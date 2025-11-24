@@ -1,6 +1,9 @@
 [build]
 builder = "nixpacks"
 
+[build.nixpacksSettings]
+buildCommand = "bash scripts/setup-backend.sh && npm ci && npm run build"
+
 [deploy]
 startCommand = "node_modules/.bin/next start -p $PORT"
 restartPolicyType = "on_failure"

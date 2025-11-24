@@ -3,6 +3,9 @@ node_modules/
 .pnp
 .pnp.js
 
+# Backend (copied during Railway build)
+backend/
+
 # Testing
 coverage/
 
