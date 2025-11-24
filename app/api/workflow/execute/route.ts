@@ -35,20 +35,12 @@ export async function POST(request: NextRequest) {
         sendEvent({ log: `Topic: ${topic}` })
         sendEvent({ log: `Platforms: ${platforms.join(', ')}` })
 
-        // Path to backend main.js
-        const backendRoot = path.join(process.cwd(), '..')
-        const mainScript = path.join(backendRoot, 'main.js')
+        // Path to backend (monorepo structure: frontend/backend/)
+        const workingDir = path.join(process.cwd(), 'backend')
+        const mainScript = path.join(workingDir, 'main.js')
 
-        // Check if backend exists
-        const fs = require('fs')
-        if (!fs.existsSync(mainScript)) {
-          sendEvent({ log: '⚠️ Backend not available in this deployment' })
-          sendEvent({ log: '📝 This is a frontend-only deployment' })
-          sendEvent({ log: '💡 To execute workflows, deploy the full stack or run locally' })
-          sendEvent({ stage: 1, status: 'error', message: 'Backend not available' })
-          controller.close()
-          return
-        }
+        sendEvent({ log: `📍 Executing: ${mainScript}` })
+        sendEvent({ log: `📍 Working Dir: ${workingDir}` })
 
         // Build command arguments
         const args = [
@@ -67,10 +59,19 @@ export async function POST(request: NextRequest) {
           args.push('--platform', platform)
         })
 
+        // Add parent node_modules to NODE_PATH for module resolution
+        const parentNodeModules = path.join(process.cwd(), 'node_modules')
+        const nodeEnv = {
+          ...process.env,
+          NODE_PATH: parentNodeModules + (process.env.NODE_PATH ? ':' + process.env.NODE_PATH : '')
+        }
+
+        sendEvent({ log: `🚀 Command: node ${args.slice(1).join(' ')}` })
+
         // Spawn backend process
         const backendProcess = spawn('node', args, {
-          cwd: backendRoot,
-          env: { ...process.env }
+          cwd: workingDir,
+          env: nodeEnv
         })
 
         let currentStage = 1

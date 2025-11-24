@@ -46,20 +46,12 @@ export async function POST(request: NextRequest) {
         sendEvent({ log: `🚀 Starting Stage ${stageId}: ${stageName}...` })
         sendEvent({ stage: stageId, status: 'running', message: `Executing ${stageName}...` })
 
-        // Path to backend main.js
-        const backendRoot = path.join(process.cwd(), '..')
-        const mainScript = path.join(backendRoot, 'main.js')
+        // Path to backend (monorepo structure: frontend/backend/)
+        const workingDir = path.join(process.cwd(), 'backend')
+        const mainScript = path.join(workingDir, 'main.js')
 
-        // Check if backend exists
-        const fs = require('fs')
-        if (!fs.existsSync(mainScript)) {
-          sendEvent({ log: '⚠️ Backend not available in this deployment' })
-          sendEvent({ log: '📝 This is a frontend-only deployment' })
-          sendEvent({ log: '💡 To execute workflows, deploy the full stack or run locally' })
-          sendEvent({ stage: stageId, status: 'error', message: 'Backend not available' })
-          controller.close()
-          return
-        }
+        sendEvent({ log: `📍 Executing: ${mainScript}` })
+        sendEvent({ log: `📍 Working Dir: ${workingDir}` })
 
         // Build command arguments
         const args = [
@@ -90,21 +82,27 @@ export async function POST(request: NextRequest) {
           })
         }
 
-        // Prepare environment variables
-        const env = { ...process.env }
+        // Add parent node_modules to NODE_PATH for module resolution
+        const parentNodeModules = path.join(process.cwd(), 'node_modules')
+        const nodeEnv = {
+          ...process.env,
+          NODE_PATH: parentNodeModules + (process.env.NODE_PATH ? ':' + process.env.NODE_PATH : '')
+        }
 
         // Pass LongCat configuration as environment variables for video stage
         if (stageId === 4 && longCatConfig) {
-          env.LONGCAT_ENABLED = longCatConfig.enabled ? 'true' : 'false'
-          env.LONGCAT_MODE = longCatConfig.mode || 'text-to-video'
-          env.LONGCAT_PROMPT = longCatConfig.prompt || ''
-          env.LONGCAT_DURATION = longCatConfig.duration?.toString() || duration.toString()
+          nodeEnv.LONGCAT_ENABLED = longCatConfig.enabled ? 'true' : 'false'
+          nodeEnv.LONGCAT_MODE = longCatConfig.mode || 'text-to-video'
+          nodeEnv.LONGCAT_PROMPT = longCatConfig.prompt || ''
+          nodeEnv.LONGCAT_DURATION = longCatConfig.duration?.toString() || duration.toString()
         }
+
+        sendEvent({ log: `🚀 Command: node ${args.slice(1).join(' ')}` })
 
         // Spawn backend process
         const backendProcess = spawn('node', args, {
-          cwd: backendRoot,
-          env: env
+          cwd: workingDir,
+          env: nodeEnv
         })
 
         // Handle stdout

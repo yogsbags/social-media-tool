@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Path to backend state file
-    const backendRoot = path.join(process.cwd(), '..')
+    // Path to backend state file (monorepo structure: frontend/backend/data/)
+    const backendRoot = path.join(process.cwd(), 'backend')
     const stateFilePath = path.join(backendRoot, 'data', 'campaign-state.json')
 
     // Check if state file exists
