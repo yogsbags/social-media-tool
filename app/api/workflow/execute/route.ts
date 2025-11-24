@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         const nodeEnv = {
           ...process.env,
           NODE_PATH: parentNodeModules + (process.env.NODE_PATH ? ':' + process.env.NODE_PATH : '')
-        }
+        } as NodeJS.ProcessEnv
 
         sendEvent({ log: `🚀 Command: node ${args.slice(1).join(' ')}` })
 

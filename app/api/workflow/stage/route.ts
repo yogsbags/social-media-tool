@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
         const nodeEnv = {
           ...process.env,
           NODE_PATH: parentNodeModules + (process.env.NODE_PATH ? ':' + process.env.NODE_PATH : '')
-        }
+        } as NodeJS.ProcessEnv
 
         // Pass LongCat configuration as environment variables for video stage
         if (stageId === 4 && longCatConfig) {
