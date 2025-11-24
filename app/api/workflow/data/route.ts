@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
         stageData = state.published || {}
         summary = {
           totalPosts: Object.keys(stageData).length,
-          publishedPlatforms: [...new Set(Object.values(stageData).map((p: any) => p.platform))]
+          publishedPlatforms: Array.from(new Set(Object.values(stageData).map((p: any) => p.platform)))
         }
         break
 
