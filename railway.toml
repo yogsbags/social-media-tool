@@ -5,6 +5,9 @@ builder = "nixpacks"
 startCommand = "node_modules/.bin/next start -p $PORT"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+sleepApplication = false
 
 # Environment variables
 # Note: Set these in Railway dashboard:
