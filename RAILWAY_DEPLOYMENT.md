@@ -10,21 +10,20 @@ Your social media automation platform is now ready for Railway deployment with a
 ```
 frontend/
 ├── app/                         # Next.js app
-├── backend/                     # Backend (created during build)
+├── backend/                     # Backend (committed to git)
 │   ├── core/                   # Workflow orchestrator
 │   ├── video/                  # Video generation modules
 │   ├── image/                  # Image generation
 │   ├── config/                 # Configuration
-│   ├── data/                   # Campaign state files
+│   ├── data/                   # Campaign state files (runtime)
 │   └── main.js                 # CLI entry point
-├── scripts/
-│   └── setup-backend.sh        # Build-time backend copy script
 └── railway.toml                # Railway deployment config
 ```
 
+**Note:** Backend folder is committed to git (same pattern as reference project).
+
 ### 2. Railway Configuration (railway.toml)
-- **Builder**: Nixpacks
-- **Build Command**: `bash scripts/setup-backend.sh && npm ci && npm run build`
+- **Builder**: Nixpacks (default build process)
 - **Start Command**: `node_modules/.bin/next start -p $PORT`
 - **Restart Policy**: On failure (max 10 retries)
 
@@ -36,14 +35,7 @@ All three API routes now use the monorepo pattern:
 
 Path pattern: `path.join(process.cwd(), 'backend')`
 
-### 4. Build Script
-`scripts/setup-backend.sh` copies backend files during Railway build:
-- Copies `core/`, `video/`, `image/`, `config/` from parent directory
-- Copies `main.js`, `package.json`, `package-lock.json`
-- Creates `data/` directory for campaign state
-- The `backend/` folder is gitignored (build-time only)
-
-### 5. Module Resolution
+### 4. Module Resolution
 Added NODE_PATH configuration for backend to find dependencies:
 ```javascript
 const parentNodeModules = path.join(process.cwd(), 'node_modules')
@@ -88,10 +80,9 @@ NEXT_PUBLIC_API_URL=<backend-api-url-if-needed>
 
 ### 3. Deploy
 Railway will automatically:
-1. Run `scripts/setup-backend.sh` (copies backend files)
-2. Run `npm ci` (install dependencies)
-3. Run `npm run build` (build Next.js)
-4. Start with `next start -p $PORT`
+1. Run `npm ci` (install dependencies)
+2. Run `npm run build` (build Next.js)
+3. Start with `next start -p $PORT`
 
 ## 🔍 Verification
 
@@ -126,21 +117,26 @@ After deployment, test these endpoints:
 
 ## 📁 File Structure Reference
 
-### Backend Files (Copied During Build)
+### Backend Files (Committed to Git)
 ```
-../core/orchestrator.js          → backend/core/orchestrator.js
-../core/state-manager.js         → backend/core/state-manager.js
-../video/video-coordinator.js    → backend/video/video-coordinator.js
-../video/video-generator.js      → backend/video/video-generator.js
-../video/avatar-generator.js     → backend/video/avatar-generator.js
-../video/longcat-generator.js    → backend/video/longcat-generator.js
-../video/video-editor.js         → backend/video/video-editor.js
-../image/image-generator.js      → backend/image/image-generator.js
-../config/brand-config.js        → backend/config/brand-config.js
-../config/heygen-avatar-config.js → backend/config/heygen-avatar-config.js
-../config/plindia-images.json    → backend/config/plindia-images.json
-../main.js                        → backend/main.js
-../package.json                   → backend/package.json
+backend/
+├── core/
+│   ├── orchestrator.js          # Workflow orchestration
+│   └── state-manager.js         # Campaign state management
+├── video/
+│   ├── video-coordinator.js     # Video workflow coordination
+│   ├── video-generator.js       # VEO video generation
+│   ├── avatar-generator.js      # HeyGen avatar videos
+│   ├── longcat-generator.js     # LongCat long-form videos
+│   └── video-editor.js          # Shotstack editing
+├── image/
+│   └── image-generator.js       # Image generation
+├── config/
+│   ├── brand-config.js          # Brand settings
+│   ├── heygen-avatar-config.js  # Avatar configurations
+│   └── plindia-images.json      # Image assets
+├── main.js                       # CLI entry point
+└── package.json                  # Backend dependencies
 ```
 
 ### Frontend API Routes
@@ -152,15 +148,10 @@ app/api/workflow/data/route.ts     - Fetch stage data
 
 ## 🐛 Troubleshooting
 
-### Build Fails
-**Error**: "scripts/setup-backend.sh: No such file or directory"
-- **Fix**: Ensure script has execute permissions: `chmod +x scripts/setup-backend.sh`
-- **Fix**: Verify script is committed to git
-
 ### Backend Not Found (502 Errors)
 **Error**: "ENOENT: no such file or directory, open 'backend/main.js'"
-- **Fix**: Check Railway build logs to verify setup-backend.sh ran
-- **Fix**: Ensure parent directory structure exists (../ relative to frontend/)
+- **Fix**: Verify backend/ folder is committed to git (not in .gitignore)
+- **Fix**: Check Railway is building from `/frontend` root directory
 
 ### Module Resolution Errors
 **Error**: "Cannot find module 'groq-sdk'"
@@ -176,15 +167,12 @@ app/api/workflow/data/route.ts     - Fetch stage data
 
 ### Build Process
 ```
-1. Checkout code from GitHub
-2. Run: bash scripts/setup-backend.sh
-   📦 Setting up backend for deployment...
-   ✅ Backend setup complete!
-3. Run: npm ci
+1. Checkout code from GitHub (includes backend/ folder)
+2. Run: npm ci
    ✓ Dependencies installed
-4. Run: npm run build
+3. Run: npm run build
    ✓ Next.js built successfully
-5. Start: next start -p 8080
+4. Start: next start -p 8080
    ✓ Ready on http://localhost:8080
 ```
 
