@@ -1,0 +1,4602 @@
+{
+  "totalUrlsProcessed": 31,
+  "totalImagesFound": 919,
+  "scrapedAt": "2025-11-21T17:51:16.530Z",
+  "images": [
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/11/logo-main-1.svg",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/11/whats-new-section_Scout-Quest-copy.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Strategy-Report-Oct-2025.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/AV-Jim-Banner.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/AV-Ringside.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/whats-new-section_AIF.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-award-img-1.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-award-img-2.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-award-img-3.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-award-img-4.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-award-img-5.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-award-img-6.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-award-img-7.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-award-img-8.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/08/screen-2-01-updated.webp",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/playstore.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/appstore.webp",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/inv-1.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/inv-2.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/inv-3.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/inv-4.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/inv-5.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/inv-6.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/inv-7.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/inv-8.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-app-feature-icn-1.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-app-feature-icn-2.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-app-feature-icn-3.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-app-feature-icn-4.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-app-feature-icn-5.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-app-feature-icn-6.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-app-feature-icn-7.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/home-app-feature-icn-8.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/wealth-creation-icn-1.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/wealth-creation-icn-2.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/wealth-creation-icn-3.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/wealth-creation-icn-4.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/wealth-creation-icn-5.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/wealth-creation-icn-6.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Pms-team_AV.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Dhiren-sheth.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Sandip-Raichura-1.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Pms-team_Siddharth-Vora.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/BFSI-Award-2025-175x175-1.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Best-BFSI-ET-NOW-2024-175x175-1.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Award-Steward-of-Corporate-Governance-of-Board-Stewardship-png-175-x-144-px.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/CFBP-Award_Upload.png",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/best-brands.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/BFSI-brands.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Innovative-company.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/preferred-workplace-2-2.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/mcx-awards.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Corporate-Advisory-Consultants-2018.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/asia-money.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/asia-choice.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/asia-gcc.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/wealth-money-mngmnt.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/thomson-returns.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/markets-mojo.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/brands360.jpg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-2390.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-2389.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-2388.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-2388.svg",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/history-1970.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/PR-Siddharth-Vora.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Amnish-2603.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/11/Vineet-Agarwal.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/SAndip-MEdia-1.jpg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/08/Inderbir-Jolly-Pic.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Margin-Trading-Facility-Basics-Explained-01.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/What-is-the-Zulu-Principle-for-Investing-01.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Importance-of-Long-Term-Investing-01.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/All-about-Quantitative-Investing-01.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/What-is-Algo-Trading-01.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/All-about-Non-Convertible-Debentures-NCDs-01.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Ringside-View_Dr-Jim-Walker_Thumbnail.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Decoding-the-UK%E2%80%93India-Free-Trade-Agreement-Ringside-View.jpg",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Ringside-View_Dr.-Lola-Woetzel_Thumbnail.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Mark-Mobius-on-Indias-Growth-Global-Markets-and-Investment-Opportunities.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/%E2%82%B9100-cr-net-profit-in-7-12-months-Anjali-Nashier-Revolt-Motors.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Indias-Path-to-Energy-Security-Dr.-Praveer-Sinha-MD-CEO-Tata-Power.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Maritime-Amrit-Kaal-Vision-2047-Strategic-Investments-Future-Plans-More.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Suzlon-Energys-journey-in-Indias-Renewable-Transformation.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Unveiling-the-Solar-Glass-Industry-Borosils-Play-in-Indias-Solar-Ascent.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/On-the-Fast-Track-RVNLs-Ambitious-Growth-Journey.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/BSE-Ltd-Vision-and-the-Strategic-Roadmap-Ahead-with-Mr.-Sundararaman-Ramamurthy-640x343-1.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Dixon-Technologies-Growth-Future-Prospects-640x343-1.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/PM-Modis-Chief-Economic-Advisor-on-Indias-path-to-a-7-tn-Economy-by-2030-640x343-1.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/PM-Modis-Economic-Advisor-Sanjeev-Sanyal-on-Prabhudas-Lilladhers-The-Ringside-View.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/In-Conversation-with-ONDC-on-Disrupting-the-Online-Marketplace-640x343-1.png",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/we-care-icn.svg",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/we-are-now.webp",
+      "sourcePage": "https://www.plindia.com/",
+      "foundAt": "2025-11-21T17:50:48.656Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/phone.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/whatsapp.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/email.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/11/Mask-Group-2073@2x.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/facebook-round-color-icon.svg",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/twitter_x_new_logo_x_rounded_icon_256078-cropped.svg",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/linkedin.svg",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/instagram.svg",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/youtube.svg",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/telegram.svg",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/pl-qr.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/Mask-Group-1240@2x.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/trophy.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3496.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3448.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3877.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3875.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3876.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3878.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3879.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3880.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/profile-pic-2.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/siddharth-1.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/s.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/m.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/a.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/r.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/t.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-1304@2x-3.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management-services/",
+      "foundAt": "2025-11-21T17:50:49.583Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-1304@2x-2.png",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-1304@2x-1.png",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-1304@2x.png",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Zarin-NDTV.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Zarin-CNBC.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/aqua_pms_footer_logo.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/top-banner.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-1.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-2.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-3.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-4.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-5.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-6.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-7.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-8.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/nri-9.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/step1.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3757@2x.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-2000@2x.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3756@2x.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/slick-left.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/slick-right.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/choose-1.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/dynamic.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-2159@2x.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Mask-Group-1247@2x.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/choose-5.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/choose-6.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3262@2x.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3268@2x.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-2389.svg",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/invest.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/tax.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/track.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/safe.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/09/integrated.png",
+      "sourcePage": "https://www.plindia.com/nri-demat-account/",
+      "foundAt": "2025-11-21T17:50:50.455Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/wealth-mngmnt-mob-bnr.webp",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4517.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4516.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4515.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4514.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4518.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4519.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-3657.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-3659.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-3660.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4181.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-3661.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4182.svg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Pms-team_AV@2x.webp",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-3668.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4472.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-1992.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-2001.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4474.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4473.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/sandip-raichura.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Inderbir-Jolly-Pic.jpg",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vineet-Agarwal.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/pankaj-shreshtha.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Pankaj.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/11/Rajkumar-Subramanian.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/AV-Award-ET.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/wealth_footer.png",
+      "sourcePage": "https://www.plindia.com/wealth-management/",
+      "foundAt": "2025-11-21T17:50:51.289Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/sgb-bnr.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3409@2x.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3403@2x.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3395@2x.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3389@2x.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3383@2x.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/SGB_1.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/SGB_2.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4837@2x.png",
+      "sourcePage": "https://www.plindia.com/sovereign-gold-bonds/",
+      "foundAt": "2025-11-21T17:50:52.072Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fd-bnr.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fd-pl-1.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fd-pl-2.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fd-pl-3.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fd-pl-4.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fd-pl-5.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fd-pl-6.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/fd-pl-7.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fd-pl-8.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/portfolio-1-1.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/portfolio-2.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/portfolio-3.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/portfolio-4.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/portfolio-5.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/goal-1.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/goal-2.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/goal-3.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/goal-4.png",
+      "sourcePage": "https://www.plindia.com/fixed-deposits/",
+      "foundAt": "2025-11-21T17:50:52.854Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/partner-bnr.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names1.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names2.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names3.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names4.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names5.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names6.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names7.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names8.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/trusted_names9.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-2086.svg",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-2084.svg",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-01.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-09.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-02.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-03.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-05.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-14.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-17.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-18.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-16.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-15.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-14.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-13.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-12.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-11.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-10.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-08.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-09.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-07.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-06.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-05.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-04.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-03.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-02.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-01.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-24.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-13.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-10.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/PP-meet-greet-07.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-19.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-20.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-21.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-22.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-23.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-24.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-25.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-26.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-27.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-28.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-29.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-30.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-31.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-32.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-33.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Pp-images-34.png",
+      "sourcePage": "https://www.plindia.com/progress-partner/",
+      "foundAt": "2025-11-21T17:50:53.682Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/da-banner.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/one-step.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/swift-account.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/best.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/panCard.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/appstore.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/account-1.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/account-2.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/account-3.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/account-4.png",
+      "sourcePage": "https://www.plindia.com/open-demat-account/",
+      "foundAt": "2025-11-21T17:50:54.447Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/mob-pms-bnr.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5349@2x.png",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5367@2x.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5366@2x.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5351@2x.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5363@2x.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5365@2x.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5364@2x.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-3923.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-3924.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-3926.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-3927.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-3928.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-3929.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Mask-Group-3190.svg",
+      "sourcePage": "https://www.plindia.com/portfolio-management/",
+      "foundAt": "2025-11-21T17:50:55.264Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/aif-mob-bnr.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/aif.svg",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-4544.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6172.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6173.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6174.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5060.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-5059.png",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/aif-choose1.svg",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/aif-choose2.svg",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/aif-choose3.svg",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/aif-choose4.svg",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/aif-choose5.svg",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/aif-choose6.svg",
+      "sourcePage": "https://www.plindia.com/alternative-investment-funds/",
+      "foundAt": "2025-11-21T17:50:56.070Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/nd-pms-mob-bnr.png",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/nd-pms.svg",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/nd-pms-approach.png",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/evaluation-1.svg",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/evaluation-2.svg",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/evaluation-3.svg",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/evaluation-4.svg",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/evaluation-5.svg",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/evaluation-6.svg",
+      "sourcePage": "https://www.plindia.com/non-discretionary-pms/",
+      "foundAt": "2025-11-21T17:50:56.859Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/mtf-mob-bnr.png",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/bulb-icon.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6466.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6379.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6380.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-5798.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6441.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6442.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6444.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6445.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6443.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Path-6446.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/benefits-1.png",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/apply-1.png",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/pluses.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-2001.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/activate1-mob.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-1992.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/activate2-mob.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/Group-3668.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/activate3-mob.svg",
+      "sourcePage": "https://www.plindia.com/margin-trading-facility/",
+      "foundAt": "2025-11-21T17:50:57.648Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/mld-mob-bnr.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/diversification.png",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/higher-returns-3.png",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/capital-protection.png",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/tax-advantage.png",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/customizable-structures.png",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/transparent-ratings.png",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/mld-icn-1.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/mld-icn-2.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/mld-icn-3.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/mld-icn-4.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/key-features-icn-1.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/key-features-icn-2.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/key-features-icn-3.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/key-features-icn-4.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/step-to-invest-icn-1.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/step-to-invest-icn-2.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/step-to-invest-icn-3.svg",
+      "sourcePage": "https://www.plindia.com/market-linked-debentures/",
+      "foundAt": "2025-11-21T17:50:58.418Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/aqua-vector-mobile-1.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/aqua-vector-mobile-2.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/Path-6662.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/Path-6663.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/Path-6664.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/Path-6665.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/aq-1.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/aq-2.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/aq-3.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/aq-4.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.240Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/aq-5.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/aq-6.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/aq-7.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/aq-8.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/strategy-mobile-bg.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/flexicap.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/scrip.png",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/proprietary-icn-1.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/proprietary-icn-3.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/proprietary-icn-5.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/proprietary-icn-2.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/proprietary-icn-4.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/proprietary-icn-6.svg",
+      "sourcePage": "https://www.plindia.com/aqua-equity-pms/",
+      "foundAt": "2025-11-21T17:50:59.241Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/creators-mobile.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/creators-web.png",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/siddharth.png",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/mob-banner-image.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invest-1.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invest-2.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invest-3.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invest-4.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invest-5.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invest-6.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invest-7.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invest-8.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invested-icn-1.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invested-icn-2.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invested-icn-4.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-invested-icn-3.svg",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/newsletter-img.png",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/aqua_pms_footer_logo.png",
+      "sourcePage": "https://www.plindia.com/madp-alpha-pms-strategy/",
+      "foundAt": "2025-11-21T17:51:00.077Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/logo-about.svg",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Rajeev-Dalal.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Best-BFSI-ET-NOW_Upload.png",
+      "sourcePage": "https://www.plindia.com/about-us/",
+      "foundAt": "2025-11-21T17:51:00.857Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/india-map.png",
+      "sourcePage": "https://www.plindia.com/get-in-touch/",
+      "foundAt": "2025-11-21T17:51:06.144Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/11/pl-logo.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/11/Group-2468@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/11/Group-24682@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/11/Group-5@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-52468@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/ssd.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-24684@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-246844@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-24683@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/Humans-Of-PL-Trupti-Pandit-1.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/Humans-Of-PL-Vikas-vaid-copy-1.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3593.svg",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3595.svg",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-3594.svg",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-3592.svg",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/PPS_3627@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/PNR_8773@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/PPS_3684@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/festive-01.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/festive-02.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/festive-03.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/festive-04.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/festive-05.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/festive-06.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/festive-07.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/PP-meet-greet-01@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/DSC_8396@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/26-jan-04@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/DSC_8449@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/WhatsApp-Image-2022-10-21-at-4.08.41-PM@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/DSC_8605@2x.png",
+      "sourcePage": "https://www.plindia.com/careers/",
+      "foundAt": "2025-11-21T17:51:01.649Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/linkedin.svg",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/vimal-jain.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Parag-Paigankar.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/rupesh-agarwal.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-23466.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/user-icon.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Uday-Patil-1.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Dr.-Punita-Kumar-Sinha-1.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Inderbir-Jolly.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Ajay-Sharma.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Kenin-Jain.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Nipun-Lodha.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/ashik_barat.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/rajesh_narain.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Samir-Satyam1.png",
+      "sourcePage": "https://www.plindia.com/board-of-directors/",
+      "foundAt": "2025-11-21T17:51:02.430Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-2667.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-2667-1.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-2667-2.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-2667-3.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-2675.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-2667-4.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Pms-team_AV@2x.png",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3604.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3603.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3601.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3597.svg",
+      "sourcePage": "https://www.plindia.com/logo-story/",
+      "foundAt": "2025-11-21T17:51:03.175Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/values-logo.svg",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-01.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-16.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-15.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-14.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-05.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-06.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-07.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-08.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/humans-logo.svg",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-09.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-10.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-11.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-12.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-13.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-02.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-03.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Humans-of-PL-04.png",
+      "sourcePage": "https://www.plindia.com/vision-mission-purpose/",
+      "foundAt": "2025-11-21T17:51:03.913Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Vaishali-CNBC-Bajar.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Shilpa-Kamai-Ka-Adda.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/11/Amisha-BS.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Amnish-2502-1.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Amisha-BT.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Amisha-India-Today.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Amisha-ET.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Amisha-Zee.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Praveen-Moneycontrol.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Amisha-CNBC.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Amisha-Vora-NDTV.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Amnish-ETNow.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Nipun-NDTV.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/AV-CNBC.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Nipun-ET-Now.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Vikram-Moneycontrol.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Amnish-18Feb-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/AV-Money9.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/Siddharth-CNBC-1405.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/AV-NDTV.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/Siddharth-ET-1405.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Siddharth-CNBC.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/08/Vaishali-Business-Today.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/AV-ETNow.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Amnish-2502.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/Siddharth-ET.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/AV-Fortune.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/Jinesh-NDTV.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Siddharth-CNBC-0204.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/Munafe-Ki-Taiyari.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Praveen-CNBC.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Munafe-Ki-Taiyari-4.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Amit-CNBC.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Praveen-CNBC-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Munafe-Ki-Taiyari-5.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/AV-Interview-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/AV-CNBC.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Amnish-18Feb.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/Munafe-Ki-Taiyari-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/Siddharth-CNBCBajar14May.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/Munafe-Ki-Taiyari-4.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Inder-2904.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Amnish-Earning.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Siddharth-ET-0204.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Amit-Anwani-2703.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/SV-PMS.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/AV-NDTV-7Mar.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/AV-ETNow-7MAr.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/AV-CNBCBajar-7MAr.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/AV-CNBCAwaaz-7MAr.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/AV-ET.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/AV-BT-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Siddharth-2402-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Tushar-2402-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Amit-_20Feb-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/AV-14Feb-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Arsh-14Feb-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Tushar_2401.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Amit_2801.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Amnish_2801.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Samvat-2081-With-ET-Now-Swadesh-Nov4.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Market-Today-With-Business-Today-Nov4.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-The-Market-With-ET-NowNov4.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Bajar-Helpline-With-CNBC-Bajar-4Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Kamai-Ka-Adda-With-CNBC-Awaaz-4Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Markets-Forward-With-CNBC-TV18.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Chartbusters-With-CNBC-TV18-Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Your-Trades-With-ET-Now-Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-India-Market-Open-With-NDTV-Profit-Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Stocks-Fatafat-With-ET-Now-Swadesh-Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Kamai-Ka-Adda-With-CNBC-Awaaz-Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Markets-Forward-With-CNBC-TV18-Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Khara-Sauda-With-ET-Now-Swadesh-Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Market-Live-With-CNBC-Bajar.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Your-Stocks-With-CNBC-TV18-Nov24.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Amisha-Vora-Shares-Her-Views-On-The-Most-Powerful-Women-In-Business-With-Business-Today.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Bajar-Helpline-With-CNBC-Bajar-9Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Kamai-Ka-Adda-With-CNBC-Awaa.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Khara-Sauda-With-ET-Now-Swadesh.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Amnish-Aggarwal-Shares-His-Views-On-Bazaar-Morning-calls-With-CNBC-TV18.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Kamai-Ka-Adda-With-CNBC-Awaaz-14Nov.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Share-Market-Live-With-Business-Today.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Bajar-Helpline-With-CNBC-Bajar.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Vaishali-Parekh-Shares-Her-Views-On-Market-Fatafat-With-ET-Now.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Shilpa-Rout-Shares-Her-Views-On-Kamai-Ka-Adda-With-CNBC-Awaaz.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Siddharth-Vora.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Amisha-Vora.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Financials-Manufacturing-will-be-two-key-themes-going-forward-says-Amisha-Vora-on-CNBC-TV-18.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/cnbc.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Indian-Market-Close-With-NDTV-Profit.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Siddharth-Vora-sheds-light-on-where-he-sees-value-is-building-positions-in-the-market-on-ET-Now.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/etnow.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Siddharth-Vora-Shares-His-Views-On-The-Newsroom-With-ET-Now.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Closing-Trades-With-ET-Now.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Big-Market-Voices-With-CNBC-Awaaz.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-India-Market-Open-With-NDTV-Profit.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Share-Her-Views-On-Market-Ke-Mahila-Maharathi-With-ET-Now-Swadesh.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Janadesh-Aur-Bazaar-With-CNBC-Awaaz.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-shares-insights-on-India-Decides-2024-with-NDTV-Profit.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Kiski-Sarkar-Kaisa-Bazaar-With-Zee-Business-new2.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/zeebusiness-logo_enhanced.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Kiski-Sarkar-Kaisa-Bazaar-With-Zee-Business-new1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Kiski-Sarkar-Kaisa-Bazaar-With-Zee-Business-new.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Kiski-Sarka-Kaisa-Bazaar-With-Zee-Business.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Kiski-Sarkar-Kaisa-Bazaar-With-Zee-Business.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Closing-Cues-With-ET-Now.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Janadesh-2024-With-CNBC-Bajar.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-shares-her-views-on-Modi-3.0-with-Bloomberg-TV-Asia.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Siddharth-Vora-shares-overall-market-view-through-the-Quant-lens-On-Bajar@1-With-CNBC-Bajar.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Siddharth-Vora-Shares-His-Views-On-Special-Program-With-Business-Today-TV.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Nifty-scales-24000-for-first-time-Siddharth-Vora-shares-his-market-outlook-on-ET-NOW.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Union-Budget-2024-Amisha-Voras-Wishlist-and-Key-Sectors-to-Watch.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Markets-are-in-a-risk-transition-phase-Siddharth-Vora-on-CNBC-TV18-Alpha-Managers.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Budget-2024-With-CNBC-Awaaz.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Exclusive-With-ET-Now-Swadesh.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/By-2030-Nifty-could-breach-35000-40000-Amisha-Vora-ET-NOWs-Rise-With-India-maxres-1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Leaders-Of-Tomorrow-Springs-With-ET-Now.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Siddharth-Vora-Shares-His-Views-On-Fund-Manager-na-Funda-With-CNBC-Bajar.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Leaders-Of-Tomorrow-Springs-With-ET-Now-maxres.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Amisha-Vora-Shares-Her-Views-On-Investment-Ki-Pathshala-With-Zee-Business-maxres.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Vaishali-Parekh-Shares-Her-Views-On-Share-Market-Live-With-Business-Today.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Vaishali-Parekh-Shares-Her-Views-On-Stocks-Social-With-Zee-Business.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Vaishali-Parekh-Shares-Her-Views-On-Bajar-Helpline-With-CNBC-Bajar.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Shilpa-Rout-Shares-Her-Views-On-Markets-Forward-With-CNBC-TV18.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Vaishali-Parekh-Shares-Her-Views-On-Closing-Trades-With-ET-Now.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Shilpa-Rout-Shares-Her-Views-On-Kamai-Ka-Adda-With-CNBC-Awaaz-1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-news-4.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-news-3.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/madp-news-2.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/SV_CNBC-TV18_640x480.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/3-stocks-to-buy-Vaishali-Parekh-Mint.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Mint-Logo.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Nifty-surge.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/stocks-to-watch.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/maxresdefault-1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/sddefault.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/market-opening.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/coal-india.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/amit-anwani.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/aqua-strategy-max-returns.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/bq-prime.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/aqua-youtube-thumbnail.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/trending-youtube.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/market-update-aqua.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/siddharth-vora-sheds-light.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/sddefault.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/prabhudas-lilladher-pvt-ltd-fort-mumbai-share-brokers-t8nx5.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/sddefault-1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Group-2825@2x.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/swarnendu-cnbc.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/11/Group-2447@2x.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/praveen-sahay.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/jinesh-cnbc.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/amit-anwani-et.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/param-cnbc.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/amnish-cnbc.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/samir-satyam.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/Amisha-Vora.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Picture1_20250922185809_original_image_47.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Vikram-Kasat-01.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/08/IPO-1.jpg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/pl-capital-leads-laxmi-india-finance-ipo-the-%E2%82%B9254-cr-public-issue-opens-july-29-gmp-at-%E2%82%B913-signals-strong-debut-01.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Vaishali-Parekh.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/AV-Magazine.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/AM-Magazine.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Sunteck-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/IT-Media-2.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/SAndip-MEdia.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/RBI1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/REduce.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/Markets-.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/Accumulate-.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/TradeSetup.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/BUY-1.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/AIF-Image1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/AIF-May.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/AIF-Image.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Centuryply.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/JSW.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/top-picks.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/irctc33.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Inder.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Trump-Tariff-1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Trump.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Nifty-slumps.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/donald-trump-executive-order.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/IPO2.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/IPO-4.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/IPO5.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/1733319583_1730278478_gold.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/IMG_20250313_133736.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/03/BUY-2.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/IPO-Funding.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/IPO-Funding-1.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/laxmi-india-finance-files-drhp-with-sebi.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Sandip-Raichura.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Inderbir-Singh-Jolly.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/Kapil-Sachdeva.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/66de790a9754b-the-ipo-of-gala-precision-engineering-ran-between-september-02-04-as-it-had-offered-its-shares-in-th-092649589-16x9-1.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/India-market-strategy-Quality-and-low-volatility-factors-lead-the-way-2.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/10/markets.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Logo-Moneycontrol-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/Acumulate.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/BUY-News.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/REduce.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/urea-ksKD-621414LiveMint_1722335174328_1722335174507.webp",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Vaishali-Mint-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/ndtv.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/ConsumerDurables.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/RateGain-story.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/HOLD.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Mahindra.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.394Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/DrReddy.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/BUY.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Vaishali-Mint.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Logo-Moneycontrol.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Accumulate.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/mint.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/BW.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/return-of-ipo.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/speciality-restaurants-raises-rs-127-crore-via-preferential-issue.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-6219.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/3-0-97431674-iStock-834792042-0_1679787577110_1700645672694.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/bs.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/1680686226-6079.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/2023_12_21_0g7_Kleki-modified-modified-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/market_flat-2-770x433-1.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/accumulate2-770x433-1.png",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/bloombergquint_2023-04_8057a4fc-3200-4251-8e00-ecacdd113597_An_oil_refinery___Source_pexels_Tom_fisk_.jpg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/11/tata-steel.jpeg",
+      "sourcePage": "https://www.plindia.com/news-press/",
+      "foundAt": "2025-11-21T17:51:05.395Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3599-1.svg",
+      "sourcePage": "https://www.plindia.com/get-in-touch/",
+      "foundAt": "2025-11-21T17:51:06.144Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3597-1.svg",
+      "sourcePage": "https://www.plindia.com/get-in-touch/",
+      "foundAt": "2025-11-21T17:51:06.144Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/Group-3598.svg",
+      "sourcePage": "https://www.plindia.com/get-in-touch/",
+      "foundAt": "2025-11-21T17:51:06.144Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/pl-1.png",
+      "sourcePage": "https://www.plindia.com/get-in-touch/",
+      "foundAt": "2025-11-21T17:51:06.144Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/pl-2.png",
+      "sourcePage": "https://www.plindia.com/get-in-touch/",
+      "foundAt": "2025-11-21T17:51:06.144Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/12/pl-3.png",
+      "sourcePage": "https://www.plindia.com/get-in-touch/",
+      "foundAt": "2025-11-21T17:51:06.144Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/research-icn.svg",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Research-Report_Information-Technology-4.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Research-Report_Cement-Sector-02-1.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/08/Research-Report_Cement-Sector-05.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Consumer.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Research-Report_Information-Technology-3.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Research-Report_Consumer.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/Research-Report_Chemicals.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/08/Research-Report_Cement-Sector-04.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Research-Report_Cement-Sector-02.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/Research-Report_Information-Technology-4.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/Research-Report_Cement-Sector-04.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Research-Report_Capital-Goods-Defence.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/Research-Report_Cement-Sector-03.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/02/Group-2468@2x-300x195-1.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Intraday-Graph-Mob.svg",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/04/Intraday-Graph.svg",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-3023-3.svg",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-3023.svg",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/themes/plindia/images/locked.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/amnish.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/swarnendu.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/vikram.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/vaishali.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/shilpa.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/open-accnt-icn-1.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/open-accnt-icn-2.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/open-accnt-icn-3.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/open-accnt-icn-4.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/02/client_image4.svg",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4271@2x.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4274@2x.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4277@2x.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4278@2x.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4279@2x.png",
+      "sourcePage": "https://www.plindia.com/research/",
+      "foundAt": "2025-11-21T17:51:08.067Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/11/US_India_donal-trump-and-piyush-goyal-768x243.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/11/India-US-Trade-Talks-Resume-in-New-Delhi-Tariffs-Russian-Oil-and-Modis-%E2%80%98Forward-Looking-Quote-in-Focus-02-768x243.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/11/us-tariffs-squeeze-indian-textile-exporters-stocks-surge-as-india-us-trade-deal-nears-completion-01.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/us-fed-meeting-today-key-decisions-timings-impact-on-global-and-indian-markets-01.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/crude-oil-prices-surge-us-sanctions-hit-russian-giants-ongc-oil-india-bpcl-reliance-in-focus-01.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/india-us-trade-pact-textile-stocks-jump-modi-trump-call-trade-deal-hopes-01.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/10/thumbnail-US-Fed-Meeting-in-Focus.jpg",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/thumbnail-Sustainability-Convergence-Summit-2025.jpg",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/09/thumbnail-The-Ringside-View-with-Amisha-Vora-and-Dr.-Jim-Walker-explores-how-global-shocks.jpg",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/08/thumbnail-Indias-Rupee-Push-BRICS-Shift-from-Dollar-Gains-Speed.jpg",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/08/thumbnail-Indias-Weekly-Macro-Highlights-By-Arsh-Mogre-Economist-at-PL.jpg",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/07/cropped-The-Chipmaker-That-Ate-the-Market_1.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/06/cropped-Trump-Hints-at-Very-Big-Trade-Deal-With-India_1.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/cropped-Web-Story-5-May-2025_1.png",
+      "sourcePage": "https://www.plindia.com/india-us-trade-deal/",
+      "foundAt": "2025-11-21T17:51:09.589Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/investment-banking-mob-bnr.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/fund.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/market.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/mergers.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/advisory.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Group-23396.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Group-23397.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Group-23398.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/approach-icn-6.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/approach-icn-5.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/approach-icn-4.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/approach-icn-3.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/approach-icn-2.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/approach-icn-1.svg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/ib-choose-icn-1.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/ib-choose-icn-2.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/ib-choose-icn-3.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/ib-choose-icn-4.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/ib-choose-icn-5.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/ib-choose-icn-6.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/ib-choose-icn-7.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/ib-choose-icn-8.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Amisha-Vora-1.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Uday-Patil.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/ajay_sharma.jpg",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/05/Debrato-Sen-copy.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Mahak-Jain.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Nipun-Lodha-1.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/rajeev-dalal.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/investment-banking-footer-logo.png",
+      "sourcePage": "https://www.plindia.com/investment-banking/",
+      "foundAt": "2025-11-21T17:51:10.412Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Mask-Group-1238@2x-1.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Group-23430.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Group-3562.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Group-3204.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Group-4813.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/11/Group-4814.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/Mask-Group-1176.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Mask-Group-1176.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/01/insti-graph.png",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-3023.svg",
+      "sourcePage": "https://www.plindia.com/institutional-equities/",
+      "foundAt": "2025-11-21T17:51:12.010Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/algo-trading-mob-bnr.svg",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Alphanti.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Value-Stocks.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/robotrade.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/icons_wealthbridge-1.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/icons_tradeclue-1.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2025/01/Untitled_design__1_-removebg-preview.webp",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/tried-tested.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/lightening.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/iprved-accurcy.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/btr-rsk-mgmnt.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/diversification.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/04/const-monitorng.png",
+      "sourcePage": "https://www.plindia.com/algo-trading/",
+      "foundAt": "2025-11-21T17:51:12.827Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mutual-funds-mob-bnr.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-1.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-2.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-3.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-4.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/sip1.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/sip3.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/sip2.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/sip4.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-benefits1.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-benefits2.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-benefits3.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-benefits4.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-benefits5.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-benefits6.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-benefits7.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-benefits8.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_360-One-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Aditya-Birla-Sun-Life-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Axis-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Bajaj-Finserv-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Bandhan-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Bank-Of-India-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Baroda-BNP-Paribas-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Canara-Robeco-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_DSP-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Edelweiss-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Franklin-Templeton-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Groww-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_HDFC-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Helios-Capital-Management-India-Private-Limited.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_HSBC-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_ICICI-Prudential-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_IDBI-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Invesco-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_ITI-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_JM-Financial-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Kotak-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_LIC-Mutual-Fund-Asset-Management-Ltd.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Mahindra-Manulife-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Mirae-Asset-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Motilal-Oswal-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Navi-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Nippon-India-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_NJ-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Old-Bridge-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_PGIM-India-Asset-Management-Private-Limited.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_PPFAS-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Quant-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Quantum-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_SAMCO-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_SBI-Funds-Management-Pvt-Ltd-.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Shriram-Mutual-fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Sundaram-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_TATA-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Taurus-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Trust-Asset-Management-Private-Limited.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Union-Asset-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_UTI-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/AMC_Whiteoak-Mutual-Fund.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-invest1.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-invest2.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-invest3.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-invest4.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-invest5.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-invest6.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-step1.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-step2.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/mf-step3.svg",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/09/digi-mf.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/playstore.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/appstore.png",
+      "sourcePage": "https://www.plindia.com/mutual-funds/",
+      "foundAt": "2025-11-21T17:51:13.666Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/unlisted-shares-mob-bnr.png",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4548@2x.png",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4546@2x.png",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4544@2x.png",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/Group-4542@2x.png",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/06/Group-4534.svg",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/buy-unlist-2.png",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/buy-unlist-3.png",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/buy-unlist-4.png",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/invest1.svg",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/invest2.svg",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/invest3.svg",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/05/invest4.svg",
+      "sourcePage": "https://www.plindia.com/unlisted-shares/",
+      "foundAt": "2025-11-21T17:51:14.420Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/commodities-bnr.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/trade-1.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/trade-2.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/trade-3.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/trade-4.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/trade-5.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/12/features.webp",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/type-1.svg",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/type-2.svg",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/type-3.svg",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2023/10/commodities-bottom-bnr.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/Group-2589@2x.png",
+      "sourcePage": "https://www.plindia.com/commodity-trading/",
+      "foundAt": "2025-11-21T17:51:15.188Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/03/currencies-bnr.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3126.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3192.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3274.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3174.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/07/Group-3204.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/Group-3767.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    },
+    {
+      "url": "https://www.plindia.com/wp-content/uploads/2024/08/Mask-Group-2087.png",
+      "sourcePage": "https://www.plindia.com/currency-trading/",
+      "foundAt": "2025-11-21T17:51:16.029Z"
+    }
+  ]
+}

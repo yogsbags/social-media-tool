@@ -1,9 +1,6 @@
 [build]
 builder = "nixpacks"
 
-[build.nixpacksSettings]
-buildCommand = "bash scripts/setup-backend.sh && npm ci && npm run build"
-
 [deploy]
 startCommand = "node_modules/.bin/next start -p $PORT"
 restartPolicyType = "on_failure"
@@ -11,8 +8,6 @@ restartPolicyMaxRetries = 10
 
 # Environment variables
 # Note: Set these in Railway dashboard:
-# - NODE_PATH (include node_modules path)
-# - NEXT_PUBLIC_API_URL (backend API URL if needed)
 # - GROQ_API_KEY (AI content generation)
 # - GEMINI_API_KEY (VEO video generation)
 # - FAL_KEY (LongCat long-form videos)

@@ -1,0 +1,35 @@
+{
+  "name": "social-media-automation",
+  "version": "1.0.0",
+  "description": "AI-powered social media campaign automation with Veo 3.1, HeyGen, and Shotstack",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "init": "node main.js init",
+    "status": "node main.js status",
+    "test": "node main.js --simulate status"
+  },
+  "keywords": [
+    "social-media",
+    "automation",
+    "ai",
+    "video",
+    "veo",
+    "heygen",
+    "shotstack",
+    "campaign"
+  ],
+  "author": "PL Capital",
+  "license": "MIT",
+  "dependencies": {
+    "@fal-ai/client": "^1.7.2",
+    "@google/genai": "^1.29.1",
+    "canvas": "^3.2.0",
+    "jsdom": "^27.2.0",
+    "node-fetch": "^3.3.2",
+    "replicate": "^0.27.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
