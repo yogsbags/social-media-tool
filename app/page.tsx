@@ -105,23 +105,47 @@ export default function Home() {
   ]
 
   const purposeOptions = [
-    { value: 'mobile-app', label: '📱 Mobile App', description: 'PL Capital Mobile App' },
+    // Products
+    { value: 'falcon', label: '🦅 Falcon', description: '5Lakh Min., Research Basket' },
+    { value: 'aqua', label: '💧 AQUA', description: 'Quant Portfolio Strategy (1Cr+ clients)' },
+    { value: 'madp', label: '📊 MADP', description: 'Multi-Asset Dynamic Portfolio (1Cr+ clients)' },
+    { value: 'loan-tieups', label: '🏦 Loan Tie ups', description: 'Loan Against Securities' },
+    { value: 'scoutquest', label: '🔍 Scoutquest', description: '45 days free, 24x7 alerts, track all stocks' },
+    { value: 'mobile-app', label: '📱 Mobile App', description: 'Easy Options, Scanners, Algos, Research Baskets' },
+    { value: 'open-account', label: '⚡ Open Account in 5mins', description: 'Quick Account Opening (Lead Gen)' },
+    { value: 'commodity-activation', label: '🥇 Commodity Account Activation', description: 'Gold, Silver & Commodity Trading, Call and Trade Support' },
+    { value: 'mtf-activation', label: '📈 MTF Account Activation', description: 'MTF Research Calls, Competitive ROI, 1000+ scrips, 4X multiplier' },
+    { value: 'dormant-activation', label: '🔄 Dormant Account Activation', description: 'MTF, Research and New App' },
+    // Other
     { value: 'partners-mobile-app', label: '🤝 Partners Mobile App', description: 'IFA/Partner Platform' },
     { value: 'website', label: '🌐 Website', description: 'Corporate Website' },
     { value: 'web-app', label: '💻 Web App', description: 'Web Application' },
-    { value: 'pms-madp', label: '📊 PMS-MADP', description: 'Multi-Asset Dynamic Portfolio' },
-    { value: 'pms-aqua', label: '💧 PMS-AQUA', description: 'Quant Portfolio Strategy' },
-    { value: 'aif', label: '🏦 AIF', description: 'Alternative Investment Fund' },
-    { value: 'mtf', label: '📈 MTF', description: 'Margin Trading Facility' },
+    { value: 'aif', label: '🏛️ AIF', description: 'Alternative Investment Fund' },
     { value: 'brand-awareness', label: '✨ Brand Awareness', description: 'General Brand Building' },
   ]
 
   const targetAudienceOptions = [
+    // General Segments
+    { value: 'all_clients', label: '🌐 All', description: 'All clients' },
+    { value: 'lead_gen', label: '🎯 Lead Gen', description: 'New customer acquisition' },
     { value: 'internal', label: '👥 Internal communication', description: 'Employee communications, training' },
     { value: 'mass_affluent', label: '💰 Mass affluent', description: 'Emerging investors, young professionals' },
     { value: 'hni', label: '💎 HNIs', description: 'High Net Worth Individuals' },
     { value: 'uhni', label: '👑 UHNIs', description: 'Ultra High Net Worth Individuals' },
-    { value: 'all_clients', label: '🌐 All clients', description: 'General client communications' },
+    // Client Segments by DP Value
+    { value: 'more_than_10l_dp', label: '💵 More than 10L DP', description: 'Clients with 10L+ demat portfolio' },
+    { value: '1cr_plus', label: '💎 1cr+', description: 'Clients with 1 crore+ portfolio' },
+    // Activity-based Segments
+    { value: 'semi_active', label: '📊 Semi-active', description: 'Occasional trading activity' },
+    { value: 'dormant', label: '😴 Dormant', description: 'No recent activity, needs reactivation' },
+    { value: 'inactive', label: '⏸️ Inactive', description: 'Currently inactive accounts' },
+    // Performance-based Segments
+    { value: 'in_loss', label: '📉 In Loss', description: 'Clients currently in loss' },
+    // Product-based Segments
+    { value: 'fno_traders', label: '📈 F&O traders', description: 'Futures & Options active traders' },
+    { value: 'commodity', label: '🥇 Commodity', description: 'Commodity trading clients' },
+    { value: 'non_mtf', label: '💳 Non-MTF', description: 'Clients not using Margin Trading' },
+    { value: 'cash', label: '💵 Cash', description: 'Cash segment traders' },
   ]
 
   const platforms = [
