@@ -1,0 +1,17 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "node_modules/.bin/next start -p $PORT"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+# Environment variables
+# Note: Set these in Railway dashboard:
+# - NODE_PATH (include node_modules path)
+# - NEXT_PUBLIC_API_URL (backend API URL if needed)
+# - GROQ_API_KEY (AI content generation)
+# - GEMINI_API_KEY (VEO video generation)
+# - FAL_KEY (LongCat long-form videos)
+# - HEYGEN_API_KEY (AI avatar videos)
+# - REPLICATE_API_TOKEN (Image generation)
