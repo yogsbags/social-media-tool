@@ -39,6 +39,17 @@ export async function POST(request: NextRequest) {
         const backendRoot = path.join(process.cwd(), '..')
         const mainScript = path.join(backendRoot, 'main.js')
 
+        // Check if backend exists
+        const fs = require('fs')
+        if (!fs.existsSync(mainScript)) {
+          sendEvent({ log: '⚠️ Backend not available in this deployment' })
+          sendEvent({ log: '📝 This is a frontend-only deployment' })
+          sendEvent({ log: '💡 To execute workflows, deploy the full stack or run locally' })
+          sendEvent({ stage: 1, status: 'error', message: 'Backend not available' })
+          controller.close()
+          return
+        }
+
         // Build command arguments
         const args = [
           mainScript,
