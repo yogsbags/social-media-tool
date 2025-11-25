@@ -29,7 +29,7 @@ class VideoGenerator {
       aspectRatio: "16:9",      // "16:9" or "9:16"
       resolution: "720p",        // "720p" or "1080p"
       duration: 8,               // 4, 6, or 8 seconds (API may support)
-      personGeneration: "allow_all", // "allow_all" or "allow_adult"
+      personGeneration: "allow_adult", // "allow_adult" is the only supported value
     };
 
     // Polling configuration
@@ -449,7 +449,17 @@ class VideoGenerator {
       throw new Error(`Operation timeout after ${this.maxPollingAttempts * this.pollingInterval / 1000}s`);
     }
 
+    // Check for errors in operation
+    if (operation.error) {
+      console.error('   Operation error:', JSON.stringify(operation.error, null, 2));
+      throw new Error(`Video generation failed: ${operation.error.message || JSON.stringify(operation.error)}`);
+    }
+
+    // Debug: Log full response structure
+    console.log('   Operation response keys:', Object.keys(operation.response || {}));
+
     if (!operation.response?.generatedVideos?.[0]) {
+      console.error('   Full operation response:', JSON.stringify(operation.response, null, 2));
       throw new Error("No video in operation response");
     }
 
@@ -501,13 +511,14 @@ class VideoGenerator {
    * Helper method for loading images from file paths
    *
    * @param {string} imagePath - Path to image file
-   * @returns {Object} Image object with imageBytes and mimeType
+   * @returns {Object} Image object with imageBytes (base64) and mimeType
    */
   async loadImageFromFile(imagePath) {
     const fs = await import('fs');
     const path = await import('path');
 
-    const imageBytes = await fs.promises.readFile(imagePath);
+    const imageBuffer = await fs.promises.readFile(imagePath);
+    const imageBytes = imageBuffer.toString('base64'); // Convert to base64 string
     const ext = path.extname(imagePath).toLowerCase();
 
     const mimeTypes = {
@@ -521,7 +532,7 @@ class VideoGenerator {
     const mimeType = mimeTypes[ext] || 'image/png';
 
     return {
-      imageBytes: imageBytes,
+      imageBytes: imageBytes, // Base64 string
       mimeType: mimeType
     };
   }

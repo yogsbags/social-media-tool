@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Raj",
+    "file": "raj_avatar.jpg",
+    "voiceId": "LolxzR74HCt7Un4IvoxI",
+    "voiceName": "Maneesh",
+    "heygenResult": {
+      "error": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n"
+    }
+  },
+  {
+    "name": "Priya",
+    "file": "priya_avatar.jpg",
+    "voiceId": "vZcFdbaKO9EUmpfW004U",
+    "voiceName": "Saheli",
+    "heygenResult": {
+      "error": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n"
+    }
+  },
+  {
+    "name": "Arjun",
+    "file": "arjun_avatar.jpg",
+    "voiceId": "oH8YmZXJYEZq5ScgoGn9",
+    "voiceName": "Aakash Aryan",
+    "heygenResult": {
+      "error": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n"
+    }
+  },
+  {
+    "name": "Meera",
+    "file": "meera_avatar.jpg",
+    "voiceId": "m28sDRnudtExG3WLAufB",
+    "voiceName": "Alekhya",
+    "heygenResult": {
+      "error": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n"
+    }
+  },
+  {
+    "name": "Vikram",
+    "file": "vikram_avatar.jpg",
+    "voiceId": "CZdRaSQ51p0onta4eec8",
+    "voiceName": "Akshay",
+    "heygenResult": {
+      "error": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n"
+    }
+  }
+]

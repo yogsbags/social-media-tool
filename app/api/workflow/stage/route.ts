@@ -1,9 +1,63 @@
 import { NextRequest } from 'next/server'
 import { spawn } from 'child_process'
 import path from 'path'
+import fs from 'fs'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+// Helper function to save stage data
+function saveStageData(stageId: number, data: any) {
+  try {
+    const backendRoot = path.join(process.cwd(), 'backend')
+    const stateFilePath = path.join(backendRoot, 'data', 'workflow-state.json')
+
+    // Read existing state
+    let state: any = {
+      campaigns: {},
+      content: {},
+      visuals: {},
+      videos: {},
+      published: {},
+      metrics: {}
+    }
+
+    if (fs.existsSync(stateFilePath)) {
+      const stateContent = fs.readFileSync(stateFilePath, 'utf-8')
+      state = JSON.parse(stateContent)
+    }
+
+    // Generate unique ID
+    const timestamp = Date.now()
+    const id = `${stageId}-${timestamp}`
+
+    // Save data based on stage
+    const stageKeys: Record<number, string> = {
+      1: 'campaigns',
+      2: 'content',
+      3: 'visuals',
+      4: 'videos',
+      5: 'published',
+      6: 'metrics'
+    }
+
+    const key = stageKeys[stageId]
+    if (key) {
+      state[key][id] = {
+        id,
+        ...data,
+        stageId,
+        completedAt: new Date().toISOString()
+      }
+    }
+
+    // Write updated state
+    fs.writeFileSync(stateFilePath, JSON.stringify(state, null, 2))
+    console.log(`Saved stage ${stageId} data:`, id)
+  } catch (error) {
+    console.error('Error saving stage data:', error)
+  }
+}
 
 /**
  * Execute single workflow stage
@@ -20,7 +74,12 @@ export async function POST(request: NextRequest) {
     useVeo = true,
     useAvatar = true,
     campaignData = {},
-    longCatConfig = null
+    longCatConfig = null,
+    purpose,
+    targetAudience,
+    contentType,
+    language,
+    brandSettings
   } = body
 
   const stageNames: Record<number, string> = {
@@ -45,6 +104,139 @@ export async function POST(request: NextRequest) {
       try {
         sendEvent({ log: `🚀 Starting Stage ${stageId}: ${stageName}...` })
         sendEvent({ stage: stageId, status: 'running', message: `Executing ${stageName}...` })
+
+        // Special handling for Stage 1: Generate creative prompt
+        if (stageId === 1) {
+          sendEvent({ log: '🎨 Generating creative prompt with GPT-OSS-120B...' })
+
+          try {
+            const promptResponse = await fetch('http://localhost:3004/api/prompt/generate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                topic,
+                campaignType,
+                purpose,
+                targetAudience,
+                platforms,
+                contentType,
+                duration,
+                language,
+                brandSettings
+              })
+            })
+
+            if (!promptResponse.ok) {
+              throw new Error('Failed to generate creative prompt')
+            }
+
+            const promptData = await promptResponse.json()
+            const generatedPrompt = promptData.prompt
+
+            sendEvent({ log: '✅ Creative prompt generated successfully!' })
+
+            // Save the generated prompt as stage 1 data
+            const stageData = {
+              topic,
+              campaignType,
+              platforms,
+              status: 'completed',
+              type: 'campaign-planning',
+              creativePrompt: generatedPrompt,
+              promptModel: promptData.model
+            }
+
+            saveStageData(stageId, stageData)
+            sendEvent({ stage: stageId, status: 'completed', message: 'Creative prompt generated' })
+            sendEvent({ log: '✅ Stage 1 completed successfully!' })
+            controller.close()
+            return
+
+          } catch (error) {
+            sendEvent({ log: `⚠️ Prompt generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
+            sendEvent({ log: '📦 Falling back to standard workflow execution...' })
+            // Continue with normal backend execution if prompt generation fails
+          }
+        }
+
+        // Special handling for Stage 2: Generate email newsletter content
+        if (stageId === 2 && (platforms.includes('email') || campaignType.includes('email') || campaignType.includes('newsletter'))) {
+          sendEvent({ log: '📧 Generating HTML email newsletter...' })
+
+          try {
+            // Get creative prompt from Stage 1 if available
+            const backendRoot = path.join(process.cwd(), 'backend')
+            const stateFilePath = path.join(backendRoot, 'data', 'workflow-state.json')
+            let creativePrompt = ''
+
+            if (fs.existsSync(stateFilePath)) {
+              const stateContent = fs.readFileSync(stateFilePath, 'utf-8')
+              const state = JSON.parse(stateContent)
+
+              // Find the most recent campaign with matching topic
+              const campaigns = Object.values(state.campaigns || {}) as any[]
+              const matchingCampaign = campaigns
+                .filter((c: any) => c.topic === topic)
+                .sort((a: any, b: any) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())[0]
+
+              if (matchingCampaign?.creativePrompt) {
+                creativePrompt = matchingCampaign.creativePrompt
+                sendEvent({ log: '📋 Using creative prompt from Stage 1' })
+              }
+            }
+
+            const emailResponse = await fetch('http://localhost:3004/api/email/generate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                topic,
+                purpose,
+                targetAudience,
+                creativePrompt,
+                brandSettings,
+                language
+              })
+            })
+
+            if (!emailResponse.ok) {
+              throw new Error('Failed to generate email newsletter')
+            }
+
+            const emailData = await emailResponse.json()
+
+            sendEvent({ log: '✅ Email newsletter generated successfully!' })
+            sendEvent({ log: `📧 Subject: ${emailData.subject}` })
+            sendEvent({ log: `📝 Preheader: ${emailData.preheader}` })
+            sendEvent({ log: `📄 HTML: ${emailData.html.length} characters` })
+
+            // Save the generated email as stage 2 data
+            const stageData = {
+              topic,
+              campaignType,
+              platforms,
+              status: 'completed',
+              type: 'content-generation',
+              contentType: 'email-newsletter',
+              subject: emailData.subject,
+              preheader: emailData.preheader,
+              subjectVariations: emailData.subjectVariations,
+              html: emailData.html,
+              plainText: emailData.plainText,
+              model: emailData.model
+            }
+
+            saveStageData(stageId, stageData)
+            sendEvent({ stage: stageId, status: 'completed', message: 'Email newsletter generated', data: stageData })
+            sendEvent({ log: '✅ Stage 2 completed successfully!' })
+            controller.close()
+            return
+
+          } catch (error) {
+            sendEvent({ log: `⚠️ Email generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
+            sendEvent({ log: '📦 Falling back to standard workflow execution...' })
+            // Continue with normal backend execution if email generation fails
+          }
+        }
 
         // Path to backend (monorepo structure: frontend/backend/)
         const workingDir = path.join(process.cwd(), 'backend')
@@ -105,9 +297,12 @@ export async function POST(request: NextRequest) {
           env: nodeEnv
         })
 
-        // Handle stdout
+        let outputBuffer = ''
+
+        // Handle stdout - collect output and send events
         backendProcess.stdout.on('data', (data) => {
           const output = data.toString()
+          outputBuffer += output
           sendEvent({ log: output.trim() })
 
           // Stage-specific parsing
@@ -152,6 +347,36 @@ export async function POST(request: NextRequest) {
         // Handle process completion
         backendProcess.on('close', (code) => {
           if (code === 0) {
+            // Save stage data based on stage type
+            const stageData: any = {
+              topic,
+              campaignType,
+              platforms,
+              status: 'completed',
+              output: outputBuffer
+            }
+
+            // Add stage-specific data
+            if (stageId === 1) {
+              stageData.type = 'campaign-planning'
+            } else if (stageId === 2) {
+              stageData.type = 'content-generation'
+            } else if (stageId === 3) {
+              stageData.type = 'visual-assets'
+            } else if (stageId === 4) {
+              stageData.type = 'video-production'
+              stageData.duration = duration
+              stageData.useVeo = useVeo
+              stageData.useAvatar = useAvatar
+            } else if (stageId === 5) {
+              stageData.type = 'publishing'
+            } else if (stageId === 6) {
+              stageData.type = 'analytics'
+            }
+
+            // Save to workflow state file
+            saveStageData(stageId, stageData)
+
             sendEvent({ stage: stageId, status: 'completed', message: `${stageName} completed` })
             sendEvent({ log: `✅ Stage ${stageId} completed successfully!` })
           } else {

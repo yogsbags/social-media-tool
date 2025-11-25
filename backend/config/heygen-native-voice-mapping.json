@@ -1,0 +1,57 @@
+{
+  "6f268f0fa28a41ce8b1fe4e83ac3867b": {
+    "avatarName": "Raj",
+    "groupId": "6f268f0fa28a41ce8b1fe4e83ac3867b",
+    "imageKey": "image/195e91fcc6a34db99924bda34c6a22d0/original",
+    "voiceId": "ef5765a5c2ee49e58f7dd942e67fb6f2",
+    "voiceName": "Jaidev - Professional",
+    "gender": "male",
+    "language": "Hindi",
+    "previewAudio": "https://static.heygen.ai/voice_preview/f76b718088c54b22bb8da12dbcb78a0f.wav",
+    "description": "Professional male voice - perfect for financial advisor persona"
+  },
+  "0ada07010c8e4049aca376e132b04a1d": {
+    "avatarName": "Priya",
+    "groupId": "0ada07010c8e4049aca376e132b04a1d",
+    "imageKey": "image/e4d675d39f5545fd9e3fe14e9a5f48f4/original",
+    "voiceId": "9799f1ba6acd4b2b993fe813a18f9a91",
+    "voiceName": "Swara - Friendly",
+    "gender": "female",
+    "language": "Hindi",
+    "previewAudio": "https://static.heygen.ai/voice_preview/e4bc76818ccf4591b1ca4321de23130e.wav",
+    "description": "Friendly female voice - ideal for corporate trainer persona"
+  },
+  "350da0c0495f43c69e1f97b10df2c441": {
+    "avatarName": "Arjun",
+    "groupId": "350da0c0495f43c69e1f97b10df2c441",
+    "imageKey": "image/665da71a7f02474f98cc8378f75603ab/original",
+    "voiceId": "957336970bc64d479d551fea07e56784",
+    "voiceName": "Madhur - Natural",
+    "gender": "male",
+    "language": "Hindi",
+    "previewAudio": "https://static.heygen.ai/voice_preview/20d3b6c692db483a92e3788a87e9e231.wav",
+    "description": "Natural male voice - fits business casual professional"
+  },
+  "ef20bde4645c458ab72c9cadfc4fbdc7": {
+    "avatarName": "Meera",
+    "groupId": "ef20bde4645c458ab72c9cadfc4fbdc7",
+    "imageKey": "image/6b3d6a26cb084c24b470797842b6f417/original",
+    "voiceId": "86e484394d8b44649d686a77a14d2ce6",
+    "voiceName": "Nirmala",
+    "gender": "female",
+    "language": "Hindi",
+    "previewAudio": "https://resource.heygen.ai/text_to_speech/xUmob87su5HccMTFcYaCP5.mp3",
+    "description": "Professional female voice - suitable for senior executive persona"
+  },
+  "39baeece5af54c38b25562ad4f4a375a": {
+    "avatarName": "Vikram",
+    "groupId": "39baeece5af54c38b25562ad4f4a375a",
+    "imageKey": "image/996930d352c44c77b6e788b9d608dd52/original",
+    "voiceId": "ae3563ff1460469e89f661ffb3f1260b",
+    "voiceName": "Bhavin - Newscaster",
+    "gender": "male",
+    "language": "Hindi",
+    "previewAudio": "https://static.heygen.ai/voice_preview/7224e9c56b234898a758421c138475b2.wav",
+    "description": "Professional newscaster voice - excellent for financial expert persona"
+  }
+}

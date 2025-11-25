@@ -1,0 +1,42 @@
+{
+  "6f268f0fa28a41ce8b1fe4e83ac3867b": {
+    "avatarName": "Raj",
+    "groupId": "6f268f0fa28a41ce8b1fe4e83ac3867b",
+    "imageKey": "image/195e91fcc6a34db99924bda34c6a22d0/original",
+    "voiceId": "LolxzR74HCt7Un4IvoxI",
+    "voiceName": "Maneesh",
+    "gender": "male"
+  },
+  "0ada07010c8e4049aca376e132b04a1d": {
+    "avatarName": "Priya",
+    "groupId": "0ada07010c8e4049aca376e132b04a1d",
+    "imageKey": "image/e4d675d39f5545fd9e3fe14e9a5f48f4/original",
+    "voiceId": "vZcFdbaKO9EUmpfW004U",
+    "voiceName": "Saheli",
+    "gender": "female"
+  },
+  "350da0c0495f43c69e1f97b10df2c441": {
+    "avatarName": "Arjun",
+    "groupId": "350da0c0495f43c69e1f97b10df2c441",
+    "imageKey": "image/665da71a7f02474f98cc8378f75603ab/original",
+    "voiceId": "oH8YmZXJYEZq5ScgoGn9",
+    "voiceName": "Aakash Aryan",
+    "gender": "male"
+  },
+  "ef20bde4645c458ab72c9cadfc4fbdc7": {
+    "avatarName": "Meera",
+    "groupId": "ef20bde4645c458ab72c9cadfc4fbdc7",
+    "imageKey": "image/6b3d6a26cb084c24b470797842b6f417/original",
+    "voiceId": "m28sDRnudtExG3WLAufB",
+    "voiceName": "Alekhya",
+    "gender": "female"
+  },
+  "39baeece5af54c38b25562ad4f4a375a": {
+    "avatarName": "Vikram",
+    "groupId": "39baeece5af54c38b25562ad4f4a375a",
+    "imageKey": "image/996930d352c44c77b6e788b9d608dd52/original",
+    "voiceId": "CZdRaSQ51p0onta4eec8",
+    "voiceName": "Akshay",
+    "gender": "male"
+  }
+}

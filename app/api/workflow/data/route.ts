@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   try {
     // Path to backend state file (monorepo structure: frontend/backend/data/)
     const backendRoot = path.join(process.cwd(), 'backend')
-    const stateFilePath = path.join(backendRoot, 'data', 'campaign-state.json')
+    const stateFilePath = path.join(backendRoot, 'data', 'workflow-state.json')
 
     // Check if state file exists
     if (!fs.existsSync(stateFilePath)) {
@@ -47,6 +47,24 @@ export async function GET(request: NextRequest) {
         }
         break
 
+      case 2:
+        // Content generation - return content
+        stageData = state.content || {}
+        summary = {
+          totalContent: Object.keys(stageData).length,
+          contentTypes: Array.from(new Set(Object.values(stageData).map((c: any) => c.type || 'unknown')))
+        }
+        break
+
+      case 3:
+        // Visual assets - return visuals
+        stageData = state.visuals || {}
+        summary = {
+          totalVisuals: Object.keys(stageData).length,
+          visualTypes: Array.from(new Set(Object.values(stageData).map((v: any) => v.type || 'unknown')))
+        }
+        break
+
       case 4:
         // Video production - return videos
         stageData = state.videos || {}
@@ -62,6 +80,15 @@ export async function GET(request: NextRequest) {
         summary = {
           totalPosts: Object.keys(stageData).length,
           publishedPlatforms: Array.from(new Set(Object.values(stageData).map((p: any) => p.platform)))
+        }
+        break
+
+      case 6:
+        // Analytics - return metrics
+        stageData = state.metrics || {}
+        summary = {
+          totalMetrics: Object.keys(stageData).length,
+          trackedPlatforms: Array.from(new Set(Object.values(stageData).map((m: any) => m.platform || 'unknown')))
         }
         break
 

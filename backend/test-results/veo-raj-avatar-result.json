@@ -1,0 +1,16 @@
+{
+  "type": "image-to-video-references",
+  "videoUri": "/tmp/veo-ref-1764040202653.mp4",
+  "videoFile": {},
+  "referenceCount": 1,
+  "duration": 8,
+  "config": {
+    "aspectRatio": "16:9",
+    "resolution": "1080p",
+    "duration": 8,
+    "personGeneration": "allow_adult"
+  },
+  "timestamp": "2025-11-25T03:10:04.587Z",
+  "avatarUsed": "Raj",
+  "prompt": "A professional Indian male financial advisor in a navy blue business suit\nis speaking directly to the camera in a modern office setting. He gestures naturally\nwhile explaining financial concepts. The lighting is professional with soft shadows.\nCinematic 16:9 shot, 4K quality, natural movements."
+}

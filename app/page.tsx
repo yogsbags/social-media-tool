@@ -5,6 +5,7 @@ import VideoProducer from './components/VideoProducer'
 import PublishingQueue from './components/PublishingQueue'
 import FileUpload from './components/FileUpload'
 import PromptEditor from './components/PromptEditor'
+import StageDataModal from './components/StageDataModal'
 
 type WorkflowStage = {
   id: number
@@ -45,28 +46,41 @@ export default function Home() {
   const [campaignData, setCampaignData] = useState<CampaignData>({})
   const [executionMode, setExecutionMode] = useState<'full' | 'staged'>('full')
   const [executingStage, setExecutingStage] = useState<number | null>(null)
+  const [expandedStage, setExpandedStage] = useState<number | null>(null)
+  const [showDataModal, setShowDataModal] = useState(false)
+  const [selectedStageData, setSelectedStageData] = useState<{ stageId: number; stageName: string; data: any; dataId: string } | null>(null)
 
   // Campaign configuration
   const [campaignType, setCampaignType] = useState<string>('linkedin-testimonial')
   const [purpose, setPurpose] = useState<string>('brand-awareness')
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['linkedin'])
   const [topic, setTopic] = useState<string>('')
-  const [duration, setDuration] = useState<number>(90)
+  const [isGeneratingTopic, setIsGeneratingTopic] = useState<boolean>(false)
+  const [topicError, setTopicError] = useState<string | null>(null)
+  const [duration, setDuration] = useState<number>(30)
+  const [contentType, setContentType] = useState<'image' | 'faceless-video' | 'avatar-video'>('image')
+  const [facelessVideoMode, setFacelessVideoMode] = useState<'text-to-video' | 'image-to-video'>('text-to-video')
+  const [imageSource, setImageSource] = useState<'generate' | 'upload'>('generate')
   const [useVeo, setUseVeo] = useState<boolean>(true)
   const [useAvatar, setUseAvatar] = useState<boolean>(true)
   const [autoPublish, setAutoPublish] = useState<boolean>(false)
   const [targetAudience, setTargetAudience] = useState<string>('all_clients')
+  const [language, setLanguage] = useState<string>('english')
+
+  // Brand Guidelines
+  const [showBrandGuidelines, setShowBrandGuidelines] = useState<boolean>(false)
+  const [useBrandGuidelines, setUseBrandGuidelines] = useState<boolean>(true)
+  const [customColors, setCustomColors] = useState<string>('')
+  const [customTone, setCustomTone] = useState<string>('')
+  const [customInstructions, setCustomInstructions] = useState<string>('')
+
+  // Reference Materials
+  const [showReferenceMaterials, setShowReferenceMaterials] = useState<boolean>(false)
 
   // File uploads
   const [researchPDFs, setResearchPDFs] = useState<File[]>([])
   const [referenceImages, setReferenceImages] = useState<File[]>([])
   const [referenceVideo, setReferenceVideo] = useState<File[]>([])
-
-  // Brand Guidelines
-  const [useBrandGuidelines, setUseBrandGuidelines] = useState<boolean>(true)
-  const [customColors, setCustomColors] = useState<string>('')
-  const [customTone, setCustomTone] = useState<string>('')
-  const [customInstructions, setCustomInstructions] = useState<string>('')
 
   // Prompt editing
   const [showPromptEditor, setShowPromptEditor] = useState<boolean>(false)
@@ -90,72 +104,88 @@ export default function Home() {
   const [longCatPrompt, setLongCatPrompt] = useState<string>('')
   const [longCatReferenceImage, setLongCatReferenceImage] = useState<File[]>([])
 
+  // Platform dropdown state
+  const [showPlatformDropdown, setShowPlatformDropdown] = useState<boolean>(false)
+
   const campaignTypes = [
-    { value: 'linkedin-carousel', label: '📊 LinkedIn Carousel', platforms: ['linkedin'] },
-    { value: 'linkedin-testimonial', label: '🎥 LinkedIn Testimonial', platforms: ['linkedin'] },
-    { value: 'linkedin-data-viz', label: '📈 LinkedIn Data Viz', platforms: ['linkedin'] },
-    { value: 'instagram-reel', label: '📱 Instagram Reel', platforms: ['instagram'] },
-    { value: 'instagram-carousel', label: '🖼️ Instagram Carousel', platforms: ['instagram'] },
-    { value: 'youtube-explainer', label: '📺 YouTube Explainer', platforms: ['youtube'] },
-    { value: 'youtube-short', label: '⚡ YouTube Short', platforms: ['youtube'] },
-    { value: 'facebook-community', label: '👥 Facebook Community', platforms: ['facebook'] },
-    { value: 'twitter-thread', label: '🧵 Twitter Thread', platforms: ['twitter'] },
-    { value: 'whatsapp-creative', label: '💬 WhatsApp Creative', platforms: ['whatsapp'] },
-    { value: 'email-newsletter', label: '📧 Email Newsletter', platforms: ['email'] },
+    { value: 'linkedin-carousel', label: 'LinkedIn Carousel', platforms: ['linkedin'] },
+    { value: 'linkedin-testimonial', label: 'LinkedIn Testimonial', platforms: ['linkedin'] },
+    { value: 'linkedin-data-viz', label: 'LinkedIn Data Viz', platforms: ['linkedin'] },
+    { value: 'instagram-reel', label: 'Instagram Reel', platforms: ['instagram'] },
+    { value: 'instagram-carousel', label: 'Instagram Carousel', platforms: ['instagram'] },
+    { value: 'youtube-explainer', label: 'YouTube Explainer', platforms: ['youtube'] },
+    { value: 'youtube-short', label: 'YouTube Short', platforms: ['youtube'] },
+    { value: 'facebook-community', label: 'Facebook Community', platforms: ['facebook'] },
+    { value: 'twitter-thread', label: 'Twitter Thread', platforms: ['twitter'] },
+    { value: 'whatsapp-creative', label: 'WhatsApp Creative', platforms: ['whatsapp'] },
+    { value: 'email-newsletter', label: 'Email Newsletter', platforms: ['email'] },
   ]
 
   const purposeOptions = [
     // Products
-    { value: 'falcon', label: '🦅 Falcon', description: '5Lakh Min., Research Basket' },
-    { value: 'aqua', label: '💧 AQUA', description: 'Quant Portfolio Strategy (1Cr+ clients)' },
-    { value: 'madp', label: '📊 MADP', description: 'Multi-Asset Dynamic Portfolio (1Cr+ clients)' },
-    { value: 'loan-tieups', label: '🏦 Loan Tie ups', description: 'Loan Against Securities' },
-    { value: 'scoutquest', label: '🔍 Scoutquest', description: '45 days free, 24x7 alerts, track all stocks' },
-    { value: 'mobile-app', label: '📱 Mobile App', description: 'Easy Options, Scanners, Algos, Research Baskets' },
-    { value: 'open-account', label: '⚡ Open Account in 5mins', description: 'Quick Account Opening (Lead Gen)' },
-    { value: 'commodity-activation', label: '🥇 Commodity Account Activation', description: 'Gold, Silver & Commodity Trading, Call and Trade Support' },
-    { value: 'mtf-activation', label: '📈 MTF Account Activation', description: 'MTF Research Calls, Competitive ROI, 1000+ scrips, 4X multiplier' },
-    { value: 'dormant-activation', label: '🔄 Dormant Account Activation', description: 'MTF, Research and New App' },
+    { value: 'falcon', label: 'Falcon', description: '5Lakh Min., Research Basket' },
+    { value: 'aqua', label: 'AQUA', description: 'Quant Portfolio Strategy (1Cr+ clients)' },
+    { value: 'madp', label: 'MADP', description: 'Multi-Asset Dynamic Portfolio (1Cr+ clients)' },
+    { value: 'loan-tieups', label: 'Loan Tie ups', description: 'Loan Against Securities' },
+    { value: 'scoutquest', label: 'Scoutquest', description: '45 days free, 24x7 alerts, track all stocks' },
+    { value: 'mobile-app', label: 'Mobile App', description: 'Easy Options, Scanners, Algos, Research Baskets' },
+    { value: 'open-account', label: 'Open Account in 5mins', description: 'Quick Account Opening (Lead Gen)' },
+    { value: 'commodity-activation', label: 'Commodity Account Activation', description: 'Gold, Silver & Commodity Trading, Call and Trade Support' },
+    { value: 'mtf-activation', label: 'MTF Account Activation', description: 'MTF Research Calls, Competitive ROI, 1000+ scrips, 4X multiplier' },
+    { value: 'dormant-activation', label: 'Dormant Account Activation', description: 'MTF, Research and New App' },
     // Other
-    { value: 'partners-mobile-app', label: '🤝 Partners Mobile App', description: 'IFA/Partner Platform' },
-    { value: 'website', label: '🌐 Website', description: 'Corporate Website' },
-    { value: 'web-app', label: '💻 Web App', description: 'Web Application' },
-    { value: 'aif', label: '🏛️ AIF', description: 'Alternative Investment Fund' },
-    { value: 'brand-awareness', label: '✨ Brand Awareness', description: 'General Brand Building' },
+    { value: 'partners-mobile-app', label: 'Partners Mobile App', description: 'IFA/Partner Platform' },
+    { value: 'website', label: 'Website', description: 'Corporate Website' },
+    { value: 'web-app', label: 'Web App', description: 'Web Application' },
+    { value: 'aif', label: 'AIF', description: 'Alternative Investment Fund' },
+    { value: 'brand-awareness', label: 'Brand Awareness', description: 'General Brand Building' },
   ]
 
   const targetAudienceOptions = [
     // General Segments
-    { value: 'all_clients', label: '🌐 All', description: 'All clients' },
-    { value: 'lead_gen', label: '🎯 Lead Gen', description: 'New customer acquisition' },
-    { value: 'internal', label: '👥 Internal communication', description: 'Employee communications, training' },
-    { value: 'mass_affluent', label: '💰 Mass affluent', description: 'Emerging investors, young professionals' },
-    { value: 'hni', label: '💎 HNIs', description: 'High Net Worth Individuals' },
-    { value: 'uhni', label: '👑 UHNIs', description: 'Ultra High Net Worth Individuals' },
+    { value: 'all_clients', label: 'All', description: 'All clients' },
+    { value: 'lead_gen', label: 'Lead Gen', description: 'New customer acquisition' },
+    { value: 'internal', label: 'Internal communication', description: 'Employee communications, training' },
+    { value: 'mass_affluent', label: 'Mass affluent', description: 'Emerging investors, young professionals' },
+    { value: 'hni', label: 'HNIs', description: 'High Net Worth Individuals' },
+    { value: 'uhni', label: 'UHNIs', description: 'Ultra High Net Worth Individuals' },
     // Client Segments by DP Value
-    { value: 'more_than_10l_dp', label: '💵 More than 10L DP', description: 'Clients with 10L+ demat portfolio' },
-    { value: '1cr_plus', label: '💎 1cr+', description: 'Clients with 1 crore+ portfolio' },
+    { value: 'more_than_10l_dp', label: 'More than 10L DP', description: 'Clients with 10L+ demat portfolio' },
+    { value: '1cr_plus', label: '1cr+', description: 'Clients with 1 crore+ portfolio' },
     // Activity-based Segments
-    { value: 'semi_active', label: '📊 Semi-active', description: 'Occasional trading activity' },
-    { value: 'dormant', label: '😴 Dormant', description: 'No recent activity, needs reactivation' },
-    { value: 'inactive', label: '⏸️ Inactive', description: 'Currently inactive accounts' },
+    { value: 'semi_active', label: 'Semi-active', description: 'Occasional trading activity' },
+    { value: 'dormant', label: 'Dormant', description: 'No recent activity, needs reactivation' },
+    { value: 'inactive', label: 'Inactive', description: 'Currently inactive accounts' },
     // Performance-based Segments
-    { value: 'in_loss', label: '📉 In Loss', description: 'Clients currently in loss' },
+    { value: 'in_loss', label: 'In Loss', description: 'Clients currently in loss' },
     // Product-based Segments
-    { value: 'fno_traders', label: '📈 F&O traders', description: 'Futures & Options active traders' },
-    { value: 'commodity', label: '🥇 Commodity', description: 'Commodity trading clients' },
-    { value: 'non_mtf', label: '💳 Non-MTF', description: 'Clients not using Margin Trading' },
-    { value: 'cash', label: '💵 Cash', description: 'Cash segment traders' },
+    { value: 'fno_traders', label: 'F&O traders', description: 'Futures & Options active traders' },
+    { value: 'commodity', label: 'Commodity', description: 'Commodity trading clients' },
+    { value: 'non_mtf', label: 'Non-MTF', description: 'Clients not using Margin Trading' },
+    { value: 'cash', label: 'Cash', description: 'Cash segment traders' },
   ]
 
   const platforms = [
-    { value: 'linkedin', label: 'LinkedIn', icon: '🔗', color: 'bg-blue-500' },
-    { value: 'instagram', label: 'Instagram', icon: '📸', color: 'bg-pink-500' },
-    { value: 'youtube', label: 'YouTube', icon: '📺', color: 'bg-red-500' },
-    { value: 'facebook', label: 'Facebook', icon: '👥', color: 'bg-blue-600' },
-    { value: 'twitter', label: 'Twitter/X', icon: '🐦', color: 'bg-sky-500' },
-    { value: 'whatsapp', label: 'WhatsApp', icon: '💬', color: 'bg-green-500' },
-    { value: 'email', label: 'Email', icon: '📧', color: 'bg-gray-600' },
+    { value: 'linkedin', label: 'LinkedIn', color: 'bg-blue-500' },
+    { value: 'instagram', label: 'Instagram', color: 'bg-pink-500' },
+    { value: 'youtube', label: 'YouTube', color: 'bg-red-500' },
+    { value: 'facebook', label: 'Facebook', color: 'bg-blue-600' },
+    { value: 'twitter', label: 'Twitter/X', color: 'bg-sky-500' },
+    { value: 'whatsapp', label: 'WhatsApp', color: 'bg-green-500' },
+    { value: 'email', label: 'Email', color: 'bg-gray-600' },
+  ]
+
+  const languages = [
+    { value: 'english', label: 'English', native: 'English' },
+    { value: 'hindi', label: 'Hindi', native: 'हिंदी' },
+    { value: 'bengali', label: 'Bengali', native: 'বাংলা' },
+    { value: 'telugu', label: 'Telugu', native: 'తెలుగు' },
+    { value: 'marathi', label: 'Marathi', native: 'मराठी' },
+    { value: 'tamil', label: 'Tamil', native: 'தமிழ்' },
+    { value: 'gujarati', label: 'Gujarati', native: 'ગુજરાતી' },
+    { value: 'kannada', label: 'Kannada', native: 'ಕನ್ನಡ' },
+    { value: 'malayalam', label: 'Malayalam', native: 'മലയാളം' },
+    { value: 'punjabi', label: 'Punjabi', native: 'ਪੰਜਾਬੀ' },
   ]
 
   const updateStage = async (stageId: number, status: WorkflowStage['status'], message: string) => {
@@ -183,11 +213,11 @@ export default function Home() {
 
   const executeStage = async (stageId: number) => {
     setExecutingStage(stageId)
-    addLog(`🚀 Starting Stage ${stageId} execution...`)
+    addLog(`Starting Stage ${stageId} execution...`)
 
     try {
       // Prepare file data
-      addLog('📎 Preparing reference materials...')
+      addLog('Preparing reference materials...')
       const fileData = await prepareFilesForAPI()
 
       const response = await fetch('/api/workflow/stage', {
@@ -200,10 +230,12 @@ export default function Home() {
           platforms: selectedPlatforms,
           topic,
           duration,
+          contentType,
           useVeo,
           useAvatar,
           autoPublish,
           targetAudience,
+          language,
           campaignData,
           files: fileData,
           brandSettings: {
@@ -270,9 +302,9 @@ export default function Home() {
         }
       }
 
-      addLog(`✅ Stage ${stageId} completed!`)
+      addLog(`Stage ${stageId} completed!`)
     } catch (error) {
-      addLog(`❌ Error in Stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      addLog(`Error in Stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
       console.error('Stage error:', error)
     } finally {
       setExecutingStage(null)
@@ -287,10 +319,10 @@ export default function Home() {
     setStages(stages.map(s => ({ ...s, status: 'idle', message: '' })))
 
     try {
-      addLog('🚀 Starting full workflow execution...')
+      addLog('Starting full workflow execution...')
 
       // Prepare file data
-      addLog('📎 Preparing reference materials...')
+      addLog('Preparing reference materials...')
       const fileData = await prepareFilesForAPI()
 
       const response = await fetch('/api/workflow/execute', {
@@ -302,10 +334,12 @@ export default function Home() {
           platforms: selectedPlatforms,
           topic,
           duration,
+          contentType,
           useVeo,
           useAvatar,
           autoPublish,
           targetAudience,
+          language,
           files: fileData,
           brandSettings: {
             useBrandGuidelines,
@@ -370,9 +404,9 @@ export default function Home() {
         }
       }
 
-      addLog('✅ Workflow completed successfully!')
+      addLog('Workflow completed successfully!')
     } catch (error) {
-      addLog(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      addLog(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
       console.error('Workflow error:', error)
     } finally {
       setIsRunning(false)
@@ -403,6 +437,47 @@ export default function Home() {
         ? prev.filter(p => p !== platform)
         : [...prev, platform]
     )
+  }
+
+  const generateTopic = async () => {
+    if (isRunning || executingStage !== null || isGeneratingTopic) return
+
+    try {
+      setIsGeneratingTopic(true)
+      setTopicError(null)
+      addLog('Generating campaign topic with Gemini 3 Pro Preview...')
+
+      const response = await fetch('/api/topic/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          campaignType,
+          purpose,
+          targetAudience,
+          platforms: selectedPlatforms,
+          language
+        })
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(errorText || 'Failed to generate topic')
+      }
+
+      const data = await response.json()
+      if (data.topic) {
+        setTopic(data.topic)
+        addLog(`Topic generated (${data.model || 'Gemini'}): ${data.topic}`)
+      } else {
+        throw new Error('No topic returned from generator')
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      setTopicError(message)
+      addLog(`Topic generation failed: ${message}`)
+    } finally {
+      setIsGeneratingTopic(false)
+    }
   }
 
   // Convert files to base64 for API transmission
@@ -500,7 +575,7 @@ export default function Home() {
   const handleSavePrompt = (editedPrompt: string) => {
     if (promptStage) {
       setGeneratedPrompts(prev => ({ ...prev, [promptStage]: editedPrompt }))
-      addLog(`✏️ Prompt updated for Stage ${promptStage}`)
+      addLog(`Prompt updated for Stage ${promptStage}`)
     }
     setShowPromptEditor(false)
     setCurrentPrompt('')
@@ -511,6 +586,59 @@ export default function Home() {
     setShowPromptEditor(false)
     setCurrentPrompt('')
     setPromptStage(null)
+  }
+
+  // Stage data modal handlers
+  const handleViewData = (stageId: number, stageName: string) => {
+    if (stageData[stageId]?.data) {
+      // Extract all data entries and sort by completedAt to get the most recent
+      const dataEntries = Object.entries(stageData[stageId].data)
+      if (dataEntries.length > 0) {
+        // Sort by completedAt timestamp (most recent first)
+        const sortedEntries = dataEntries.sort((a: any, b: any) => {
+          const timeA = new Date(a[1].completedAt || a[1].createdAt || 0).getTime()
+          const timeB = new Date(b[1].completedAt || b[1].createdAt || 0).getTime()
+          return timeB - timeA // Descending order (newest first)
+        })
+
+        const [dataId, data] = sortedEntries[0]
+        setSelectedStageData({ stageId, stageName, data, dataId })
+        setShowDataModal(true)
+      }
+    }
+  }
+
+  const handleSaveStageData = async (stageId: number, editedData: any) => {
+    if (!selectedStageData) return
+
+    const response = await fetch('/api/workflow/data/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        stageId,
+        dataId: selectedStageData.dataId,
+        editedData
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || 'Failed to save data')
+    }
+
+    // Refresh stage data
+    const dataResponse = await fetch(`/api/workflow/data?stage=${stageId}`)
+    if (dataResponse.ok) {
+      const data = await dataResponse.json()
+      setStageData(prev => ({ ...prev, [stageId]: data }))
+    }
+
+    addLog(`Stage ${stageId} data updated successfully`)
+  }
+
+  const handleCloseModal = () => {
+    setShowDataModal(false)
+    setSelectedStageData(null)
   }
 
   // Calculate scene extension count for VEO 3.1
@@ -573,11 +701,11 @@ export default function Home() {
           <div className="mt-4 flex items-center gap-4">
             <div className="px-4 py-2 bg-blue-50 rounded-lg">
               <span className="text-sm text-gray-600">Video Production:</span>
-              <span className="ml-2 font-semibold text-blue-600">HeyGen + Veo 3.1</span>
+              <span className="ml-2 font-semibold text-blue-600">AI-Powered</span>
             </div>
             <div className="px-4 py-2 bg-green-50 rounded-lg">
               <span className="text-sm text-gray-600">Platforms:</span>
-              <span className="ml-2 font-semibold text-green-600">5 Social Channels</span>
+              <span className="ml-2 font-semibold text-green-600">7 Social Channels</span>
             </div>
             <div className="px-4 py-2 bg-purple-50 rounded-lg">
               <span className="text-sm text-gray-600">Goal:</span>
@@ -588,7 +716,7 @@ export default function Home() {
 
         {/* Main Control Panel */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
             Campaign Configuration
           </h2>
 
@@ -607,10 +735,7 @@ export default function Home() {
                     : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-blue-300'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
-                <div className="flex items-center justify-center gap-2">
-                  <span>⚡</span>
-                  <span>Full Campaign</span>
-                </div>
+                <div>Full Campaign</div>
                 <p className="text-xs mt-1 opacity-80">Execute all 6 stages automatically</p>
               </button>
               <button
@@ -622,16 +747,13 @@ export default function Home() {
                     : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
-                <div className="flex items-center justify-center gap-2">
-                  <span>🎯</span>
-                  <span>Stage-by-Stage</span>
-                </div>
+                <div>Stage-by-Stage</div>
                 <p className="text-xs mt-1 opacity-80">Review and approve each stage</p>
               </button>
             </div>
           </div>
 
-          {/* Campaign Configuration Row - Compact Side-by-Side */}
+          {/* Campaign Configuration Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {/* Campaign Type Selection */}
             <div>
@@ -691,743 +813,780 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Helper Text */}
-          <p className="text-xs text-gray-500 mb-6 -mt-2">
-            Content tone, style, and compliance requirements will be automatically adjusted based on target audience
-          </p>
+          {/* Topic and Platform Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {/* Campaign Topic Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Campaign Topic:
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={topic}
+                  onChange={(e) => {
+                    setTopic(e.target.value)
+                    if (topicError) {
+                      setTopicError(null)
+                    }
+                  }}
+                  disabled={isRunning || executingStage !== null}
+                  placeholder="e.g., Client Success: ₹50L to ₹2Cr in 5 years"
+                  className="w-full pr-[120px] px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                />
+                <button
+                  type="button"
+                  onClick={generateTopic}
+                  disabled={isRunning || executingStage !== null || isGeneratingTopic}
+                  className={`absolute right-2 whitespace-nowrap px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${
+                    isRunning || executingStage !== null
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
+                  } ${isGeneratingTopic ? 'opacity-80 cursor-wait' : ''}`}
+                >
+                  {isGeneratingTopic ? 'Generating...' : 'Generate'}
+                </button>
+              </div>
+              {topicError && (
+                <p className="text-xs text-red-600 mt-2">
+                  {topicError}
+                </p>
+              )}
+            </div>
 
-          {/* Brand Guidelines Section */}
-          <div className="mb-6 p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border-2 border-indigo-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <span>🎨</span> Brand Guidelines
+            {/* Platform Multi-Selector Dropdown */}
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Target Platforms:
+              </label>
+              <div
+                onClick={() => setShowPlatformDropdown(!showPlatformDropdown)}
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 cursor-pointer bg-white text-sm text-gray-800 flex items-center justify-between"
+              >
+                <span>
+                  {selectedPlatforms.length === 0
+                    ? 'Select platforms...'
+                    : `${selectedPlatforms.length} selected (${selectedPlatforms.join(', ')})`}
+                </span>
+                <svg
+                  className={`w-4 h-4 transition-transform ${showPlatformDropdown ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+
+              {showPlatformDropdown && (
+                <div className="absolute z-10 w-full mt-1 bg-white border-2 border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                  {platforms.map(platform => (
+                    <label
+                      key={platform.value}
+                      className="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedPlatforms.includes(platform.value)}
+                        onChange={() => togglePlatform(platform.value)}
+                        className="mr-3 w-4 h-4 text-blue-600 rounded"
+                      />
+                      <span className="text-sm text-gray-800">{platform.label}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Content Language Selection */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Content Language:
+            </label>
+            <div className="max-w-xs">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                disabled={isRunning || executingStage !== null}
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                {languages.map(lang => (
+                  <option key={lang.value} value={lang.value}>
+                    {lang.label} ({lang.native})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Content and videos will be created in the selected language
+            </p>
+          </div>
+
+          {/* Output Format Type Selector */}
+          <div className="mb-6 p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Output Format Type
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button
+                onClick={() => setContentType('image')}
+                disabled={isRunning || executingStage !== null}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  contentType === 'image'
+                    ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                    : 'bg-white border-gray-300 text-gray-700 hover:border-blue-300'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <div className="text-lg font-semibold mb-1">Static Image</div>
+                <p className="text-xs opacity-80">Generate single image</p>
+              </button>
+
+              <button
+                onClick={() => setContentType('faceless-video')}
+                disabled={isRunning || executingStage !== null}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  contentType === 'faceless-video'
+                    ? 'bg-purple-500 text-white border-purple-500 shadow-md'
+                    : 'bg-white border-gray-300 text-gray-700 hover:border-purple-300'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <div className="text-lg font-semibold mb-1">Faceless Video</div>
+                <p className="text-xs opacity-80">AI video generation</p>
+              </button>
+
+              <button
+                onClick={() => setContentType('avatar-video')}
+                disabled={isRunning || executingStage !== null}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  contentType === 'avatar-video'
+                    ? 'bg-green-500 text-white border-green-500 shadow-md'
+                    : 'bg-white border-gray-300 text-gray-700 hover:border-green-300'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <div className="text-lg font-semibold mb-1">Avatar Video</div>
+                <p className="text-xs opacity-80">AI Avatar</p>
+              </button>
+            </div>
+          </div>
+
+          {/* Conditional sections based on contentType */}
+          {contentType === 'faceless-video' && (
+            <>
+              <div className="mb-6 p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
+                <h3 className="text-md font-semibold text-gray-800 mb-4">
+                  Faceless Video Options
+                </h3>
+
+                {/* Video Duration */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video Duration: {duration} seconds
+                  </label>
+                  <input
+                    type="range"
+                    min="8"
+                    max="900"
+                    step="1"
+                    value={duration}
+                    onChange={(e) => handleDurationChange(Number(e.target.value))}
+                    disabled={isRunning || executingStage !== null}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed"
+                  />
+                  <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <span>8s (min)</span>
+                    <span>148s (Standard)</span>
+                    <span>900s (15 min, Extended)</span>
+                  </div>
+                </div>
+
+                {/* Model Selection */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video Duration Mode:
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      onClick={() => handleModelChange('veo')}
+                      disabled={isRunning || executingStage !== null}
+                      className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
+                        useVeo
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-blue-300'
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                      <div>Standard Duration</div>
+                      <div className="text-xs font-normal opacity-80 mt-1">Up to 148s, High Quality</div>
+                    </button>
+
+                    <button
+                      onClick={() => handleModelChange('longcat')}
+                      disabled={isRunning || executingStage !== null}
+                      className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
+                        useLongCat
+                          ? 'bg-purple-600 text-white shadow-md'
+                          : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                      <div>Extended Duration</div>
+                      <div className="text-xs font-normal opacity-80 mt-1">149s to 15 min</div>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <button
+                    onClick={() => setFacelessVideoMode('text-to-video')}
+                    disabled={isRunning || executingStage !== null}
+                    className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
+                      facelessVideoMode === 'text-to-video'
+                        ? 'bg-blue-500 text-white shadow-md'
+                        : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-blue-300'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    <div>Text-to-Video</div>
+                    <div className="text-xs font-normal opacity-80 mt-1">Direct generation</div>
+                  </button>
+
+                  <button
+                    onClick={() => setFacelessVideoMode('image-to-video')}
+                    disabled={isRunning || executingStage !== null}
+                    className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
+                      facelessVideoMode === 'image-to-video'
+                        ? 'bg-blue-500 text-white shadow-md'
+                        : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-blue-300'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    <div>Image-to-Video</div>
+                    <div className="text-xs font-normal opacity-80 mt-1">Animate from image</div>
+                  </button>
+                </div>
+
+                {facelessVideoMode === 'image-to-video' && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Image Source:
+                    </label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button
+                        onClick={() => setImageSource('generate')}
+                        disabled={isRunning || executingStage !== null}
+                        className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                          imageSource === 'generate'
+                            ? 'bg-green-500 text-white shadow-md'
+                            : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-green-300'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                      >
+                        Generate Image
+                      </button>
+
+                      <button
+                        onClick={() => setImageSource('upload')}
+                        disabled={isRunning || executingStage !== null}
+                        className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                          imageSource === 'upload'
+                            ? 'bg-green-500 text-white shadow-md'
+                            : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-green-300'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                      >
+                        Upload Image
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* VEO 3.1 Frame Interpolation */}
+              {useVeo && (
+                <div className="mb-6 p-6 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg border-2 border-cyan-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-md font-semibold text-gray-800">
+                      Advanced Frame Controls
+                    </h3>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={useFrameInterpolation}
+                        onChange={(e) => setUseFrameInterpolation(e.target.checked)}
+                        disabled={isRunning || executingStage !== null}
+                        className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+                      />
+                      <span className="ml-2 text-sm font-medium text-gray-700">
+                        Use Frame Interpolation
+                      </span>
+                    </label>
+                  </div>
+
+                  {useFrameInterpolation && (
+                    <div className="space-y-4">
+                      <div className="bg-white rounded-lg p-4 border-2 border-blue-200">
+                        <p className="text-xs text-gray-600 mb-3">
+                          Scene Extensions: {sceneExtensionCount} (Total: {8 + sceneExtensionCount * 7}s)
+                        </p>
+
+                        {/* First Frame */}
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            First Frame:
+                          </label>
+                          <div className="grid grid-cols-3 gap-2 mb-3">
+                            <button
+                              onClick={() => setFirstFrameMode('upload')}
+                              disabled={isRunning || executingStage !== null}
+                              className={`px-3 py-2 rounded text-xs font-semibold transition-all ${
+                                firstFrameMode === 'upload'
+                                  ? 'bg-blue-500 text-white'
+                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            >
+                              Upload
+                            </button>
+                            <button
+                              onClick={() => setFirstFrameMode('text-gemini')}
+                              disabled={isRunning || executingStage !== null}
+                              className={`px-3 py-2 rounded text-xs font-semibold transition-all ${
+                                firstFrameMode === 'text-gemini'
+                                  ? 'bg-blue-500 text-white'
+                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            >
+                              Text-to-Image (Method 1)
+                            </button>
+                            <button
+                              onClick={() => setFirstFrameMode('text-imagen')}
+                              disabled={isRunning || executingStage !== null}
+                              className={`px-3 py-2 rounded text-xs font-semibold transition-all ${
+                                firstFrameMode === 'text-imagen'
+                                  ? 'bg-blue-500 text-white'
+                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            >
+                              Text-to-Image (Method 2)
+                            </button>
+                          </div>
+
+                          {firstFrameMode === 'upload' ? (
+                            <FileUpload
+                              fileType="image"
+                              label="Upload First Frame Image"
+                              accept="image/*"
+                              onFilesChange={setFirstFrameImage}
+                              maxFiles={1}
+                              multiple={false}
+                              disabled={isRunning || executingStage !== null}
+                            />
+                          ) : (
+                            <textarea
+                              value={firstFramePrompt}
+                              onChange={(e) => setFirstFramePrompt(e.target.value)}
+                              placeholder="Describe the first frame..."
+                              rows={2}
+                              disabled={isRunning || executingStage !== null}
+                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            />
+                          )}
+                        </div>
+
+                        {/* Last Frame */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Last Frame:
+                          </label>
+                          <div className="grid grid-cols-3 gap-2 mb-3">
+                            <button
+                              onClick={() => setLastFrameMode('upload')}
+                              disabled={isRunning || executingStage !== null}
+                              className={`px-3 py-2 rounded text-xs font-semibold transition-all ${
+                                lastFrameMode === 'upload'
+                                  ? 'bg-blue-500 text-white'
+                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            >
+                              Upload
+                            </button>
+                            <button
+                              onClick={() => setLastFrameMode('text-gemini')}
+                              disabled={isRunning || executingStage !== null}
+                              className={`px-3 py-2 rounded text-xs font-semibold transition-all ${
+                                lastFrameMode === 'text-gemini'
+                                  ? 'bg-blue-500 text-white'
+                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            >
+                              Text-to-Image (Method 1)
+                            </button>
+                            <button
+                              onClick={() => setLastFrameMode('text-imagen')}
+                              disabled={isRunning || executingStage !== null}
+                              className={`px-3 py-2 rounded text-xs font-semibold transition-all ${
+                                lastFrameMode === 'text-imagen'
+                                  ? 'bg-blue-500 text-white'
+                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            >
+                              Text-to-Image (Method 2)
+                            </button>
+                          </div>
+
+                          {lastFrameMode === 'upload' ? (
+                            <FileUpload
+                              fileType="image"
+                              label="Upload Last Frame Image"
+                              accept="image/*"
+                              onFilesChange={setLastFrameImage}
+                              maxFiles={1}
+                              multiple={false}
+                              disabled={isRunning || executingStage !== null}
+                            />
+                          ) : (
+                            <textarea
+                              value={lastFramePrompt}
+                              onChange={(e) => setLastFramePrompt(e.target.value)}
+                              placeholder="Describe the last frame..."
+                              rows={2}
+                              disabled={isRunning || executingStage !== null}
+                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* LongCat Configuration */}
+              {useLongCat && (
+                <div className="mb-6 p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200">
+                  <h3 className="text-md font-semibold text-gray-800 mb-4">
+                    Extended Video Configuration
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Video Mode:
+                      </label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <button
+                          onClick={() => setLongCatMode('text-to-video')}
+                          disabled={isRunning || executingStage !== null}
+                          className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                            longCatMode === 'text-to-video'
+                              ? 'bg-purple-500 text-white shadow-md'
+                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
+                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                          Text-to-Video
+                        </button>
+                        <button
+                          onClick={() => setLongCatMode('image-to-video')}
+                          disabled={isRunning || executingStage !== null}
+                          className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                            longCatMode === 'image-to-video'
+                              ? 'bg-purple-500 text-white shadow-md'
+                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
+                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                          Image-to-Video
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Video Prompt:
+                      </label>
+                      <textarea
+                        value={longCatPrompt}
+                        onChange={(e) => setLongCatPrompt(e.target.value)}
+                        placeholder="Describe your long-form video..."
+                        rows={3}
+                        disabled={isRunning || executingStage !== null}
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      />
+                    </div>
+
+                    {longCatMode === 'image-to-video' && (
+                      <div>
+                        <FileUpload
+                          fileType="image"
+                          label="Reference Image"
+                          accept="image/*"
+                          onFilesChange={setLongCatReferenceImage}
+                          maxFiles={1}
+                          multiple={false}
+                          disabled={isRunning || executingStage !== null}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Avatar Video Configuration */}
+          {contentType === 'avatar-video' && (
+            <div className="mb-6 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-200">
+              <h3 className="text-md font-semibold text-gray-800 mb-4">
+                Avatar Video Configuration
               </h3>
+
+              <div className="space-y-4">
+                <div className="bg-white rounded-lg p-4 border-2 border-yellow-200">
+                  <p className="text-sm text-yellow-700 font-semibold">
+                    Coming Soon: Avatar Selection
+                  </p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Avatar selection, voice configuration, and script editing will be available in the next update.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video Duration: {duration} seconds
+                  </label>
+                  <input
+                    type="range"
+                    min="15"
+                    max="300"
+                    step="5"
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value))}
+                    disabled={isRunning || executingStage !== null}
+                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed"
+                  />
+                  <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <span>15s</span>
+                    <span>300s (5 min)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Reference Materials Section - Collapsible for Static Image */}
+          <div className="mb-6 p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border-2 border-amber-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 flex-1">
+                {contentType === 'image' && (
+                  <button
+                    onClick={() => setShowReferenceMaterials(!showReferenceMaterials)}
+                    className="text-gray-600 hover:text-gray-800 transition-colors"
+                  >
+                    <svg
+                      className={`w-5 h-5 transition-transform ${showReferenceMaterials ? 'rotate-90' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                )}
+                <h3 className="text-md font-semibold text-gray-800">
+                  Reference Materials (Optional)
+                </h3>
+              </div>
+            </div>
+
+            {(contentType !== 'image' || showReferenceMaterials) && (
+              <div className={`space-y-4 ${contentType === 'image' ? 'mt-4 pt-4 border-t border-amber-200' : ''}`}>
+                {/* Research PDFs */}
+                <FileUpload
+                  fileType="pdf"
+                  label="Research PDFs"
+                  accept=".pdf"
+                  onFilesChange={setResearchPDFs}
+                  maxFiles={5}
+                  multiple={true}
+                  disabled={isRunning || executingStage !== null}
+                />
+
+                {/* Reference Images */}
+                <FileUpload
+                  fileType="image"
+                  label="Reference Images"
+                  accept="image/*"
+                  onFilesChange={setReferenceImages}
+                  maxFiles={10}
+                  multiple={true}
+                  disabled={isRunning || executingStage !== null}
+                />
+
+                {/* Reference Video */}
+                <FileUpload
+                  fileType="video"
+                  label="Reference Video"
+                  accept="video/*"
+                  onFilesChange={setReferenceVideo}
+                  maxFiles={1}
+                  multiple={false}
+                  disabled={isRunning || executingStage !== null}
+                />
+
+                <p className="text-xs text-gray-600 mt-2">
+                  Upload reference materials to guide content generation. These files will be analyzed by AI to understand your style and preferences.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Auto-Publish Toggle */}
+          <div className="mb-6 p-4 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-lg border-2 border-teal-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-md font-semibold text-gray-800">
+                  Auto-Publish
+                </h3>
+                <p className="text-xs text-gray-600 mt-1">
+                  Automatically publish content to selected platforms after generation
+                </p>
+              </div>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={autoPublish}
+                  onChange={(e) => setAutoPublish(e.target.checked)}
+                  disabled={isRunning || executingStage !== null}
+                  className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500 disabled:cursor-not-allowed"
+                />
+                <span className="ml-2 text-sm font-medium text-gray-700">
+                  Enable Auto-Publish
+                </span>
+              </label>
+            </div>
+          </div>
+
+          {/* Brand Guidelines Section - Collapsed by default */}
+          <div className="mb-6 p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border-2 border-indigo-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 flex-1">
+                <button
+                  onClick={() => setShowBrandGuidelines(!showBrandGuidelines)}
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  <svg
+                    className={`w-5 h-5 transition-transform ${showBrandGuidelines ? 'rotate-90' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <h3 className="text-md font-semibold text-gray-800">
+                  Brand Guidelines
+                </h3>
+              </div>
               <label className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={useBrandGuidelines}
                   onChange={(e) => setUseBrandGuidelines(e.target.checked)}
                   disabled={isRunning || executingStage !== null}
-                  className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 disabled:cursor-not-allowed"
+                  className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 disabled:cursor-not-allowed"
                 />
-                <span className="ml-3 text-sm font-medium text-gray-700">
+                <span className="ml-2 text-sm font-medium text-gray-700">
                   Use PL Capital Brand Guidelines
                 </span>
               </label>
             </div>
 
-            {useBrandGuidelines ? (
-              <div className="bg-white rounded-lg p-4 border-2 border-green-300">
-                <p className="text-sm font-semibold text-green-700 mb-2">
-                  ✓ PL Capital Brand Guidelines Active
-                </p>
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-600">Primary Colors:</span>
-                    <div className="flex gap-1">
-                      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#0e0e6a' }} title="Navy"></div>
-                      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#3c3cf8' }} title="Blue"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-600">Accent Colors:</span>
-                    <div className="flex gap-1">
-                      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#00d084' }} title="Teal"></div>
-                      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#66e766' }} title="Green"></div>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-gray-600">Font:</span>
-                    <span className="ml-2 text-gray-800">Figtree</span>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-gray-600">Tone:</span>
-                    <span className="ml-2 text-gray-800">Professional, Trustworthy</span>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-3">
-                  All images and videos will follow PL Capital's official brand guidelines including colors, typography, tone, and compliance requirements.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <p className="text-sm text-gray-600 mb-4">
-                  Define custom brand settings for this campaign:
-                </p>
-
-                {/* Custom Colors */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Brand Colors:
-                  </label>
-                  <input
-                    type="text"
-                    value={customColors}
-                    onChange={(e) => setCustomColors(e.target.value)}
-                    disabled={isRunning || executingStage !== null}
-                    placeholder="e.g., #0e0e6a (navy), #3c3cf8 (blue), #00d084 (teal)"
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Comma-separated hex colors or color names
-                  </p>
-                </div>
-
-                {/* Custom Tone */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Brand Tone:
-                  </label>
-                  <select
-                    value={customTone}
-                    onChange={(e) => setCustomTone(e.target.value)}
-                    disabled={isRunning || executingStage !== null}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    <option value="">Select tone...</option>
-                    <option value="professional">Professional & Corporate</option>
-                    <option value="friendly">Friendly & Approachable</option>
-                    <option value="luxury">Luxury & Premium</option>
-                    <option value="energetic">Energetic & Dynamic</option>
-                    <option value="minimalist">Minimalist & Clean</option>
-                    <option value="bold">Bold & Vibrant</option>
-                    <option value="elegant">Elegant & Sophisticated</option>
-                  </select>
-                </div>
-
-                {/* Custom Instructions */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Additional Instructions:
-                  </label>
-                  <textarea
-                    value={customInstructions}
-                    onChange={(e) => setCustomInstructions(e.target.value)}
-                    disabled={isRunning || executingStage !== null}
-                    placeholder="Add specific style guidelines, mood, composition requirements, or any other instructions for image/video generation..."
-                    rows={3}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Be specific about visual style, mood, composition, or technical requirements
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Platform Selection */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Target Platforms:
-            </label>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {platforms.map(platform => (
-                <button
-                  key={platform.value}
-                  onClick={() => togglePlatform(platform.value)}
-                  disabled={isRunning || executingStage !== null}
-                  className={`platform-icon p-4 rounded-lg border-2 transition-all ${
-                    selectedPlatforms.includes(platform.value)
-                      ? `${platform.color} text-white border-transparent shadow-md`
-                      : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
-                  } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  <div className="text-2xl mb-1">{platform.icon}</div>
-                  <div className="text-xs font-semibold">{platform.label}</div>
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              Selected: {selectedPlatforms.length} platform(s)
-            </p>
-          </div>
-
-          {/* Topic Input */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Campaign Topic:
-            </label>
-            <input
-              type="text"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              disabled={isRunning || executingStage !== null}
-              placeholder="e.g., Client Success: ₹50L to ₹2Cr in 5 years"
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none font-medium text-gray-800 disabled:bg-gray-100 disabled:cursor-not-allowed"
-            />
-          </div>
-
-          {/* File Uploads Section */}
-          <div className="mb-6 p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <span>📎</span> Reference Materials (Optional)
-            </h3>
-            <p className="text-sm text-gray-600 mb-6">
-              Upload reference materials to enhance content generation with Gemini 3 Pro Image Preview
-            </p>
-
-            {/* Research PDFs Upload */}
-            <FileUpload
-              fileType="pdf"
-              label="Research Reports / PDFs"
-              description="Upload research reports, market analysis, or any PDF documents for context"
-              accept=".pdf,application/pdf"
-              multiple={true}
-              maxFiles={5}
-              maxSizeMB={50}
-              onFilesChange={setResearchPDFs}
-              disabled={isRunning || executingStage !== null}
-              icon="📄"
-            />
-
-            {/* Reference Images Upload */}
-            <FileUpload
-              fileType="image"
-              label="Reference Images"
-              description="Upload reference images for style, composition, or visual elements (supports multi-image blending up to 14 images)"
-              accept=".jpg,.jpeg,.png,.webp,.gif,image/*"
-              multiple={true}
-              maxFiles={14}
-              maxSizeMB={10}
-              onFilesChange={setReferenceImages}
-              disabled={isRunning || executingStage !== null}
-              icon="🖼️"
-            />
-
-            {/* Reference Video Upload */}
-            <FileUpload
-              fileType="video"
-              label="Reference Video"
-              description="Upload a reference video for Gemini 3 Pro to analyze style, pacing, or visual elements"
-              accept=".mp4,.mov,.avi,.webm,video/*"
-              multiple={false}
-              maxFiles={1}
-              maxSizeMB={100}
-              onFilesChange={setReferenceVideo}
-              disabled={isRunning || executingStage !== null}
-              icon="🎬"
-            />
-
-            {/* Upload Summary */}
-            {(researchPDFs.length > 0 || referenceImages.length > 0 || referenceVideo.length > 0) && (
-              <div className="mt-4 p-4 bg-white rounded-lg border-2 border-green-300">
-                <p className="text-sm font-semibold text-green-700 mb-2">
-                  ✓ Reference Materials Ready
-                </p>
-                <div className="flex flex-wrap gap-3 text-xs">
-                  {researchPDFs.length > 0 && (
-                    <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full font-medium">
-                      📄 {researchPDFs.length} PDF{researchPDFs.length > 1 ? 's' : ''}
-                    </span>
-                  )}
-                  {referenceImages.length > 0 && (
-                    <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
-                      🖼️ {referenceImages.length} Image{referenceImages.length > 1 ? 's' : ''}
-                    </span>
-                  )}
-                  {referenceVideo.length > 0 && (
-                    <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
-                      🎬 {referenceVideo.length} Video
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* VEO 3.1 Frame Interpolation Section */}
-          {useVeo && (
-            <div className="mb-6 p-6 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg border-2 border-cyan-200">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                  <span>🎞️</span> VEO 3.1 Frame Interpolation
-                </h3>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={useFrameInterpolation}
-                    onChange={(e) => setUseFrameInterpolation(e.target.checked)}
-                    disabled={isRunning || executingStage !== null}
-                    className="w-5 h-5 text-cyan-600 rounded focus:ring-cyan-500 disabled:cursor-not-allowed"
-                  />
-                  <span className="ml-3 text-sm font-medium text-gray-700">
-                    Enable First/Last Frame Control
-                  </span>
-                </label>
-              </div>
-
-              {useFrameInterpolation ? (
-                <div className="space-y-6">
-                  <p className="text-sm text-gray-600 mb-4">
-                    Control the first and last frames of your video to ensure smooth transitions and consistent character appearance.
-                    Intermediate frames for scene extensions will be automatically generated by Gemini 3 Pro.
-                  </p>
-
-                  {/* First Frame Configuration */}
-                  <div className="bg-white rounded-lg p-5 border-2 border-cyan-300">
-                    <h4 className="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <span>🎬</span> First Frame
-                    </h4>
-
-                    {/* First Frame Mode Selection */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        First Frame Source:
-                      </label>
-                      <div className="grid grid-cols-3 gap-3">
-                        <button
-                          onClick={() => setFirstFrameMode('upload')}
-                          disabled={isRunning || executingStage !== null}
-                          className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                            firstFrameMode === 'upload'
-                              ? 'bg-cyan-500 text-white shadow-md'
-                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-cyan-300'
-                          } disabled:opacity-50 disabled:cursor-not-allowed`}
-                        >
-                          <div>📁 Upload</div>
-                          <div className="text-xs font-normal opacity-80 mt-1">Upload image</div>
-                        </button>
-                        <button
-                          onClick={() => setFirstFrameMode('text-gemini')}
-                          disabled={isRunning || executingStage !== null}
-                          className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                            firstFrameMode === 'text-gemini'
-                              ? 'bg-cyan-500 text-white shadow-md'
-                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-cyan-300'
-                          } disabled:opacity-50 disabled:cursor-not-allowed`}
-                        >
-                          <div>🧠 Gemini 3 Pro</div>
-                          <div className="text-xs font-normal opacity-80 mt-1">Character consistency</div>
-                        </button>
-                        <button
-                          onClick={() => setFirstFrameMode('text-imagen')}
-                          disabled={isRunning || executingStage !== null}
-                          className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                            firstFrameMode === 'text-imagen'
-                              ? 'bg-cyan-500 text-white shadow-md'
-                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-cyan-300'
-                          } disabled:opacity-50 disabled:cursor-not-allowed`}
-                        >
-                          <div>🎨 Imagen 4 Ultra</div>
-                          <div className="text-xs font-normal opacity-80 mt-1">Photorealistic scenes</div>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* First Frame Content - Upload Mode */}
-                    {firstFrameMode === 'upload' && (
-                      <FileUpload
-                        fileType="image"
-                        label="First Frame Image"
-                        description="Upload the first frame of your video (recommended: 1920x1080 or 1080x1920)"
-                        accept=".jpg,.jpeg,.png,.webp,image/*"
-                        multiple={false}
-                        maxFiles={1}
-                        maxSizeMB={10}
-                        onFilesChange={setFirstFrameImage}
-                        disabled={isRunning || executingStage !== null}
-                        icon="🎬"
-                      />
-                    )}
-
-                    {/* First Frame Content - Text Prompt Mode */}
-                    {(firstFrameMode === 'text-gemini' || firstFrameMode === 'text-imagen') && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          {firstFrameMode === 'text-gemini' ? '🧠 Gemini 3 Pro Prompt:' : '🎨 Imagen 4 Ultra Prompt:'}
-                        </label>
-                        <textarea
-                          value={firstFramePrompt}
-                          onChange={(e) => setFirstFramePrompt(e.target.value)}
-                          disabled={isRunning || executingStage !== null}
-                          placeholder={
-                            firstFrameMode === 'text-gemini'
-                              ? 'Describe the first frame with focus on character appearance, expression, and pose for consistent character generation...'
-                              : 'Describe the first frame with focus on photorealistic scene, lighting, composition, and atmosphere...'
-                          }
-                          rows={4}
-                          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-cyan-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        />
-                        <p className="text-xs text-gray-500 mt-2">
-                          {firstFrameMode === 'text-gemini'
-                            ? '💡 Gemini 3 Pro (Nano Banana Pro) excels at character consistency across frames'
-                            : '💡 Imagen 4 Ultra is best for landscapes, product shots, and photorealistic scenes'}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Last Frame Configuration */}
-                  <div className="bg-white rounded-lg p-5 border-2 border-cyan-300">
-                    <h4 className="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <span>🎞️</span> Last Frame
-                    </h4>
-
-                    {/* Last Frame Mode Selection */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Last Frame Source:
-                      </label>
-                      <div className="grid grid-cols-3 gap-3">
-                        <button
-                          onClick={() => setLastFrameMode('upload')}
-                          disabled={isRunning || executingStage !== null}
-                          className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                            lastFrameMode === 'upload'
-                              ? 'bg-cyan-500 text-white shadow-md'
-                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-cyan-300'
-                          } disabled:opacity-50 disabled:cursor-not-allowed`}
-                        >
-                          <div>📁 Upload</div>
-                          <div className="text-xs font-normal opacity-80 mt-1">Upload image</div>
-                        </button>
-                        <button
-                          onClick={() => setLastFrameMode('text-gemini')}
-                          disabled={isRunning || executingStage !== null}
-                          className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                            lastFrameMode === 'text-gemini'
-                              ? 'bg-cyan-500 text-white shadow-md'
-                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-cyan-300'
-                          } disabled:opacity-50 disabled:cursor-not-allowed`}
-                        >
-                          <div>🧠 Gemini 3 Pro</div>
-                          <div className="text-xs font-normal opacity-80 mt-1">Character consistency</div>
-                        </button>
-                        <button
-                          onClick={() => setLastFrameMode('text-imagen')}
-                          disabled={isRunning || executingStage !== null}
-                          className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                            lastFrameMode === 'text-imagen'
-                              ? 'bg-cyan-500 text-white shadow-md'
-                              : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-cyan-300'
-                          } disabled:opacity-50 disabled:cursor-not-allowed`}
-                        >
-                          <div>🎨 Imagen 4 Ultra</div>
-                          <div className="text-xs font-normal opacity-80 mt-1">Photorealistic scenes</div>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Last Frame Content - Upload Mode */}
-                    {lastFrameMode === 'upload' && (
-                      <FileUpload
-                        fileType="image"
-                        label="Last Frame Image"
-                        description="Upload the last frame of your video (recommended: 1920x1080 or 1080x1920)"
-                        accept=".jpg,.jpeg,.png,.webp,image/*"
-                        multiple={false}
-                        maxFiles={1}
-                        maxSizeMB={10}
-                        onFilesChange={setLastFrameImage}
-                        disabled={isRunning || executingStage !== null}
-                        icon="🎞️"
-                      />
-                    )}
-
-                    {/* Last Frame Content - Text Prompt Mode */}
-                    {(lastFrameMode === 'text-gemini' || lastFrameMode === 'text-imagen') && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          {lastFrameMode === 'text-gemini' ? '🧠 Gemini 3 Pro Prompt:' : '🎨 Imagen 4 Ultra Prompt:'}
-                        </label>
-                        <textarea
-                          value={lastFramePrompt}
-                          onChange={(e) => setLastFramePrompt(e.target.value)}
-                          disabled={isRunning || executingStage !== null}
-                          placeholder={
-                            lastFrameMode === 'text-gemini'
-                              ? 'Describe the last frame with focus on character appearance, expression, and final pose for consistent character generation...'
-                              : 'Describe the last frame with focus on photorealistic scene, lighting, composition, and final atmosphere...'
-                          }
-                          rows={4}
-                          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-cyan-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        />
-                        <p className="text-xs text-gray-500 mt-2">
-                          {lastFrameMode === 'text-gemini'
-                            ? '💡 Gemini 3 Pro (Nano Banana Pro) excels at character consistency across frames'
-                            : '💡 Imagen 4 Ultra is best for landscapes, product shots, and photorealistic scenes'}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Scene Extension Info */}
-                  {sceneExtensionCount > 0 && (
-                    <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-                      <h4 className="text-sm font-semibold text-blue-800 mb-2 flex items-center gap-2">
-                        <span>🔄</span> Automatic Scene Extension
-                      </h4>
-                      <p className="text-xs text-blue-700 mb-2">
-                        With {sceneExtensionCount} scene extension{sceneExtensionCount > 1 ? 's' : ''} ({sceneExtensionCount * 7}s),
-                        intermediate frames will be automatically generated by Gemini 3 Pro to maintain smooth transitions.
-                      </p>
-                      <ul className="text-xs text-blue-600 space-y-1 list-disc list-inside">
-                        <li>Initial video: 8s (First frame → AI generated)</li>
-                        {Array.from({ length: sceneExtensionCount }, (_, i) => (
-                          <li key={i}>
-                            Extension {i + 1}: 7s (Previous last frame → AI generated)
-                          </li>
-                        ))}
-                        <li>Final frame: Your specified last frame</li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-white rounded-lg p-4 border-2 border-gray-300">
-                  <p className="text-sm text-gray-600">
-                    Enable frame interpolation to control the first and last frames of your video.
-                    This provides better control over character consistency and smooth scene transitions.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* LongCat Video Generation Section */}
-          {useLongCat && (
-            <div className="mb-6 p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200">
-              <div className="flex items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                  <span>🐱</span> LongCat Video Generation (Up to 15 Minutes)
-                </h3>
-              </div>
-
-              <p className="text-sm text-gray-600 mb-6">
-                LongCat by fal.ai enables high-quality 720p video generation up to 15 minutes.
-                Choose between text-to-video or image-to-video modes for optimal results.
-              </p>
-
-              {/* Mode Selection */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Generation Mode:
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => setLongCatMode('text-to-video')}
-                    disabled={isRunning || executingStage !== null}
-                    className={`px-6 py-4 rounded-lg font-semibold text-sm transition-all ${
-                      longCatMode === 'text-to-video'
-                        ? 'bg-purple-500 text-white shadow-md'
-                        : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    <div className="text-lg mb-1">📝 Text-to-Video</div>
-                    <div className="text-xs font-normal opacity-80">
-                      Generate video from text description
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => setLongCatMode('image-to-video')}
-                    disabled={isRunning || executingStage !== null}
-                    className={`px-6 py-4 rounded-lg font-semibold text-sm transition-all ${
-                      longCatMode === 'image-to-video'
-                        ? 'bg-purple-500 text-white shadow-md'
-                        : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                  >
-                    <div className="text-lg mb-1">🖼️ Image-to-Video</div>
-                    <div className="text-xs font-normal opacity-80">
-                      Animate from reference image
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Text-to-Video Configuration */}
-              {longCatMode === 'text-to-video' && (
-                <div className="bg-white rounded-lg p-5 border-2 border-purple-300">
-                  <h4 className="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <span>📝</span> Video Description
-                  </h4>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Text Prompt for Video Generation:
-                    </label>
-                    <textarea
-                      value={longCatPrompt}
-                      onChange={(e) => setLongCatPrompt(e.target.value)}
-                      disabled={isRunning || executingStage !== null}
-                      placeholder="Describe the video you want to generate. Be specific about scenes, actions, transitions, camera movements, and visual style. LongCat excels at creating coherent long-form narratives..."
-                      rows={6}
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    />
-                    <p className="text-xs text-gray-500 mt-2">
-                      💡 LongCat can generate up to 15 minutes of coherent video at 720p resolution
+            {showBrandGuidelines && (
+              <div className="mt-4 pt-4 border-t border-indigo-200">
+                {useBrandGuidelines ? (
+                  <div className="bg-white rounded-lg p-4 border-2 border-green-300">
+                    <p className="text-sm font-semibold text-green-700 mb-2">
+                      PL Capital Brand Guidelines Active
                     </p>
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-600">Primary Colors:</span>
+                        <div className="flex gap-1">
+                          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#0e0e6a' }} title="Navy"></div>
+                          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#3c3cf8' }} title="Blue"></div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-600">Accent Colors:</span>
+                        <div className="flex gap-1">
+                          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#00d084' }} title="Teal"></div>
+                          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#66e766' }} title="Green"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-gray-600">Font:</span>
+                        <span className="ml-2 text-gray-800">Figtree</span>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-gray-600">Tone:</span>
+                        <span className="ml-2 text-gray-800">Professional, Trustworthy</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-600 mb-4">
+                      Define custom brand settings for this campaign:
+                    </p>
 
-              {/* Image-to-Video Configuration */}
-              {longCatMode === 'image-to-video' && (
-                <div className="space-y-4">
-                  <div className="bg-white rounded-lg p-5 border-2 border-purple-300">
-                    <h4 className="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <span>🖼️</span> Reference Image
-                    </h4>
-                    <FileUpload
-                      fileType="image"
-                      label="Starting Image"
-                      description="Upload a reference image that will be animated into a video (recommended: high resolution, clear subject)"
-                      accept=".jpg,.jpeg,.png,.webp,image/*"
-                      multiple={false}
-                      maxFiles={1}
-                      maxSizeMB={10}
-                      onFilesChange={setLongCatReferenceImage}
-                      disabled={isRunning || executingStage !== null}
-                      icon="🖼️"
-                    />
-                  </div>
-
-                  <div className="bg-white rounded-lg p-5 border-2 border-purple-300">
-                    <h4 className="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <span>📝</span> Animation Instructions
-                    </h4>
+                    {/* Custom Colors */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Video Generation Prompt:
+                        Brand Colors:
+                      </label>
+                      <input
+                        type="text"
+                        value={customColors}
+                        onChange={(e) => setCustomColors(e.target.value)}
+                        disabled={isRunning || executingStage !== null}
+                        placeholder="e.g., #0e0e6a (navy), #3c3cf8 (blue), #00d084 (teal)"
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      />
+                    </div>
+
+                    {/* Custom Tone */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Brand Tone:
+                      </label>
+                      <select
+                        value={customTone}
+                        onChange={(e) => setCustomTone(e.target.value)}
+                        disabled={isRunning || executingStage !== null}
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      >
+                        <option value="">Select tone...</option>
+                        <option value="professional">Professional & Corporate</option>
+                        <option value="friendly">Friendly & Approachable</option>
+                        <option value="luxury">Luxury & Premium</option>
+                        <option value="energetic">Energetic & Dynamic</option>
+                        <option value="minimalist">Minimalist & Clean</option>
+                        <option value="bold">Bold & Vibrant</option>
+                        <option value="elegant">Elegant & Sophisticated</option>
+                      </select>
+                    </div>
+
+                    {/* Custom Instructions */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Additional Instructions:
                       </label>
                       <textarea
-                        value={longCatPrompt}
-                        onChange={(e) => setLongCatPrompt(e.target.value)}
+                        value={customInstructions}
+                        onChange={(e) => setCustomInstructions(e.target.value)}
                         disabled={isRunning || executingStage !== null}
-                        placeholder="Describe how the image should be animated. Include camera movements, subject actions, transitions, and any scene changes you want to see in the video..."
-                        rows={5}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        placeholder="Add specific style guidelines, mood, composition requirements..."
+                        rows={3}
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                       />
-                      <p className="text-xs text-gray-500 mt-2">
-                        💡 Describe the motion, camera movements, and transformations you want to apply to the image
-                      </p>
                     </div>
                   </div>
-                </div>
-              )}
-
-              {/* LongCat Info Box */}
-              <div className="mt-6 bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-purple-800 mb-2 flex items-center gap-2">
-                  <span>ℹ️</span> LongCat Capabilities
-                </h4>
-                <ul className="text-xs text-purple-700 space-y-1 list-disc list-inside">
-                  <li>Generate videos up to 15 minutes (900 seconds) at 720p resolution</li>
-                  <li>Maintains temporal coherence across long sequences</li>
-                  <li>Supports both text-to-video and image-to-video workflows</li>
-                  <li>Ideal for documentaries, explainers, testimonials, and narrative content</li>
-                  <li>Powered by fal.ai's advanced video generation models</li>
-                </ul>
-                <div className="mt-3 pt-3 border-t border-purple-300">
-                  <p className="text-xs text-purple-600 font-medium">
-                    📊 Current Configuration: {Math.floor(duration / 60)} min {duration % 60}s • {longCatMode === 'text-to-video' ? 'Text-to-Video' : 'Image-to-Video'} • 720p
-                  </p>
-                </div>
+                )}
               </div>
-            </div>
-          )}
-
-          {/* Video Configuration */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Video Duration (seconds):
-              </label>
-              <select
-                value={duration}
-                onChange={(e) => handleDurationChange(parseInt(e.target.value))}
-                disabled={isRunning || executingStage !== null}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none font-medium text-gray-800 disabled:bg-gray-100"
-              >
-                {/* VEO 3.1 Durations (up to 148s) */}
-                <option value="8">8s (VEO Base)</option>
-                <option value="30">30s (Quick)</option>
-                <option value="60">1 min (Standard)</option>
-                <option value="90">1.5 min (Testimonial)</option>
-                <option value="120">2 min (Extended)</option>
-                <option value="148">2.5 min (Max VEO)</option>
-
-                {/* LongCat Durations (149s - 900s / 15 min) */}
-                <option value="180">3 min (LongCat)</option>
-                <option value="240">4 min (LongCat)</option>
-                <option value="300">5 min (LongCat)</option>
-                <option value="360">6 min (LongCat)</option>
-                <option value="420">7 min (LongCat)</option>
-                <option value="480">8 min (LongCat)</option>
-                <option value="540">9 min (LongCat)</option>
-                <option value="600">10 min (LongCat)</option>
-                <option value="720">12 min (LongCat)</option>
-                <option value="900">15 min (Max LongCat)</option>
-              </select>
-
-              {/* Duration Info */}
-              {useVeo && duration > 8 && (
-                <p className="text-xs text-gray-500 mt-2">
-                  📊 VEO Scene Extensions: {sceneExtensionCount} × 7s hops (Initial 8s + {sceneExtensionCount * 7}s = {8 + sceneExtensionCount * 7}s)
-                </p>
-              )}
-              {useLongCat && (
-                <p className="text-xs text-gray-500 mt-2">
-                  🐱 LongCat Generation: {Math.floor(duration / 60)} min {duration % 60}s video (720p)
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Video Generation Model:
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => handleModelChange('veo')}
-                  disabled={isRunning || executingStage !== null || duration > 148}
-                  className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                    useVeo
-                      ? 'bg-blue-500 text-white shadow-md'
-                      : duration > 148
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-blue-300'
-                  } disabled:opacity-50`}
-                >
-                  <div>🎬 VEO 3.1</div>
-                  <div className="text-xs font-normal opacity-80 mt-1">Up to 148s</div>
-                </button>
-                <button
-                  onClick={() => handleModelChange('longcat')}
-                  disabled={isRunning || executingStage !== null || duration <= 148}
-                  className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                    useLongCat
-                      ? 'bg-purple-500 text-white shadow-md'
-                      : duration <= 148
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
-                  } disabled:opacity-50`}
-                >
-                  <div>🐱 LongCat</div>
-                  <div className="text-xs font-normal opacity-80 mt-1">149s - 15 min</div>
-                </button>
-              </div>
-              {duration > 148 && (
-                <p className="text-xs text-purple-600 mt-2 font-medium">
-                  ℹ️ LongCat automatically selected for videos &gt;148s
-                </p>
-              )}
-            </div>
-
-            <div className="flex items-center">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={useAvatar}
-                  onChange={(e) => setUseAvatar(e.target.checked)}
-                  disabled={isRunning || executingStage !== null}
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
-                />
-                <span className="ml-3 text-sm font-medium text-gray-700">
-                  🎭 Use HeyGen AI Avatar
-                </span>
-              </label>
-            </div>
+            )}
           </div>
 
           {/* Execute Button */}
@@ -1451,7 +1610,7 @@ export default function Home() {
                     Running Campaign...
                   </span>
                 ) : (
-                  '🚀 Execute Full Campaign'
+                  'Execute Full Campaign'
                 )}
               </button>
             </div>
@@ -1524,7 +1683,7 @@ export default function Home() {
                                   : 'bg-purple-500 text-white hover:bg-purple-600 shadow-md hover:shadow-lg'
                               }`}
                             >
-                              {executingStage === stage.id ? 'Executing...' : stage.status === 'completed' ? '✓ Completed' : '▶ Execute Stage'}
+                              {executingStage === stage.id ? 'Executing...' : stage.status === 'completed' ? 'Completed' : 'Execute Stage'}
                             </button>
                           ) : (
                             <button
@@ -1548,13 +1707,23 @@ export default function Home() {
                               {executingStage === stage.id
                                 ? 'Executing...'
                                 : stage.status === 'completed'
-                                ? '✓ Completed'
+                                ? 'Completed'
                                 : stages[stage.id - 2]?.status !== 'completed'
-                                ? '⏸ Waiting'
-                                : '✅ Approve & Continue'}
+                                ? 'Waiting'
+                                : 'Approve & Continue'}
                             </button>
                           )}
                         </>
+                      )}
+
+                      {/* View Data Button (available after completion) */}
+                      {stageData[stage.id]?.data && stage.status === 'completed' && (
+                        <button
+                          onClick={() => handleViewData(stage.id, stage.name)}
+                          className="text-sm px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                        >
+                          📝 View & Edit Data
+                        </button>
                       )}
                     </div>
                   </div>
@@ -1572,6 +1741,7 @@ export default function Home() {
                     <PublishingQueue publishedUrls={campaignData.publishedUrls} platforms={selectedPlatforms} />
                   </div>
                 )}
+
               </div>
             ))}
           </div>
@@ -1599,7 +1769,7 @@ export default function Home() {
         <div className="mt-8 text-center text-gray-600">
           <p className="text-sm">
             Social Media Engine • Port 3004 •
-            <span className="ml-2">HeyGen • Veo 3.1 • Shotstack • Zapier MCP</span>
+            <span className="ml-2">AI-Powered Video Production & Multi-Platform Publishing</span>
           </p>
         </div>
 
@@ -1612,6 +1782,18 @@ export default function Home() {
           onSave={handleSavePrompt}
           onCancel={handleCancelPrompt}
         />
+
+        {/* Stage Data Edit Modal */}
+        {selectedStageData && (
+          <StageDataModal
+            isOpen={showDataModal}
+            stageId={selectedStageData.stageId}
+            stageName={selectedStageData.stageName}
+            data={selectedStageData.data}
+            onClose={handleCloseModal}
+            onSave={handleSaveStageData}
+          />
+        )}
       </div>
     </div>
   )

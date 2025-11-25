@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Raj",
+    "file": "raj_avatar.jpg",
+    "voiceId": "LolxzR74HCt7Un4IvoxI",
+    "voiceName": "Maneesh",
+    "gender": "male",
+    "imageKey": "image/195e91fcc6a34db99924bda34c6a22d0/original",
+    "groupId": "6f268f0fa28a41ce8b1fe4e83ac3867b",
+    "trainStatus": "training_failed",
+    "trainError": "{\"data\":null,\"error\":{\"code\":\"invalid_parameter\",\"message\":\"No valid image for training found in group 6f268f0fa28a41ce8b1fe4e83ac3867b\"}}\n",
+    "status": "partially_successful"
+  },
+  {
+    "name": "Priya",
+    "file": "priya_avatar.jpg",
+    "voiceId": "vZcFdbaKO9EUmpfW004U",
+    "voiceName": "Saheli",
+    "gender": "female",
+    "imageKey": "image/e4d675d39f5545fd9e3fe14e9a5f48f4/original",
+    "groupId": "0ada07010c8e4049aca376e132b04a1d",
+    "trainStatus": "training_failed",
+    "trainError": "{\"data\":null,\"error\":{\"code\":\"invalid_parameter\",\"message\":\"No valid image for training found in group 0ada07010c8e4049aca376e132b04a1d\"}}\n",
+    "status": "partially_successful"
+  },
+  {
+    "name": "Arjun",
+    "file": "arjun_avatar.jpg",
+    "voiceId": "oH8YmZXJYEZq5ScgoGn9",
+    "voiceName": "Aakash Aryan",
+    "gender": "male",
+    "imageKey": "image/665da71a7f02474f98cc8378f75603ab/original",
+    "groupId": "350da0c0495f43c69e1f97b10df2c441",
+    "trainStatus": "training_failed",
+    "trainError": "{\"data\":null,\"error\":{\"code\":\"invalid_parameter\",\"message\":\"No valid image for training found in group 350da0c0495f43c69e1f97b10df2c441\"}}\n",
+    "status": "partially_successful"
+  },
+  {
+    "name": "Meera",
+    "file": "meera_avatar.jpg",
+    "voiceId": "m28sDRnudtExG3WLAufB",
+    "voiceName": "Alekhya",
+    "gender": "female",
+    "imageKey": "image/6b3d6a26cb084c24b470797842b6f417/original",
+    "groupId": "ef20bde4645c458ab72c9cadfc4fbdc7",
+    "trainStatus": "training_failed",
+    "trainError": "{\"data\":null,\"error\":{\"code\":\"invalid_parameter\",\"message\":\"No valid image for training found in group ef20bde4645c458ab72c9cadfc4fbdc7\"}}\n",
+    "status": "partially_successful"
+  },
+  {
+    "name": "Vikram",
+    "file": "vikram_avatar.jpg",
+    "voiceId": "CZdRaSQ51p0onta4eec8",
+    "voiceName": "Akshay",
+    "gender": "male",
+    "imageKey": "image/996930d352c44c77b6e788b9d608dd52/original",
+    "groupId": "39baeece5af54c38b25562ad4f4a375a",
+    "trainStatus": "training_failed",
+    "trainError": "{\"data\":null,\"error\":{\"code\":\"invalid_parameter\",\"message\":\"No valid image for training found in group 39baeece5af54c38b25562ad4f4a375a\"}}\n",
+    "status": "partially_successful"
+  }
+]

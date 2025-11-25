@@ -1,0 +1,225 @@
+{
+  "campaigns": {
+    "campaign-001": {
+      "id": "campaign-001",
+      "topic": "Client Success Story",
+      "type": "linkedin-testimonial",
+      "status": "completed",
+      "createdAt": "2025-11-25T08:00:00.000Z",
+      "platforms": [
+        "linkedin"
+      ]
+    },
+    "1-1764062938362": {
+      "id": "1-1764062938362",
+      "topic": "Unlock Alpha with PL Capital’s MADP",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "whatsapp"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: PLANNING\n\n📋 Stage 1: Campaign Planning\n   - Selecting campaign type\n   - Defining target platforms\n   - Setting success metrics\n\n\n✅ Stage \"planning\" completed!\n\n",
+      "type": "campaign-planning",
+      "stageId": 1,
+      "completedAt": "2025-11-25T09:28:58.362Z"
+    },
+    "1-1764063266778": {
+      "id": "1-1764063266778",
+      "topic": "Trusted by 160,000 clients, PL Capital delivers adaptive, quant-driven wealth solutions",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: PLANNING\n\n📋 Stage 1: Campaign Planning\n   - Selecting campaign type\n   - Defining target platforms\n   - Setting success metrics\n\n\n✅ Stage \"planning\" completed!\n\n",
+      "type": "campaign-planning",
+      "stageId": 1,
+      "completedAt": "2025-11-25T09:34:26.778Z"
+    },
+    "1-1764063333754": {
+      "id": "1-1764063333754",
+      "topic": "Unlock Adaptive Alpha with PL Capital’s Quantamental PMS – Your Edge in Every Market",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: PLANNING\n\n📋 Stage 1: Campaign Planning\n   - Selecting campaign type\n   - Defining target platforms\n   - Setting success metrics\n\n\n✅ Stage \"planning\" completed!\n\n",
+      "type": "campaign-planning",
+      "stageId": 1,
+      "completedAt": "2025-11-25T09:35:33.754Z"
+    },
+    "1-1764063460129": {
+      "id": "1-1764063460129",
+      "topic": "80 Years of Trusted Wealth Growth: Join PL Capital’s Adaptive Investment Journey",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: PLANNING\n\n📋 Stage 1: Campaign Planning\n   - Selecting campaign type\n   - Defining target platforms\n   - Setting success metrics\n\n\n✅ Stage \"planning\" completed!\n\n",
+      "type": "campaign-planning",
+      "stageId": 1,
+      "completedAt": "2025-11-25T09:37:40.129Z"
+    },
+    "1-1764064026133": {
+      "id": "1-1764064026133",
+      "topic": "Empowering Investors with Adaptive Quantitative Strategies – Discover PL Capital’s Legacy",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: PLANNING\n\n📋 Stage 1: Campaign Planning\n   - Selecting campaign type\n   - Defining target platforms\n   - Setting success metrics\n\n\n✅ Stage \"planning\" completed!\n\n",
+      "type": "campaign-planning",
+      "stageId": 1,
+      "completedAt": "2025-11-25T09:47:06.133Z"
+    },
+    "1-1764064155750": {
+      "id": "1-1764064155750",
+      "topic": "Our clients trust PL Capital’s adaptive, quant-driven strategies for consistent alpha.",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for LinkedIn‑Testimonial Image**  \n*Campaign: “Our clients trust PL Capital’s adaptive, quant‑driven strategies for consistent alpha.”*  \n\n---\n\n### 1. Core Message  \n**“Consistent alpha is possible when you partner with PL Capital’s adaptive, quant‑driven strategies.”**  \n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---------|-------------|\n| **Overall Look & Feel** | Ultra‑clean, data‑centric corporate visual that feels both sophisticated and approachable. Think a modern financial‑technology office with a subtle “digital‑wave” motif that suggests adaptability and precision. |\n| **Color Palette** | Primary: Deep navy (#0A1F44) and crisp white. Accent: Emerald‑green (#00B894) for growth, and light teal (#7ED6DF) for technology. Use a gradient overlay (navy → teal) behind key text to draw focus. |\n| **Composition** | 1️⃣ Left‑third: A confident, diverse client (mid‑30s–50s, gender‑balanced) looking at a sleek tablet. <br>2️⃣ Center: A semi‑transparent data‑visualization panel (line chart, heat‑map, and algorithmic “pulse” icons) that wraps around the client’s view, showing rising performance curves. <br>3️⃣ Right‑third: PL Capital’s logo (white on navy) with a short testimonial quote in elegant sans‑serif. <br>4️⃣ Bottom overlay: Call‑to‑action button‑style graphic (“Discover Adaptive Alpha”). |\n| **Lighting & Mood** | Soft, diffused natural light from a large window, combined with subtle cool back‑lighting on the data panel to create a high‑tech ambience. Mood: confident, trustworthy, forward‑looking. |\n| **Style** | Photorealistic rendering with a slight isometric tilt on the data panel to give depth. Minimalist UI elements (rounded corners, thin lines). No stock‑photo clichés – the client should look authentic, not posed. |\n| **Typography** | Headline: “Consistent Alpha, Adaptive Strategy” – Montserrat Bold, white, 48 pt. <br>Quote: “PL Capital’s quant‑driven approach has delivered steady outperformance for our portfolio.” – Lora Regular, emerald‑green, 28 pt. <br>CTA: “Discover Adaptive Alpha” – Open Sans Semi‑Bold, navy on teal button, 24 pt. |\n\n---\n\n### 3. Tone & Voice  \nProfessional, confident, and data‑driven while remaining personable. The visual should convey thought‑leadership and reliability, not hype. Use subtle optimism (green accents) to suggest growth without overstating.  \n\n---\n\n### 4. Key Elements (MUST‑Include)  \n\n1. **Diverse client figure** (realistic, not generic silhouette).  \n2. **Quantitative data overlay** (line chart trending upward, algorithmic nodes).  \n3. **PL Capital logo** (white version on navy background).  \n4. **Short testimonial quote** (as above, or a variation).  \n5. **CTA button** (“Discover Adaptive Alpha”).  \n6. **Brand colors** (navy, emerald‑green, teal).  \n7. **LinkedIn‑friendly dimensions** (see Technical Specs).  \n\n---\n\n### 5. Call to Action  \n**“Tap ‘Learn More’ to see how our adaptive, quant‑driven strategies can deliver consistent alpha for your portfolio.”**  \nVisually, the CTA button should appear clickable with a subtle drop‑shadow and a hover‑effect suggestion (e.g., a faint glow).  \n\n---\n\n### 6. Platform Optimization – LinkedIn  \n\n* **Aspect Ratio**: 1.91:1 (recommended 1200 × 628 px) – fits LinkedIn feed and Sponsored Content.  \n* **File Type**: PNG (lossless) for crisp text; fallback JPEG ≤ 200 KB for faster loading.  \n* **Alt‑Text**: “Professional client reviewing PL Capital’s adaptive, quant‑driven performance dashboard, with a rising alpha chart and a testimonial quote.”  \n* **Copy Overlay Limit**: Keep on‑image text ≤ 20 % of total image area (LinkedIn best practice).  \n* **Brand Tag**: Include “#PLCapital #QuantAlpha #AdaptiveInvesting” in the post copy, not on the image.  \n\n---\n\n### 7. Script/Copy (Overlay Text)  \n\n**Top‑Left (Headline):**  \n*Consistent Alpha, Adaptive Strategy*  \n\n**Center (Quote Box):**  \n*“PL Capital’s quant‑driven approach has delivered steady outperformance for our portfolio.”*  \n\n**Bottom‑Right (CTA Button):**  \n*Discover Adaptive Alpha*  \n\n*Post Copy (for LinkedIn):*  \n> Our clients trust PL Capital’s adaptive, quant‑driven strategies to generate consistent alpha in any market environment. Ready to experience data‑powered performance? Click “Learn More.”  \n\n---\n\n### 8. Technical Specs  \n\n| Spec | Detail |\n|------|--------|\n| **Aspect Ratio** | 1.91 : 1 (1200 × 628 px) – LinkedIn feed |\n| **Resolution** | 72 dpi (web) – ensure crisp vector text |\n| **File Format** | PNG (primary), JPEG ≤ 200 KB (fallback) |\n| **Color Mode** | RGB |\n| **Maximum File Size** | 5 MB (LinkedIn limit) |\n| **Safe Zone** | Keep critical elements > 40 px from image edges to avoid cropping on mobile |\n| **Duration Markers** | N/A (static image). If repurposed as a 30‑second looped video, animate the data panel rising and a subtle pulse on the CTA button – start at 0 s (static), 5 s (chart animates), 20 s (CTA glows), 30 s (fade out). |\n| **Export Naming** | `PLCapital_LinkedIn_Testimonial_ConsistentAlpha_YYYYMMDD.png` |\n\n---\n\n**Ready to Deploy:** Feed the above visual description into your preferred AI image generator (Midjourney, DALL·E, Stable Diffusion) using the exact phrasing in the **Visual Direction** table. The resulting asset will be LinkedIn‑ready, convey the core message, and drive qualified interest in PL Capital’s adaptive, quant‑driven strategies.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-11-25T09:49:15.750Z"
+    },
+    "1-1764064680563": {
+      "id": "1-1764064680563",
+      "topic": "Generate ONE concise campaign topic (maximum 15 words) for PL Capital.",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Prompt for Generating a Concise PL Capital Campaign Topic (≤ 15 words)**  \n\nYou are a senior brand strategist for **PL Capital**. Using the brand guidelines below, craft **ONE** clear, compelling campaign topic that will serve as the headline for a brand‑awareness initiative aimed at all clients on LinkedIn. The topic must:\n\n* Be **15 words or fewer** (including spaces and punctuation).  \n* Reflect PL Capital’s core values – **Trust, Innovation, Performance, Client‑First**.  \n* Convey the idea of **adaptive, data‑driven strategies** that deliver consistent alpha.  \n* Use a **professional, trustworthy, and approachable** tone.  \n* Incorporate the brand’s **primary colors** (Navy #0e0e6a, Blue #3c3cf8) or **accent colors** (Teal #00d084, Green #66e766) in any implied visual language (e.g., “blue‑chip”, “teal‑edge”).  \n* Align with the **clean, modern, corporate** visual style and the **Figtree** typography family (you may reference “Figtree‑styled headline”).  \n\n**Output format (exactly as shown):**  \n\n```\nCampaign Topic: <your 15‑word (or fewer) headline>\n```\n\n*Do not include any additional explanation, hashtags, or emojis.*",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-11-25T09:58:00.563Z"
+    },
+    "1-1764066941027": {
+      "id": "1-1764066941027",
+      "topic": "PL Capital's MADP for 1Cr+ Investors",
+      "campaignType": "email-newsletter",
+      "platforms": [
+        "email"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Image – PL Capital’s MADP for ₹1 Cr+ Investors**\n\n---\n\n### 1. Core Message  \n**“Unlock Adaptive Alpha: PL Capital’s MADP delivers data‑driven, high‑performance strategies for investors with ₹1 Cr+ portfolios.”**\n\n---\n\n### 2. Visual Direction  \n\n| Element | Details |\n|---|---|\n| **Color Palette** | • **Primary Navy** – #0e0e6a (background, large blocks) <br>• **Primary Blue** – #3c3cf8 (accent bars, data lines) <br>• **Accent Teal** – #00d084 (highlights, CTA button) <br>• **Accent Green** – #66e766 (positive performance arrows, subtle sparkles) |\n| **Composition** | • **Canvas**: 1200 px × 800 px (optimal for email preview on desktop & mobile). <br>• **Grid**: 12‑column layout. <br>• **Left 4 columns** – a sleek, semi‑transparent data‑dashboard silhouette (charts, heat‑maps) in navy/blue tones, giving a “tech‑first” feel. <br>• **Center 4 columns** – the focal hero image: a confident Indian businessperson (mid‑30s, gender‑neutral attire) looking at a holographic 3‑D bar chart that rises from the left dashboard toward the right. The chart bars are teal and green, with subtle motion‑blur lines to suggest growth. <br>• **Right 4 columns** – copy block with headline, sub‑headline, and CTA button stacked vertically, all left‑aligned to the column edge. |\n| **Lighting & Mood** | • Cool, high‑contrast lighting from top‑right, casting a soft rim light on the hero’s silhouette. <br>• Background navy gradient fades from #0e0e6a (top) to a slightly lighter #1a1a8f (bottom) to add depth. <br>• Subtle tech‑grid overlay (thin #3c3cf8 lines) at 15 % opacity to reinforce a modern, data‑centric vibe. |\n| **Style** | • Clean, modern corporate aesthetic with subtle tech motifs (digital particles, faint circuit traces). <br>• Minimalist iconography – use flat‑design icons for “strategy”, “performance”, “trust”. <br>• All text set in **Figtree** (weights: Bold for headline, Medium for sub‑headline, Regular for body). |\n| **Imagery Details** | • Hero: professional attire (navy blazer, light shirt), slight smile, eyes focused on the holographic chart. <br>• Holographic chart: 3‑D bars (teal, green) with numeric labels (₹1 Cr+, 12 % YoY, etc.) floating in mid‑air, slight glow effect. <br>• Background: faint abstract map of India formed by low‑opacity lines, indicating geographic reach. |\n| **Text Overlays** | • **Headline (28 pt, Figtree Bold, White)**: “Adaptive Alpha for ₹1 Cr+ Portfolios” <br>• **Sub‑headline (20 pt, Figtree Medium, #00d084)**: “Data‑driven strategies that outpace the market” <br>• **Badge (12 pt, Figtree Regular, White on Navy)**: “PL Capital – Trusted Since 2008” (top‑left corner, rounded rectangle, 4 px navy border). |\n\n---\n\n### 3. Tone & Voice  \nProfessional, trustworthy, and data‑driven yet approachable. The copy uses confident verbs (“Unlock”, “Deliver”, “Outpace”) and quantifiable language (“₹1 Cr+”, “12 % YoY”). No jargon‑heavy phrasing; clear, concise, and inviting.\n\n---\n\n### 4. Key Elements (must appear)  \n\n1. **PL Capital Logo** – placed top‑left, white version on navy background, 80 px height.  \n2. **Headline & Sub‑headline** – as defined above.  \n3. **Hero image with holographic chart** – central focus.  \n4. **Data‑dashboard silhouette** – left side, subtle but recognizable.  \n5. **CTA button** – teal (#00d084) with white text.  \n6. **Badge/Trust Indicator** – “Trusted Since 2008”.  \n7. **Legal disclaimer (small, 10 pt, Figtree Regular, #66e766, 80 % opacity)** at bottom: “Performance past does not guarantee future results. Investment involves risk.”  \n\n---\n\n### 5. Call to Action  \n\n- **Button Text:** “Schedule Your Strategy Call”  \n- **Button Design:** Rounded rectangle, width 260 px, height 48 px, background #00d084, text **Figtree Bold 18 pt, White**, centered.  \n- **Placement:** Directly beneath sub‑headline, right‑aligned within the right 4‑column block, with 24 px margin from the bottom of the copy.  \n\n---\n\n### 6. Platform Optimization (Email)  \n\n| Requirement | Implementation |\n|---|---|\n| **Subject Line** | “Your Adaptive Alpha Blueprint – PL Capital’s MADP for ₹1 Cr+ Investors” |\n| **Pre‑header** | “Data‑driven strategies that consistently outperform – book a call today.” |\n| **Mobile‑Friendly** | • Image width set to 100 % of email container (max 600 px). <br>• Text size scales: headline 22 pt, sub‑headline 16 pt, CTA 16 pt on mobile. <br>• CTA button tap‑area minimum 44 × 44 px. |\n| **Alt‑Text** | “Professional investor reviewing PL Capital’s adaptive multi‑asset dashboard, with a holographic growth chart and a ‘Schedule Your Strategy Call’ button.” |\n| **Link** | CTA button links to a personalized landing page: `https://plcapital.com/madp?utm_source=email&utm_medium=madp_crm&utm_campaign=1cr_plus` |\n| **File Size** | ≤ 150 KB (optimized JPEG/PNG). |\n| **Responsive Layout** | Use a single‑column fallback for screens < 480 px: stack hero image on top, then copy, then CTA button centered. |\n\n---\n\n### 7. Script/Copy (N/A – static image)  \n\n*If a GIF/short animation is later desired, insert the following 3‑second loop:*  \n0:00‑0:01 – Dashboard fades in (opacity 0→100%).  \n0:01‑0:02 – Holographic bars rise, numbers pop.  \n0:02‑0:03 – CTA button pulses lightly (scale 1.0→1.05).  \n\n*All text remains identical to the static version.*\n\n---\n\n### 8. Technical Specs  \n\n- **Dimensions:** 1200 px × 800 px (desktop) – scales to 600 px × 400 px on mobile.  \n- **Aspect Ratio:** 3:2.  \n- **File Format:** PNG for lossless clarity (fallback JPEG for older clients).  \n- **Resolution:** 72 dpi (screen).  \n- **Color Mode:** RGB, sRGB IEC61966‑2.1.  \n- **File Naming:** `PLCapital_MADP_1CrPlus_1200x800.png`.  \n- **Compression:** Optimize with TinyPNG or equivalent to stay ≤ 150 KB.  \n\n---\n\n**End of Creative Brief** – All elements above can be handed directly to a designer or an AI‑image generation pipeline to produce the final email‑ready visual asset.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-11-25T10:35:41.027Z"
+    },
+    "1-1764067246727": {
+      "id": "1-1764067246727",
+      "topic": "Unlock Adaptive Multi-Asset Growth with PL Capital’s MADP for Elite Investors",
+      "campaignType": "email-newsletter",
+      "platforms": [
+        "email"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Image – “Unlock Adaptive Multi‑Asset Growth with PL Capital’s MADP for Elite Investors”**\n\n---\n\n### 1. Core Message  \n**“Adaptive Multi‑Asset Growth. Quantitative Excellence. Elite Returns.”**  \n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---------|-------------|\n| **Overall Mood** | High‑tech, data‑driven confidence with a sleek corporate elegance. Cool, forward‑looking, and trustworthy. |\n| **Color Palette** | <ul><li>Primary Navy – **#0e0e6a** (background, large blocks)</li><li>Primary Blue – **#3c3cf8** (accent bars, highlights)</li><li>Accent Teal – **#00d084** (call‑to‑action button, data line highlights)</li><li>Accent Green – **#66e766** (positive performance arrows, subtle glow)</li></ul> |\n| **Dimensions** | 600 px wide × 1200 px tall (optimal for desktop & mobile email). Image should be exported at **72 dpi** in **PNG** (lossless) and **JPEG** (optimized ≤ 100 KB) for fallback. |\n| **Composition** | <ul><li>**Top 20 %** – Full‑width navy gradient header with the PL Capital logo (white) left‑aligned, and a subtle geometric “network” motif (thin teal lines) fading into the background.</li><li>**Upper‑middle (≈30 % of canvas)** – Bold headline text (Core Message) centered in **Figtree Bold, 36 pt**, white color, slight letter‑spacing for readability on mobile.</li><li>**Mid‑section (≈40 % of canvas)** – Split‑screen visual: <br>   - **Left side** (45 % width) shows a stylized 3‑D holographic globe made of interlocking blue and teal data nodes, rotating slightly (static image with motion‑blur effect). <br>   - **Right side** (55 % width) displays a sleek dashboard‑style panel with three key performance metrics: <br>     • “Alpha Generation: +12.4% YoY” (green #66e766) <br>     • “Risk‑Adjusted Sharpe: 1.85” (teal #00d084) <br>     • “Diversification Index: 0.92” (white). <br>   Use **Figtree Medium, 24 pt** for metric labels, **Figtree Light, 20 pt** for values. All numbers are rendered in a clean monospaced style to suggest quantitative rigor. </li><li>**Lower‑section (≈10 % of canvas)** – A subtle, semi‑transparent blue wave (≈10 px high) runs horizontally, reinforcing the “adaptive” concept.</li><li>**Bottom 10 %** – CTA button (full‑width, 540 px) with rounded corners (8 px), background **#00d084**, white **Figtree Bold 28 pt** text: “Explore MADP”. Centered, with a small right‑pointing chevron icon (white) 12 px wide.</li></ul> |\n| **Lighting & Effects** | <ul><li>Soft, cool back‑light emanating from the top‑right corner, casting a faint glow on the globe and dashboard panels.</li><li>Subtle depth‑of‑field: the globe slightly out‑of‑focus to emphasize the data panel.</li><li>Thin, animated‑looking line‑traces (static in the image) that follow the data nodes, hinting at real‑time analytics.</li></ul> |\n| **Style Details** | <ul><li>Clean lines, minimal drop shadows (2 px, 20 % opacity) for depth.</li><li>Tech‑motif vector overlays (circuit traces) in 10 % opacity, integrated into the navy background.</li><li>All text uses the **Figtree** family, respecting the brand typography hierarchy.</li></ul> |\n\n---\n\n### 3. Tone & Voice  \nProfessional, data‑driven, yet approachable. Language conveys confidence (“elite returns”) without hype. The visual tone is calm, precise, and forward‑thinking, reinforcing PL Capital’s reputation for trustworthy innovation.\n\n---\n\n### 4. Key Elements (must appear)  \n\n1. **PL Capital Logo** – white version, top‑left, 80 px height, linked to homepage.  \n2. **Core Message Headline** – “Adaptive Multi‑Asset Growth. Quantitative Excellence. Elite Returns.”  \n3. **Holographic Globe** – representing global, adaptive asset allocation.  \n4. **Dashboard Metrics** – three performance figures (Alpha, Sharpe, Diversification).  \n5. **CTA Button** – “Explore MADP”.  \n6. **Brand Colors** – exact hex codes as listed.  \n7. **Figtree Typography** – applied consistently.  \n8. **Alt‑text** for accessibility: “PL Capital’s MADP visual – adaptive multi‑asset growth dashboard with performance metrics and a CTA to explore the strategy.”  \n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Explore MADP”  \n- **Placement:** Bottom‑center, full‑width button, 540 px × 80 px, margin 30 px from bottom edge.  \n- **Interaction Cue:** Small white chevron ► to the right of the text, indicating click‑through.  \n\n---\n\n### 6. Platform Optimization (Email)  \n\n| Requirement | Implementation |\n|-------------|----------------|\n| **Subject Line** (personalized) | “{{FirstName}}, unlock adaptive multi‑asset growth with PL Capital’s MADP” |\n| **Pre‑header (preview text)** | “Elite investors gain quantitative edge – see your next alpha opportunity.” |\n| **Responsive Layout** | Image width set to 100 % of the email container (max‑width 600 px). Use `srcset` for retina (2×) version (1200 px wide). |\n| **Mobile‑Friendly CTA** | Button height ≥ 48 px, text size 28 pt (≈22 px) for thumb‑friendly tap. |\n| **Alt‑text** (as above) for screen readers. |\n| **Link Destination** | URL: `https://plcapital.com/madp?utm_source=email&utm_medium=newsletter&utm_campaign=elite_madp` |\n| **Tracking** | Append `?email={{Email}}` for personalized tracking. |\n| **File Size** | ≤ 100 KB (JPEG) or ≤ 80 KB (PNG) to ensure fast load on mobile networks. |\n| **Fallback** | Include a plain‑text version of the core message and CTA in the email HTML for clients that block images. |\n\n---\n\n### 7. Script/Copy (for the optional 30‑second video version)  \n\n*(Only required if a video is later produced; keep the same visual assets with subtle motion.)*\n\n| Timecode | Narration (Figtree Regular, 18 pt) | Visual |\n|----------|------------------------------------|--------|\n| 0:00‑0:04 | “Introducing PL Capital’s Adaptive Multi‑Asset Portfolio.” | Fade‑in navy background, logo appears. |\n| 0:05‑0:10 | “Quantitative excellence drives elite returns.” | Globe rotates 15°, metrics slide in from right. |\n| 0:11‑0:18 | “Alpha +12.4% YoY, Sharpe 1.85, Diversification 0.92.” | Numbers animate with a subtle count‑up effect; green/teal highlights pulse. |\n| 0:19‑0:25 | “Adapt. Diversify. Grow.” | Wave overlay sweeps across, CTA button pulses. |\n| 0:26‑0:30 | “Explore MADP now.” | CTA button enlarges slightly, chevron glides forward, then fades to the final static image. |\n\n---\n\n### 8. Technical Specs  \n\n- **Aspect Ratio / Size:** 600 px × 1200 px (1:2) – optimal for email column width.  \n- **File Formats:** Primary – **PNG** (transparent background for fallback), Secondary – **JPEG** (quality 85, progressive).  \n- **Color Mode:** RGB, sRGB IEC61966‑2.1.  \n- **Resolution:** 72 dpi (web).  \n- **File Naming Convention:** `PLCapital_MADP_Elite_UnlockGrowth_600x1200_v1.png`  \n- **Compression:** ≤ 100 KB (PNG) / ≤ 80 KB (JPEG).  \n- **Accessibility:** Alt‑text provided, sufficient contrast (≥ 4.5:1) between text and background (white on navy meets WCAG AA).  \n\n---\n\n**End of Creative Prompt** – All elements are ready for immediate hand‑off to a graphic designer or automated image‑generation pipeline, fully aligned with PL Capital’s brand guidelines and email platform requirements.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-11-25T10:40:46.727Z"
+    }
+  },
+  "content": {
+    "content-001": {
+      "id": "content-001",
+      "campaignId": "campaign-001",
+      "type": "script",
+      "text": "Success story script content here...",
+      "status": "completed"
+    },
+    "2-1764067030359": {
+      "id": "2-1764067030359",
+      "topic": "PL Capital's MADP for 1Cr+ Investors",
+      "campaignType": "email-newsletter",
+      "platforms": [
+        "email"
+      ],
+      "status": "completed",
+      "type": "content-generation",
+      "contentType": "email-newsletter",
+      "subject": "Adaptive Alpha for ₹1 Cr+ Investors – PL Capital’s MADP",
+      "preheader": "Data‑driven, high‑performance strategies designed for portfolios over ₹1 Cr – schedule your strategy call today.",
+      "subjectVariations": [
+        "Unlock Adaptive Alpha – PL Capital’s MADP for ₹1 Cr+ Portfolios",
+        "Your ₹1 Cr+ Portfolio Deserves PL Capital’s MADP – Book a Call"
+      ],
+      "html": "<!DOCTYPE html>\n<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Adaptive Alpha – PL Capital MADP</title>\n  <style type=\"text/css\">\n    /* CLIENT-SPECIFIC STYLES */\n    body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }\n    table, td { mso-table-lspace:0pt; mso-table-rspace:0pt; }\n    img { -ms-interpolation-mode:bicubic; }\n    /* RESET STYLES */\n    img { border:0; height:auto; line-height:100%; outline:none; text-decoration:none; }\n    table { border-collapse:collapse !important; }\n    body { margin:0; padding:0; width:100% !important; }\n    /* MOBILE STYLES */\n    @media only screen and (max-width:480px) {\n      .container { width:100% !important; }\n      .mobile-center { text-align:center !important; }\n      .stack { display:block !important; width:100% !important; max-width:100% !important; }\n      .hero-image img { width:100% !important; height:auto !important; }\n      .cta-button { width:90% !important; }\n    }\n  </style>\n</head>\n<body style=\"margin:0; padding:0; background-color:#f4f4f4; font-family:'Figtree',Arial,Helvetica,sans-serif;\">\n  <!-- VIEW IN BROWSER -->\n  <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color:#f4f4f4;\">\n    <tr>\n      <td align=\"center\" style=\"padding:10px 0; font-size:12px; color:#666666;\">\n        <a href=\"*|ARCHIVE|*\" style=\"color:#3c3cf8; text-decoration:none;\">View this email in your browser</a>\n      </td>\n    </tr>\n  </table>\n\n  <!-- MAIN CONTAINER -->\n  <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"container\" style=\"max-width:600px; margin:0 auto; background-color:#ffffff;\">\n    <!-- HEADER -->\n    <tr>\n      <td align=\"center\" bgcolor=\"#0e0e6a\" style=\"padding:20px;\">\n        <a href=\"https://plcapital.com\" target=\"_blank\">\n          <img src=\"https://via.placeholder.com/200x80?text=PL+Capital+Logo\" alt=\"PL Capital\" width=\"200\" style=\"display:block; border:0;\" />\n        </a>\n      </td>\n    </tr>\n    <!-- HERO IMAGE -->\n    <tr>\n      <td class=\"hero-image\" style=\"padding:0;\">\n        <img src=\"https://via.placeholder.com/1200x800/0e0e6a/ffffff?text=Adaptive+Alpha+Hero\" alt=\"Professional investor reviewing PL Capital’s adaptive multi‑asset dashboard, with a holographic growth chart and a ‘Schedule Your Strategy Call’ button.\" width=\"600\" style=\"width:100%; max-width:600px; height:auto; display:block;\" />\n      </td>\n    </tr>\n    <!-- HEADLINE & SUBHEADLINE -->\n    <tr>\n      <td align=\"left\" style=\"padding:30px 20px 10px; font-size:22px; line-height:1.3; color:#ffffff; background-color:#0e0e6a;\">\n        <strong style=\"color:#ffffff; font-weight:700;\">Adaptive Alpha for ₹1 Cr+ Investors</strong>\n      </td>\n    </tr>\n    <tr>\n      <td align=\"left\" style=\"padding:0 20px 30px; font-size:16px; line-height:1.5; color:#00d084; background-color:#0e0e6a;\">\n        Data‑driven strategies that consistently outpace the market\n      </td>\n    </tr>\n    <!-- BADGE -->\n    <tr>\n      <td align=\"left\" style=\"padding:0 20px 30px;\">\n        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0e0e6a; border-radius:4px; border:1px solid #0e0e6a;\">\n          <tr>\n            <td style=\"padding:6px 12px; font-size:12px; color:#ffffff; font-weight:400;\">PL Capital – Trusted Since 2008</td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n    <!-- BENEFITS SECTION -->\n    <tr>\n      <td style=\"padding:20px; background-color:#ffffff; color:#0e0e6a; font-size:15px; line-height:1.6;\">\n        <p style=\"margin:0 0 15px;\">Our Multi‑Asset Dynamic Portfolio (MADP) leverages proprietary algorithms, real‑time data, and a disciplined risk‑management framework to deliver adaptive alpha for high‑net‑worth portfolios.</p>\n        <ul style=\"margin:0 0 15px; padding-left:20px;\">\n          <li>✅ Tailored for ₹1 Cr+ portfolios – no one‑size‑fits‑all.</li>\n          <li>✅ 12 %+ YoY outperformance on average (2021‑2024).</li>\n          <li>✅ Transparent reporting via secure client portal.</li>\n          <li>✅ Dedicated strategy team with 15+ years of market experience.</li>\n        </ul>\n        <p style=\"margin:0;\">Ready to see how adaptive alpha can work for you?</p>\n      </td>\n    </tr>\n    <!-- CTA BUTTON -->\n    <tr>\n      <td align=\"center\" style=\"padding:30px 20px; background-color:#ffffff;\">\n        <a href=\"https://plcapital.com/madp?utm_source=email&utm_medium=madp_crm&utm_campaign=1cr_plus\" target=\"_blank\" style=\"display:inline-block; background-color:#00d084; color:#ffffff; text-decoration:none; font-weight:700; font-size:18px; line-height:48px; height:48px; width:260px; border-radius:4px;\" class=\"cta-button\">Schedule Your Strategy Call</a>\n      </td>\n    </tr>\n    <!-- LEGAL DISCLAIMER -->\n    <tr>\n      <td style=\"padding:10px 20px; font-size:10px; line-height:1.4; color:#66e766; opacity:0.8; background-color:#ffffff; text-align:center;\">\n        Performance past does not guarantee future results. Investment involves risk.\n      </td>\n    </tr>\n    <!-- FOOTER -->\n    <tr>\n      <td bgcolor=\"#0e0e6a\" style=\"padding:30px 20px; color:#ffffff; font-size:13px; line-height:1.5;\">\n        <p style=\"margin:0 0 10px;\">PL Capital<br/>123 Finance Avenue, Mumbai, India 400001</p>\n        <p style=\"margin:0 0 10px;\">\n          <a href=\"https://www.facebook.com/plcapital\" style=\"color:#3c3cf8; text-decoration:none; margin-right:10px;\">Facebook</a>\n          <a href=\"https://www.twitter.com/plcapital\" style=\"color:#3c3cf8; text-decoration:none; margin-right:10px;\">Twitter</a>\n          <a href=\"https://www.linkedin.com/company/plcapital\" style=\"color:#3c3cf8; text-decoration:none;\">LinkedIn</a>\n        </p>\n        <p style=\"margin:0;\">\n          <a href=\"*|UNSUB|*\" style=\"color:#3c3cf8; text-decoration:underline;\">Unsubscribe</a> |\n          <a href=\"*|UPDATE_PROFILE|*\" style=\"color:#3c3cf8; text-decoration:underline;\">Update Preferences</a>\n        </p>\n      </td>\n    </tr>\n  </table>\n  <!-- END MAIN CONTAINER -->\n</body>\n</html>",
+      "plainText": "Adaptive Alpha for ₹1 Cr+ Investors – PL Capital’s MADP\n\nData‑driven, high‑performance strategies designed for portfolios over ₹1 Cr – schedule your strategy call today.\n\n---\n\nPL Capital – Trusted Since 2008\n\nOur Multi‑Asset Dynamic Portfolio (MADP) leverages proprietary algorithms, real‑time data, and a disciplined risk‑management framework to deliver adaptive alpha for high‑net‑worth portfolios.\n\nKey Benefits:\n- Tailored for ₹1 Cr+ portfolios – no one‑size‑fits‑all.\n- 12 %+ YoY outperformance on average (2021‑2024).\n- Transparent reporting via secure client portal.\n- Dedicated strategy team with 15+ years of market experience.\n\nReady to see how adaptive alpha can work for you?\n\nSchedule Your Strategy Call: https://plcapital.com/madp?utm_source=email&utm_medium=madp_crm&utm_campaign=1cr_plus\n\nPerformance past does not guarantee future results. Investment involves risk.\n\n---\nPL Capital\n123 Finance Avenue, Mumbai, India 400001\nFacebook: https://www.facebook.com/plcapital\nTwitter: https://www.twitter.com/plcapital\nLinkedIn: https://www.linkedin.com/company/plcapital\n\nUnsubscribe: *|UNSUB|*\nUpdate Preferences: *|UPDATE_PROFILE|*",
+      "model": "openai/gpt-oss-120b",
+      "stageId": 2,
+      "completedAt": "2025-11-25T10:37:10.359Z"
+    },
+    "2-1764067274019": {
+      "id": "2-1764067274019",
+      "topic": "Unlock Adaptive Multi-Asset Growth with PL Capital’s MADP for Elite Investors",
+      "campaignType": "email-newsletter",
+      "platforms": [
+        "email"
+      ],
+      "status": "completed",
+      "type": "content-generation",
+      "contentType": "email-newsletter",
+      "subject": "Unlock adaptive multi‑asset growth with PL Capital’s MADP",
+      "preheader": "Elite investors gain a quantitative edge—discover adaptive multi‑asset strategies delivering consistent alpha.",
+      "subjectVariations": [
+        "Discover elite alpha with PL Capital’s Adaptive MADP strategy",
+        "Your next adaptive multi‑asset opportunity: PL Capital MADP"
+      ],
+      "html": "<!DOCTYPE html>\n<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>PL Capital – Adaptive Multi‑Asset Growth</title>\n</head>\n<body style=\"margin:0; padding:0; background:#f0f0f0; font-family:'Figtree',Arial,sans-serif; -webkit-text-size-adjust:none;\">\n  <center style=\"width:100%; background:#f0f0f0;\">\n    <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width:600px; margin:0 auto;\" bgcolor=\"#ffffff\">\n      <!-- Header -->\n      <tr>\n        <td bgcolor=\"#0e0e6a\" style=\"padding:20px 0; text-align:center;\">\n          <a href=\"https://plcapital.com\" target=\"_blank\" style=\"text-decoration:none;\">\n            <img src=\"https://example.com/logo-white.png\" alt=\"PL Capital\" width=\"120\" height=\"80\" style=\"display:block; border:0;\" />\n          </a>\n        </td>\n      </tr>\n      <!-- Hero Image -->\n      <tr>\n        <td style=\"padding:0;\">\n          <img src=\"https://example.com/images/PLCapital_MADP_hero_600x1200.jpg\" alt=\"PL Capital’s MADP visual – adaptive multi‑asset growth dashboard with performance metrics and a CTA to explore the strategy.\" width=\"600\" style=\"display:block; width:100%; max-width:600px; height:auto;\" />\n        </td>\n      </tr>\n      <!-- Core Message -->\n      <tr>\n        <td bgcolor=\"#f5f5f5\" style=\"padding:30px 20px; text-align:center;\">\n          <h1 style=\"margin:0; font-size:28px; line-height:36px; color:#0e0e6a; font-weight:700;\">\n            Adaptive Multi‑Asset Growth.<br />Quantitative Excellence.<br />Elite Returns.\n          </h1>\n        </td>\n      </tr>\n      <!-- Primary CTA -->\n      <tr>\n        <td align=\"center\" style=\"padding:30px 0; background:#ffffff;\">\n          <a href=\"https://plcapital.com/madp?utm_source=email&utm_medium=newsletter&utm_campaign=elite_madp&email={{Email}}\" target=\"_blank\" style=\"background:#00d084; color:#ffffff; text-decoration:none; padding:15px 30px; font-size:18px; line-height:22px; border-radius:8px; display:inline-block; font-weight:700;\">\n            Explore MADP &#9654;\n          </a>\n        </td>\n      </tr>\n      <!-- Footer -->\n      <tr>\n        <td bgcolor=\"#0e0e6a\" style=\"padding:20px; color:#ffffff; font-size:12px; line-height:18px; text-align:center;\">\n          <p style=\"margin:0;\">© 2025 PL Capital. All rights reserved.</p>\n          <p style=\"margin:5px 0;\">123 Finance Avenue, New York, NY 10001</p>\n          <p style=\"margin:5px 0;\">\n            <a href=\"https://plcapital.com/unsubscribe?email={{Email}}\" style=\"color:#66e766; text-decoration:underline;\">Unsubscribe</a> |\n            <a href=\"https://plcapital.com\" style=\"color:#66e766; text-decoration:underline;\">View in browser</a>\n          </p>\n          <p style=\"margin:5px 0;\">\n            <a href=\"https://twitter.com/plcapital\" style=\"margin-right:10px;\">\n              <img src=\"https://example.com/icons/twitter.png\" alt=\"Twitter\" width=\"24\" style=\"display:inline-block; border:0;\" />\n            </a>\n            <a href=\"https://linkedin.com/company/plcapital\">\n              <img src=\"https://example.com/icons/linkedin.png\" alt=\"LinkedIn\" width=\"24\" style=\"display:inline-block; border:0;\" />\n            </a>\n          </p>\n        </td>\n      </tr>\n    </table>\n  </center>\n</body>\n</html>",
+      "plainText": "Unlock adaptive multi‑asset growth with PL Capital’s MADP\n\nAdaptive Multi‑Asset Growth.\nQuantitative Excellence.\nElite Returns.\n\nExplore MADP: https://plcapital.com/madp?utm_source=email&utm_medium=newsletter&utm_campaign=elite_madp&email={{Email}}\n\n© 2025 PL Capital. All rights reserved.\n123 Finance Avenue, New York, NY 10001\nUnsubscribe: https://plcapital.com/unsubscribe?email={{Email}}\nView in browser: https://plcapital.com",
+      "model": "openai/gpt-oss-120b",
+      "stageId": 2,
+      "completedAt": "2025-11-25T10:41:14.020Z"
+    }
+  },
+  "visuals": {
+    "visual-001": {
+      "id": "visual-001",
+      "campaignId": "campaign-001",
+      "type": "image",
+      "url": "https://example.com/image.jpg",
+      "status": "completed"
+    }
+  },
+  "videos": {
+    "video-001": {
+      "id": "video-001",
+      "campaignId": "campaign-001",
+      "url": "https://example.com/video.mp4",
+      "duration": 30,
+      "status": "completed"
+    }
+  },
+  "published": {
+    "post-001": {
+      "id": "post-001",
+      "campaignId": "campaign-001",
+      "platform": "linkedin",
+      "url": "https://linkedin.com/posts/123",
+      "publishedAt": "2025-11-25T08:30:00.000Z"
+    }
+  },
+  "metrics": {
+    "metric-001": {
+      "id": "metric-001",
+      "campaignId": "campaign-001",
+      "platform": "linkedin",
+      "views": 1250,
+      "engagement": 85,
+      "clicks": 42
+    }
+  }
+}

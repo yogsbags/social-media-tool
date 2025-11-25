@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Raj",
+    "gender": "male",
+    "prompt": "Professional headshot photo of an Indian male financial advisor, age 38, wearing a navy blue business suit with white shirt and subtle tie. Clean shaven, confident warm smile, well-groomed hair. Professional corporate look. Neutral light gray studio background. High quality portrait photo, sharp focus, professional lighting.",
+    "voiceId": "LolxzR74HCt7Un4IvoxI",
+    "voiceName": "Maneesh",
+    "style": "professional",
+    "useCase": "Portfolio updates, Market insights, Client communications",
+    "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+    "status": "failed"
+  },
+  {
+    "name": "Priya",
+    "gender": "female",
+    "prompt": "Professional headshot photo of an Indian female corporate trainer, age 32, wearing elegant business formal attire - navy blazer with light colored blouse. Warm approachable smile, professional makeup, neat hairstyle. Friendly yet professional appearance. Neutral light gray studio background. High quality portrait photo, sharp focus, professional lighting.",
+    "voiceId": "vZcFdbaKO9EUmpfW004U",
+    "voiceName": "Saheli",
+    "style": "educational",
+    "useCase": "Educational content, Client onboarding, Product explainers",
+    "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+    "status": "failed"
+  },
+  {
+    "name": "Arjun",
+    "gender": "male",
+    "prompt": "Professional headshot photo of an Indian male, age 30, wearing smart business casual - light blue button-down shirt without tie. Friendly approachable smile, modern look, well-groomed. Casual yet professional appearance. Neutral light gray studio background. High quality portrait photo, sharp focus, professional lighting.",
+    "voiceId": "oH8YmZXJYEZq5ScgoGn9",
+    "voiceName": "Aakash Aryan",
+    "style": "approachable",
+    "useCase": "Internal communications, Training videos, Team announcements",
+    "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+    "status": "failed"
+  },
+  {
+    "name": "Meera",
+    "gender": "female",
+    "prompt": "Professional headshot photo of an Indian female senior executive, age 45, wearing elegant executive business attire - dark blazer with subtle jewelry. Confident authoritative expression, sophisticated look, well-styled hair. Executive presence. Neutral light gray studio background. High quality portrait photo, sharp focus, professional lighting.",
+    "voiceId": "m28sDRnudtExG3WLAufB",
+    "voiceName": "Alekhya",
+    "style": "executive",
+    "useCase": "CEO messages, Strategic updates, Leadership communications",
+    "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+    "status": "failed"
+  },
+  {
+    "name": "Vikram",
+    "gender": "male",
+    "prompt": "Professional headshot photo of an Indian male financial expert, age 42, wearing brown/tan business blazer with white shirt. Knowledgeable trustworthy expression, slight smile, glasses optional, well-groomed beard optional. Expert advisor appearance. Neutral light gray studio background. High quality portrait photo, sharp focus, professional lighting.",
+    "voiceId": "CZdRaSQ51p0onta4eec8",
+    "voiceName": "Akshay",
+    "style": "expert",
+    "useCase": "Market analysis, Investment advice, Research presentations",
+    "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+    "status": "failed"
+  }
+]
