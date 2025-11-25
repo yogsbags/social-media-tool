@@ -62,6 +62,36 @@ class MoengageEmailPublisher {
 
     return this.client.track(payload);
   }
+
+  /**
+   * Push a WhatsApp creative event to MoEngage Data API.
+   * MoEngage/Interakt journey should map this event to an actual WhatsApp send.
+   */
+  async publishWhatsAppCreative(input) {
+    if (!input?.creativeUrl) {
+      throw new Error('WhatsApp creativeUrl is required');
+    }
+
+    const payload = {
+      type: 'event',
+      customer_id: 'broadcast',
+      actions: [
+        {
+          action: 'WhatsAppCreativeReady',
+          timestamp: Date.now(),
+          attributes: {
+            topic: input.topic || '',
+            creativeUrl: input.creativeUrl,
+            cta: input.cta || '',
+            source: 'social-media-automation',
+            channel: 'whatsapp'
+          }
+        }
+      ]
+    };
+
+    return this.client.track(payload);
+  }
 }
 
 function getMoengageEmailPublisher() {

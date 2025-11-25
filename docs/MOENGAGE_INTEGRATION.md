@@ -23,6 +23,9 @@ Set these in Railway (or locally) before using the endpoints:
   - `getCustomTemplates()`
   - `getCatalog(catalogId)`
   - `getInformReport(reportId)`
+- `backend/integrations/moengage-email-publisher.js`  
+  - `publishNewsletter({ subject, html, plainText, preheader, topic })` → sends `EmailNewsletterReady` event
+  - `publishWhatsAppCreative({ creativeUrl, cta, topic })` → sends `WhatsAppCreativeReady` event
 
 ## API Routes
 
@@ -38,4 +41,6 @@ Set these in Railway (or locally) before using the endpoints:
 - Endpoints are server-only; keys are never exposed to the client bundle.
 - Defaults assume MoEngage region `api-01`; override via the optional base URL vars if needed.
 - This integrates only; no live calls were executed.
-- Publishing Stage: when `campaignType`/platform includes email, Stage 5 uses `backend/integrations/moengage-email-publisher.js` to push an `EmailNewsletterReady` event (subject/html/plain text) to MoEngage. Your MoEngage/SendGrid campaign should listen to that event and send the actual email.
+- Publishing Stage:
+  - Email: when `campaignType`/platform includes email, Stage 5 pushes `EmailNewsletterReady` (subject/html/plain text) to MoEngage; your MoEngage/SendGrid campaign should listen and deliver.
+  - WhatsApp: when platform includes `whatsapp`, Stage 5 pushes `WhatsAppCreativeReady` with `creativeUrl`/`cta`; your MoEngage↔Interakt WhatsApp campaign should listen and deliver.

@@ -483,6 +483,8 @@ class SocialMediaOrchestrator {
     const isEmailNewsletter = (options.platform && options.platform.includes('email')) ||
       (options.type && options.type.includes('email'));
 
+    const isWhatsApp = options.platform && options.platform.includes('whatsapp');
+
     try {
       const publisher = getMoengageEmailPublisher();
       const newsletter = publisher.loadLatestNewsletter(options.topic);
@@ -499,6 +501,25 @@ class SocialMediaOrchestrator {
           topic: newsletter.topic || options.topic
         });
         console.log('   ✅ Newsletter push sent to MoEngage (SendGrid-backed campaign)');
+        return;
+      }
+
+      if (isWhatsApp) {
+        const creativeUrl = options.creativeUrl || options.whatsappImageUrl || options.whatsappVideoUrl;
+        const cta = options.cta || options.whatsappCta;
+
+        if (!creativeUrl) {
+          console.log('   ⚠️  No WhatsApp creative URL provided; skipping WhatsApp push.');
+          return;
+        }
+
+        console.log(`   💬 Publishing WhatsApp creative via MoEngage (event: WhatsAppCreativeReady)...`);
+        await publisher.publishWhatsAppCreative({
+          topic: options.topic,
+          creativeUrl,
+          cta
+        });
+        console.log('   ✅ WhatsApp creative push sent to MoEngage (Interakt-backed campaign expected)');
         return;
       }
     } catch (error) {
