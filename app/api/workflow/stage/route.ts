@@ -155,7 +155,11 @@ export async function POST(request: NextRequest) {
           sendEvent({ log: '🎨 Generating creative prompt with GPT-OSS-120B...' })
 
           try {
-            const promptResponse = await fetch('http://localhost:3004/api/prompt/generate', {
+            const baseUrl = process.env.NEXT_API_PUBLIC_URL
+              ? `https://${process.env.NEXT_API_PUBLIC_URL}`
+              : 'http://localhost:3004';
+
+            const promptResponse = await fetch(`${baseUrl}/api/prompt/generate`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
