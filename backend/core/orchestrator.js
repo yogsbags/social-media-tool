@@ -307,7 +307,8 @@ class SocialMediaOrchestrator {
         platform: 'whatsapp',
         format: 'image',
         topic: options.topic,
-        type: options.type
+        type: options.type,
+        brandSettings: options.brandSettings
       });
 
       const result = await this.stageVisuals({
@@ -385,14 +386,31 @@ class SocialMediaOrchestrator {
    * Build visual prompt based on options
    */
   _buildVisualPrompt(options) {
-    const { platform, format, topic, type } = options;
+    const { platform, format, topic, type, brandSettings } = options;
+
+    const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';
+    const customBrandColors = brandSettings?.customColors
+      ? `Brand colors: ${brandSettings.customColors}.`
+      : '';
+    const brandTone = brandSettings?.customTone
+      ? `Tone: ${brandSettings.customTone}.`
+      : '';
+    const brandInstructions = brandSettings?.customInstructions
+      ? `Additional guidance: ${brandSettings.customInstructions}.`
+      : '';
+    const brandGuidance = brandSettings
+      ? `${customBrandColors} ${brandTone} ${brandInstructions}`.trim() || defaultBrand
+      : defaultBrand;
+
+    const safeFormat = format || 'image';
 
     const basePrompts = {
-      linkedin: `Professional ${format} graphic for LinkedIn about ${topic || 'financial investment'}. Corporate blue and green color scheme, clean modern design, trust-building aesthetic.`,
-      instagram: `Eye-catching ${format} visual for Instagram about ${topic || 'investment growth'}. Vibrant colors, modern gradient background, engaging social media aesthetic.`,
-      youtube: `High-quality ${format} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design.`,
-      facebook: `Engaging ${format} post graphic for Facebook about ${topic || 'financial planning'}. Community-focused, accessible design, clear messaging.`,
-      twitter: `Concise ${format} visual for Twitter about ${topic || 'market insights'}. Clean, minimal design optimized for quick engagement.`
+      linkedin: `Professional ${safeFormat} graphic for LinkedIn about ${topic || 'financial investment'}. Corporate blue and green color scheme, clean modern design, trust-building aesthetic.`,
+      instagram: `Eye-catching ${safeFormat} visual for Instagram about ${topic || 'investment growth'}. Vibrant colors, modern gradient background, engaging social media aesthetic.`,
+      youtube: `High-quality ${safeFormat} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design.`,
+      facebook: `Engaging ${safeFormat} post graphic for Facebook about ${topic || 'financial planning'}. Community-focused, accessible design, clear messaging.`,
+      twitter: `Concise ${safeFormat} visual for Twitter about ${topic || 'market insights'}. Clean, minimal design optimized for quick engagement.`,
+      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors. ${brandGuidance}`
     };
 
     return basePrompts[platform] || basePrompts.linkedin;
