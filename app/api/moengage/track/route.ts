@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getMoengageClient, MoengageTrackPayload } from '../../../../backend/integrations/moengage-client'
+
+// Use CommonJS export to avoid bundler issues with shared backend code
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { getMoengageClient } = require('../../../../backend/integrations/moengage-client')
+
+type MoengageTrackPayload = {
+  type: 'event' | 'customer'
+  customer_id: string
+  actions?: Array<{ action: string; timestamp?: number; attributes?: Record<string, any> }>
+  attributes?: Record<string, any>
+}
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

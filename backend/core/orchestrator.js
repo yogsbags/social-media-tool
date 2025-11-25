@@ -3,6 +3,7 @@ const path = require('path');
 const StateManager = require('./state-manager');
 const ImageGenerator = require('../image/image-generator');
 const VideoCoordinator = require('../video/video-coordinator');
+const { getMoengageEmailPublisher } = require('../integrations/moengage-email-publisher');
 
 class SocialMediaOrchestrator {
   constructor(options = {}) {
@@ -110,7 +111,8 @@ class SocialMediaOrchestrator {
       'youtube-explainer': this.runYouTubeExplainer.bind(this),
       'youtube-short': this.runYouTubeShort.bind(this),
       'facebook-community': this.runFacebookCommunity.bind(this),
-      'twitter-thread': this.runTwitterThread.bind(this)
+      'twitter-thread': this.runTwitterThread.bind(this),
+      'email-newsletter': this.runEmailNewsletter.bind(this)
     };
 
     const handler = campaignHandlers[campaignType];
@@ -477,8 +479,35 @@ class SocialMediaOrchestrator {
       return;
     }
 
-    // TODO: Implement Zapier MCP publishing
-    console.log('   ⚠️  Publishing not yet implemented');
+    // Email newsletter publishing via MoEngage
+    const isEmailNewsletter = (options.platform && options.platform.includes('email')) ||
+      (options.type && options.type.includes('email'));
+
+    try {
+      const publisher = getMoengageEmailPublisher();
+      const newsletter = publisher.loadLatestNewsletter(options.topic);
+
+      if (isEmailNewsletter || newsletter) {
+        if (!newsletter) {
+          console.log('   ⚠️  No email newsletter content found in workflow-state.json');
+          return;
+        }
+
+        console.log(`   📧 Publishing newsletter via MoEngage (subject: ${newsletter.subject})...`);
+        await publisher.publishNewsletter({
+          ...newsletter,
+          topic: newsletter.topic || options.topic
+        });
+        console.log('   ✅ Newsletter push sent to MoEngage (SendGrid-backed campaign)');
+        return;
+      }
+    } catch (error) {
+      console.error(`   ❌ MoEngage publish failed: ${error.message}`);
+      return;
+    }
+
+    // TODO: Implement other platform publishing integrations
+    console.log('   ⚠️  Publishing not yet implemented for non-email platforms');
   }
 
   async stageTracking(options) {
@@ -515,6 +544,26 @@ class SocialMediaOrchestrator {
 
   async runTwitterThread(options) {
     console.log('🐦 Twitter Thread - Not yet implemented');
+  }
+
+  async runEmailNewsletter(options) {
+    console.log('📧 Email Newsletter Campaign');
+    console.log(`   Topic: ${options.topic}\n`);
+
+    await this.stageContent({
+      platform: 'email',
+      format: 'newsletter',
+      topic: options.topic,
+      type: 'email-newsletter'
+    });
+
+    await this.stagePublishing({
+      platform: 'email',
+      type: 'email-newsletter',
+      topic: options.topic
+    });
+
+    console.log('\n✅ Email newsletter publishing trigger sent!\n');
   }
 }
 

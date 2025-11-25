@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getMoengageClient } from '../../../../backend/integrations/moengage-client'
+
+// Use CommonJS export to avoid bundler issues with shared backend code
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { getMoengageClient } = require('../../../../backend/integrations/moengage-client')
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
