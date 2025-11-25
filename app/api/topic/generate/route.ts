@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
         topic = quoteMatch[1]
       } else {
         // Get the last complete sentence
-        const sentences = reasoning.split(/[.!?]/).filter(s => s.trim().length > 10)
+        const sentences = reasoning.split(/[.!?]/).filter((s: string) => s.trim().length > 10)
         topic = sentences[sentences.length - 1]?.trim() || reasoning
       }
     }
