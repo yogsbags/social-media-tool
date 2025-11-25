@@ -311,13 +311,38 @@ class SocialMediaOrchestrator {
         brandSettings: options.brandSettings
       });
 
-      const result = await this.stageVisuals({
+      // If a reference image path is provided (via env), use edit mode
+      const referenceImagePath = process.env.REFERENCE_IMAGE_PATH;
+      if (referenceImagePath) {
+        console.log(`   🖼️  Applying reference image: ${referenceImagePath}`);
+      }
+
+      const visualsOptions = {
         platform: 'whatsapp',
         format: 'image',
         topic: options.topic,
         type: options.type,
         prompt
-      });
+      };
+
+      let result;
+      if (referenceImagePath) {
+        // Use editImage to guide generation with reference
+        const generator = new ImageGenerator({
+          apiKey: process.env.GEMINI_API_KEY,
+          provider: 'gemini'
+        });
+
+        const editResult = await generator.editImage(prompt, referenceImagePath, {
+          aspectRatio: this._getAspectRatioForFormat('story') // 9:16 for WhatsApp
+        });
+        result = {
+          success: true,
+          images: editResult.images || editResult.result || []
+        };
+      } else {
+        result = await this.stageVisuals(visualsOptions);
+      }
 
       if (result?.success) {
         console.log('   ✅ WhatsApp creative generated');

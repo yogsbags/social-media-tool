@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server'
 import { spawn } from 'child_process'
 import path from 'path'
 import fs from 'fs'
+import os from 'os'
+import { randomUUID } from 'crypto'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -79,7 +81,8 @@ export async function POST(request: NextRequest) {
     targetAudience,
     contentType,
     language,
-    brandSettings
+    brandSettings,
+    files = {}
   } = body
 
   const stageNames: Record<number, string> = {
@@ -99,6 +102,21 @@ export async function POST(request: NextRequest) {
     async start(controller) {
       const sendEvent = (data: any) => {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
+      }
+
+      // Helper to persist base64 image to tmp file and return path
+      const persistBase64Image = (dataUrl: string, name: string) => {
+        try {
+          const [, meta, b64] = dataUrl.match(/^data:(.*?);base64,(.*)$/) || []
+          const buffer = Buffer.from(b64 || dataUrl, 'base64')
+          const ext = meta?.includes('png') ? '.png' : meta?.includes('jpeg') ? '.jpg' : '.png'
+          const tmpPath = path.join(os.tmpdir(), `${randomUUID()}-${name}${ext}`)
+          fs.writeFileSync(tmpPath, buffer)
+          return tmpPath
+        } catch (e) {
+          console.error('Failed to persist reference image:', e)
+          return null
+        }
       }
 
       try {
@@ -280,6 +298,16 @@ export async function POST(request: NextRequest) {
           ...process.env,
           NODE_PATH: parentNodeModules + (process.env.NODE_PATH ? ':' + process.env.NODE_PATH : '')
         } as NodeJS.ProcessEnv
+
+        // Inject reference image (first one) for WhatsApp static creatives
+        if (files?.referenceImages?.length > 0) {
+          const ref = files.referenceImages[0]
+          const tmpPath = persistBase64Image(ref.data, ref.name || 'ref')
+          if (tmpPath) {
+            nodeEnv.REFERENCE_IMAGE_PATH = tmpPath
+            sendEvent({ log: `🖼️  Using reference image for visuals: ${tmpPath}` })
+          }
+        }
 
         // Pass LongCat configuration as environment variables for video stage
         if (stageId === 4 && longCatConfig) {
