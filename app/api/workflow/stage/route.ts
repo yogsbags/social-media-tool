@@ -155,9 +155,13 @@ export async function POST(request: NextRequest) {
           sendEvent({ log: '🎨 Generating creative prompt with GPT-OSS-120B...' })
 
           try {
-            const baseUrl = process.env.NEXT_API_PUBLIC_URL
-              ? `https://${process.env.NEXT_API_PUBLIC_URL}`
-              : 'http://localhost:3004';
+            const requestOrigin = new URL(request.url).origin
+            const envBase = process.env.NEXT_API_PUBLIC_URL
+              ? (process.env.NEXT_API_PUBLIC_URL.startsWith('http') ? process.env.NEXT_API_PUBLIC_URL : `https://${process.env.NEXT_API_PUBLIC_URL}`)
+              : process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')
+                ? process.env.NEXT_PUBLIC_API_URL
+                : null
+            const baseUrl = envBase || requestOrigin
 
             const promptResponse = await fetch(`${baseUrl}/api/prompt/generate`, {
               method: 'POST',
