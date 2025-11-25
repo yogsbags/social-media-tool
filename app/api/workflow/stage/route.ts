@@ -192,15 +192,40 @@ export async function POST(request: NextRequest) {
             }
 
             saveStageData(stageId, stageData)
-            sendEvent({ stage: stageId, status: 'completed', message: 'Creative prompt generated' })
+            sendEvent({ stage: stageId, status: 'completed', message: 'Creative prompt generated', data: stageData })
             sendEvent({ log: '✅ Stage 1 completed successfully!' })
             controller.close()
             return
 
           } catch (error) {
             sendEvent({ log: `⚠️ Prompt generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
-            sendEvent({ log: '📦 Falling back to standard workflow execution...' })
-            // Continue with normal backend execution if prompt generation fails
+            // Fallback prompt so the UI still has editable content
+            const brand = brandSettings?.useBrandGuidelines
+              ? 'Use PL Capital colors (Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766) and Figtree typography.'
+              : [
+                  brandSettings?.customColors ? `Brand colors: ${brandSettings.customColors}` : null,
+                  brandSettings?.customTone ? `Tone: ${brandSettings.customTone}` : null,
+                  brandSettings?.customInstructions ? `Guidelines: ${brandSettings.customInstructions}` : null
+                ].filter(Boolean).join(' ')
+              || 'Use brand-safe colors and professional tone.'
+
+            const fallbackPrompt = `Create a WhatsApp static creative for "${topic || 'the campaign'}". Focus on a bold headline, single CTA, high contrast, and mobile-friendly 1080x1920 layout. ${brand}`;
+
+            const stageData = {
+              topic,
+              campaignType,
+              platforms,
+              status: 'completed',
+              type: 'campaign-planning',
+              creativePrompt: fallbackPrompt,
+              promptModel: 'fallback'
+            }
+
+            saveStageData(stageId, stageData)
+            sendEvent({ stage: stageId, status: 'completed', message: 'Creative prompt generated (fallback)', data: stageData })
+            sendEvent({ log: '✅ Stage 1 completed with fallback prompt' })
+            controller.close()
+            return
           }
         }
 
