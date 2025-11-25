@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
       }
 
-      // Helper to persist base64 image to tmp file and return path
+      // Helper to persist base64 image to tmp file (fallback) and return path
       const persistBase64Image = (dataUrl: string, name: string) => {
         try {
           const [, meta, b64] = dataUrl.match(/^data:(.*?);base64,(.*)$/) || []
@@ -115,6 +115,33 @@ export async function POST(request: NextRequest) {
           return tmpPath
         } catch (e) {
           console.error('Failed to persist reference image:', e)
+          return null
+        }
+      }
+
+      // Helper to upload base64 image to ImgBB if key exists
+      const uploadToImgbb = async (dataUrl: string) => {
+        const apiKey = process.env.IMGBB_API_KEY
+        if (!apiKey) return null
+        try {
+          const [, , b64] = dataUrl.match(/^data:(.*?);base64,(.*)$/) || []
+          const payload = new URLSearchParams()
+          payload.append('key', apiKey)
+          payload.append('image', b64 || dataUrl)
+          const resp = await fetch('https://api.imgbb.com/1/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: payload
+          })
+          if (!resp.ok) {
+            const text = await resp.text()
+            console.error('ImgBB upload failed:', resp.status, text)
+            return null
+          }
+          const json = await resp.json()
+          return json?.data?.url || null
+        } catch (e) {
+          console.error('ImgBB upload error:', e)
           return null
         }
       }
@@ -302,10 +329,21 @@ export async function POST(request: NextRequest) {
         // Inject reference image (first one) for WhatsApp static creatives
         if (files?.referenceImages?.length > 0) {
           const ref = files.referenceImages[0]
-          const tmpPath = persistBase64Image(ref.data, ref.name || 'ref')
-          if (tmpPath) {
-            nodeEnv.REFERENCE_IMAGE_PATH = tmpPath
-            sendEvent({ log: `🖼️  Using reference image for visuals: ${tmpPath}` })
+          // Try ImgBB first if key exists
+          let refUrl: string | null = null
+          if (process.env.IMGBB_API_KEY) {
+            sendEvent({ log: '🖼️  Uploading reference image to ImgBB for Gemini guidance...' })
+            refUrl = await uploadToImgbb(ref.data)
+          }
+          if (refUrl) {
+            nodeEnv.VISUAL_REFERENCE_URL = refUrl
+            sendEvent({ log: `🖼️  Using reference image URL for visuals: ${refUrl}` })
+          } else {
+            const tmpPath = persistBase64Image(ref.data, ref.name || 'ref')
+            if (tmpPath) {
+              nodeEnv.REFERENCE_IMAGE_PATH = tmpPath
+              sendEvent({ log: `🖼️  Using reference image (temp file) for visuals: ${tmpPath}` })
+            }
           }
         }
 

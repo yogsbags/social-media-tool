@@ -1512,14 +1512,24 @@ class ImageGenerator {
     let imagePath;
 
     if (typeof input === 'string') {
-      // Load from file path
-      imagePath = input;
-      imageBuffer = await fs.readFile(input);
+      // Load from URL or file path
+      if (input.startsWith('http://') || input.startsWith('https://')) {
+        const response = await fetch(input);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch reference image: ${response.status} ${response.statusText}`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        imageBuffer = Buffer.from(arrayBuffer);
+        imagePath = null;
+      } else {
+        imagePath = input;
+        imageBuffer = await fs.readFile(input);
+      }
     } else if (Buffer.isBuffer(input)) {
       // Use buffer directly
       imageBuffer = input;
     } else {
-      throw new Error("Input must be file path or Buffer");
+      throw new Error("Input must be file path, URL, or Buffer");
     }
 
     // Detect MIME type from file extension or buffer

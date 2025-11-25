@@ -313,8 +313,9 @@ class SocialMediaOrchestrator {
 
       // If a reference image path is provided (via env), use edit mode
       const referenceImagePath = process.env.REFERENCE_IMAGE_PATH;
-      if (referenceImagePath) {
-        console.log(`   🖼️  Applying reference image: ${referenceImagePath}`);
+      const referenceImageUrl = process.env.VISUAL_REFERENCE_URL;
+      if (referenceImagePath || referenceImageUrl) {
+        console.log(`   🖼️  Applying reference image: ${referenceImagePath || referenceImageUrl}`);
       }
 
       const visualsOptions = {
@@ -326,14 +327,16 @@ class SocialMediaOrchestrator {
       };
 
       let result;
-      if (referenceImagePath) {
+      if (referenceImagePath || referenceImageUrl) {
         // Use editImage to guide generation with reference
         const generator = new ImageGenerator({
           apiKey: process.env.GEMINI_API_KEY,
           provider: 'gemini'
         });
 
-        const editResult = await generator.editImage(prompt, referenceImagePath, {
+        const refInput = referenceImagePath || referenceImageUrl;
+
+        const editResult = await generator.editImage(prompt, refInput, {
           aspectRatio: this._getAspectRatioForFormat('story') // 9:16 for WhatsApp
         });
         result = {
