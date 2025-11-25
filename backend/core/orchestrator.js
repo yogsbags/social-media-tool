@@ -295,8 +295,40 @@ class SocialMediaOrchestrator {
       return;
     }
 
-    // TODO: Implement AI content generation
-    console.log('   ⚠️  Content generation not yet implemented');
+    // For WhatsApp static creative, delegate to visual generation now
+    const isWhatsAppImage = (options.platform && options.platform.includes('whatsapp')) ||
+      (options.type && options.type.includes('whatsapp')) ||
+      options.format === 'whatsapp' ||
+      options.format === 'image';
+
+    if (isWhatsAppImage) {
+      console.log('   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...');
+      const prompt = options.prompt || this._buildVisualPrompt({
+        platform: 'whatsapp',
+        format: 'image',
+        topic: options.topic,
+        type: options.type
+      });
+
+      const result = await this.stageVisuals({
+        platform: 'whatsapp',
+        format: 'image',
+        topic: options.topic,
+        type: options.type,
+        prompt
+      });
+
+      if (result?.success) {
+        console.log('   ✅ WhatsApp creative generated');
+        return result;
+      }
+
+      console.log('   ⚠️ WhatsApp creative generation failed or returned no result');
+      return;
+    }
+
+    // TODO: Implement other AI content generation
+    console.log('   ⚠️  Content generation not yet implemented for this platform');
   }
 
   async stageVisuals(options) {
@@ -465,7 +497,8 @@ class SocialMediaOrchestrator {
       instagram: `Engaging ${format || 'reel'} video about ${topic || 'investment tips'}. Dynamic visuals, modern aesthetic, social media optimized.`,
       youtube: `Educational ${format || 'explainer'} video about ${topic || 'wealth building'}. Clear explanations, professional presentation, engaging content.`,
       facebook: `Community-focused ${format || 'post'} video about ${topic || 'financial planning'}. Accessible content, relatable presentation.`,
-      twitter: `Concise ${format || 'update'} video about ${topic || 'market insights'}. Quick delivery, attention-grabbing visuals.`
+      twitter: `Concise ${format || 'update'} video about ${topic || 'market insights'}. Quick delivery, attention-grabbing visuals.`,
+      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors.`
     };
 
     return basePrompts[platform] || basePrompts.linkedin;
