@@ -73,6 +73,16 @@ HEYGEN_API_KEY=<your-heygen-key>    # AI avatar videos
 REPLICATE_API_TOKEN=<your-replicate-token>
 ```
 
+**MoEngage (server-side only):**
+```bash
+MOENGAGE_WORKSPACE_ID=<your-moengage-workspace-id>
+MOENGAGE_DATA_API_KEY=<your-moengage-data-api-key>
+MOENGAGE_REPORTING_API_KEY=<your-moengage-reporting-api-key>
+# Optional overrides if your region differs:
+# MOENGAGE_BASE_URL=https://api-01.moengage.com
+# MOENGAGE_REPORTS_BASE_URL=https://api-01.moengage.com
+```
+
 **Optional:**
 ```bash
 NEXT_PUBLIC_API_URL=<backend-api-url-if-needed>

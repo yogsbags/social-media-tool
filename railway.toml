@@ -16,3 +16,7 @@ sleepApplication = false
 # - FAL_KEY (LongCat long-form videos)
 # - HEYGEN_API_KEY (AI avatar videos)
 # - REPLICATE_API_TOKEN (Image generation)
+# - MOENGAGE_WORKSPACE_ID
+# - MOENGAGE_DATA_API_KEY
+# - MOENGAGE_REPORTING_API_KEY
+# - (optional) MOENGAGE_BASE_URL, MOENGAGE_REPORTS_BASE_URL
