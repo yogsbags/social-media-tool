@@ -28,7 +28,11 @@ const voiceMapping = JSON.parse(
 );
 
 // HeyGen API Key
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
+
+if (!HEYGEN_API_KEY) {
+  throw new Error('Set HEYGEN_API_KEY in your environment before running this script.');
+}
 ```
 
 ### Step 2: Generate Video
@@ -130,10 +134,14 @@ Save this as `test-quick-video.js`:
 ```javascript
 const fs = require('fs');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 const voiceMapping = JSON.parse(
   fs.readFileSync('./config/heygen-native-voice-mapping.json', 'utf8')
 );
+
+if (!HEYGEN_API_KEY) {
+  throw new Error('Set HEYGEN_API_KEY in your environment before running this script.');
+}
 
 async function quickTest() {
   const raj = Object.values(voiceMapping).find(a => a.avatarName === 'Raj');

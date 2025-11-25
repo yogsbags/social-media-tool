@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 
 const avatars = [
   { name: 'Raj', file: 'raj_avatar.jpg', voiceId: 'LolxzR74HCt7Un4IvoxI', voiceName: 'Maneesh', gender: 'male' },
@@ -145,6 +145,10 @@ async function trainPhotoAvatar(name, groupId) {
  * Main workflow
  */
 async function main() {
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
+
   console.log('='.repeat(60));
   console.log('  HeyGen Photo Avatar Creation Workflow');
   console.log('='.repeat(60));

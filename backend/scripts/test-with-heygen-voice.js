@@ -5,13 +5,17 @@
 const fs = require('fs');
 const path = require('path');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 
 const testScript = "Hello, I am Raj. This is a test of the HeyGen photo avatar video generation.";
 
 console.log('Testing with HeyGen built-in voice...\n');
 
 async function testWithHeyGenVoice() {
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
+
   const payload = {
     test: true,
     video_inputs: [{

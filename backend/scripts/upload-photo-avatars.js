@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 
 const avatars = [
   { name: 'Raj', file: 'raj_avatar.jpg', voiceId: 'LolxzR74HCt7Un4IvoxI', voiceName: 'Maneesh' },
@@ -17,6 +17,10 @@ const avatars = [
 ];
 
 async function uploadTalkingPhoto(name, imagePath) {
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
+
   console.log(`\nUploading ${name} to HeyGen Talking Photo...`);
 
   const imageBuffer = fs.readFileSync(imagePath);
@@ -60,6 +64,10 @@ async function uploadTalkingPhoto(name, imagePath) {
 
 async function listTalkingPhotos() {
   console.log('\nListing existing talking photos...');
+
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
 
   const response = await fetch('https://api.heygen.com/v1/talking_photo.list', {
     method: 'GET',

@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const VideoGenerator = require('../video/video-generator');
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyDR2LVkBFAmxAsCF-WcGk_4K5UjdKfCavQ';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // Avatar image paths
 const AVATAR_DIR = path.join(__dirname, '../generated-avatars');
@@ -214,6 +214,10 @@ market analysis to camera. Professional studio setting, serious tone.`
 // Main execution
 async function main() {
   const args = process.argv.slice(2);
+
+  if (!GEMINI_API_KEY) {
+    throw new Error('Missing GEMINI_API_KEY. Set it in the environment before running.');
+  }
 
   if (args.includes('--all')) {
     await testAllAvatars();

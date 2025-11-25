@@ -6,8 +6,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
-const ELEVENLABS_API_KEY = 'sk_ed4a80a7544d3f88d95df1a8d7da07346b92670f5f9b4980';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 // Load avatar mappings
 const mappingPath = path.join(__dirname, '../config/avatar-voice-mapping.json');
@@ -30,6 +30,14 @@ console.log('='.repeat(60));
  */
 async function generateTestVideo() {
   console.log('\n📹 Generating test video...\n');
+
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
+
+  if (!ELEVENLABS_API_KEY) {
+    throw new Error('Missing ELEVENLABS_API_KEY. Set it in the environment before running.');
+  }
 
   const testScript = `Hello, I am ${rajMapping.avatarName}. This is a test of the HeyGen photo avatar video generation with ElevenLabs voice integration. I'm speaking in an Indian accent using the ${rajMapping.voiceName} voice.`;
 

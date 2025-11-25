@@ -379,10 +379,7 @@ backend/test-results/veo-raj-avatar-result.json
 ## 🔑 API Configuration
 
 ```javascript
-// Required environment variable
-process.env.GEMINI_API_KEY = 'AIzaSyDR2LVkBFAmxAsCF-WcGk_4K5UjdKfCavQ';
-
-// VideoGenerator initialization
+// Required environment variable (set GEMINI_API_KEY before running)
 const generator = new VideoGenerator({
   apiKey: process.env.GEMINI_API_KEY,
   model: 'veo-3.1-generate-preview'

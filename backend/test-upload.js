@@ -1,10 +1,14 @@
 const fs = require('fs');
 const FormData = require('form-data');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 const imagePath = './generated-avatars/raj_avatar.jpg';
 
 async function tryUpload() {
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
+
   // Try with 'circle_image' field
   console.log('Attempt 1: Using "circle_image" field...');
   let form = new FormData();

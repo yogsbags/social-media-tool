@@ -1,12 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 
 async function testWithNativeVoice() {
   console.log('='.repeat(60));
   console.log('Testing Talking Photo with HeyGen Native Voice');
   console.log('='.repeat(60));
+
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
 
   const payload = {
     test: true,

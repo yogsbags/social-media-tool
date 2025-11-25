@@ -159,9 +159,9 @@ node scripts/test-heygen-native-voices.js --all
 
 | Service | Key | Status |
 |---------|-----|--------|
-| HeyGen | `ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==` | ✅ Active |
-| Gemini | `AIzaSyDR2LVkBFAmxAsCF-WcGk_4K5UjdKfCavQ` | ✅ Active |
-| ElevenLabs | `sk_ed4a80a7544d3f88d95df1a8d7da07346b92670f5f9b4980` | 📝 Reference Only |
+| HeyGen | `HEYGEN_API_KEY` (env) | ✅ Set in environment |
+| Gemini | `GEMINI_API_KEY` (env) | ✅ Set in environment |
+| ElevenLabs | `ELEVENLABS_API_KEY` (env) | 📝 Reference Only |
 
 ---
 

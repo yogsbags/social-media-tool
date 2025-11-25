@@ -1,10 +1,14 @@
 const fs = require('fs');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 const imagePath = './generated-avatars/raj_avatar.jpg';
 
 async function uploadBinary() {
   console.log('Uploading with binary data...');
+
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
   
   const imageBuffer = fs.readFileSync(imagePath);
   

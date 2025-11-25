@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 
 const avatars = [
   { name: 'Raj', file: 'raj_avatar.jpg', voiceId: 'LolxzR74HCt7Un4IvoxI', voiceName: 'Maneesh', gender: 'male' },
@@ -19,6 +19,10 @@ const avatars = [
 async function uploadTalkingPhoto(name, imagePath) {
   console.log(`\n📸 Uploading ${name} as talking photo...`);
   console.log(`   Image: ${imagePath}`);
+
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
 
   // Read image and convert to base64
   const imageBuffer = fs.readFileSync(imagePath);
@@ -66,6 +70,10 @@ async function uploadTalkingPhoto(name, imagePath) {
 async function uploadWithFormData(name, imagePath) {
   console.log(`\n📸 Trying FormData upload for ${name}...`);
 
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
+
   // Use node-fetch FormData approach
   const FormData = require('form-data');
   const form = new FormData();
@@ -104,6 +112,10 @@ async function uploadWithFormData(name, imagePath) {
 
 async function uploadWithUploadEndpoint(name, imagePath) {
   console.log(`\n📸 Trying upload.heygen.com endpoint for ${name}...`);
+
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
 
   const FormData = require('form-data');
   const form = new FormData();

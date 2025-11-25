@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 
 // Load HeyGen native voice mappings
 const mappingPath = path.join(__dirname, '../config/heygen-native-voice-mapping.json');
@@ -34,6 +34,10 @@ console.log('='.repeat(80));
  * Generate video for a specific avatar
  */
 async function generateVideo(avatarMapping) {
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
+
   const testScript = `नमस्ते, मैं ${avatarMapping.avatarName} हूं। यह HeyGen फोटो अवतार और देशी हिंदी आवाज एकीकरण का परीक्षण है। Hello, I am ${avatarMapping.avatarName}. This is a test of HeyGen photo avatar with native Hindi voice integration.`;
 
   console.log(`\n${'='.repeat(80)}`);

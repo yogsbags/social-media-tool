@@ -116,9 +116,9 @@ POST https://api.heygen.com/v2/photo_avatar/avatar_group/add
 
 ## 🔑 API Keys
 
-- **HeyGen API Key:** `ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==`
-- **ElevenLabs API Key:** `sk_ed4a80a7544d3f88d95df1a8d7da07346b92670f5f9b4980`
-- **Gemini API Key:** `AIzaSyDR2LVkBFAmxAsCF-WcGk_4K5UjdKfCavQ`
+- **HeyGen API Key:** `HEYGEN_API_KEY` (set in environment)
+- **ElevenLabs API Key:** `ELEVENLABS_API_KEY` (set in environment)
+- **Gemini API Key:** `GEMINI_API_KEY` (set in environment)
 
 ## 🚀 Next Steps
 

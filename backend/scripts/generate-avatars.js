@@ -5,8 +5,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const GEMINI_API_KEY = 'AIzaSyDR2LVkBFAmxAsCF-WcGk_4K5UjdKfCavQ';
-const HEYGEN_API_KEY = 'ZTAyZDk1NTIwYzRkNDU1NjkxNTM3ZmI2ZTViOTIwYjMtMTc2MDUxNDE0OQ==';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 
 // Avatar definitions with prompts
 const avatarDefinitions = [
@@ -171,6 +171,14 @@ async function createHeyGenPhotoAvatar(name, imageBase64) {
 async function main() {
   console.log('🚀 Avatar Generation Script');
   console.log('='.repeat(50));
+
+  if (!GEMINI_API_KEY) {
+    throw new Error('Missing GEMINI_API_KEY. Set it in the environment before running.');
+  }
+
+  if (!HEYGEN_API_KEY) {
+    throw new Error('Missing HEYGEN_API_KEY. Set it in the environment before running.');
+  }
 
   const results = [];
 
