@@ -4,6 +4,7 @@ const StateManager = require('./state-manager');
 const ImageGenerator = require('../image/image-generator');
 const VideoCoordinator = require('../video/video-coordinator');
 const { getMoengageEmailPublisher } = require('../integrations/moengage-email-publisher');
+const { getMoengageClient } = require('../integrations/moengage-client');
 
 class SocialMediaOrchestrator {
   constructor(options = {}) {
@@ -539,8 +540,37 @@ class SocialMediaOrchestrator {
       return;
     }
 
-    // TODO: Implement analytics tracking
-    console.log('   ⚠️  Tracking not yet implemented');
+    // MoEngage reporting for WhatsApp/Email (requires MOENGAGE_* env)
+    const isWhatsApp = options.platform && options.platform.includes('whatsapp');
+    const isEmail = options.platform && options.platform.includes('email');
+
+    if (isWhatsApp || isEmail) {
+      try {
+        const client = getMoengageClient();
+        const now = Date.now();
+        const fromTs = now - 24 * 60 * 60 * 1000;
+        const params = {
+          event_name: isWhatsApp ? 'WhatsAppCreativeReady' : 'EmailNewsletterReady',
+          from: fromTs,
+          to: now,
+          limit: 50
+        };
+
+        console.log('   📡 Fetching MoEngage business events for last 24h...');
+        const data = await client.getBusinessEvents(params);
+        console.log(`   ✅ Retrieved ${Array.isArray(data?.data) ? data.data.length : 0} events`);
+        if (Array.isArray(data?.data) && data.data.length) {
+          const recent = data.data.slice(0, 5);
+          recent.forEach((item, idx) => {
+            console.log(`     [${idx + 1}] ${item.event_name || 'event'} :: ${item.event_timestamp || ''}`);
+          });
+        }
+      } catch (error) {
+        console.error(`   ❌ MoEngage tracking fetch failed: ${error.message}`);
+      }
+    } else {
+      console.log('   ⚠️  Tracking not yet implemented for this platform');
+    }
   }
 
   /**
