@@ -72,6 +72,13 @@ Layout reference (use this structure and styling cues):
   * Footer image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/9wn/vw0/ds6/Asset%202.png
 - Fonts: Figtree (load via Google Fonts); Colors: Navy/Blue (#0000a0 accents), CTA buttons #00b34e, body text #000
 - Dividers: 1px solid #0000a0 consistent throughout sections
+- Social icons bar (below footer image): centered row of circular color icons linking to:
+  * LinkedIn: https://www.linkedin.com/company/prabhudaslilladher/
+  * Instagram: https://www.instagram.com/prabhudaslilladher/
+  * X/Twitter: https://x.com/PLIndiaOnline
+  * YouTube: https://www.youtube.com/@PrabhudasLilladherIndia
+  * Telegram: https://t.me/PLIndiaOnline
+  Use 32px circle-color icons (e.g., https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/circle-color/linkedin@2x.png etc.)
 
 📧 SUBJECT LINE BEST PRACTICES (from subjectline.com):
 1. **Length**: 40-60 characters (optimal for mobile preview)
