@@ -263,7 +263,15 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            const emailResponse = await fetch('http://localhost:3004/api/email/generate', {
+            const requestOrigin = new URL(request.url).origin
+            const envBase = process.env.NEXT_API_PUBLIC_URL
+              ? (process.env.NEXT_API_PUBLIC_URL.startsWith('http') ? process.env.NEXT_API_PUBLIC_URL : `https://${process.env.NEXT_API_PUBLIC_URL}`)
+              : process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')
+                ? process.env.NEXT_PUBLIC_API_URL
+                : null
+            const baseUrl = envBase || requestOrigin
+
+            const emailResponse = await fetch(`${baseUrl}/api/email/generate`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
