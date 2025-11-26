@@ -78,7 +78,7 @@ Layout reference (use this structure and styling cues):
   * X/Twitter: https://x.com/PLIndiaOnline
   * YouTube: https://www.youtube.com/@PrabhudasLilladherIndia
   * Telegram: https://t.me/PLIndiaOnline
-  Use 32px circle-color icons (e.g., https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/circle-color/linkedin@2x.png etc.)
+  Use 32px circle-color icons (e.g., https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/circle-color/linkedin@2x.png etc.) in a single horizontal row (centered) — use a table with inline-block cells and equal padding so icons do NOT stack vertically on desktop or mobile.
 
 📧 SUBJECT LINE BEST PRACTICES (from subjectline.com):
 1. **Length**: 40-60 characters (optimal for mobile preview)
