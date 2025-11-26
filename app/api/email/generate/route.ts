@@ -54,9 +54,20 @@ ${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettin
 `
     }
 
-    const systemPrompt = `You are an expert email marketing specialist and HTML email designer.
+const systemPrompt = `You are an expert email marketing specialist and HTML email designer.
 
 Your task is to generate a complete, production-ready HTML email newsletter following industry best practices.
+
+Layout reference (use this structure and styling cues):
+- 600px wide, single-column responsive layout
+- Header/hero image with logo (link to plindia.com) and top banner
+- Intro paragraph and section dividers
+- “Market Highlights” section
+- 3-column story grid with image + headline + “Read more” button (rounded 24px, #00b34e background, white text, Figtree bold 12px, generous horizontal padding)
+- CTA section to visit PL Capital News
+- “Trending Web Stories” section with another 3-column grid and buttons
+- Closing tagline and footer image
+- Fonts: Figtree (load via Google Fonts); Colors: Navy/Blue (#0000a0 accents), CTA buttons #00b34e, body text #000
 
 📧 SUBJECT LINE BEST PRACTICES (from subjectline.com):
 1. **Length**: 40-60 characters (optimal for mobile preview)
