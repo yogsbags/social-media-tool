@@ -24,16 +24,16 @@ class MoengageClient {
     }
   }
 
-  async _requestData(path, body) {
+  async _requestData(path, body, method = 'POST') {
     this._assertData();
 
     const response = await fetch(`${this.baseUrl}/v1${path}`, {
-      method: 'POST',
+      method,
       headers: {
         'Content-Type': 'application/json',
         Authorization: this.dataAuthHeader
       },
-      body: JSON.stringify(body)
+      body: body ? JSON.stringify(body) : undefined
     });
 
     if (!response.ok) {
@@ -94,30 +94,34 @@ class MoengageClient {
   // Email Template API Methods
 
   async _requestTemplateAPI(path, body = null, method = 'POST') {
-    this._assertReporting();
+    this._assertData();
 
     // Email Template APIs use v2 endpoint
-    const init = {
+    const requestOptions = {
       method,
       headers: {
-        Authorization: `Bearer ${this.reportingApiKey}`,
         'Content-Type': 'application/json',
-        'MOE-APP-ID': this.workspaceId
+        Authorization: this.dataAuthHeader
       }
     };
 
-    if (body && method !== 'GET' && method !== 'DELETE') {
-      init.body = JSON.stringify(body);
+    if (body && (method === 'POST' || method === 'PUT')) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    const response = await fetch(`${this.reportsBaseUrl}/v2${path}`, init);
+    const response = await fetch(`${this.baseUrl}/v2${path}`, requestOptions);
 
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`MoEngage Email Template API error (${response.status}): ${errorText}`);
     }
 
-    return response.json();
+    // Handle empty responses (e.g., DELETE)
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+    return { success: true };
   }
 
   /**
@@ -180,29 +184,34 @@ class MoengageClient {
   // Email Campaign API Methods
 
   async _requestCampaignAPI(path, body = null, method = 'POST') {
-    this._assertReporting();
+    this._assertData();
 
-    const init = {
+    // Email Campaign APIs use v2 endpoint with MOE-APPKEY header
+    const requestOptions = {
       method,
       headers: {
-        Authorization: `Bearer ${this.reportingApiKey}`,
         'Content-Type': 'application/json',
-        'MOE-APP-ID': this.workspaceId
+        Authorization: this.dataAuthHeader,
+        'MOE-APPKEY': this.workspaceId
       }
     };
 
-    if (body && method !== 'GET') {
-      init.body = JSON.stringify(body);
+    if (body && (method === 'POST' || method === 'PUT')) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    const response = await fetch(`${this.reportsBaseUrl}/v1${path}`, init);
+    const response = await fetch(`${this.baseUrl}/v2${path}`, requestOptions);
 
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`MoEngage Email Campaign API error (${response.status}): ${errorText}`);
     }
 
-    return response.json();
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+    return { success: true };
   }
 
   /**
@@ -241,6 +250,15 @@ class MoengageClient {
    */
   async testEmailCampaign(campaignId, testConfig) {
     return this._requestCampaignAPI(`/email-campaigns/${campaignId}/test`, testConfig);
+  }
+
+  /**
+   * Get campaign meta and reachability information
+   * @param {string} campaignId - MoEngage campaign ID
+   * @returns {Promise<Object>} Campaign meta and reachability data
+   */
+  async getCampaignMeta(campaignId) {
+    return this._requestCampaignAPI(`/email-campaigns/${campaignId}/meta`, null, 'GET');
   }
 
   /**
