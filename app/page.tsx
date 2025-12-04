@@ -90,6 +90,9 @@ export default function Home() {
 
   // Reference Materials
   const [showReferenceMaterials, setShowReferenceMaterials] = useState<boolean>(false)
+  
+  // Avatar Video Configuration
+  const [showAvatarConfig, setShowAvatarConfig] = useState<boolean>(false)
 
   // File uploads
   const [researchPDFs, setResearchPDFs] = useState<File[]>([])
@@ -1370,12 +1373,30 @@ export default function Home() {
 
           {/* Avatar Video Configuration */}
           {contentType === 'avatar-video' && (
-            <div className="mb-6 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-200">
-              <h3 className="text-md font-semibold text-gray-800 mb-4">
-                Avatar Video Configuration
-              </h3>
+            <div className="mb-6 p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 flex-1">
+                  <button
+                    onClick={() => setShowAvatarConfig(!showAvatarConfig)}
+                    className="text-gray-600 hover:text-gray-800 transition-colors"
+                  >
+                    <svg
+                      className={`w-5 h-5 transition-transform ${showAvatarConfig ? 'rotate-90' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                  <h3 className="text-md font-semibold text-gray-800">
+                    Avatar Video Configuration
+                  </h3>
+                </div>
+              </div>
 
-              <div className="space-y-4">
+              {showAvatarConfig && (
+                <div className="space-y-4 mt-4 pt-4 border-t border-green-200">
                 {/* Avatar Selection */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
