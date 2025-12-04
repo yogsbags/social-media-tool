@@ -635,6 +635,152 @@ class SocialMediaOrchestrator {
         console.log('   ✅ Avatar prompt constructed\n');
       }
 
+      // HeyGen avatar routing for Siddharth Vora
+      if (isAvatarMode && isHeyGenAvatar) {
+        console.log('\n🎬 HeyGen Avatar Mode (Siddharth Vora)');
+        console.log(`   Provider: HeyGen`);
+        console.log(`   Avatar: Siddharth Vora (Custom)`);
+        console.log(`   Duration: ${requestedDuration}s\n`);
+
+        // Check for HeyGen API key
+        if (!process.env.HEYGEN_API_KEY) {
+          throw new Error('HEYGEN_API_KEY environment variable is required for HeyGen avatar generation');
+        }
+
+        // Generate or use script
+        let scriptText;
+        if (options.scriptText) {
+          scriptText = options.scriptText;
+          console.log(`   📝 Script: ${scriptText.substring(0, 60)}...`);
+        } else {
+          // Auto-generate script based on topic
+          const topic = options.topic || 'financial services and investment opportunities';
+          const platform = options.platform || 'linkedin';
+          const format = options.format || 'testimonial';
+
+          scriptText = `Generate natural, engaging speech that is informative, trustworthy, and appropriate for the platform. Include key points, benefits, and a clear message. Speech should be conversational yet professional, matching Indian business communication style`;
+
+          console.log(`   📝 Script: [Auto-generated for ${topic}]`);
+        }
+
+        // Get HeyGen avatar and voice IDs from options or use defaults
+        const heygenAvatarId = options.heygenAvatarId || process.env.HEYGEN_AVATAR_ID_SIDDHARTH;
+        const heygenVoiceId = options.heygenVoiceId || process.env.HEYGEN_VOICE_ID_SIDDHARTH;
+
+        if (!heygenAvatarId) {
+          throw new Error('HeyGen avatar ID not configured. Set HEYGEN_AVATAR_ID_SIDDHARTH or pass heygenAvatarId');
+        }
+        if (!heygenVoiceId) {
+          throw new Error('HeyGen voice ID not configured. Set HEYGEN_VOICE_ID_SIDDHARTH or pass heygenVoiceId');
+        }
+
+        console.log(`   👤 HeyGen Avatar ID: ${heygenAvatarId}`);
+        console.log(`   🎙️  HeyGen Voice ID: ${heygenVoiceId}`);
+
+        try {
+          // Generate HeyGen video using MCP tool
+          const heygenResult = await this._callMcpTool('mcp__heygen__generate_avatar_video', {
+            avatar_id: heygenAvatarId,
+            voice_id: heygenVoiceId,
+            input_text: scriptText,
+            title: options.title || `Avatar Video - ${options.topic || 'Content'}`
+          });
+
+          console.log(`   ✅ HeyGen video generation started`);
+          console.log(`   Video ID: ${heygenResult.video_id}`);
+
+          // Wait for completion if requested
+          if (options.waitForCompletion !== false) {
+            console.log(`   ⏳ Waiting for HeyGen video to complete...`);
+
+            let status = 'pending';
+            let attempts = 0;
+            const maxAttempts = 60; // 5 minutes max wait (5s intervals)
+
+            while (status === 'pending' && attempts < maxAttempts) {
+              await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5s
+
+              const statusResult = await this._callMcpTool('mcp__heygen__get_avatar_video_status', {
+                video_id: heygenResult.video_id
+              });
+
+              status = statusResult.status;
+              console.log(`   Status: ${status} (${attempts + 1}/${maxAttempts})`);
+
+              attempts++;
+            }
+
+            if (status === 'completed') {
+              const finalStatus = await this._callMcpTool('mcp__heygen__get_avatar_video_status', {
+                video_id: heygenResult.video_id
+              });
+
+              result = {
+                videoUrl: finalStatus.video_url,
+                localPath: null, // HeyGen videos are cloud-hosted
+                duration: requestedDuration,
+                metadata: {
+                  type: 'heygen-avatar',
+                  videoId: heygenResult.video_id,
+                  avatar: 'siddharth-vora'
+                }
+              };
+
+              console.log(`   ✅ HeyGen video completed: ${finalStatus.video_url}`);
+            } else {
+              console.log(`   ⚠️  HeyGen video still processing. Check status later at https://app.heygen.com/home`);
+              result = {
+                videoUrl: null,
+                localPath: null,
+                duration: requestedDuration,
+                metadata: {
+                  type: 'heygen-avatar',
+                  videoId: heygenResult.video_id,
+                  status: status,
+                  avatar: 'siddharth-vora',
+                  message: 'Video is still processing. Check HeyGen dashboard for status.'
+                }
+              };
+            }
+          } else {
+            // Don't wait for completion
+            result = {
+              videoUrl: null,
+              localPath: null,
+              duration: requestedDuration,
+              metadata: {
+                type: 'heygen-avatar',
+                videoId: heygenResult.video_id,
+                status: 'pending',
+                avatar: 'siddharth-vora',
+                message: 'Video generation started. Check status with video ID or at https://app.heygen.com/home'
+              }
+            };
+
+            console.log(`   ℹ️  HeyGen video generation started (async mode)`);
+            console.log(`   Video ID: ${heygenResult.video_id}`);
+          }
+        } catch (error) {
+          throw new Error(`HeyGen avatar video generation failed: ${error.message}`);
+        }
+
+        // Skip to final return
+        console.log(`\n✅ HeyGen avatar video generation completed!`);
+        if (result.videoUrl) {
+          console.log(`   Video URL: ${result.videoUrl}`);
+        }
+        console.log(`   Duration: ${result.duration}s`);
+
+        return {
+          success: true,
+          videoUrl: result.videoUrl,
+          localPath: result.localPath,
+          hostedUrl: result.videoUrl, // HeyGen videos are already hosted
+          duration: result.duration,
+          metadata: result.metadata
+        };
+      }
+
       // Determine if we should use scene extension (for VEO videos > 8s)
       const shouldUseSceneExtension = !useLongCat &&
                                        options.useVeo !== false &&
@@ -1264,6 +1410,117 @@ class SocialMediaOrchestrator {
     }
 
     return scenePrompts;
+  }
+
+  /**
+   * Call HeyGen API for avatar video generation and status checking
+   * Routes to HeyGen's REST API based on tool name
+   * @private
+   * @param {string} toolName - Name of the tool to call
+   * @param {object} params - Parameters to pass to the tool
+   * @returns {Promise<object>} Tool result
+   */
+  async _callMcpTool(toolName, params) {
+    const apiKey = process.env.HEYGEN_API_KEY;
+
+    if (!apiKey) {
+      throw new Error('HEYGEN_API_KEY environment variable is required');
+    }
+
+    // Route to appropriate HeyGen API endpoint
+    if (toolName === 'mcp__heygen__generate_avatar_video') {
+      return await this._heygenGenerateVideo(apiKey, params);
+    } else if (toolName === 'mcp__heygen__get_avatar_video_status') {
+      return await this._heygenGetVideoStatus(apiKey, params);
+    } else {
+      throw new Error(`Unknown MCP tool: ${toolName}`);
+    }
+  }
+
+  /**
+   * Generate HeyGen avatar video
+   * @private
+   */
+  async _heygenGenerateVideo(apiKey, params) {
+    const { avatar_id, voice_id, input_text, title } = params;
+
+    const response = await fetch('https://api.heygen.com/v2/video/generate', {
+      method: 'POST',
+      headers: {
+        'X-Api-Key': apiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        video_inputs: [{
+          character: {
+            type: 'avatar',
+            avatar_id: avatar_id,
+            avatar_style: 'normal'
+          },
+          voice: {
+            type: 'text',
+            input_text: input_text,
+            voice_id: voice_id
+          }
+        }],
+        dimension: {
+          width: 1280,
+          height: 720
+        },
+        title: title || 'Avatar Video'
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HeyGen API error: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
+
+    // HeyGen API returns { code: 100, data: { video_id: "..." }, message: "Success" }
+    if (result.code !== 100 || !result.data?.video_id) {
+      throw new Error(`HeyGen video generation failed: ${result.message || 'Unknown error'}`);
+    }
+
+    return {
+      video_id: result.data.video_id
+    };
+  }
+
+  /**
+   * Get HeyGen video status
+   * @private
+   */
+  async _heygenGetVideoStatus(apiKey, params) {
+    const { video_id } = params;
+
+    const response = await fetch(`https://api.heygen.com/v1/video_status.get?video_id=${video_id}`, {
+      method: 'GET',
+      headers: {
+        'X-Api-Key': apiKey
+      }
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HeyGen API error: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
+
+    // HeyGen API returns { code: 100, data: { status: "pending|completed|failed", video_url: "..." } }
+    if (result.code !== 100) {
+      throw new Error(`HeyGen status check failed: ${result.message || 'Unknown error'}`);
+    }
+
+    const status = result.data?.status || 'unknown';
+    const videoUrl = result.data?.video_url || null;
+
+    return {
+      status: status,
+      video_url: videoUrl
+    };
   }
 }
 
