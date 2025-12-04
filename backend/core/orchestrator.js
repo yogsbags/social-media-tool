@@ -680,13 +680,9 @@ class SocialMediaOrchestrator {
       const videoBuffer = fs.readFileSync(videoPath);
       const videoBase64 = videoBuffer.toString('base64');
 
-      // Create form data
+      // Create form data for signed upload (authenticated)
       const FormData = (await import('form-data')).default;
       const formData = new FormData();
-
-      formData.append('file', `data:video/mp4;base64,${videoBase64}`);
-      formData.append('upload_preset', 'ml_default'); // Use unsigned upload
-      formData.append('api_key', apiKey);
 
       // Generate timestamp and signature for authenticated upload
       const timestamp = Math.floor(Date.now() / 1000);
@@ -694,6 +690,9 @@ class SocialMediaOrchestrator {
       const signatureString = `timestamp=${timestamp}${apiSecret}`;
       const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
+      // Add fields for signed upload (no upload_preset needed for authenticated uploads)
+      formData.append('file', `data:video/mp4;base64,${videoBase64}`);
+      formData.append('api_key', apiKey);
       formData.append('timestamp', timestamp.toString());
       formData.append('signature', signature);
 
