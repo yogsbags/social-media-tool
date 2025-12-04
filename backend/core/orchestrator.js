@@ -699,6 +699,11 @@ class SocialMediaOrchestrator {
       const crypto = require('crypto');
       const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
+      console.log(`   🔐 Signature debug:`);
+      console.log(`      timestamp: ${timestamp}`);
+      console.log(`      api_key: ${apiKey.substring(0, 10)}...`);
+      console.log(`      signature: ${signature.substring(0, 20)}...`);
+
       // Add file as stream (actual data) - REST API requires stream, not file path
       formData.append('file', fs.createReadStream(videoPath), {
         filename: path.basename(videoPath),
