@@ -57,7 +57,7 @@ export default function Home() {
   const [topic, setTopic] = useState<string>('')
   const [isGeneratingTopic, setIsGeneratingTopic] = useState<boolean>(false)
   const [topicError, setTopicError] = useState<string | null>(null)
-  const [duration, setDuration] = useState<number>(30)
+  const [duration, setDuration] = useState<number>(15)
   const [contentType, setContentType] = useState<'image' | 'faceless-video' | 'avatar-video'>('image')
   const [facelessVideoMode, setFacelessVideoMode] = useState<'text-to-video' | 'image-to-video'>('text-to-video')
   const [imageSource, setImageSource] = useState<'generate' | 'upload'>('generate')
@@ -1441,7 +1441,7 @@ export default function Home() {
                   </label>
                   <input
                     type="range"
-                    min="15"
+                    min="8"
                     max="300"
                     step="5"
                     value={duration}
@@ -1450,7 +1450,7 @@ export default function Home() {
                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed"
                   />
                   <div className="flex justify-between text-xs text-gray-600 mt-1">
-                    <span>15s</span>
+                    <span>8s</span>
                     <span>300s (5 min)</span>
                   </div>
                 </div>
