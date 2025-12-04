@@ -599,23 +599,75 @@ class SocialMediaOrchestrator {
       const requestedDuration = options.duration || 90;
 
       // Check if this is avatar mode (VEO-based avatar generation)
+      // Read avatar options directly from options object
+      const avatarId = options.avatarId;
+      const avatarScriptText = options.scriptText || options.avatarScriptText;
+      const avatarVoiceId = options.avatarVoiceId;
+      const heygenGroupId = options.heygenAvatarGroupId;
+
       const isAvatarMode = options.useAvatar === true;
-      const isHeyGenAvatar = options.avatarId === 'siddharth-vora'; // Later: route to HeyGen
+      const isHeyGenAvatar = avatarId === 'siddharth-vora' || Boolean(heygenGroupId);
 
       // For avatar mode (non-HeyGen), augment prompt with avatar and voice descriptions
       if (isAvatarMode && !isHeyGenAvatar) {
         console.log('   🎭 Avatar mode detected (VEO-based)');
+        console.log(`   👤 Avatar ID: ${avatarId || 'default'}`);
 
-        const avatarDescription = options.avatarDescription || 'Indian male professional in formal business attire, confident posture, warm expression';
-        const voiceDescription = options.voiceDescription || 'Deep, confident Indian male voice with slight accent, clear articulation';
+        // Load avatar and voice descriptions from config files
+        let avatarDescription;
+        let voiceDescription;
 
-        // Auto-generate script instruction if not provided
+        try {
+          // Try to load from heygen-native-voice-mapping.json (for HeyGen group IDs)
+          const avatarMappingPath = path.join(this.projectRoot, 'config', 'heygen-native-voice-mapping.json');
+          if (fs.existsSync(avatarMappingPath) && avatarId) {
+            const avatarMapping = JSON.parse(fs.readFileSync(avatarMappingPath, 'utf8'));
+            const avatarData = avatarMapping[avatarId];
+
+            if (avatarData) {
+              // Build avatar description from config for VEO to generate matching avatar
+              avatarDescription = `Professional Indian ${avatarData.gender} named ${avatarData.avatarName}, ${avatarData.description || 'in formal business attire, confident posture, professional appearance'}`;
+
+              // Build voice description from config for VEO to generate matching voice
+              voiceDescription = `${avatarData.voiceName || 'Professional'} ${avatarData.gender === 'male' ? 'Indian male' : 'Indian female'} voice, ${avatarData.description || 'clear and articulate, professional tone'}`;
+
+              console.log(`   ✅ Loaded avatar config: ${avatarData.avatarName} (${avatarData.gender})`);
+              console.log(`   🎙️  Voice: ${avatarData.voiceName}`);
+            }
+          }
+        } catch (error) {
+          console.log(`   ⚠️  Could not load avatar config: ${error.message}`);
+        }
+
+        // Fallback to generic descriptions if config not found
+        if (!avatarDescription) {
+          if (avatarId === 'generic-indian-male') {
+            avatarDescription = 'Indian male professional in formal business attire, confident posture, warm expression, clean-shaven, professional appearance';
+          } else if (avatarId === 'generic-indian-female') {
+            avatarDescription = 'Indian female professional in formal business attire, confident posture, warm expression, professional appearance';
+          } else {
+            avatarDescription = options.avatarDescription || 'Indian male professional in formal business attire, confident posture, warm expression';
+          }
+        }
+
+        if (!voiceDescription) {
+          if (avatarId === 'generic-indian-female') {
+            voiceDescription = 'Professional Indian female voice, clear and articulate, warm and trustworthy tone';
+          } else {
+            voiceDescription = options.voiceDescription || 'Deep, confident Indian male voice with slight accent, clear articulation';
+          }
+        }
+
+        // Handle script text - use provided script or generate instruction for VEO
         let scriptInstruction;
-        if (options.scriptText) {
-          scriptInstruction = `speaking the following script: "${options.scriptText}"`;
-          console.log(`   📝 Script: ${options.scriptText.substring(0, 60)}...`);
+        const finalScriptText = avatarScriptText || options.scriptText;
+
+        if (finalScriptText) {
+          // Use provided script text directly - VEO will generate speech matching this script
+          scriptInstruction = `speaking the following script: "${finalScriptText}"`;
+          console.log(`   📝 Script: ${finalScriptText.substring(0, 60)}...`);
         } else {
-          // Generate script instruction based on platform and topic
+          // Generate script instruction for VEO to auto-generate speech based on context
           const topic = options.topic || 'financial services and investment opportunities';
           const platform = options.platform || 'linkedin';
           const format = options.format || 'testimonial';

@@ -1,9 +1,9 @@
-import { NextRequest } from 'next/server'
 import { spawn } from 'child_process'
-import path from 'path'
-import fs from 'fs'
-import os from 'os'
 import { randomUUID } from 'crypto'
+import fs from 'fs'
+import { NextRequest } from 'next/server'
+import os from 'os'
+import path from 'path'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -82,8 +82,14 @@ export async function POST(request: NextRequest) {
     contentType,
     language,
     brandSettings,
-    files = {}
+    files = {},
+    avatarId,
+    avatarScriptText,
+    avatarVoiceId
   } = body
+
+  // Sync useAvatar with contentType if contentType is explicitly set
+  const finalUseAvatar = contentType === 'avatar-video' ? true : (contentType === 'faceless-video' ? false : useAvatar)
 
   const stageNames: Record<number, string> = {
     1: 'planning',
@@ -362,7 +368,25 @@ export async function POST(request: NextRequest) {
           // Video production stage
           args.push('--duration', duration.toString())
           if (useVeo) args.push('--use-veo')
-          if (useAvatar) args.push('--use-avatar')
+          if (finalUseAvatar) args.push('--use-avatar')
+
+          // Pass avatar options directly as CLI arguments
+          if (avatarId) {
+            args.push('--avatar-id', avatarId)
+            if (avatarId !== 'siddharth-vora' && avatarId !== 'generic-indian-male' && avatarId !== 'generic-indian-female') {
+              // This is a HeyGen group ID, use it directly
+              args.push('--heygen-avatar-group-id', avatarId)
+              if (avatarVoiceId) {
+                args.push('--avatar-voice-id', avatarVoiceId)
+              }
+            }
+          }
+          if (avatarScriptText) {
+            args.push('--avatar-script', avatarScriptText)
+          }
+          if (avatarVoiceId && avatarId !== 'siddharth-vora') {
+            args.push('--avatar-voice-id', avatarVoiceId)
+          }
         }
 
         if (stageId === 5) {
@@ -515,7 +539,10 @@ export async function POST(request: NextRequest) {
               stageData.type = 'video-production'
               stageData.duration = duration
               stageData.useVeo = useVeo
-              stageData.useAvatar = useAvatar
+              stageData.useAvatar = finalUseAvatar
+              if (avatarId) stageData.avatarId = avatarId
+              if (avatarScriptText) stageData.avatarScriptText = avatarScriptText
+              if (avatarVoiceId) stageData.avatarVoiceId = avatarVoiceId
             } else if (stageId === 5) {
               stageData.type = 'publishing'
             } else if (stageId === 6) {

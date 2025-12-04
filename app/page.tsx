@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import VideoProducer from './components/VideoProducer'
-import PublishingQueue from './components/PublishingQueue'
+import { useEffect, useState } from 'react'
 import FileUpload from './components/FileUpload'
 import PromptEditor from './components/PromptEditor'
+import PublishingQueue from './components/PublishingQueue'
 import StageDataModal from './components/StageDataModal'
+import VideoProducer from './components/VideoProducer'
 
 type WorkflowStage = {
   id: number
@@ -71,6 +71,15 @@ export default function Home() {
   const [avatarId, setAvatarId] = useState<string>('siddharth-vora')
   const [avatarScriptText, setAvatarScriptText] = useState<string>('')
   const [avatarVoiceId, setAvatarVoiceId] = useState<string>('')
+  const [availableAvatars, setAvailableAvatars] = useState<Array<{
+    id: string
+    name: string
+    groupId: string
+    voiceId: string
+    voiceName: string
+    gender: string
+    description: string
+  }>>([])
 
   // Brand Guidelines
   const [showBrandGuidelines, setShowBrandGuidelines] = useState<boolean>(false)
@@ -192,6 +201,22 @@ export default function Home() {
     { value: 'malayalam', label: 'Malayalam', native: 'മലയാളം' },
     { value: 'punjabi', label: 'Punjabi', native: 'ਪੰਜਾਬੀ' },
   ]
+
+  // Load available avatars on component mount
+  useEffect(() => {
+    const loadAvatars = async () => {
+      try {
+        const response = await fetch('/api/avatars')
+        if (response.ok) {
+          const data = await response.json()
+          setAvailableAvatars(data.avatars || [])
+        }
+      } catch (error) {
+        console.error('Failed to load avatars:', error)
+      }
+    }
+    loadAvatars()
+  }, [])
 
   const updateStage = async (stageId: number, status: WorkflowStage['status'], message: string) => {
     setStages(prev => prev.map(stage =>
@@ -954,7 +979,10 @@ export default function Home() {
               </button>
 
               <button
-                onClick={() => setContentType('faceless-video')}
+                onClick={() => {
+                  setContentType('faceless-video')
+                  setUseAvatar(false)
+                }}
                 disabled={isRunning || executingStage !== null}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   contentType === 'faceless-video'
@@ -967,7 +995,10 @@ export default function Home() {
               </button>
 
               <button
-                onClick={() => setContentType('avatar-video')}
+                onClick={() => {
+                  setContentType('avatar-video')
+                  setUseAvatar(true)
+                }}
                 disabled={isRunning || executingStage !== null}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   contentType === 'avatar-video'
@@ -1352,17 +1383,35 @@ export default function Home() {
                   </label>
                   <select
                     value={avatarId}
-                    onChange={(e) => setAvatarId(e.target.value)}
+                    onChange={(e) => {
+                      setAvatarId(e.target.value)
+                      // Auto-set voice ID when avatar changes
+                      const selectedAvatar = availableAvatars.find(a => a.groupId === e.target.value)
+                      if (selectedAvatar) {
+                        setAvatarVoiceId(selectedAvatar.voiceId)
+                      }
+                    }}
                     disabled={isRunning || executingStage !== null}
                     className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="siddharth-vora">Siddharth Vora (HeyGen Custom Avatar)</option>
-                    <option value="generic-indian-male">Generic Indian Male (VEO)</option>
-                    <option value="generic-indian-female">Generic Indian Female (VEO)</option>
+                    {availableAvatars.map((avatar) => (
+                      <option key={avatar.groupId} value={avatar.groupId}>
+                        {avatar.name} ({avatar.gender === 'male' ? 'Male' : 'Female'}) - {avatar.voiceName}
+                      </option>
+                    ))}
+                    {availableAvatars.length === 0 && (
+                      <>
+                        <option value="generic-indian-male">Generic Indian Male (VEO)</option>
+                        <option value="generic-indian-female">Generic Indian Female (VEO)</option>
+                      </>
+                    )}
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
                     {avatarId === 'siddharth-vora'
                       ? 'Using HeyGen custom avatar for Siddharth Vora, Fund Manager at PL Capital'
+                      : availableAvatars.find(a => a.groupId === avatarId)
+                      ? `Using ${availableAvatars.find(a => a.groupId === avatarId)?.name} avatar with ${availableAvatars.find(a => a.groupId === avatarId)?.voiceName} voice`
                       : 'Using VEO-generated avatar'}
                   </p>
                 </div>

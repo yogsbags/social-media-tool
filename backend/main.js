@@ -53,7 +53,11 @@ function parseArgs(argv) {
     autoPublish: false,
     waitForCompletion: false,
     limit: null,
-    help: false
+    help: false,
+    avatarId: null,
+    avatarScriptText: null,
+    avatarVoiceId: null,
+    heygenAvatarGroupId: null
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -108,6 +112,22 @@ function parseArgs(argv) {
       case '--limit':
       case '-l':
         options.limit = parseInt(argv[i + 1], 10);
+        i++;
+        break;
+      case '--avatar-id':
+        options.avatarId = argv[i + 1];
+        i++;
+        break;
+      case '--avatar-script':
+        options.avatarScriptText = argv[i + 1];
+        i++;
+        break;
+      case '--avatar-voice-id':
+        options.avatarVoiceId = argv[i + 1];
+        i++;
+        break;
+      case '--heygen-avatar-group-id':
+        options.heygenAvatarGroupId = argv[i + 1];
         i++;
         break;
       case '--help':
