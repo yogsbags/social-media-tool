@@ -24,12 +24,8 @@ class LongCatGenerator {
       imageToVideo: 'fal-ai/longcat-video/image-to-video/720p'
     };
 
-    // Configure fal.ai client
-    if (this.apiKey) {
-      fal.config({
-        credentials: this.apiKey
-      });
-    }
+    // Note: @fal-ai/client v1.7+ automatically uses FAL_KEY environment variable
+    // No explicit configuration needed
 
     // Default configuration
     this.defaultConfig = {
