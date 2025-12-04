@@ -90,6 +90,84 @@ class MoengageClient {
   async getInformReport(reportId) {
     return this._requestReporting(`/v1/inform/reports/${reportId}`);
   }
+
+  // Email Campaign API Methods
+
+  async _requestCampaignAPI(path, body = null, method = 'POST') {
+    this._assertReporting();
+
+    const init = {
+      method,
+      headers: {
+        Authorization: `Bearer ${this.reportingApiKey}`,
+        'Content-Type': 'application/json',
+        'MOE-APP-ID': this.workspaceId
+      }
+    };
+
+    if (body && method !== 'GET') {
+      init.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(`${this.reportsBaseUrl}/v1${path}`, init);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`MoEngage Email Campaign API error (${response.status}): ${errorText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Create an email campaign in MoEngage
+   * @param {Object} campaign - Campaign configuration object
+   * @returns {Promise<Object>} Created campaign response
+   */
+  async createEmailCampaign(campaign) {
+    return this._requestCampaignAPI('/email-campaigns', campaign);
+  }
+
+  /**
+   * Update an existing email campaign
+   * @param {string} campaignId - MoEngage campaign ID
+   * @param {Object} updates - Campaign fields to update
+   * @returns {Promise<Object>} Updated campaign response
+   */
+  async updateEmailCampaign(campaignId, updates) {
+    return this._requestCampaignAPI(`/email-campaigns/${campaignId}`, updates, 'PUT');
+  }
+
+  /**
+   * Get email campaign details
+   * @param {string} campaignId - MoEngage campaign ID
+   * @returns {Promise<Object>} Campaign details
+   */
+  async getEmailCampaign(campaignId) {
+    return this._requestCampaignAPI(`/email-campaigns/${campaignId}`, null, 'GET');
+  }
+
+  /**
+   * Test an email campaign (send test email to specific users)
+   * @param {string} campaignId - MoEngage campaign ID
+   * @param {Object} testConfig - Test configuration (testEmails array, etc.)
+   * @returns {Promise<Object>} Test result
+   */
+  async testEmailCampaign(campaignId, testConfig) {
+    return this._requestCampaignAPI(`/email-campaigns/${campaignId}/test`, testConfig);
+  }
+
+  /**
+   * List all email campaigns
+   * @param {Object} filters - Optional filters (status, type, etc.)
+   * @returns {Promise<Object>} List of campaigns
+   */
+  async listEmailCampaigns(filters = {}) {
+    const query = Object.keys(filters).length > 0
+      ? `?${new URLSearchParams(filters).toString()}`
+      : '';
+    return this._requestCampaignAPI(`/email-campaigns${query}`, null, 'GET');
+  }
 }
 
 function getMoengageClient() {

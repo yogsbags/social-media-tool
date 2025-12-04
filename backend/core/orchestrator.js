@@ -1254,11 +1254,35 @@ Style: Clean, modern, data-driven, professional infographic design.`;
         }
 
         console.log(`   📧 Publishing newsletter via MoEngage (subject: ${newsletter.subject})...`);
-        await publisher.publishNewsletter({
+        
+        // Use segment-based publishing with Email Campaign API
+        const segmentId = process.env.MOENGAGE_DEFAULT_SEGMENT_ID || '66fbb814e4a912bbd07a58a0';
+        const testEmail = process.env.MOENGAGE_DEFAULT_TEST_EMAIL || 'yogsbags@gmail.com';
+        const fromEmail = process.env.MOENGAGE_DEFAULT_SENDER_EMAIL || 'marketing@pl-india.in';
+        const fromName = process.env.MOENGAGE_DEFAULT_SENDER_NAME || 'PL India Marketing';
+        
+        // Check if we should send test email only or to segment
+        const testOnly = process.env.MOENGAGE_TEST_MODE === 'true';
+        
+        const result = await publisher.publishNewsletterToSegment({
           ...newsletter,
           topic: newsletter.topic || options.topic
+        }, {
+          segmentId,
+          fromEmail,
+          fromName,
+          testEmail,
+          testOnly
         });
-        console.log('   ✅ Newsletter push sent to MoEngage (SendGrid-backed campaign)');
+        
+        if (result.mode === 'test') {
+          console.log(`   ✅ Test email sent to ${result.testEmail} (campaign ID: ${result.campaignId})`);
+        } else {
+          console.log(`   ✅ Newsletter campaign created for segment ${result.segmentId} (campaign ID: ${result.campaignId})`);
+          if (result.testEmail) {
+            console.log(`   ✉️  Test email also sent to ${result.testEmail}`);
+          }
+        }
         return;
       }
 
