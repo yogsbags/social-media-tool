@@ -683,10 +683,23 @@ class SocialMediaOrchestrator {
       const FormData = (await import('form-data')).default;
       const formData = new FormData();
 
-      // Generate timestamp and signature for authenticated upload
+      // Generate timestamp for authenticated upload
       const timestamp = Math.floor(Date.now() / 1000);
+
+      // Build parameters to sign (all params except: api_key, file, cloud_name, resource_type)
+      // Format: key1=value1&key2=value2... in alphabetical order, then append api_secret
+      const paramsToSign = {
+        timestamp: timestamp.toString()
+      };
+
+      // Create signature string: sorted params + api_secret
+      const sortedParams = Object.keys(paramsToSign)
+        .sort()
+        .map(key => `${key}=${paramsToSign[key]}`)
+        .join('&');
+      const signatureString = `${sortedParams}${apiSecret}`;
+
       const crypto = require('crypto');
-      const signatureString = `timestamp=${timestamp}${apiSecret}`;
       const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
       // Add fields for signed upload (send buffer instead of base64 string)
