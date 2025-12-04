@@ -598,6 +598,29 @@ class SocialMediaOrchestrator {
 
       const requestedDuration = options.duration || 90;
 
+      // Check if this is avatar mode (VEO-based avatar generation)
+      const isAvatarMode = options.useAvatar === true;
+      const isHeyGenAvatar = options.avatarId === 'siddharth-vora'; // Later: route to HeyGen
+
+      // For avatar mode (non-HeyGen), augment prompt with avatar and voice descriptions
+      if (isAvatarMode && !isHeyGenAvatar) {
+        console.log('   🎭 Avatar mode detected (VEO-based)');
+
+        const avatarDescription = options.avatarDescription || 'Indian male professional in formal business attire, confident posture, warm expression';
+        const voiceDescription = options.voiceDescription || 'Deep, confident Indian male voice with slight accent, clear articulation';
+        const scriptText = options.scriptText || options.topic || 'discussing financial services and investment opportunities';
+
+        console.log(`   👤 Avatar: ${avatarDescription}`);
+        console.log(`   🎙️  Voice: ${voiceDescription}`);
+        console.log(`   📝 Script: ${scriptText.substring(0, 60)}...`);
+
+        // Augment prompt with avatar and voice context
+        const avatarPrompt = `Professional video featuring ${avatarDescription}. ${voiceDescription} speaking about: "${scriptText}". Camera: Medium shot, professional framing, slight depth of field. Lighting: Soft key light, professional studio setup with subtle rim lighting. Background: Elegant office environment with soft bokeh, professional corporate setting. ${prompt}`;
+
+        prompt = avatarPrompt;
+        console.log('   ✅ Avatar prompt constructed\n');
+      }
+
       // Determine if we should use scene extension (for VEO videos > 8s)
       const shouldUseSceneExtension = !useLongCat &&
                                        options.useVeo !== false &&
@@ -624,7 +647,7 @@ class SocialMediaOrchestrator {
         const veoConfig = {
           aspectRatio: options.aspectRatio || '16:9',
           resolution: '720p',
-          personGeneration: 'disallow_all'  // Faceless videos - no people
+          personGeneration: isAvatarMode ? 'allow_all' : 'disallow_all'  // Allow people for avatars, disallow for faceless
         };
 
         result = await veoGenerator.generateLongVideo(
@@ -650,8 +673,9 @@ class SocialMediaOrchestrator {
         console.log(`\n📹 Generating video with auto scene extension...`);
         console.log(`   Provider: VEO 3.1 (Scene Extension)`);
         console.log(`   Target Duration: ${requestedDuration}s`);
+        console.log(`   Mode: ${isAvatarMode ? 'Avatar' : 'Faceless'}`);
 
-        const autoScenePrompts = this._generateAutoScenePrompts(prompt, requestedDuration);
+        const autoScenePrompts = this._generateAutoScenePrompts(prompt, requestedDuration, isAvatarMode);
         console.log(`   Auto Scenes: ${autoScenePrompts.length}\n`);
 
         // Initialize VEO generator
@@ -664,7 +688,7 @@ class SocialMediaOrchestrator {
         const veoConfig = {
           aspectRatio: options.aspectRatio || '16:9',
           resolution: '720p',
-          personGeneration: 'disallow_all'  // Faceless videos - no people
+          personGeneration: isAvatarMode ? 'allow_all' : 'disallow_all'  // Allow people for avatars, disallow for faceless
         };
 
         result = await veoGenerator.generateLongVideo(
@@ -1184,16 +1208,17 @@ class SocialMediaOrchestrator {
    * @private
    * @param {string} basePrompt - The original video prompt
    * @param {number} targetDuration - Desired video duration in seconds
+   * @param {boolean} isAvatarMode - Whether this is avatar video (vs faceless)
    * @returns {Array<string>} Array of scene prompts [base, variations...]
    */
-  _generateAutoScenePrompts(basePrompt, targetDuration) {
+  _generateAutoScenePrompts(basePrompt, targetDuration, isAvatarMode = false) {
     // Calculate number of extensions needed
     // Base = 8s, each extension = 7s
     const extensionsNeeded = Math.max(0, Math.ceil((targetDuration - 8) / 7));
     const scenePrompts = [basePrompt]; // Base scene
 
-    // Scene variation phrases for faceless videos
-    const variations = [
+    // Scene variation phrases based on mode
+    const facelessVariations = [
       'Camera orbits around the visual elements with dynamic lighting transitions',
       'Zoom into key data points revealing intricate details and patterns',
       'Visual elements reorganize and transform with smooth animated transitions',
@@ -1203,6 +1228,19 @@ class SocialMediaOrchestrator {
       'Volumetric lighting reveals hidden layers and depth',
       'Elements coalesce and disperse in fluid choreographed motion'
     ];
+
+    const avatarVariations = [
+      'Camera slowly pushes in to medium close-up, maintaining eye contact and professional framing',
+      'Subtle camera dolly right revealing more of the background environment',
+      'Camera pulls back to medium wide shot showing full upper body and gestures',
+      'Slight camera tilt up with natural subject movement and confident delivery',
+      'Camera slowly pans left while subject maintains engagement with viewer',
+      'Gentle camera push in to close-up emphasizing facial expressions and sincerity',
+      'Camera arc right to slightly off-center angle adding dynamic visual interest',
+      'Slow zoom out revealing professional office setting with subject centered'
+    ];
+
+    const variations = isAvatarMode ? avatarVariations : facelessVariations;
 
     // Generate extension prompts with variations
     for (let i = 0; i < extensionsNeeded && i < 20; i++) {
