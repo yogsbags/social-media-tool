@@ -677,9 +677,11 @@ class SocialMediaOrchestrator {
         console.log(`   👤 HeyGen Avatar ID: ${heygenAvatarId}`);
         console.log(`   🎙️  HeyGen Voice ID: ${heygenVoiceId}`);
 
+        let heygenResult; // Declare result variable for HeyGen section
+
         try {
           // Generate HeyGen video using MCP tool
-          const heygenResult = await this._callMcpTool('mcp__heygen__generate_avatar_video', {
+          const apiResult = await this._callMcpTool('mcp__heygen__generate_avatar_video', {
             avatar_id: heygenAvatarId,
             voice_id: heygenVoiceId,
             input_text: scriptText,
@@ -687,7 +689,21 @@ class SocialMediaOrchestrator {
           });
 
           console.log(`   ✅ HeyGen video generation started`);
-          console.log(`   Video ID: ${heygenResult.video_id}`);
+          console.log(`   Video ID: ${apiResult.video_id}`);
+
+          // Build result object
+          heygenResult = {
+            videoUrl: null,
+            localPath: null,
+            duration: requestedDuration,
+            metadata: {
+              type: 'heygen-avatar',
+              videoId: apiResult.video_id,
+              status: 'pending',
+              avatar: 'siddharth-vora',
+              message: 'Video generation started. Check status with video ID or at https://app.heygen.com/home'
+            }
+          };
 
           // Wait for completion if requested
           if (options.waitForCompletion !== false) {
@@ -701,7 +717,7 @@ class SocialMediaOrchestrator {
               await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5s
 
               const statusResult = await this._callMcpTool('mcp__heygen__get_avatar_video_status', {
-                video_id: heygenResult.video_id
+                video_id: heygenResult.metadata.videoId
               });
 
               status = statusResult.status;
@@ -712,16 +728,16 @@ class SocialMediaOrchestrator {
 
             if (status === 'completed') {
               const finalStatus = await this._callMcpTool('mcp__heygen__get_avatar_video_status', {
-                video_id: heygenResult.video_id
+                video_id: heygenResult.metadata.videoId
               });
 
-              result = {
+              heygenResult = {
                 videoUrl: finalStatus.video_url,
                 localPath: null, // HeyGen videos are cloud-hosted
                 duration: requestedDuration,
                 metadata: {
                   type: 'heygen-avatar',
-                  videoId: heygenResult.video_id,
+                  videoId: heygenResult.metadata.videoId,
                   avatar: 'siddharth-vora'
                 }
               };
@@ -729,36 +745,12 @@ class SocialMediaOrchestrator {
               console.log(`   ✅ HeyGen video completed: ${finalStatus.video_url}`);
             } else {
               console.log(`   ⚠️  HeyGen video still processing. Check status later at https://app.heygen.com/home`);
-              result = {
-                videoUrl: null,
-                localPath: null,
-                duration: requestedDuration,
-                metadata: {
-                  type: 'heygen-avatar',
-                  videoId: heygenResult.video_id,
-                  status: status,
-                  avatar: 'siddharth-vora',
-                  message: 'Video is still processing. Check HeyGen dashboard for status.'
-                }
-              };
+              heygenResult.metadata.status = status;
+              heygenResult.metadata.message = 'Video is still processing. Check HeyGen dashboard for status.';
             }
           } else {
-            // Don't wait for completion
-            result = {
-              videoUrl: null,
-              localPath: null,
-              duration: requestedDuration,
-              metadata: {
-                type: 'heygen-avatar',
-                videoId: heygenResult.video_id,
-                status: 'pending',
-                avatar: 'siddharth-vora',
-                message: 'Video generation started. Check status with video ID or at https://app.heygen.com/home'
-              }
-            };
-
             console.log(`   ℹ️  HeyGen video generation started (async mode)`);
-            console.log(`   Video ID: ${heygenResult.video_id}`);
+            console.log(`   Video ID: ${heygenResult.metadata.videoId}`);
           }
         } catch (error) {
           throw new Error(`HeyGen avatar video generation failed: ${error.message}`);
@@ -766,18 +758,18 @@ class SocialMediaOrchestrator {
 
         // Skip to final return
         console.log(`\n✅ HeyGen avatar video generation completed!`);
-        if (result.videoUrl) {
-          console.log(`   Video URL: ${result.videoUrl}`);
+        if (heygenResult.videoUrl) {
+          console.log(`   Video URL: ${heygenResult.videoUrl}`);
         }
-        console.log(`   Duration: ${result.duration}s`);
+        console.log(`   Duration: ${heygenResult.duration}s`);
 
         return {
           success: true,
-          videoUrl: result.videoUrl,
-          localPath: result.localPath,
-          hostedUrl: result.videoUrl, // HeyGen videos are already hosted
-          duration: result.duration,
-          metadata: result.metadata
+          videoUrl: heygenResult.videoUrl,
+          localPath: heygenResult.localPath,
+          hostedUrl: heygenResult.videoUrl, // HeyGen videos are already hosted
+          duration: heygenResult.duration,
+          metadata: heygenResult.metadata
         };
       }
 
@@ -1444,44 +1436,59 @@ class SocialMediaOrchestrator {
   async _heygenGenerateVideo(apiKey, params) {
     const { avatar_id, voice_id, input_text, title } = params;
 
+    const requestBody = {
+      video_inputs: [{
+        character: {
+          type: 'avatar',
+          avatar_id: avatar_id,
+          avatar_style: 'normal'
+        },
+        voice: {
+          type: 'text',
+          input_text: input_text,
+          voice_id: voice_id
+        }
+      }],
+      dimension: {
+        width: 1280,
+        height: 720
+      },
+      title: title || 'Avatar Video'
+    };
+
+    console.log(`   🔍 HeyGen API Request:`);
+    console.log(`      Endpoint: POST https://api.heygen.com/v2/video/generate`);
+    console.log(`      Body: ${JSON.stringify(requestBody, null, 2).substring(0, 200)}...`);
+
     const response = await fetch('https://api.heygen.com/v2/video/generate', {
       method: 'POST',
       headers: {
         'X-Api-Key': apiKey,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        video_inputs: [{
-          character: {
-            type: 'avatar',
-            avatar_id: avatar_id,
-            avatar_style: 'normal'
-          },
-          voice: {
-            type: 'text',
-            input_text: input_text,
-            voice_id: voice_id
-          }
-        }],
-        dimension: {
-          width: 1280,
-          height: 720
-        },
-        title: title || 'Avatar Video'
-      })
+      body: JSON.stringify(requestBody)
     });
 
+    const responseText = await response.text();
+    console.log(`   📡 HeyGen API Response (${response.status}): ${responseText.substring(0, 200)}...`);
+
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HeyGen API error: ${response.status} ${errorText}`);
+      throw new Error(`HeyGen API error: ${response.status} ${responseText}`);
     }
 
-    const result = await response.json();
+    const result = JSON.parse(responseText);
 
-    // HeyGen API returns { code: 100, data: { video_id: "..." }, message: "Success" }
-    if (result.code !== 100 || !result.data?.video_id) {
-      throw new Error(`HeyGen video generation failed: ${result.message || 'Unknown error'}`);
+    // HeyGen API returns { error: null, data: { video_id: "..." } } on success
+    // or { error: { code: "...", message: "..." }, data: null } on failure
+    if (result.error) {
+      throw new Error(`HeyGen video generation failed: ${result.error.message || JSON.stringify(result.error)}`);
     }
+
+    if (!result.data?.video_id) {
+      throw new Error(`HeyGen video generation failed: No video_id in response`);
+    }
+
+    console.log(`   ✅ HeyGen video initiated: ${result.data.video_id}`);
 
     return {
       video_id: result.data.video_id
@@ -1502,16 +1509,17 @@ class SocialMediaOrchestrator {
       }
     });
 
+    const responseText = await response.text();
+
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HeyGen API error: ${response.status} ${errorText}`);
+      throw new Error(`HeyGen API error: ${response.status} ${responseText}`);
     }
 
-    const result = await response.json();
+    const result = JSON.parse(responseText);
 
-    // HeyGen API returns { code: 100, data: { status: "pending|completed|failed", video_url: "..." } }
-    if (result.code !== 100) {
-      throw new Error(`HeyGen status check failed: ${result.message || 'Unknown error'}`);
+    // HeyGen API returns { error: null, data: { status: "pending|completed|failed", video_url: "..." } }
+    if (result.error) {
+      throw new Error(`HeyGen status check failed: ${result.error.message || JSON.stringify(result.error)}`);
     }
 
     const status = result.data?.status || 'unknown';
