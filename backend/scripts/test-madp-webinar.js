@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Test Script: MADP PMS Webinar by Siddharth Vora
- * 
+ *
  * Creates a proper AI webinar about MADP PMS (Multi-Asset Diversified Portfolio)
  * featuring Siddharth Vora, Fund Manager at PL Capital
- * 
+ *
  * Usage:
  *   node test-madp-webinar.js
- * 
+ *
  * Environment Variables Required:
  *   HEYGEN_API_KEY - Your HeyGen API key
  *   HEYGEN_AVATAR_ID_SIDDHARTH - Avatar ID (defaults to configured value)
@@ -103,7 +103,8 @@ Thank you for joining this webinar. I hope you found it informative. If you have
       introduction_text: introductionText,
       main_content_text: mainContentText,
       conclusion_text: conclusionText,
-      duration_minutes: 10
+      duration_minutes: 10,
+      singleVideo: true // Create single complete video instead of segments
     });
 
     console.log('\n✅ Webinar created successfully!\n');

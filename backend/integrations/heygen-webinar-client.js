@@ -1,8 +1,8 @@
 /**
  * HeyGen Webinar Client
- * 
+ *
  * Provides methods for creating AI webinars using HeyGen's Template API and Video Generation API
- * 
+ *
  * Note: HeyGen doesn't have a dedicated "webinar" API, but we can create webinar-like content
  * by combining multiple video segments (introduction, main content, conclusion) using templates
  */
@@ -237,6 +237,7 @@ class HeyGenWebinarClient {
   /**
    * Create a webinar-style video series
    * Creates multiple video segments: introduction, main content (split if needed), conclusion
+   * OR a single complete video if singleVideo option is true
    * @param {Object} params - Webinar parameters
    * @param {string} params.webinar_title - Title of the webinar
    * @param {string} params.avatar_id - HeyGen avatar ID
@@ -246,7 +247,8 @@ class HeyGenWebinarClient {
    * @param {string} params.conclusion_text - Conclusion script
    * @param {number} params.duration_minutes - Estimated duration in minutes (optional)
    * @param {string} params.background_id - Background ID (optional)
-   * @returns {Promise<Object>} Webinar creation result with segment video IDs
+   * @param {boolean} params.singleVideo - If true, creates one complete video instead of segments (default: false)
+   * @returns {Promise<Object>} Webinar creation result with video ID(s)
    */
   async createWebinar(params) {
     const {
@@ -257,16 +259,69 @@ class HeyGenWebinarClient {
       main_content_text,
       conclusion_text,
       duration_minutes = 30,
-      background_id = null
+      background_id = null,
+      singleVideo = false
     } = params;
 
     if (!webinar_title || !avatar_id || !voice_id) {
       throw new Error('webinar_title, avatar_id, and voice_id are required');
     }
 
+    // If singleVideo is true, combine all text into one script
+    if (singleVideo) {
+      console.log(`   🎓 Creating Single Complete HeyGen Webinar Video: ${webinar_title}`);
+      console.log(`      Format: Single continuous video`);
+      
+      const fullScript = [
+        introduction_text,
+        main_content_text,
+        conclusion_text
+      ].filter(Boolean).join('\n\n');
+
+      if (!fullScript) {
+        throw new Error('At least one of introduction_text, main_content_text, or conclusion_text is required');
+      }
+
+      const estimatedDuration = this._estimateDuration(fullScript);
+
+      console.log(`      Estimated Duration: ~${Math.ceil(estimatedDuration / 60)} minutes`);
+
+      try {
+        const video = await this._generateVideo({
+          avatar_id,
+          voice_id,
+          input_text: fullScript,
+          title: webinar_title
+        });
+
+        const webinarData = {
+          webinar_id: `webinar_${Date.now()}`,
+          title: webinar_title,
+          created_at: new Date().toISOString(),
+          estimated_duration_minutes: Math.ceil(estimatedDuration / 60),
+          estimated_duration_seconds: estimatedDuration,
+          format: 'single_video',
+          video_id: video.video_id,
+          status: 'generating'
+        };
+
+        console.log(`   ✅ Single webinar video created: ${video.video_id}`);
+        console.log(`   ⏳ Video is generating. Check status with getVideoStatus('${video.video_id}')`);
+
+        return {
+          success: true,
+          ...webinarData
+        };
+      } catch (error) {
+        console.error(`   ❌ Single video creation failed: ${error.message}`);
+        throw new Error(`HeyGen single video webinar creation failed: ${error.message}`);
+      }
+    }
+
+    // Original multi-segment approach
     console.log(`   🎓 Creating HeyGen Webinar: ${webinar_title}`);
     console.log(`      Duration: ~${duration_minutes} minutes`);
-    console.log(`      Segments: Introduction, Main Content, Conclusion`);
+    console.log(`      Format: Multi-segment (Introduction, Main Content, Conclusion)`);
 
     const webinarVideos = [];
 
@@ -293,7 +348,7 @@ class HeyGenWebinarClient {
         const maxWordsPerSegment = 750; // ~5 minutes per segment
         const words = main_content_text.split(/\s+/);
         const segments = [];
-        
+
         for (let i = 0; i < words.length; i += maxWordsPerSegment) {
           const segmentText = words.slice(i, i + maxWordsPerSegment).join(' ');
           segments.push(segmentText);
