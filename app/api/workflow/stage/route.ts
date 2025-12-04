@@ -373,9 +373,15 @@ export async function POST(request: NextRequest) {
           // Pass avatar options directly as CLI arguments
           if (avatarId) {
             args.push('--avatar-id', avatarId)
-            if (avatarId !== 'siddharth-vora' && avatarId !== 'generic-indian-male' && avatarId !== 'generic-indian-female') {
-              // This is a HeyGen group ID, use it directly
-              args.push('--heygen-avatar-group-id', avatarId)
+            // Only pass heygen-avatar-group-id for Siddharth Vora (if explicitly provided)
+            // Other avatars (Raj, Priya, etc.) use VEO with descriptions from mapping
+            if (avatarId === 'siddharth-vora') {
+              const heygenGroupId = body.heygenAvatarGroupId
+              if (heygenGroupId) {
+                args.push('--heygen-avatar-group-id', heygenGroupId)
+              }
+            } else {
+              // For non-Siddharth avatars, pass voice ID for VEO
               if (avatarVoiceId) {
                 args.push('--avatar-voice-id', avatarVoiceId)
               }
@@ -383,9 +389,6 @@ export async function POST(request: NextRequest) {
           }
           if (avatarScriptText) {
             args.push('--avatar-script', avatarScriptText)
-          }
-          if (avatarVoiceId && avatarId !== 'siddharth-vora') {
-            args.push('--avatar-voice-id', avatarVoiceId)
           }
         }
 

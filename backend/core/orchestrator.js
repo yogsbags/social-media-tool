@@ -471,7 +471,7 @@ class SocialMediaOrchestrator {
 
       // Load creative prompt from Stage 1 workflow state (especially important for infographics)
       let prompt = options.prompt;
-      
+
       if (!prompt) {
         try {
           const state = this.stateManager.state;
@@ -479,7 +479,7 @@ class SocialMediaOrchestrator {
           const matchingCampaign = campaigns
             .filter((c) => c.topic === options.topic)
             .sort((a, b) => new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime())[0];
-          
+
           if (matchingCampaign?.creativePrompt) {
             prompt = matchingCampaign.creativePrompt;
             if (options.type === 'infographic' || options.format === 'infographic') {
@@ -669,7 +669,9 @@ Style: Clean, modern, data-driven, professional infographic design.`;
       const heygenGroupId = options.heygenAvatarGroupId;
 
       const isAvatarMode = options.useAvatar === true;
-      const isHeyGenAvatar = avatarId === 'siddharth-vora' || Boolean(heygenGroupId);
+      // Only use HeyGen API for Siddharth Vora explicitly
+      // Other avatars (Raj, Priya, etc.) use VEO with descriptions from mapping
+      const isHeyGenAvatar = avatarId === 'siddharth-vora';
 
       // For avatar mode (non-HeyGen), augment prompt with avatar and voice descriptions
       if (isAvatarMode && !isHeyGenAvatar) {
