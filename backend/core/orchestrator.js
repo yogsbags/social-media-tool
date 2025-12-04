@@ -676,9 +676,6 @@ class SocialMediaOrchestrator {
 
       console.log('   ☁️  Uploading video to Cloudinary...');
 
-      // Read video file as buffer
-      const videoBuffer = fs.readFileSync(videoPath);
-
       // Create form data for signed upload (authenticated)
       const FormData = (await import('form-data')).default;
       const formData = new FormData();
@@ -702,8 +699,8 @@ class SocialMediaOrchestrator {
       const crypto = require('crypto');
       const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
-      // Add fields for signed upload (send buffer instead of base64 string)
-      formData.append('file', videoBuffer, {
+      // Add file as stream (actual data) - REST API requires stream, not file path
+      formData.append('file', fs.createReadStream(videoPath), {
         filename: path.basename(videoPath),
         contentType: 'video/mp4'
       });
