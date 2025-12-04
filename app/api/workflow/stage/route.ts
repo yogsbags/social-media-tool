@@ -453,6 +453,29 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Load creative prompt from Stage 1 for Stage 2/3 (especially for infographics)
+        if ((stageId === 2 || stageId === 3) && campaignType === 'infographic') {
+          try {
+            const backendRoot = path.join(process.cwd(), 'backend')
+            const stateFilePath = path.join(backendRoot, 'data', 'workflow-state.json')
+            if (fs.existsSync(stateFilePath)) {
+              const stateContent = fs.readFileSync(stateFilePath, 'utf-8')
+              const state = JSON.parse(stateContent)
+              const campaigns = Object.values(state.campaigns || {}) as any[]
+              const matchingCampaign = campaigns
+                .filter((c: any) => c.topic === topic)
+                .sort((a: any, b: any) => new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime())[0]
+              
+              if (matchingCampaign?.creativePrompt) {
+                nodeEnv.CREATIVE_PROMPT = matchingCampaign.creativePrompt
+                sendEvent({ log: '📋 Loaded creative prompt from Stage 1 for infographic generation' })
+              }
+            }
+          } catch (error) {
+            console.error('Failed to load creative prompt:', error)
+          }
+        }
+
         // Pass LongCat configuration as environment variables for video stage
         if (stageId === 4 && longCatConfig) {
           nodeEnv.LONGCAT_ENABLED = longCatConfig.enabled ? 'true' : 'false'

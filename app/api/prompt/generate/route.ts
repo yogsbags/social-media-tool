@@ -52,7 +52,11 @@ export async function POST(request: NextRequest) {
     // Build content type guidance
     let contentGuidance = ''
     if (contentType === 'image') {
-      contentGuidance = 'Generate a detailed image generation prompt with visual descriptions, composition, colors, mood, and style.'
+      if (campaignType === 'infographic') {
+        contentGuidance = 'Generate a detailed infographic design prompt with: data visualization elements (charts, graphs, icons), information hierarchy, layout structure, color coding for different sections, typography for headings and body text, visual flow from top to bottom, key statistics and numbers prominently displayed, icons and illustrations to represent concepts, clear sections and divisions, call-to-action placement. The prompt should be optimized for creating an educational, data-rich infographic that presents information clearly and visually.'
+      } else {
+        contentGuidance = 'Generate a detailed image generation prompt with visual descriptions, composition, colors, mood, and style.'
+      }
     } else if (contentType === 'faceless-video') {
       contentGuidance = `Generate a video script with scene descriptions, visuals, transitions, and narration for a ${duration}-second video.`
     } else if (contentType === 'avatar-video') {
@@ -123,6 +127,20 @@ ${brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: You MUST st
 
 Generate a detailed, specific, and actionable creative prompt with these sections:
 
+${campaignType === 'infographic' ? `
+1. **Core Message**: The main data-driven takeaway or key insight
+2. **Data & Statistics**: Specific numbers, percentages, and metrics to highlight prominently
+3. **Visual Structure**: Layout design (vertical scroll, multi-section, timeline, comparison, etc.)
+4. **Information Hierarchy**: What information goes where (header, key stats, supporting data, conclusion)
+5. **Visual Elements**: Charts/graphs types (bar, pie, line, infographic icons), color coding system, iconography style
+6. **Typography**: Font sizes and weights for headings, subheadings, body text, statistics
+7. **Color Palette**: Specific hex codes for different sections, data visualization colors, background
+8. **Visual Flow**: How the eye should move through the infographic (top to bottom, left to right)
+9. **Key Visual Elements**: Icons, illustrations, charts, graphs, and their specific placements
+10. **Call to Action**: CTA text and placement within the infographic
+11. **Platform Optimization**: Adaptations for each platform (LinkedIn: professional, Instagram: vibrant, etc.)
+12. **Technical Specs**: Exact aspect ratios (recommended: 1080x1920 for vertical, 1920x1080 for horizontal), file format (PNG/JPG)
+` : `
 1. **Core Message**: The main takeaway (write the actual message, not instructions)
 2. **Visual Direction**: Specific descriptions of look, feel, colors (#hex codes), composition, lighting, camera angles
 3. **Tone & Voice**: How the messaging sounds (professional, friendly, urgent, etc.)
@@ -131,6 +149,7 @@ Generate a detailed, specific, and actionable creative prompt with these section
 6. **Platform Optimization**: Specific adaptations for each platform
 7. **Script/Copy** (if video): Word-for-word narration or dialogue with timing
 8. **Technical Specs**: Exact aspect ratios (e.g., 1920x1080), file formats, duration markers (e.g., 0:00-0:05)
+`}
 
 Example format (for reference - adapt to your specific content type):
 **Creative Prompt for [Type] - [Campaign]**

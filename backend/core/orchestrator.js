@@ -429,13 +429,14 @@ class SocialMediaOrchestrator {
     console.log(`   Format: ${options.format}`);
 
     // Check if this is a video-only format (skip image generation for faceless videos)
+    // Infographic is NOT a video format, so it should proceed with image generation
     const isVideoOnlyFormat = options.format && (
       options.format.includes('video') ||
       options.format.includes('testimonial') ||
       options.format.includes('reel') ||
       options.format.includes('explainer') ||
       options.format.includes('short')
-    );
+    ) && !options.format.includes('infographic') && options.type !== 'infographic';
 
     if (isVideoOnlyFormat) {
       console.log('   🎬 Video-only format detected (faceless video)');
@@ -498,6 +499,41 @@ class SocialMediaOrchestrator {
    */
   _buildVisualPrompt(options) {
     const { platform, format, topic, type, brandSettings } = options;
+
+    // Special handling for infographic campaign type
+    if (type === 'infographic' || format === 'infographic') {
+      const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';
+      const customBrandColors = brandSettings?.customColors
+        ? `Brand colors: ${brandSettings.customColors}.`
+        : '';
+      const brandTone = brandSettings?.customTone
+        ? `Tone: ${brandSettings.customTone}.`
+        : '';
+      const brandInstructions = brandSettings?.customInstructions
+        ? `Additional guidelines: ${brandSettings.customInstructions}.`
+        : '';
+      
+      const brandGuidance = brandSettings?.useBrandGuidelines
+        ? defaultBrand
+        : `${customBrandColors} ${brandTone} ${brandInstructions}`.trim();
+
+      return `Create a professional infographic about "${topic}" for ${platform || 'social media'}.
+
+${brandGuidance}
+
+The infographic should include:
+- Clear visual hierarchy with prominent key statistics
+- Data visualizations (charts, graphs, icons) that support the main message
+- Well-organized sections with clear divisions
+- Professional typography with varying font sizes for emphasis
+- Color-coded sections for easy navigation
+- Icons and illustrations that enhance understanding
+- A clear call-to-action
+- Optimized for ${platform || 'social media'} sharing
+
+Format: Vertical layout (1080x1920) recommended for mobile viewing, or horizontal (1920x1080) for desktop platforms.
+Style: Clean, modern, data-driven, professional infographic design.`;
+    }
 
     const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';
     const customBrandColors = brandSettings?.customColors

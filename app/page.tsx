@@ -93,7 +93,7 @@ export default function Home() {
 
   // Avatar Video Configuration
   const [showAvatarConfig, setShowAvatarConfig] = useState<boolean>(false)
-  
+
   // Faceless Video Options
   const [showFacelessOptions, setShowFacelessOptions] = useState<boolean>(false)
 
@@ -139,6 +139,7 @@ export default function Home() {
     { value: 'twitter-thread', label: 'Twitter Thread', platforms: ['twitter'] },
     { value: 'whatsapp-creative', label: 'WhatsApp Creative', platforms: ['whatsapp'] },
     { value: 'email-newsletter', label: 'Email Newsletter', platforms: ['email'] },
+    { value: 'infographic', label: 'Infographic', platforms: ['linkedin', 'instagram', 'facebook', 'twitter'] },
   ]
 
   const purposeOptions = [
@@ -804,7 +805,13 @@ export default function Home() {
               </label>
               <select
                 value={campaignType}
-                onChange={(e) => setCampaignType(e.target.value)}
+                onChange={(e) => {
+                  setCampaignType(e.target.value)
+                  // Auto-set contentType to 'image' for infographic campaigns
+                  if (e.target.value === 'infographic') {
+                    setContentType('image')
+                  }
+                }}
                 disabled={isRunning || executingStage !== null}
                 className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
