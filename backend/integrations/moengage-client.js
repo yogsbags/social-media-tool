@@ -91,6 +91,92 @@ class MoengageClient {
     return this._requestReporting(`/v1/inform/reports/${reportId}`);
   }
 
+  // Email Template API Methods
+
+  async _requestTemplateAPI(path, body = null, method = 'POST') {
+    this._assertReporting();
+
+    // Email Template APIs use v2 endpoint
+    const init = {
+      method,
+      headers: {
+        Authorization: `Bearer ${this.reportingApiKey}`,
+        'Content-Type': 'application/json',
+        'MOE-APP-ID': this.workspaceId
+      }
+    };
+
+    if (body && method !== 'GET' && method !== 'DELETE') {
+      init.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(`${this.reportsBaseUrl}/v2${path}`, init);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`MoEngage Email Template API error (${response.status}): ${errorText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Create an email template in MoEngage
+   * @param {Object} template - Template object with name, subject, htmlBody, etc.
+   * @returns {Promise<Object>} Created template response
+   */
+  async createEmailTemplate(template) {
+    return this._requestTemplateAPI('/email-templates', template);
+  }
+
+  /**
+   * Update an existing email template
+   * @param {string} templateId - MoEngage template ID
+   * @param {Object} updates - Template fields to update
+   * @returns {Promise<Object>} Updated template response
+   */
+  async updateEmailTemplate(templateId, updates) {
+    return this._requestTemplateAPI(`/email-templates/${templateId}`, updates, 'PUT');
+  }
+
+  /**
+   * Search/retrieve email templates
+   * @param {Object} filters - Search filters (name, version, id, etc.)
+   * @returns {Promise<Object>} Search results
+   */
+  async searchEmailTemplates(filters = {}) {
+    const query = Object.keys(filters).length > 0
+      ? `?${new URLSearchParams(filters).toString()}`
+      : '';
+    return this._requestTemplateAPI(`/email-templates${query}`, null, 'GET');
+  }
+
+  /**
+   * List all email templates
+   * @returns {Promise<Object>} List of templates
+   */
+  async listEmailTemplates() {
+    return this._requestTemplateAPI('/email-templates', null, 'GET');
+  }
+
+  /**
+   * Get a specific email template by ID
+   * @param {string} templateId - MoEngage template ID
+   * @returns {Promise<Object>} Template details
+   */
+  async getEmailTemplate(templateId) {
+    return this._requestTemplateAPI(`/email-templates/${templateId}`, null, 'GET');
+  }
+
+  /**
+   * Delete an email template
+   * @param {string} templateId - MoEngage template ID
+   * @returns {Promise<Object>} Deletion response
+   */
+  async deleteEmailTemplate(templateId) {
+    return this._requestTemplateAPI(`/email-templates/${templateId}`, null, 'DELETE');
+  }
+
   // Email Campaign API Methods
 
   async _requestCampaignAPI(path, body = null, method = 'POST') {
