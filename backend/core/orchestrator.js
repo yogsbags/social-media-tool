@@ -608,14 +608,28 @@ class SocialMediaOrchestrator {
 
         const avatarDescription = options.avatarDescription || 'Indian male professional in formal business attire, confident posture, warm expression';
         const voiceDescription = options.voiceDescription || 'Deep, confident Indian male voice with slight accent, clear articulation';
-        const scriptText = options.scriptText || options.topic || 'discussing financial services and investment opportunities';
+
+        // Auto-generate script instruction if not provided
+        let scriptInstruction;
+        if (options.scriptText) {
+          scriptInstruction = `speaking the following script: "${options.scriptText}"`;
+          console.log(`   📝 Script: ${options.scriptText.substring(0, 60)}...`);
+        } else {
+          // Generate script instruction based on platform and topic
+          const topic = options.topic || 'financial services and investment opportunities';
+          const platform = options.platform || 'linkedin';
+          const format = options.format || 'testimonial';
+
+          scriptInstruction = `delivering a professional ${format} about ${topic} for ${platform}. Generate natural, engaging speech that is informative, trustworthy, and appropriate for the platform. Include key points, benefits, and a clear message. Speech should be conversational yet professional, matching Indian business communication style`;
+
+          console.log(`   📝 Script: [Auto-generated for ${topic}]`);
+        }
 
         console.log(`   👤 Avatar: ${avatarDescription}`);
         console.log(`   🎙️  Voice: ${voiceDescription}`);
-        console.log(`   📝 Script: ${scriptText.substring(0, 60)}...`);
 
         // Augment prompt with avatar and voice context
-        const avatarPrompt = `Professional video featuring ${avatarDescription}. ${voiceDescription} speaking about: "${scriptText}". Camera: Medium shot, professional framing, slight depth of field. Lighting: Soft key light, professional studio setup with subtle rim lighting. Background: Elegant office environment with soft bokeh, professional corporate setting. ${prompt}`;
+        const avatarPrompt = `Professional video featuring ${avatarDescription}. ${voiceDescription} ${scriptInstruction}. Camera: Medium shot, professional framing, slight depth of field. Lighting: Soft key light, professional studio setup with subtle rim lighting. Background: Elegant office environment with soft bokeh, professional corporate setting. ${prompt}`;
 
         prompt = avatarPrompt;
         console.log('   ✅ Avatar prompt constructed\n');
