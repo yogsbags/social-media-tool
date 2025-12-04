@@ -568,8 +568,24 @@ class SocialMediaOrchestrator {
         outputDir: path.join(this.projectRoot, 'output', 'videos')
       });
 
-      // Build video generation prompt
-      const prompt = longCatPrompt || this._buildVideoPrompt(options);
+      // Check for custom JSON prompt from environment or options
+      const customPromptJson = process.env.VIDEO_PROMPT_JSON || options.videoPromptJson;
+      let prompt;
+
+      if (customPromptJson) {
+        try {
+          const promptData = typeof customPromptJson === 'string'
+            ? JSON.parse(customPromptJson)
+            : customPromptJson;
+          prompt = this._buildPromptFromJson(promptData);
+          console.log('   📋 Using custom JSON prompt structure');
+        } catch (error) {
+          console.log(`   ⚠️  Invalid JSON prompt, falling back to default: ${error.message}`);
+          prompt = longCatPrompt || this._buildVideoPrompt(options);
+        }
+      } else {
+        prompt = longCatPrompt || this._buildVideoPrompt(options);
+      }
 
       // Configure video generation
       const videoConfig = {
@@ -633,20 +649,135 @@ class SocialMediaOrchestrator {
 
   /**
    * Build video generation prompt based on options
+   * Updated to generate faceless videos by default with explicit constraints
    */
   _buildVideoPrompt(options) {
     const { platform, format, topic, type } = options;
 
+    // Faceless video prompts with explicit "no people" constraints
     const basePrompts = {
-      linkedin: `Professional ${format || 'business'} video about ${topic || 'financial services'}. Corporate aesthetic, trustworthy presentation, executive tone.`,
-      instagram: `Engaging ${format || 'reel'} video about ${topic || 'investment tips'}. Dynamic visuals, modern aesthetic, social media optimized.`,
-      youtube: `Educational ${format || 'explainer'} video about ${topic || 'wealth building'}. Clear explanations, professional presentation, engaging content.`,
-      facebook: `Community-focused ${format || 'post'} video about ${topic || 'financial planning'}. Accessible content, relatable presentation.`,
-      twitter: `Concise ${format || 'update'} video about ${topic || 'market insights'}. Quick delivery, attention-grabbing visuals.`,
+      linkedin: `Faceless professional ${format || 'business'} video about ${topic || 'financial services'}. NO PEOPLE, NO FACES, NO HUMANS. Abstract data visualizations, animated charts and graphs, geometric shapes, motion graphics only. Corporate blue and teal color palette with navy accents. Dynamic camera movements orbiting around 3D data elements. Volumetric lighting with soft glows. Modern, clean, premium aesthetic. Cinematic quality. 16:9 aspect ratio.`,
+
+      instagram: `Faceless engaging ${format || 'reel'} video about ${topic || 'investment tips'}. NO PEOPLE, NO FACES, NO HUMANS. Vibrant abstract visuals, animated infographics, colorful geometric patterns, particle effects, data-driven motion graphics. Dynamic camera zoom and rotation. Trendy gradient backgrounds (purple to teal). High-energy pacing. Modern social media aesthetic. 9:16 vertical format optimized.`,
+
+      youtube: `Faceless educational ${format || 'explainer'} video about ${topic || 'wealth building'}. NO PEOPLE, NO FACES, NO HUMANS. Animated educational graphics, step-by-step visual diagrams, 3D charts and statistics, icon animations, timeline visualizations. Clear visual hierarchy. Professional presentation with smooth transitions. Clean modern design with focus on information delivery. 16:9 landscape format.`,
+
+      facebook: `Faceless community-focused ${format || 'post'} video about ${topic || 'financial planning'}. NO PEOPLE, NO FACES, NO HUMANS. Friendly animated graphics, simple infographics, icon-based storytelling, warm color palette, accessible visual language. Relatable abstract symbols and metaphors. Clear messaging through visuals and text overlays. 1:1 or 16:9 format.`,
+
+      twitter: `Faceless concise ${format || 'update'} video about ${topic || 'market insights'}. NO PEOPLE, NO FACES, NO HUMANS. Quick-cut motion graphics, animated statistics, bold data visualizations, minimal design. High contrast colors for attention. Fast-paced transitions. Optimized for quick engagement and shareability. Clean professional look. 16:9 format.`,
+
       whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors.`
     };
 
     return basePrompts[platform] || basePrompts.linkedin;
+  }
+
+  /**
+   * Build video prompt from structured JSON format
+   * Converts detailed JSON prompt structure into comprehensive text prompt for Veo
+   * @private
+   * @param {object} promptData - Structured prompt data
+   * @returns {string} Formatted text prompt
+   */
+  _buildPromptFromJson(promptData) {
+    const parts = [];
+
+    // Product/Brand context
+    if (promptData.brand) {
+      parts.push(`${promptData.brand} brand video`);
+    }
+    if (promptData.product) {
+      parts.push(`showcasing ${promptData.product}`);
+    }
+
+    // Description
+    if (promptData.description) {
+      parts.push(`- ${promptData.description}`);
+    }
+
+    // Style attributes
+    if (promptData.style) {
+      const styleDesc = Array.isArray(promptData.style)
+        ? promptData.style.join(', ')
+        : promptData.style;
+      parts.push(`Style: ${styleDesc}.`);
+    }
+
+    // Camera work
+    if (promptData.camera) {
+      const cameraDesc = Array.isArray(promptData.camera)
+        ? promptData.camera.join(', ')
+        : promptData.camera;
+      parts.push(`Camera: ${cameraDesc}.`);
+    }
+
+    // Lighting
+    if (promptData.lighting) {
+      const lightingDesc = Array.isArray(promptData.lighting)
+        ? promptData.lighting.join(', ')
+        : promptData.lighting;
+      parts.push(`Lighting: ${lightingDesc}.`);
+    }
+
+    // Environment
+    if (promptData.environment) {
+      parts.push(`Environment: ${promptData.environment}.`);
+    }
+
+    // Color palette
+    if (promptData.color_palette && promptData.color_palette.length > 0) {
+      parts.push(`Colors: ${promptData.color_palette.join(', ')}.`);
+    }
+
+    // Visual elements
+    if (promptData.elements && promptData.elements.length > 0) {
+      parts.push(`Elements: ${promptData.elements.join(', ')}.`);
+    }
+
+    // Motion timeline (convert object to narrative)
+    if (promptData.motion && typeof promptData.motion === 'object') {
+      parts.push('\nMotion sequence:');
+      Object.entries(promptData.motion).forEach(([timeRange, action]) => {
+        parts.push(`${timeRange}: ${action}`);
+      });
+    }
+
+    // Ending
+    if (promptData.ending) {
+      parts.push(`\nEnding: ${promptData.ending}.`);
+    }
+
+    // Explicit constraints
+    const constraints = [];
+    if (promptData.text !== undefined) {
+      if (promptData.text === 'none' || promptData.text === null) {
+        constraints.push('No text on screen');
+      } else if (promptData.text) {
+        constraints.push(`Text: "${promptData.text}"`);
+      }
+    }
+    if (promptData.audio !== undefined) {
+      if (promptData.audio === 'none' || promptData.audio === null) {
+        constraints.push('No audio');
+      } else if (promptData.audio) {
+        constraints.push(`Audio: ${promptData.audio}`);
+      }
+    }
+    if (constraints.length > 0) {
+      parts.push(`\nConstraints: ${constraints.join(', ')}.`);
+    }
+
+    // Keywords for emphasis
+    if (promptData.keywords && promptData.keywords.length > 0) {
+      parts.push(`\nKeywords: ${promptData.keywords.join(', ')}.`);
+    }
+
+    // Duration
+    if (promptData.duration) {
+      parts.push(`\nDuration: ${promptData.duration} seconds.`);
+    }
+
+    return parts.join(' ');
   }
 
   /**
