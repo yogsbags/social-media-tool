@@ -67,6 +67,11 @@ export default function Home() {
   const [targetAudience, setTargetAudience] = useState<string>('all_clients')
   const [language, setLanguage] = useState<string>('english')
 
+  // Avatar Video Configuration
+  const [avatarId, setAvatarId] = useState<string>('siddharth-vora')
+  const [avatarScriptText, setAvatarScriptText] = useState<string>('')
+  const [avatarVoiceId, setAvatarVoiceId] = useState<string>('')
+
   // Brand Guidelines
   const [showBrandGuidelines, setShowBrandGuidelines] = useState<boolean>(false)
   const [useBrandGuidelines, setUseBrandGuidelines] = useState<boolean>(true)
@@ -238,6 +243,9 @@ export default function Home() {
           language,
           campaignData,
           files: fileData,
+          avatarId,
+          avatarScriptText,
+          avatarVoiceId,
           brandSettings: {
             useBrandGuidelines,
             customColors: useBrandGuidelines ? null : customColors,
@@ -341,6 +349,9 @@ export default function Home() {
           targetAudience,
           language,
           files: fileData,
+          avatarId,
+          avatarScriptText,
+          avatarVoiceId,
           brandSettings: {
             useBrandGuidelines,
             customColors: useBrandGuidelines ? null : customColors,
@@ -1334,15 +1345,47 @@ export default function Home() {
               </h3>
 
               <div className="space-y-4">
-                <div className="bg-white rounded-lg p-4 border-2 border-yellow-200">
-                  <p className="text-sm text-yellow-700 font-semibold">
-                    Coming Soon: Avatar Selection
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    Avatar selection, voice configuration, and script editing will be available in the next update.
+                {/* Avatar Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Avatar:
+                  </label>
+                  <select
+                    value={avatarId}
+                    onChange={(e) => setAvatarId(e.target.value)}
+                    disabled={isRunning || executingStage !== null}
+                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="siddharth-vora">Siddharth Vora (HeyGen Custom Avatar)</option>
+                    <option value="generic-indian-male">Generic Indian Male (VEO)</option>
+                    <option value="generic-indian-female">Generic Indian Female (VEO)</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {avatarId === 'siddharth-vora'
+                      ? 'Using HeyGen custom avatar for Siddharth Vora, Fund Manager at PL Capital'
+                      : 'Using VEO-generated avatar'}
                   </p>
                 </div>
 
+                {/* Script Text (Optional) */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video Script (optional):
+                  </label>
+                  <textarea
+                    value={avatarScriptText}
+                    onChange={(e) => setAvatarScriptText(e.target.value)}
+                    placeholder="Leave empty to auto-generate based on campaign topic and purpose..."
+                    rows={4}
+                    disabled={isRunning || executingStage !== null}
+                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    If left empty, AI will generate a contextually appropriate script based on your campaign configuration
+                  </p>
+                </div>
+
+                {/* Video Duration */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Video Duration: {duration} seconds
