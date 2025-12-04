@@ -427,6 +427,26 @@ class SocialMediaOrchestrator {
     console.log('🎨 Stage 3: Visual Asset Production');
     console.log(`   Platform: ${options.platform}`);
     console.log(`   Format: ${options.format}`);
+
+    // Check if this is a video-only format (skip image generation for faceless videos)
+    const isVideoOnlyFormat = options.format && (
+      options.format.includes('video') ||
+      options.format.includes('testimonial') ||
+      options.format.includes('reel') ||
+      options.format.includes('explainer') ||
+      options.format.includes('short')
+    );
+
+    if (isVideoOnlyFormat) {
+      console.log('   🎬 Video-only format detected (faceless video)');
+      console.log('   ⏭️  Skipping image generation - proceeding directly to video production');
+      return {
+        success: true,
+        skipped: true,
+        reason: 'Video-only campaign - no static images needed'
+      };
+    }
+
     console.log(`   Model: Gemini 3 Pro Image Preview (4K, Grounded)\n`);
 
     // Placeholder for visual generation
