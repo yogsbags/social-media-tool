@@ -344,6 +344,18 @@ export async function POST(request: NextRequest) {
 
         if (campaignType) {
           args.push('--type', campaignType)
+
+          // Extract platform from campaignType (e.g., "linkedin-testimonial" -> "linkedin")
+          const platform = campaignType.split('-')[0]
+          if (platform) {
+            args.push('--platform', platform)
+          }
+
+          // Extract format from campaignType (e.g., "linkedin-testimonial" -> "testimonial")
+          const format = campaignType.split('-').slice(1).join('-')
+          if (format) {
+            args.push('--format', format)
+          }
         }
 
         if (stageId === 4) {

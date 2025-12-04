@@ -43,6 +43,7 @@ function parseArgs(argv) {
     command: null,
     campaign: null,
     platform: null,
+    format: null,
     topic: null,
     type: null,
     simulate: false,
@@ -66,6 +67,11 @@ function parseArgs(argv) {
       case '--platform':
       case '-p':
         options.platform = argv[i + 1];
+        i++;
+        break;
+      case '--format':
+      case '-f':
+        options.format = argv[i + 1];
         i++;
         break;
       case '--topic':
