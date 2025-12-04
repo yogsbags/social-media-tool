@@ -169,6 +169,35 @@ class VideoCoordinator {
       personGeneration: 'allow_all'
     };
 
+    // Check for reference images from environment variables (set by frontend)
+    const referenceImagePaths = process.env.REFERENCE_IMAGE_PATHS?.split(',').filter(Boolean) || [];
+
+    if (referenceImagePaths.length > 0) {
+      console.log(`   🖼️  Found ${referenceImagePaths.length} reference image(s) for video generation`);
+
+      // Load reference images
+      const referenceImages = [];
+      for (const imagePath of referenceImagePaths) {
+        try {
+          console.log(`   📥 Loading reference image: ${imagePath}`);
+          const imageData = await this.veoGenerator.loadImageFromFile(imagePath);
+          referenceImages.push({
+            imageBytes: imageData.imageBytes,
+            mimeType: imageData.mimeType,
+            referenceType: 'asset' // Preserve subject appearance (people, characters, products)
+          });
+        } catch (error) {
+          console.log(`   ⚠️  Failed to load ${imagePath}: ${error.message}`);
+        }
+      }
+
+      if (referenceImages.length > 0) {
+        console.log(`   ✅ Using ${referenceImages.length} reference image(s) for Veo 3.1 generation`);
+        return await this.veoGenerator.imageToVideoWithReferences(prompt, referenceImages, veoConfig);
+      }
+    }
+
+    // Fallback to standard generation modes if no reference images
     if (mode === 'text-to-video') {
       return await this.veoGenerator.textToVideo(prompt, veoConfig);
     } else if (mode === 'image-to-video') {

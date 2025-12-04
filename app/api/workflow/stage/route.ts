@@ -379,23 +379,52 @@ export async function POST(request: NextRequest) {
           NODE_PATH: parentNodeModules + (process.env.NODE_PATH ? ':' + process.env.NODE_PATH : '')
         } as NodeJS.ProcessEnv
 
-        // Inject reference image (first one) for WhatsApp static creatives
+        // Inject reference images for visual generation and video production
         if (files?.referenceImages?.length > 0) {
-          const ref = files.referenceImages[0]
-          // Try ImgBB first if key exists
-          let refUrl: string | null = null
-          if (process.env.IMGBB_API_KEY) {
-            sendEvent({ log: '🖼️  Uploading reference image to ImgBB for Gemini guidance...' })
-            refUrl = await uploadToImgbb(ref.data)
+          sendEvent({ log: `🖼️  Processing ${files.referenceImages.length} reference image(s)...` })
+
+          const referencePaths: string[] = []
+          const referenceUrls: string[] = []
+
+          // Process each reference image (up to 3 for video)
+          const imagesToProcess = files.referenceImages.slice(0, 3)
+
+          for (let i = 0; i < imagesToProcess.length; i++) {
+            const ref = imagesToProcess[i]
+
+            // Try ImgBB upload first if key exists
+            let refUrl: string | null = null
+            if (process.env.IMGBB_API_KEY && stageId !== 4) {
+              // Only upload to ImgBB for non-video stages (images work better with URLs)
+              refUrl = await uploadToImgbb(ref.data)
+              if (refUrl) {
+                referenceUrls.push(refUrl)
+                sendEvent({ log: `   ✅ Image ${i + 1}: Uploaded to ImgBB` })
+              }
+            }
+
+            // For video stage (4) or if ImgBB failed, save as temp file
+            if (!refUrl || stageId === 4) {
+              const tmpPath = persistBase64Image(ref.data, ref.name || `ref-${i}`)
+              if (tmpPath) {
+                referencePaths.push(tmpPath)
+                sendEvent({ log: `   ✅ Image ${i + 1}: Saved to ${tmpPath}` })
+              }
+            }
           }
-          if (refUrl) {
-            nodeEnv.VISUAL_REFERENCE_URL = refUrl
-            sendEvent({ log: `🖼️  Using reference image URL for visuals: ${refUrl}` })
-          } else {
-            const tmpPath = persistBase64Image(ref.data, ref.name || 'ref')
-            if (tmpPath) {
-              nodeEnv.REFERENCE_IMAGE_PATH = tmpPath
-              sendEvent({ log: `🖼️  Using reference image (temp file) for visuals: ${tmpPath}` })
+
+          // Set environment variables for backend to use
+          if (referenceUrls.length > 0) {
+            nodeEnv.VISUAL_REFERENCE_URL = referenceUrls[0]
+            nodeEnv.VISUAL_REFERENCE_URLS = referenceUrls.join(',')
+          }
+
+          if (referencePaths.length > 0) {
+            nodeEnv.REFERENCE_IMAGE_PATH = referencePaths[0]
+            nodeEnv.REFERENCE_IMAGE_PATHS = referencePaths.join(',')
+
+            if (stageId === 4) {
+              sendEvent({ log: `🎬 Reference images will be used for Veo 3.1 video generation` })
             }
           }
         }
