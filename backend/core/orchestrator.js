@@ -676,9 +676,8 @@ class SocialMediaOrchestrator {
 
       console.log('   ☁️  Uploading video to Cloudinary...');
 
-      // Read video file
+      // Read video file as buffer
       const videoBuffer = fs.readFileSync(videoPath);
-      const videoBase64 = videoBuffer.toString('base64');
 
       // Create form data for signed upload (authenticated)
       const FormData = (await import('form-data')).default;
@@ -690,8 +689,11 @@ class SocialMediaOrchestrator {
       const signatureString = `timestamp=${timestamp}${apiSecret}`;
       const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
-      // Add fields for signed upload (no upload_preset needed for authenticated uploads)
-      formData.append('file', `data:video/mp4;base64,${videoBase64}`);
+      // Add fields for signed upload (send buffer instead of base64 string)
+      formData.append('file', videoBuffer, {
+        filename: path.basename(videoPath),
+        contentType: 'video/mp4'
+      });
       formData.append('api_key', apiKey);
       formData.append('timestamp', timestamp.toString());
       formData.append('signature', signature);
