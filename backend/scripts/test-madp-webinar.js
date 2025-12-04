@@ -91,10 +91,8 @@ Remember, investing involves risk, and past performance doesn't guarantee future
 
 Thank you for joining this webinar. I hope you found it informative. If you have questions, please reach out to our team. Let's build wealth together, systematically.`;
 
-    console.log('📝 Creating webinar segments...\n');
-    console.log('   Introduction: ~60 seconds');
-    console.log('   Main Content: ~8 minutes (will be split into segments)');
-    console.log('   Conclusion: ~60 seconds\n');
+    console.log('📝 Creating complete webinar video...\n');
+    console.log('   Note: If content exceeds 5000 characters, will split intelligently\n');
 
     const webinarResult = await client.createWebinar({
       webinar_title: 'MADP PMS - Multi-Asset Diversified Portfolio Explained',

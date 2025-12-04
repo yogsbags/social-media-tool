@@ -267,10 +267,11 @@ class HeyGenWebinarClient {
       throw new Error('webinar_title, avatar_id, and voice_id are required');
     }
 
-    // If singleVideo is true, combine all text into one script
+    // If singleVideo is true, try to create one complete video
+    // If content exceeds HeyGen's 5000 character limit, split intelligently
     if (singleVideo) {
-      console.log(`   🎓 Creating Single Complete HeyGen Webinar Video: ${webinar_title}`);
-      console.log(`      Format: Single continuous video`);
+      console.log(`   🎓 Creating Complete HeyGen Webinar Video: ${webinar_title}`);
+      console.log(`      Format: Single continuous video (or minimal segments if needed)`);
       
       const fullScript = [
         introduction_text,
@@ -283,38 +284,94 @@ class HeyGenWebinarClient {
       }
 
       const estimatedDuration = this._estimateDuration(fullScript);
+      const maxChars = 5000; // HeyGen's limit per video
 
-      console.log(`      Estimated Duration: ~${Math.ceil(estimatedDuration / 60)} minutes`);
+      // If script fits in one video, create single video
+      if (fullScript.length <= maxChars) {
+        console.log(`      Estimated Duration: ~${Math.ceil(estimatedDuration / 60)} minutes`);
+        console.log(`      Script Length: ${fullScript.length} characters (within limit)`);
 
-      try {
-        const video = await this._generateVideo({
-          avatar_id,
-          voice_id,
-          input_text: fullScript,
-          title: webinar_title
-        });
+        try {
+          const video = await this._generateVideo({
+            avatar_id,
+            voice_id,
+            input_text: fullScript,
+            title: webinar_title
+          });
+
+          const webinarData = {
+            webinar_id: `webinar_${Date.now()}`,
+            title: webinar_title,
+            created_at: new Date().toISOString(),
+            estimated_duration_minutes: Math.ceil(estimatedDuration / 60),
+            estimated_duration_seconds: estimatedDuration,
+            format: 'single_video',
+            video_id: video.video_id,
+            status: 'generating'
+          };
+
+          console.log(`   ✅ Single complete webinar video created: ${video.video_id}`);
+          console.log(`   ⏳ Video is generating. Check status with getVideoStatus('${video.video_id}')`);
+
+          return {
+            success: true,
+            ...webinarData
+          };
+        } catch (error) {
+          console.error(`   ❌ Single video creation failed: ${error.message}`);
+          throw new Error(`HeyGen single video webinar creation failed: ${error.message}`);
+        }
+      } else {
+        // Script too long - split intelligently at paragraph boundaries
+        console.log(`      Script Length: ${fullScript.length} characters (exceeds ${maxChars} limit)`);
+        console.log(`      Splitting intelligently into minimal segments...`);
+
+        const segments = this._splitIntelligently(fullScript, maxChars);
+        console.log(`      Created ${segments.length} segment(s) for complete video`);
+
+        const webinarVideos = [];
+
+        for (let idx = 0; idx < segments.length; idx++) {
+          const segmentVideo = await this._generateVideo({
+            avatar_id,
+            voice_id,
+            input_text: segments[idx],
+            title: idx === 0 ? webinar_title : `${webinar_title} - Part ${idx + 1}`
+          });
+          webinarVideos.push({
+            segment: idx === 0 ? 'complete' : `part_${idx + 1}`,
+            video_id: segmentVideo.video_id,
+            text: segments[idx],
+            estimated_duration_seconds: this._estimateDuration(segments[idx])
+          });
+        }
+
+        const totalDurationSeconds = webinarVideos.reduce(
+          (sum, seg) => sum + (seg.estimated_duration_seconds || 0),
+          0
+        );
 
         const webinarData = {
           webinar_id: `webinar_${Date.now()}`,
           title: webinar_title,
           created_at: new Date().toISOString(),
-          estimated_duration_minutes: Math.ceil(estimatedDuration / 60),
-          estimated_duration_seconds: estimatedDuration,
-          format: 'single_video',
-          video_id: video.video_id,
-          status: 'generating'
+          estimated_duration_minutes: Math.ceil(totalDurationSeconds / 60),
+          estimated_duration_seconds: totalDurationSeconds,
+          format: 'multi_segment_minimal',
+          segments: webinarVideos,
+          total_segments: webinarVideos.length,
+          status: 'generating',
+          note: 'Content split into minimal segments due to HeyGen 5000 character limit'
         };
 
-        console.log(`   ✅ Single webinar video created: ${video.video_id}`);
-        console.log(`   ⏳ Video is generating. Check status with getVideoStatus('${video.video_id}')`);
+        console.log(`   ✅ Complete webinar created with ${webinarVideos.length} segment(s)`);
+        console.log(`   ⏳ Estimated total duration: ${webinarData.estimated_duration_minutes} minutes`);
+        console.log(`   ⏳ Videos are generating. Check status individually.`);
 
         return {
           success: true,
           ...webinarData
         };
-      } catch (error) {
-        console.error(`   ❌ Single video creation failed: ${error.message}`);
-        throw new Error(`HeyGen single video webinar creation failed: ${error.message}`);
       }
     }
 
@@ -430,6 +487,67 @@ class HeyGenWebinarClient {
     const wordCount = text.split(/\s+/).length;
     const wordsPerMinute = 150;
     return Math.ceil((wordCount / wordsPerMinute) * 60);
+  }
+
+  /**
+   * Split text intelligently at paragraph boundaries to stay within character limit
+   * Tries to split at natural breaks (double newlines) rather than mid-sentence
+   * @private
+   */
+  _splitIntelligently(text, maxChars) {
+    if (text.length <= maxChars) {
+      return [text];
+    }
+
+    const segments = [];
+    const paragraphs = text.split(/\n\n+/);
+    let currentSegment = '';
+
+    for (const paragraph of paragraphs) {
+      // If adding this paragraph would exceed limit
+      if (currentSegment && (currentSegment.length + paragraph.length + 2) > maxChars) {
+        // Save current segment and start new one
+        if (currentSegment.trim()) {
+          segments.push(currentSegment.trim());
+        }
+        currentSegment = paragraph;
+      } else {
+        // Add paragraph to current segment
+        currentSegment = currentSegment 
+          ? `${currentSegment}\n\n${paragraph}`
+          : paragraph;
+      }
+    }
+
+    // Add remaining segment
+    if (currentSegment.trim()) {
+      segments.push(currentSegment.trim());
+    }
+
+    // If any segment is still too long (shouldn't happen, but safety check)
+    const finalSegments = [];
+    for (const seg of segments) {
+      if (seg.length <= maxChars) {
+        finalSegments.push(seg);
+      } else {
+        // Force split at sentence boundaries
+        const sentences = seg.split(/[.!?]+\s+/);
+        let current = '';
+        for (const sentence of sentences) {
+          if (current && (current.length + sentence.length + 2) > maxChars) {
+            finalSegments.push(current.trim() + '.');
+            current = sentence;
+          } else {
+            current = current ? `${current}. ${sentence}` : sentence;
+          }
+        }
+        if (current.trim()) {
+          finalSegments.push(current.trim() + '.');
+        }
+      }
+    }
+
+    return finalSegments.length > 0 ? finalSegments : [text.substring(0, maxChars)];
   }
 
   /**
