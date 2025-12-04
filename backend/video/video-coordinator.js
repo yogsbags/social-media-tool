@@ -79,28 +79,31 @@ class VideoCoordinator {
         throw new Error(`Unknown provider: ${provider}`);
       }
 
-      // Download video if URL is provided
-      if (result.videoUrl && !this.simulate) {
+      // Normalize property names (video-generator uses videoUri, we need videoUrl and localPath)
+      if (result.videoUri && !result.videoUrl) {
+        result.videoUrl = result.videoUri;
+      }
+      if (result.videoUri && !result.localPath && provider === 'veo') {
+        // VEO videos are already saved locally to /tmp
+        result.localPath = result.videoUri;
+      }
+
+      // Download video if it's a remote URL (LongCat)
+      if (result.videoUrl && result.videoUrl.startsWith('http') && !this.simulate) {
         await this._ensureOutputDir();
         const videoFileName = `video_${Date.now()}_${provider}.mp4`;
         const videoPath = path.join(this.outputDir, videoFileName);
 
         console.log(`📥 Downloading video to: ${videoPath}`);
-
-        if (provider === 'longcat') {
-          await this.longCatGenerator.downloadVideo(result.videoUrl, videoPath);
-        } else {
-          // VEO videos are already local files
-          console.log(`✅ Video already saved locally`);
-        }
-
+        await this.longCatGenerator.downloadVideo(result.videoUrl, videoPath);
         result.localPath = videoPath;
       }
 
       console.log(`\n✅ Video generation completed successfully!`);
       console.log(`   Provider: ${provider}`);
       console.log(`   Duration: ${result.duration}s`);
-      console.log(`   Video URL: ${result.videoUrl || result.localPath}`);
+      console.log(`   Video URL: ${result.videoUrl || 'N/A'}`);
+      console.log(`   Local Path: ${result.localPath || 'N/A'}`);
 
       return result;
 
