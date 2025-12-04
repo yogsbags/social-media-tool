@@ -295,6 +295,27 @@ class SocialMediaOrchestrator {
       return;
     }
 
+    // Check if this is a video format
+    const isVideoFormat = options.format && (
+      options.format.includes('video') ||
+      options.format.includes('testimonial') ||
+      options.format.includes('reel') ||
+      options.format.includes('explainer') ||
+      options.format.includes('short')
+    );
+
+    // For video campaigns, Stage 2 content is optional (creative prompt from Stage 1 is used)
+    if (isVideoFormat) {
+      console.log('   🎬 Video content format detected');
+      console.log('   ℹ️  Using creative prompt from Stage 1 for video generation');
+      console.log('   ✅ Proceeding to video production stage');
+      return {
+        success: true,
+        contentType: 'video-script',
+        message: 'Video format - using creative prompt for generation'
+      };
+    }
+
     // For WhatsApp static creative, delegate to visual generation now
     const isWhatsAppImage = (options.platform && options.platform.includes('whatsapp')) ||
       (options.type && options.type.includes('whatsapp')) ||
