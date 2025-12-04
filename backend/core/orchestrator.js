@@ -624,7 +624,7 @@ class SocialMediaOrchestrator {
         const veoConfig = {
           aspectRatio: options.aspectRatio || '16:9',
           resolution: '720p',
-          personGeneration: 'allow_all'
+          personGeneration: 'disallow_all'  // Faceless videos - no people
         };
 
         result = await veoGenerator.generateLongVideo(
@@ -664,7 +664,7 @@ class SocialMediaOrchestrator {
         const veoConfig = {
           aspectRatio: options.aspectRatio || '16:9',
           resolution: '720p',
-          personGeneration: 'allow_all'
+          personGeneration: 'disallow_all'  // Faceless videos - no people
         };
 
         result = await veoGenerator.generateLongVideo(
