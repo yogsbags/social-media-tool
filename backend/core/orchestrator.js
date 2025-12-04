@@ -469,8 +469,31 @@ class SocialMediaOrchestrator {
         provider: 'gemini'
       });
 
-      // Generate platform-specific graphics using Gemini 3 Pro
-      const prompt = options.prompt || this._buildVisualPrompt(options);
+      // Load creative prompt from Stage 1 if available (especially important for infographics)
+      let prompt = options.prompt || process.env.CREATIVE_PROMPT;
+      
+      if (!prompt && (options.type === 'infographic' || options.format === 'infographic')) {
+        try {
+          const state = this.stateManager.state;
+          const campaigns = Object.values(state.campaigns || {});
+          const matchingCampaign = campaigns
+            .filter((c) => c.topic === options.topic)
+            .sort((a, b) => new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime())[0];
+          
+          if (matchingCampaign?.creativePrompt) {
+            prompt = matchingCampaign.creativePrompt;
+            console.log('   📋 Using creative prompt from Stage 1 for infographic generation');
+          }
+        } catch (error) {
+          console.log(`   ⚠️  Could not load prompt from Stage 1: ${error.message}`);
+        }
+      }
+
+      // Fallback to building visual prompt if no prompt available
+      if (!prompt) {
+        prompt = this._buildVisualPrompt(options);
+      }
+
       console.log(`   Prompt: ${prompt.substring(0, 80)}...`);
       console.log('   ⏳ Generating image (Gemini 3 Pro, 4K)...\n');
 
