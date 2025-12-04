@@ -551,10 +551,26 @@ class SocialMediaOrchestrator {
       console.log(`   Video path: ${result.localPath || result.videoUrl}`);
       console.log(`   Duration: ${result.duration}s`);
 
+      // NEW: Upload video to Cloudinary for hosting
+      let hostedVideoUrl = null;
+
+      if (result.localPath && fs.existsSync(result.localPath)) {
+        hostedVideoUrl = await this._uploadVideoToCloudinary(result.localPath);
+
+        if (hostedVideoUrl) {
+          result.hostedUrl = hostedVideoUrl;
+        }
+      } else if (result.videoUrl && result.videoUrl.startsWith('http')) {
+        // If video is already hosted (e.g., HeyGen), use that URL
+        hostedVideoUrl = result.videoUrl;
+        console.log(`   ℹ️  Video already hosted: ${hostedVideoUrl}`);
+      }
+
       return {
         success: true,
         videoUrl: result.videoUrl,
         localPath: result.localPath,
+        hostedUrl: hostedVideoUrl,  // Add hosted URL for WhatsApp
         duration: result.duration,
         metadata: result.metadata
       };
@@ -590,6 +606,83 @@ class SocialMediaOrchestrator {
     };
 
     return basePrompts[platform] || basePrompts.linkedin;
+  }
+
+  /**
+   * Upload video to Cloudinary for hosting
+   * @private
+   * @param {string} videoPath - Local path to video file
+   * @returns {Promise<string|null>} Hosted video URL or null on failure
+   */
+  async _uploadVideoToCloudinary(videoPath) {
+    // Parse Cloudinary URL: cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+    const cloudinaryUrl = process.env.CLOUDINARY_URL;
+
+    if (!cloudinaryUrl) {
+      console.log('   ⚠️  CLOUDINARY_URL not configured. Set it to upload videos.');
+      return null;
+    }
+
+    try {
+      // Parse credentials from URL
+      const urlMatch = cloudinaryUrl.match(/cloudinary:\/\/(\d+):([^@]+)@(.+)/);
+      if (!urlMatch) {
+        console.log('   ⚠️  Invalid CLOUDINARY_URL format');
+        return null;
+      }
+
+      const [, apiKey, apiSecret, cloudName] = urlMatch;
+
+      console.log('   ☁️  Uploading video to Cloudinary...');
+
+      // Read video file
+      const videoBuffer = fs.readFileSync(videoPath);
+      const videoBase64 = videoBuffer.toString('base64');
+
+      // Create form data
+      const FormData = (await import('form-data')).default;
+      const formData = new FormData();
+
+      formData.append('file', `data:video/mp4;base64,${videoBase64}`);
+      formData.append('upload_preset', 'ml_default'); // Use unsigned upload
+      formData.append('api_key', apiKey);
+
+      // Generate timestamp and signature for authenticated upload
+      const timestamp = Math.floor(Date.now() / 1000);
+      const crypto = require('crypto');
+      const signatureString = `timestamp=${timestamp}${apiSecret}`;
+      const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
+
+      formData.append('timestamp', timestamp.toString());
+      formData.append('signature', signature);
+
+      // Upload to Cloudinary
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`;
+      const response = await fetch(uploadUrl, {
+        method: 'POST',
+        body: formData,
+        headers: formData.getHeaders()
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log(`   ⚠️  Cloudinary upload failed: ${response.status} ${errorText}`);
+        return null;
+      }
+
+      const result = await response.json();
+      const hostedUrl = result.secure_url;
+
+      if (hostedUrl) {
+        console.log(`   ✅ Video uploaded to Cloudinary: ${hostedUrl}`);
+        return hostedUrl;
+      }
+
+      return null;
+    } catch (error) {
+      console.log(`   ⚠️  Cloudinary upload error: ${error.message}`);
+      return null;
+    }
   }
 
   async stagePublishing(options) {
@@ -632,16 +725,24 @@ class SocialMediaOrchestrator {
 
         if (!creativeUrl) {
           console.log('   ⚠️  No WhatsApp creative URL provided; skipping WhatsApp push.');
+          console.log('   💡 Tip: For images, pass options.whatsappImageUrl (from stageContent result)');
+          console.log('   💡 Tip: For videos, pass options.whatsappVideoUrl (from stageVideo hostedUrl)');
+          console.log('   💡 Example: await stagePublishing({ platform: "whatsapp", whatsappVideoUrl: videoResult.hostedUrl })');
           return;
         }
 
-        console.log(`   💬 Publishing WhatsApp creative via MoEngage (event: WhatsAppCreativeReady)...`);
+        const isVideo = creativeUrl.includes('.mp4') || creativeUrl.includes('video') || options.whatsappVideoUrl;
+        const mediaType = isVideo ? 'video' : 'image';
+
+        console.log(`   💬 Publishing WhatsApp ${mediaType} via MoEngage (event: WhatsAppCreativeReady)...`);
+        console.log(`   🔗 Creative URL: ${creativeUrl.substring(0, 60)}...`);
+
         await publisher.publishWhatsAppCreative({
           topic: options.topic,
           creativeUrl,
           cta
         });
-        console.log('   ✅ WhatsApp creative push sent to MoEngage (Interakt-backed campaign expected)');
+        console.log(`   ✅ WhatsApp ${mediaType} push sent to MoEngage (Interakt-backed campaign expected)`);
         return;
       }
     } catch (error) {
