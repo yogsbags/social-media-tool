@@ -1475,7 +1475,8 @@ export default function Home() {
                     <span>300s (5 min)</span>
                   </div>
                 </div>
-              </div>
+                </div>
+              )}
             </div>
           )}
 
