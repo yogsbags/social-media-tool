@@ -676,62 +676,26 @@ class SocialMediaOrchestrator {
 
       console.log('   ☁️  Uploading video to Cloudinary...');
 
-      // Create form data for signed upload (authenticated)
-      const FormData = (await import('form-data')).default;
-      const formData = new FormData();
-
-      // Generate timestamp for authenticated upload
-      const timestamp = Math.floor(Date.now() / 1000);
-
-      // Build parameters to sign (all params except: api_key, file, cloud_name, resource_type)
-      // Format: key1=value1&key2=value2... in alphabetical order, then append api_secret
-      const paramsToSign = {
-        timestamp: timestamp.toString()
-      };
-
-      // Create signature string: sorted params + api_secret
-      const sortedParams = Object.keys(paramsToSign)
-        .sort()
-        .map(key => `${key}=${paramsToSign[key]}`)
-        .join('&');
-      const signatureString = `${sortedParams}${apiSecret}`;
-
-      const crypto = require('crypto');
-      const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
-
-      console.log(`   🔐 Signature debug:`);
-      console.log(`      timestamp: ${timestamp}`);
-      console.log(`      api_key: ${apiKey.substring(0, 10)}...`);
-      console.log(`      signature: ${signature.substring(0, 20)}...`);
-
-      // Add file as stream (actual data) - REST API requires stream, not file path
-      formData.append('file', fs.createReadStream(videoPath), {
-        filename: path.basename(videoPath),
-        contentType: 'video/mp4'
-      });
-      formData.append('api_key', apiKey);
-      formData.append('timestamp', timestamp.toString());
-      formData.append('signature', signature);
-
-      // Upload to Cloudinary
-      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`;
-      const response = await fetch(uploadUrl, {
-        method: 'POST',
-        body: formData,
-        headers: formData.getHeaders()
+      // Use official Cloudinary SDK for reliable uploads
+      const cloudinary = require('cloudinary').v2;
+      cloudinary.config({
+        cloud_name: cloudName,
+        api_key: apiKey,
+        api_secret: apiSecret
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log(`   ⚠️  Cloudinary upload failed: ${response.status} ${errorText}`);
-        return null;
-      }
+      const result = await cloudinary.uploader.upload(videoPath, {
+        resource_type: 'video',
+        folder: 'social-media'
+      });
 
-      const result = await response.json();
       const hostedUrl = result.secure_url;
 
       if (hostedUrl) {
         console.log(`   ✅ Video uploaded to Cloudinary: ${hostedUrl}`);
+        console.log(`      Public ID: ${result.public_id}`);
+        console.log(`      Duration: ${result.duration}s`);
+        console.log(`      Size: ${(result.bytes / 1024 / 1024).toFixed(2)} MB`);
         return hostedUrl;
       }
 
