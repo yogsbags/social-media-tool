@@ -571,12 +571,21 @@ class SocialMediaOrchestrator {
       // Check for custom JSON prompt from environment or options
       const customPromptJson = process.env.VIDEO_PROMPT_JSON || options.videoPromptJson;
       let prompt;
+      let scenePrompts = null;
+      let promptData = null;
 
       if (customPromptJson) {
         try {
-          const promptData = typeof customPromptJson === 'string'
+          promptData = typeof customPromptJson === 'string'
             ? JSON.parse(customPromptJson)
             : customPromptJson;
+
+          // Extract scene prompts if motion timeline exists
+          if (promptData.motion && typeof promptData.motion === 'object') {
+            scenePrompts = this._extractScenePromptsFromJson(promptData);
+            console.log(`   🎬 Detected ${scenePrompts.length} scene prompts from motion timeline`);
+          }
+
           prompt = this._buildPromptFromJson(promptData);
           console.log('   📋 Using custom JSON prompt structure');
         } catch (error) {
@@ -587,22 +596,111 @@ class SocialMediaOrchestrator {
         prompt = longCatPrompt || this._buildVideoPrompt(options);
       }
 
-      // Configure video generation
-      const videoConfig = {
-        prompt: prompt,
-        duration: options.duration || 90,
-        mode: longCatMode,
-        aspectRatio: options.aspectRatio || '16:9',
-        useLongCat: useLongCat,
-        useVeo: options.useVeo && !useLongCat // Don't use VEO if LongCat is explicitly enabled
-      };
+      const requestedDuration = options.duration || 90;
 
-      console.log(`\n📹 Generating video...`);
-      console.log(`   Provider: ${useLongCat ? 'LongCat (fal.ai)' : options.useVeo ? 'VEO 3.1' : 'Auto'}`);
-      console.log(`   Mode: ${videoConfig.mode}`);
+      // Determine if we should use scene extension (for VEO videos > 8s)
+      const shouldUseSceneExtension = !useLongCat &&
+                                       options.useVeo !== false &&
+                                       requestedDuration > 8 &&
+                                       requestedDuration <= 148;
 
-      // Generate video
-      const result = await coordinator.generateVideo(videoConfig);
+      let result;
+
+      if (shouldUseSceneExtension && scenePrompts && scenePrompts.length > 1) {
+        // Use scene-based generation with motion timeline
+        console.log(`\n📹 Generating video with scene extension...`);
+        console.log(`   Provider: VEO 3.1 (Scene Extension)`);
+        console.log(`   Total Scenes: ${scenePrompts.length}`);
+        console.log(`   Target Duration: ${requestedDuration}s`);
+        console.log(`   Estimated Duration: ${8 + (scenePrompts.length - 1) * 7}s\n`);
+
+        // Initialize VEO generator
+        const VideoGenerator = require('../video/video-generator');
+        const veoGenerator = new VideoGenerator({
+          apiKey: process.env.GEMINI_API_KEY,
+          simulate: this.simulate
+        });
+
+        const veoConfig = {
+          aspectRatio: options.aspectRatio || '16:9',
+          resolution: '720p',
+          personGeneration: 'allow_all'
+        };
+
+        result = await veoGenerator.generateLongVideo(
+          scenePrompts[0],  // Base prompt (8s)
+          scenePrompts.slice(1),  // Extension prompts (7s each)
+          veoConfig
+        );
+
+        // Normalize result to match coordinator format
+        result = {
+          videoUrl: result.finalVideoUri,
+          localPath: result.finalVideoUri,
+          duration: result.totalDuration,
+          metadata: {
+            type: 'long-video',
+            totalClips: result.totalClips,
+            sceneCount: scenePrompts.length
+          }
+        };
+
+      } else if (shouldUseSceneExtension && !scenePrompts) {
+        // Auto-generate scene variations for default prompts
+        console.log(`\n📹 Generating video with auto scene extension...`);
+        console.log(`   Provider: VEO 3.1 (Scene Extension)`);
+        console.log(`   Target Duration: ${requestedDuration}s`);
+
+        const autoScenePrompts = this._generateAutoScenePrompts(prompt, requestedDuration);
+        console.log(`   Auto Scenes: ${autoScenePrompts.length}\n`);
+
+        // Initialize VEO generator
+        const VideoGenerator = require('../video/video-generator');
+        const veoGenerator = new VideoGenerator({
+          apiKey: process.env.GEMINI_API_KEY,
+          simulate: this.simulate
+        });
+
+        const veoConfig = {
+          aspectRatio: options.aspectRatio || '16:9',
+          resolution: '720p',
+          personGeneration: 'allow_all'
+        };
+
+        result = await veoGenerator.generateLongVideo(
+          autoScenePrompts[0],
+          autoScenePrompts.slice(1),
+          veoConfig
+        );
+
+        result = {
+          videoUrl: result.finalVideoUri,
+          localPath: result.finalVideoUri,
+          duration: result.totalDuration,
+          metadata: {
+            type: 'long-video',
+            totalClips: result.totalClips,
+            sceneCount: autoScenePrompts.length
+          }
+        };
+
+      } else {
+        // Standard single-prompt generation (LongCat or short VEO)
+        const videoConfig = {
+          prompt: prompt,
+          duration: requestedDuration,
+          mode: longCatMode,
+          aspectRatio: options.aspectRatio || '16:9',
+          useLongCat: useLongCat,
+          useVeo: options.useVeo && !useLongCat
+        };
+
+        console.log(`\n📹 Generating video...`);
+        console.log(`   Provider: ${useLongCat ? 'LongCat (fal.ai)' : options.useVeo ? 'VEO 3.1' : 'Auto'}`);
+        console.log(`   Mode: ${videoConfig.mode}`);
+
+        result = await coordinator.generateVideo(videoConfig);
+      }
 
       console.log(`\n✅ Video generation completed!`);
       console.log(`   Video path: ${result.localPath || result.videoUrl}`);
@@ -989,6 +1087,131 @@ class SocialMediaOrchestrator {
     });
 
     console.log('\n✅ Email newsletter publishing trigger sent!\n');
+  }
+
+  /**
+   * Extract scene-specific prompts from JSON motion timeline
+   * Converts motion timeline object into array of scene prompts for VEO extension
+   * @private
+   * @param {object} promptData - Full JSON prompt data
+   * @returns {Array<string>} Array of scene prompts [base, extension1, extension2...]
+   */
+  _extractScenePromptsFromJson(promptData) {
+    const scenePrompts = [];
+
+    // Build base context (brand, product, style, etc.) to apply to all scenes
+    const baseContext = [];
+    if (promptData.brand) baseContext.push(`${promptData.brand} brand video`);
+    if (promptData.product) baseContext.push(`showcasing ${promptData.product}`);
+    if (promptData.description) baseContext.push(promptData.description);
+
+    const styleElements = [];
+    if (promptData.style) {
+      const styleDesc = Array.isArray(promptData.style) ? promptData.style.join(', ') : promptData.style;
+      styleElements.push(`Style: ${styleDesc}`);
+    }
+    if (promptData.lighting) {
+      const lightingDesc = Array.isArray(promptData.lighting) ? promptData.lighting.join(', ') : promptData.lighting;
+      styleElements.push(`Lighting: ${lightingDesc}`);
+    }
+    if (promptData.environment) {
+      styleElements.push(`Environment: ${promptData.environment}`);
+    }
+    if (promptData.color_palette && promptData.color_palette.length > 0) {
+      styleElements.push(`Colors: ${promptData.color_palette.join(', ')}`);
+    }
+    if (promptData.elements && promptData.elements.length > 0) {
+      styleElements.push(`Elements: ${promptData.elements.join(', ')}`);
+    }
+
+    const constraints = [];
+    if (promptData.text === 'none' || promptData.text === null) {
+      constraints.push('No text on screen');
+    }
+    if (promptData.keywords && promptData.keywords.length > 0) {
+      constraints.push(`Keywords: ${promptData.keywords.join(', ')}`);
+    }
+
+    // Sort motion timeline entries by time (e.g., "0-1s", "1-3s", "3-5s")
+    const motionEntries = Object.entries(promptData.motion).sort((a, b) => {
+      const aStart = parseInt(a[0].split('-')[0]);
+      const bStart = parseInt(b[0].split('-')[0]);
+      return aStart - bStart;
+    });
+
+    // Group timeline entries into scenes (base = first ~8s of motion, extensions = ~7s each)
+    const baseMotion = [];
+    const extensionMotions = [];
+
+    motionEntries.forEach(([timeRange, action], index) => {
+      if (index === 0 || index === 1) {
+        // First 2 entries = base scene (8s)
+        baseMotion.push(`${timeRange}: ${action}`);
+      } else {
+        // Subsequent entries = extensions (7s each)
+        extensionMotions.push({ timeRange, action });
+      }
+    });
+
+    // Build base scene prompt (8s)
+    const basePrompt = [
+      ...baseContext,
+      ...styleElements,
+      `Motion: ${baseMotion.map(m => m).join('; ')}`,
+      constraints.join(', ')
+    ].filter(Boolean).join('. ') + '.';
+
+    scenePrompts.push(basePrompt);
+
+    // Build extension prompts (7s each)
+    extensionMotions.forEach(({ timeRange, action }) => {
+      const extensionPrompt = [
+        ...baseContext,
+        ...styleElements,
+        `${timeRange}: ${action}`,
+        constraints.join(', ')
+      ].filter(Boolean).join('. ') + '.';
+
+      scenePrompts.push(extensionPrompt);
+    });
+
+    return scenePrompts;
+  }
+
+  /**
+   * Auto-generate scene variations from a single prompt
+   * Creates base + extension prompts for scene extension without JSON timeline
+   * @private
+   * @param {string} basePrompt - The original video prompt
+   * @param {number} targetDuration - Desired video duration in seconds
+   * @returns {Array<string>} Array of scene prompts [base, variations...]
+   */
+  _generateAutoScenePrompts(basePrompt, targetDuration) {
+    // Calculate number of extensions needed
+    // Base = 8s, each extension = 7s
+    const extensionsNeeded = Math.max(0, Math.ceil((targetDuration - 8) / 7));
+    const scenePrompts = [basePrompt]; // Base scene
+
+    // Scene variation phrases for faceless videos
+    const variations = [
+      'Camera orbits around the visual elements with dynamic lighting transitions',
+      'Zoom into key data points revealing intricate details and patterns',
+      'Visual elements reorganize and transform with smooth animated transitions',
+      'Camera pulls back to reveal full scene with enhanced lighting effects',
+      'Data elements pulse and animate with synchronized motion',
+      'Cinematic rotation showcasing different angles and perspectives',
+      'Volumetric lighting reveals hidden layers and depth',
+      'Elements coalesce and disperse in fluid choreographed motion'
+    ];
+
+    // Generate extension prompts with variations
+    for (let i = 0; i < extensionsNeeded && i < 20; i++) {
+      const variation = variations[i % variations.length];
+      const extensionPrompt = `${basePrompt} ${variation}.`;
+      scenePrompts.push(extensionPrompt);
+    }
+
+    return scenePrompts;
   }
 }
 
