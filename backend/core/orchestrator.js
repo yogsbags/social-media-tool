@@ -469,10 +469,10 @@ class SocialMediaOrchestrator {
         provider: 'gemini'
       });
 
-      // Load creative prompt from Stage 1 if available (especially important for infographics)
-      let prompt = options.prompt || process.env.CREATIVE_PROMPT;
+      // Load creative prompt from Stage 1 workflow state (especially important for infographics)
+      let prompt = options.prompt;
       
-      if (!prompt && (options.type === 'infographic' || options.format === 'infographic')) {
+      if (!prompt) {
         try {
           const state = this.stateManager.state;
           const campaigns = Object.values(state.campaigns || {});
@@ -482,7 +482,11 @@ class SocialMediaOrchestrator {
           
           if (matchingCampaign?.creativePrompt) {
             prompt = matchingCampaign.creativePrompt;
-            console.log('   📋 Using creative prompt from Stage 1 for infographic generation');
+            if (options.type === 'infographic' || options.format === 'infographic') {
+              console.log('   📋 Using creative prompt from Stage 1 for infographic generation');
+            } else {
+              console.log('   📋 Using creative prompt from Stage 1');
+            }
           }
         } catch (error) {
           console.log(`   ⚠️  Could not load prompt from Stage 1: ${error.message}`);
@@ -535,7 +539,7 @@ class SocialMediaOrchestrator {
       const brandInstructions = brandSettings?.customInstructions
         ? `Additional guidelines: ${brandSettings.customInstructions}.`
         : '';
-      
+
       const brandGuidance = brandSettings?.useBrandGuidelines
         ? defaultBrand
         : `${customBrandColors} ${brandTone} ${brandInstructions}`.trim();
