@@ -370,8 +370,8 @@ export async function POST(request: NextRequest) {
           if (useVeo) args.push('--use-veo')
           if (finalUseAvatar) args.push('--use-avatar')
 
-          // Pass avatar options directly as CLI arguments
-          if (avatarId) {
+          // Pass avatar options directly as CLI arguments - ONLY if avatar mode is enabled
+          if (finalUseAvatar && avatarId) {
             args.push('--avatar-id', avatarId)
             // Only pass heygen-avatar-group-id for Siddharth Vora (if explicitly provided)
             // Other avatars (Raj, Priya, etc.) use VEO with descriptions from mapping
@@ -387,7 +387,7 @@ export async function POST(request: NextRequest) {
               }
             }
           }
-          if (avatarScriptText) {
+          if (finalUseAvatar && avatarScriptText) {
             args.push('--avatar-script', avatarScriptText)
           }
         }
@@ -480,38 +480,6 @@ export async function POST(request: NextRequest) {
           const output = data.toString()
           outputBuffer += output
           sendEvent({ log: output.trim() })
-
-          // Stage-specific parsing
-          if (stageId === 4) {
-            // Video production updates
-            if (output.includes('HeyGen')) {
-              sendEvent({ log: '🎭 HeyGen avatar processing...' })
-            }
-            if (output.includes('Veo')) {
-              sendEvent({ log: '🎬 Veo scene generation...' })
-            }
-            if (output.includes('LongCat')) {
-              sendEvent({ log: '🎥 LongCat long-form video generation...' })
-            }
-            if (output.includes('Shotstack')) {
-              sendEvent({ log: '✂️ Shotstack compositing...' })
-            }
-          }
-
-          if (stageId === 5) {
-            // Publishing updates
-            if (output.includes('Published to')) {
-              const urlMatch = output.match(/(https?:\/\/[^\s]+)/)
-              if (urlMatch) {
-                const platform = output.toLowerCase().includes('linkedin') ? 'linkedin' :
-                               output.toLowerCase().includes('instagram') ? 'instagram' :
-                               output.toLowerCase().includes('youtube') ? 'youtube' :
-                               output.toLowerCase().includes('facebook') ? 'facebook' :
-                               output.toLowerCase().includes('twitter') ? 'twitter' : 'unknown'
-                sendEvent({ campaignData: { publishedUrls: { [platform]: urlMatch[1] } } })
-              }
-            }
-          }
         })
 
         // Handle stderr
