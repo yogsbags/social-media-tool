@@ -1507,20 +1507,64 @@ class ImageGenerator {
    * HELPER: Load image from file path or buffer
    * @private
    */
-  async _loadImage(input) {
+  async _loadImage(input, retries = 3) {
     let imageBuffer;
     let imagePath;
 
     if (typeof input === 'string') {
       // Load from URL or file path
       if (input.startsWith('http://') || input.startsWith('https://')) {
-        const response = await fetch(input);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch reference image: ${response.status} ${response.statusText}`);
+        // Fetch with timeout and retry logic
+        let lastError;
+        for (let attempt = 1; attempt <= retries; attempt++) {
+          try {
+            console.log(`   📥 Fetching image from URL (attempt ${attempt}/${retries}): ${input.substring(0, 60)}...`);
+
+            // Create AbortController for timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+            try {
+              const response = await fetch(input, {
+                signal: controller.signal,
+                headers: {
+                  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+                }
+              });
+
+              clearTimeout(timeoutId);
+
+              if (!response.ok) {
+                throw new Error(`Failed to fetch reference image: ${response.status} ${response.statusText}`);
+              }
+
+              const arrayBuffer = await response.arrayBuffer();
+              imageBuffer = Buffer.from(arrayBuffer);
+              imagePath = null;
+              console.log(`   ✅ Image fetched successfully (${(imageBuffer.length / 1024).toFixed(2)} KB)`);
+              break; // Success, exit retry loop
+            } catch (fetchError) {
+              clearTimeout(timeoutId);
+              throw fetchError;
+            }
+          } catch (error) {
+            lastError = error;
+            const isTimeout = error.name === 'AbortError' || error.code === 'UND_ERR_CONNECT_TIMEOUT';
+            const isNetworkError = error.message.includes('fetch failed') || error.message.includes('timeout');
+
+            if (attempt < retries && (isTimeout || isNetworkError)) {
+              const waitTime = attempt * 2000; // Exponential backoff: 2s, 4s, 6s
+              console.log(`   ⚠️ Fetch attempt ${attempt} failed (${error.message}), retrying in ${waitTime/1000}s...`);
+              await new Promise(resolve => setTimeout(resolve, waitTime));
+            } else {
+              throw error;
+            }
+          }
         }
-        const arrayBuffer = await response.arrayBuffer();
-        imageBuffer = Buffer.from(arrayBuffer);
-        imagePath = null;
+
+        if (!imageBuffer) {
+          throw lastError || new Error('Failed to fetch image after all retries');
+        }
       } else {
         imagePath = input;
         imageBuffer = await fs.readFile(input);

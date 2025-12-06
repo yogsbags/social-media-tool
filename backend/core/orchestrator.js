@@ -159,13 +159,15 @@ class SocialMediaOrchestrator {
       platform: 'linkedin',
       format: 'carousel',
       topic: options.topic,
-      type: options.type
+      type: options.type,
+      language: options.language
     });
 
     // Stage 2: Generate images
     await this.stageVisuals({
       platform: 'linkedin',
-      format: 'carousel'
+      format: 'carousel',
+      language: options.language
     });
 
     // Stage 3: Auto-publish if requested
@@ -186,7 +188,8 @@ class SocialMediaOrchestrator {
       platform: 'linkedin',
       format: 'video-testimonial',
       topic: options.topic,
-      duration: options.duration
+      duration: options.duration,
+      language: options.language
     });
 
     // Stage 2: Generate video
@@ -196,7 +199,9 @@ class SocialMediaOrchestrator {
       duration: options.duration,
       useVeo: options.useVeo,
       useAvatar: options.useAvatar,
-      waitForCompletion: options.waitForCompletion
+      waitForCompletion: options.waitForCompletion,
+      language: options.language,
+      aspectRatio: options.aspectRatio
     });
 
     // Stage 3: Auto-publish if requested
@@ -217,16 +222,18 @@ class SocialMediaOrchestrator {
       platform: 'instagram',
       format: 'reel',
       topic: options.topic,
-      duration: options.duration
+      duration: options.duration,
+      language: options.language
     });
 
     await this.stageVideo({
       platform: 'instagram',
       format: 'reel',
-      aspectRatio: '9:16',
+      aspectRatio: options.aspectRatio || '9:16',
       duration: options.duration,
       useVeo: options.useVeo,
       useAvatar: options.useAvatar,
+      language: options.language,
       waitForCompletion: options.waitForCompletion
     });
 
@@ -287,7 +294,11 @@ class SocialMediaOrchestrator {
     console.log('✍️  Stage 2: Content Generation');
     console.log(`   Platform: ${options.platform}`);
     console.log(`   Format: ${options.format}`);
-    console.log(`   Topic: ${options.topic}\n`);
+    console.log(`   Topic: ${options.topic}`);
+    if (options.language) {
+      console.log(`   Language: ${this._getLanguageName(options.language)}`);
+    }
+    console.log('');
 
     // Placeholder for content generation
     if (this.simulate) {
@@ -344,7 +355,9 @@ class SocialMediaOrchestrator {
         format: 'image',
         topic: options.topic,
         type: options.type,
-        prompt
+        prompt,
+        aspectRatio: options.aspectRatio,  // Pass aspectRatio from options
+        language: options.language  // Pass language from options
       };
 
       let result;
@@ -358,7 +371,8 @@ class SocialMediaOrchestrator {
         const refInput = referenceImagePath || referenceImageUrl;
 
         const editResult = await generator.editImage(prompt, refInput, {
-          aspectRatio: this._getAspectRatioForFormat('story') // 9:16 for WhatsApp
+          aspectRatio: options.aspectRatio || this._getAspectRatioForFormat('story'), // Use provided aspectRatio or default to 9:16 for WhatsApp
+          language: options.language  // Pass language for text generation
         });
         result = {
           success: true,
@@ -426,17 +440,19 @@ class SocialMediaOrchestrator {
   async stageVisuals(options) {
     console.log('🎨 Stage 3: Visual Asset Production');
     console.log(`   Platform: ${options.platform}`);
+    if (options.language) {
+      console.log(`   Language: ${this._getLanguageName(options.language)}`);
+    }
     console.log(`   Format: ${options.format}`);
 
     // Check if this is a video-only format (skip image generation for faceless videos)
-    // Infographic is NOT a video format, so it should proceed with image generation
     const isVideoOnlyFormat = options.format && (
       options.format.includes('video') ||
       options.format.includes('testimonial') ||
       options.format.includes('reel') ||
       options.format.includes('explainer') ||
       options.format.includes('short')
-    ) && !options.format.includes('infographic') && options.type !== 'infographic';
+    );
 
     if (isVideoOnlyFormat) {
       console.log('   🎬 Video-only format detected (faceless video)');
@@ -469,42 +485,16 @@ class SocialMediaOrchestrator {
         provider: 'gemini'
       });
 
-      // Load creative prompt from Stage 1 workflow state (especially important for infographics)
-      let prompt = options.prompt;
-
-      if (!prompt) {
-        try {
-          const state = this.stateManager.state;
-          const campaigns = Object.values(state.campaigns || {});
-          const matchingCampaign = campaigns
-            .filter((c) => c.topic === options.topic)
-            .sort((a, b) => new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime())[0];
-
-          if (matchingCampaign?.creativePrompt) {
-            prompt = matchingCampaign.creativePrompt;
-            if (options.type === 'infographic' || options.format === 'infographic') {
-              console.log('   📋 Using creative prompt from Stage 1 for infographic generation');
-            } else {
-              console.log('   📋 Using creative prompt from Stage 1');
-            }
-          }
-        } catch (error) {
-          console.log(`   ⚠️  Could not load prompt from Stage 1: ${error.message}`);
-        }
-      }
-
-      // Fallback to building visual prompt if no prompt available
-      if (!prompt) {
-        prompt = this._buildVisualPrompt(options);
-      }
-
+      // Generate platform-specific graphics using Gemini 3 Pro
+      const prompt = options.prompt || this._buildVisualPrompt(options);
       console.log(`   Prompt: ${prompt.substring(0, 80)}...`);
       console.log('   ⏳ Generating image (Gemini 3 Pro, 4K)...\n');
 
       const result = await generator.generateSocialGraphic(prompt, options.platform, {
         imageSize: '4K',
         useGrounding: true,
-        aspectRatio: this._getAspectRatioForFormat(options.format)
+        aspectRatio: options.aspectRatio || this._getAspectRatioForFormat(options.format),
+        language: options.language  // Pass language for text generation
       });
 
       console.log(`   ✅ Visual generated: ${result.images[0]?.path || 'success'}`);
@@ -522,45 +512,33 @@ class SocialMediaOrchestrator {
   }
 
   /**
+   * Get language name from language code
+   */
+  _getLanguageName(languageCode) {
+    const languageMap = {
+      'english': 'English',
+      'hindi': 'Hindi',
+      'bengali': 'Bengali',
+      'telugu': 'Telugu',
+      'marathi': 'Marathi',
+      'tamil': 'Tamil',
+      'gujarati': 'Gujarati',
+      'kannada': 'Kannada',
+      'malayalam': 'Malayalam',
+      'punjabi': 'Punjabi',
+      'urdu': 'Urdu',
+      'odia': 'Odia',
+      'assamese': 'Assamese'
+    };
+    return languageMap[languageCode] || 'English';
+  }
+
+  /**
    * Build visual prompt based on options
    */
   _buildVisualPrompt(options) {
-    const { platform, format, topic, type, brandSettings } = options;
-
-    // Special handling for infographic campaign type
-    if (type === 'infographic' || format === 'infographic') {
-      const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';
-      const customBrandColors = brandSettings?.customColors
-        ? `Brand colors: ${brandSettings.customColors}.`
-        : '';
-      const brandTone = brandSettings?.customTone
-        ? `Tone: ${brandSettings.customTone}.`
-        : '';
-      const brandInstructions = brandSettings?.customInstructions
-        ? `Additional guidelines: ${brandSettings.customInstructions}.`
-        : '';
-
-      const brandGuidance = brandSettings?.useBrandGuidelines
-        ? defaultBrand
-        : `${customBrandColors} ${brandTone} ${brandInstructions}`.trim();
-
-      return `Create a professional infographic about "${topic}" for ${platform || 'social media'}.
-
-${brandGuidance}
-
-The infographic should include:
-- Clear visual hierarchy with prominent key statistics
-- Data visualizations (charts, graphs, icons) that support the main message
-- Well-organized sections with clear divisions
-- Professional typography with varying font sizes for emphasis
-- Color-coded sections for easy navigation
-- Icons and illustrations that enhance understanding
-- A clear call-to-action
-- Optimized for ${platform || 'social media'} sharing
-
-Format: Vertical layout (1080x1920) recommended for mobile viewing, or horizontal (1920x1080) for desktop platforms.
-Style: Clean, modern, data-driven, professional infographic design.`;
-    }
+    const { platform, format, topic, type, brandSettings, language = 'english' } = options;
+    const languageName = this._getLanguageName(language);
 
     const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';
     const customBrandColors = brandSettings?.customColors
@@ -578,13 +556,17 @@ Style: Clean, modern, data-driven, professional infographic design.`;
 
     const safeFormat = format || 'image';
 
+    const languageInstruction = language !== 'english'
+      ? ` All text, labels, and content must be in ${languageName}.`
+      : '';
+
     const basePrompts = {
-      linkedin: `Professional ${safeFormat} graphic for LinkedIn about ${topic || 'financial investment'}. Corporate blue and green color scheme, clean modern design, trust-building aesthetic.`,
-      instagram: `Eye-catching ${safeFormat} visual for Instagram about ${topic || 'investment growth'}. Vibrant colors, modern gradient background, engaging social media aesthetic.`,
-      youtube: `High-quality ${safeFormat} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design.`,
-      facebook: `Engaging ${safeFormat} post graphic for Facebook about ${topic || 'financial planning'}. Community-focused, accessible design, clear messaging.`,
-      twitter: `Concise ${safeFormat} visual for Twitter about ${topic || 'market insights'}. Clean, minimal design optimized for quick engagement.`,
-      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors. ${brandGuidance}`
+      linkedin: `Professional ${safeFormat} graphic for LinkedIn about ${topic || 'financial investment'}. Corporate blue and green color scheme, clean modern design, trust-building aesthetic.${languageInstruction}`,
+      instagram: `Eye-catching ${safeFormat} visual for Instagram about ${topic || 'investment growth'}. Vibrant colors, modern gradient background, engaging social media aesthetic.${languageInstruction}`,
+      youtube: `High-quality ${safeFormat} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design.${languageInstruction}`,
+      facebook: `Engaging ${safeFormat} post graphic for Facebook about ${topic || 'financial planning'}. Community-focused, accessible design, clear messaging.${languageInstruction}`,
+      twitter: `Concise ${safeFormat} visual for Twitter about ${topic || 'market insights'}. Clean, minimal design optimized for quick engagement.${languageInstruction}`,
+      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors.${languageInstruction} ${brandGuidance}`
     };
 
     return basePrompts[platform] || basePrompts.linkedin;
@@ -612,6 +594,9 @@ Style: Clean, modern, data-driven, professional infographic design.`;
     console.log(`   Platform: ${options.platform}`);
     console.log(`   Duration: ${options.duration}s`);
     console.log(`   Aspect Ratio: ${options.aspectRatio || '16:9'}`);
+    if (options.language) {
+      console.log(`   Language: ${this._getLanguageName(options.language)}`);
+    }
     console.log(`   Method: ${options.useVeo ? 'Veo 3.1' : 'Auto-detect'} ${options.useAvatar ? '+ Avatar' : ''}\n`);
 
     if (this.simulate) {
@@ -662,82 +647,32 @@ Style: Clean, modern, data-driven, professional infographic design.`;
       const requestedDuration = options.duration || 90;
 
       // Check if this is avatar mode (VEO-based avatar generation)
-      // Read avatar options directly from options object
-      const avatarId = options.avatarId;
-      const avatarScriptText = options.scriptText || options.avatarScriptText;
-      const avatarVoiceId = options.avatarVoiceId;
-      const heygenGroupId = options.heygenAvatarGroupId;
-
       const isAvatarMode = options.useAvatar === true;
-      // Only use HeyGen API for Siddharth Vora explicitly
-      // Other avatars (Raj, Priya, etc.) use VEO with descriptions from mapping
-      const isHeyGenAvatar = avatarId === 'siddharth-vora';
+      const isHeyGenAvatar = options.avatarId === 'siddharth-vora'; // Later: route to HeyGen
 
       // For avatar mode (non-HeyGen), augment prompt with avatar and voice descriptions
       if (isAvatarMode && !isHeyGenAvatar) {
         console.log('   🎭 Avatar mode detected (VEO-based)');
-        console.log(`   👤 Avatar ID: ${avatarId || 'default'}`);
 
-        // Load avatar and voice descriptions from config files
-        let avatarDescription;
-        let voiceDescription;
+        const avatarDescription = options.avatarDescription || 'Indian male professional in formal business attire, confident posture, warm expression';
+        const voiceDescription = options.voiceDescription || 'Deep, confident Indian male voice with slight accent, clear articulation';
 
-        try {
-          // Try to load from heygen-native-voice-mapping.json (for HeyGen group IDs)
-          const avatarMappingPath = path.join(this.projectRoot, 'config', 'heygen-native-voice-mapping.json');
-          if (fs.existsSync(avatarMappingPath) && avatarId) {
-            const avatarMapping = JSON.parse(fs.readFileSync(avatarMappingPath, 'utf8'));
-            const avatarData = avatarMapping[avatarId];
-
-            if (avatarData) {
-              // Build avatar description from config for VEO to generate matching avatar
-              avatarDescription = `Professional Indian ${avatarData.gender} named ${avatarData.avatarName}, ${avatarData.description || 'in formal business attire, confident posture, professional appearance'}`;
-
-              // Build voice description from config for VEO to generate matching voice
-              voiceDescription = `${avatarData.voiceName || 'Professional'} ${avatarData.gender === 'male' ? 'Indian male' : 'Indian female'} voice, ${avatarData.description || 'clear and articulate, professional tone'}`;
-
-              console.log(`   ✅ Loaded avatar config: ${avatarData.avatarName} (${avatarData.gender})`);
-              console.log(`   🎙️  Voice: ${avatarData.voiceName}`);
-            }
-          }
-        } catch (error) {
-          console.log(`   ⚠️  Could not load avatar config: ${error.message}`);
-        }
-
-        // Fallback to generic descriptions if config not found
-        if (!avatarDescription) {
-          if (avatarId === 'generic-indian-male') {
-            avatarDescription = 'Indian male professional in formal business attire, confident posture, warm expression, clean-shaven, professional appearance';
-          } else if (avatarId === 'generic-indian-female') {
-            avatarDescription = 'Indian female professional in formal business attire, confident posture, warm expression, professional appearance';
-          } else {
-            avatarDescription = options.avatarDescription || 'Indian male professional in formal business attire, confident posture, warm expression';
-          }
-        }
-
-        if (!voiceDescription) {
-          if (avatarId === 'generic-indian-female') {
-            voiceDescription = 'Professional Indian female voice, clear and articulate, warm and trustworthy tone';
-          } else {
-            voiceDescription = options.voiceDescription || 'Deep, confident Indian male voice with slight accent, clear articulation';
-          }
-        }
-
-        // Handle script text - use provided script or generate instruction for VEO
+        // Auto-generate script instruction if not provided
         let scriptInstruction;
-        const finalScriptText = avatarScriptText || options.scriptText;
-
-        if (finalScriptText) {
-          // Use provided script text directly - VEO will generate speech matching this script
-          scriptInstruction = `speaking the following script: "${finalScriptText}"`;
-          console.log(`   📝 Script: ${finalScriptText.substring(0, 60)}...`);
+        if (options.scriptText) {
+          scriptInstruction = `speaking the following script: "${options.scriptText}"`;
+          console.log(`   📝 Script: ${options.scriptText.substring(0, 60)}...`);
         } else {
-          // Generate script instruction for VEO to auto-generate speech based on context
+          // Generate script instruction based on platform and topic
           const topic = options.topic || 'financial services and investment opportunities';
           const platform = options.platform || 'linkedin';
           const format = options.format || 'testimonial';
 
-          scriptInstruction = `delivering a professional ${format} about ${topic} for ${platform}. Generate natural, engaging speech that is informative, trustworthy, and appropriate for the platform. Include key points, benefits, and a clear message. Speech should be conversational yet professional, matching Indian business communication style`;
+          const languageName = this._getLanguageName(options.language || 'english');
+          const languageInstruction = options.language && options.language !== 'english'
+            ? ` All speech and dialogue must be in ${languageName}.`
+            : '';
+          scriptInstruction = `delivering a professional ${format} about ${topic} for ${platform}. Generate natural, engaging speech that is informative, trustworthy, and appropriate for the platform. Include key points, benefits, and a clear message. Speech should be conversational yet professional, matching Indian business communication style.${languageInstruction}`;
 
           console.log(`   📝 Script: [Auto-generated for ${topic}]`);
         }
@@ -775,7 +710,11 @@ Style: Clean, modern, data-driven, professional infographic design.`;
           const platform = options.platform || 'linkedin';
           const format = options.format || 'testimonial';
 
-          scriptText = `Generate natural, engaging speech that is informative, trustworthy, and appropriate for the platform. Include key points, benefits, and a clear message. Speech should be conversational yet professional, matching Indian business communication style`;
+          const languageName = this._getLanguageName(options.language || 'english');
+          const languageInstruction = options.language && options.language !== 'english'
+            ? ` All speech and dialogue must be in ${languageName}.`
+            : '';
+          scriptText = `Generate natural, engaging speech that is informative, trustworthy, and appropriate for the platform. Include key points, benefits, and a clear message. Speech should be conversational yet professional, matching Indian business communication style.${languageInstruction}`;
 
           console.log(`   📝 Script: [Auto-generated for ${topic}]`);
         }
@@ -916,7 +855,10 @@ Style: Clean, modern, data-driven, professional infographic design.`;
         const veoConfig = {
           aspectRatio: options.aspectRatio || '16:9',
           resolution: '720p',
-          personGeneration: isAvatarMode ? 'allow_all' : 'disallow_all'  // Allow people for avatars, disallow for faceless
+          // According to Veo 3.1 docs: Text-to-video & Extension require "allow_all" only
+          // For faceless videos, we use "allow_all" but rely on prompt constraints ("NO PEOPLE, NO FACES, NO HUMANS")
+          // For avatar videos, we also use "allow_all" (text-to-video mode)
+          personGeneration: 'allow_all'  // Required for text-to-video mode (Veo 3.1)
         };
 
         result = await veoGenerator.generateLongVideo(
@@ -957,7 +899,10 @@ Style: Clean, modern, data-driven, professional infographic design.`;
         const veoConfig = {
           aspectRatio: options.aspectRatio || '16:9',
           resolution: '720p',
-          personGeneration: isAvatarMode ? 'allow_all' : 'disallow_all'  // Allow people for avatars, disallow for faceless
+          // According to Veo 3.1 docs: Text-to-video & Extension require "allow_all" only
+          // For faceless videos, we use "allow_all" but rely on prompt constraints ("NO PEOPLE, NO FACES, NO HUMANS")
+          // For avatar videos, we also use "allow_all" (text-to-video mode)
+          personGeneration: 'allow_all'  // Required for text-to-video mode (Veo 3.1)
         };
 
         result = await veoGenerator.generateLongVideo(
@@ -1043,21 +988,27 @@ Style: Clean, modern, data-driven, professional infographic design.`;
    * Updated to generate faceless videos by default with explicit constraints
    */
   _buildVideoPrompt(options) {
-    const { platform, format, topic, type } = options;
+    const { platform, format, topic, type, language = 'english' } = options;
+    const languageName = this._getLanguageName(language);
+
+    // Language instruction for video content
+    const languageInstruction = language !== 'english'
+      ? ` All on-screen text, labels, captions, and any spoken content must be in ${languageName}.`
+      : '';
 
     // Faceless video prompts with explicit "no people" constraints
     const basePrompts = {
-      linkedin: `Faceless professional ${format || 'business'} video about ${topic || 'financial services'}. NO PEOPLE, NO FACES, NO HUMANS. Abstract data visualizations, animated charts and graphs, geometric shapes, motion graphics only. Corporate blue and teal color palette with navy accents. Dynamic camera movements orbiting around 3D data elements. Volumetric lighting with soft glows. Modern, clean, premium aesthetic. Cinematic quality. 16:9 aspect ratio.`,
+      linkedin: `Faceless professional ${format || 'business'} video about ${topic || 'financial services'}. NO PEOPLE, NO FACES, NO HUMANS. Abstract data visualizations, animated charts and graphs, geometric shapes, motion graphics only. Corporate blue and teal color palette with navy accents. Dynamic camera movements orbiting around 3D data elements. Volumetric lighting with soft glows. Modern, clean, premium aesthetic. Cinematic quality. 16:9 aspect ratio.${languageInstruction}`,
 
-      instagram: `Faceless engaging ${format || 'reel'} video about ${topic || 'investment tips'}. NO PEOPLE, NO FACES, NO HUMANS. Vibrant abstract visuals, animated infographics, colorful geometric patterns, particle effects, data-driven motion graphics. Dynamic camera zoom and rotation. Trendy gradient backgrounds (purple to teal). High-energy pacing. Modern social media aesthetic. 9:16 vertical format optimized.`,
+      instagram: `Faceless engaging ${format || 'reel'} video about ${topic || 'investment tips'}. NO PEOPLE, NO FACES, NO HUMANS. Vibrant abstract visuals, animated infographics, colorful geometric patterns, particle effects, data-driven motion graphics. Dynamic camera zoom and rotation. Trendy gradient backgrounds (purple to teal). High-energy pacing. Modern social media aesthetic. 9:16 vertical format optimized.${languageInstruction}`,
 
-      youtube: `Faceless educational ${format || 'explainer'} video about ${topic || 'wealth building'}. NO PEOPLE, NO FACES, NO HUMANS. Animated educational graphics, step-by-step visual diagrams, 3D charts and statistics, icon animations, timeline visualizations. Clear visual hierarchy. Professional presentation with smooth transitions. Clean modern design with focus on information delivery. 16:9 landscape format.`,
+      youtube: `Faceless educational ${format || 'explainer'} video about ${topic || 'wealth building'}. NO PEOPLE, NO FACES, NO HUMANS. Animated educational graphics, step-by-step visual diagrams, 3D charts and statistics, icon animations, timeline visualizations. Clear visual hierarchy. Professional presentation with smooth transitions. Clean modern design with focus on information delivery. 16:9 landscape format.${languageInstruction}`,
 
-      facebook: `Faceless community-focused ${format || 'post'} video about ${topic || 'financial planning'}. NO PEOPLE, NO FACES, NO HUMANS. Friendly animated graphics, simple infographics, icon-based storytelling, warm color palette, accessible visual language. Relatable abstract symbols and metaphors. Clear messaging through visuals and text overlays. 1:1 or 16:9 format.`,
+      facebook: `Faceless community-focused ${format || 'post'} video about ${topic || 'financial planning'}. NO PEOPLE, NO FACES, NO HUMANS. Friendly animated graphics, simple infographics, icon-based storytelling, warm color palette, accessible visual language. Relatable abstract symbols and metaphors. Clear messaging through visuals and text overlays. 1:1 or 16:9 format.${languageInstruction}`,
 
-      twitter: `Faceless concise ${format || 'update'} video about ${topic || 'market insights'}. NO PEOPLE, NO FACES, NO HUMANS. Quick-cut motion graphics, animated statistics, bold data visualizations, minimal design. High contrast colors for attention. Fast-paced transitions. Optimized for quick engagement and shareability. Clean professional look. 16:9 format.`,
+      twitter: `Faceless concise ${format || 'update'} video about ${topic || 'market insights'}. NO PEOPLE, NO FACES, NO HUMANS. Quick-cut motion graphics, animated statistics, bold data visualizations, minimal design. High contrast colors for attention. Fast-paced transitions. Optimized for quick engagement and shareability. Clean professional look. 16:9 format.${languageInstruction}`,
 
-      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors.`
+      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors.${languageInstruction}`
     };
 
     return basePrompts[platform] || basePrompts.linkedin;
@@ -1254,35 +1205,11 @@ Style: Clean, modern, data-driven, professional infographic design.`;
         }
 
         console.log(`   📧 Publishing newsletter via MoEngage (subject: ${newsletter.subject})...`);
-        
-        // Use segment-based publishing with Email Campaign API
-        const segmentId = process.env.MOENGAGE_DEFAULT_SEGMENT_ID || '66fbb814e4a912bbd07a58a0';
-        const testEmail = process.env.MOENGAGE_DEFAULT_TEST_EMAIL || 'yogsbags@gmail.com';
-        const fromEmail = process.env.MOENGAGE_DEFAULT_SENDER_EMAIL || 'marketing@pl-india.in';
-        const fromName = process.env.MOENGAGE_DEFAULT_SENDER_NAME || 'PL India Marketing';
-        
-        // Check if we should send test email only or to segment
-        const testOnly = process.env.MOENGAGE_TEST_MODE === 'true';
-        
-        const result = await publisher.publishNewsletterToSegment({
+        await publisher.publishNewsletter({
           ...newsletter,
           topic: newsletter.topic || options.topic
-        }, {
-          segmentId,
-          fromEmail,
-          fromName,
-          testEmail,
-          testOnly
         });
-        
-        if (result.mode === 'test') {
-          console.log(`   ✅ Test email sent to ${result.testEmail} (campaign ID: ${result.campaignId})`);
-        } else {
-          console.log(`   ✅ Newsletter campaign created for segment ${result.segmentId} (campaign ID: ${result.campaignId})`);
-          if (result.testEmail) {
-            console.log(`   ✉️  Test email also sent to ${result.testEmail}`);
-          }
-        }
+        console.log('   ✅ Newsletter push sent to MoEngage (SendGrid-backed campaign)');
         return;
       }
 
@@ -1394,7 +1321,8 @@ Style: Clean, modern, data-driven, professional infographic design.`;
       platform: 'email',
       format: 'newsletter',
       topic: options.topic,
-      type: 'email-newsletter'
+      type: 'email-newsletter',
+      language: options.language
     });
 
     await this.stagePublishing({

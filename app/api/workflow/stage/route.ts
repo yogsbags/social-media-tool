@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
     targetAudience,
     contentType,
     language,
+    aspectRatio = '16:9',
     brandSettings,
     files = {},
     avatarId,
@@ -90,6 +91,8 @@ export async function POST(request: NextRequest) {
 
   // Sync useAvatar with contentType if contentType is explicitly set
   const finalUseAvatar = contentType === 'avatar-video' ? true : (contentType === 'faceless-video' ? false : useAvatar)
+
+  console.log(`[DEBUG] contentType="${contentType}", useAvatar=${useAvatar}, finalUseAvatar=${finalUseAvatar}`)
 
   const stageNames: Record<number, string> = {
     1: 'planning',
@@ -348,6 +351,10 @@ export async function POST(request: NextRequest) {
           args.push('--topic', topic)
         }
 
+        if (language) {
+          args.push('--language', language)
+        }
+
         if (campaignType) {
           args.push('--type', campaignType)
 
@@ -364,11 +371,22 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Add aspect ratio for image generation stages (Stage 2: Content, Stage 3: Visuals)
+        if (stageId === 2 || stageId === 3) {
+          args.push('--aspect-ratio', aspectRatio)
+        }
+
         if (stageId === 4) {
           // Video production stage
           args.push('--duration', duration.toString())
+          args.push('--aspect-ratio', aspectRatio)
           if (useVeo) args.push('--use-veo')
-          if (finalUseAvatar) args.push('--use-avatar')
+          // Explicitly set avatar mode: pass --use-avatar if true, --no-avatar if false
+          if (finalUseAvatar) {
+            args.push('--use-avatar')
+          } else {
+            args.push('--no-avatar')  // Explicitly disable avatar for faceless videos
+          }
 
           // Pass avatar options directly as CLI arguments - ONLY if avatar mode is enabled
           if (finalUseAvatar && avatarId) {

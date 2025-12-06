@@ -64,6 +64,8 @@ export default function Home() {
   const [useVeo, setUseVeo] = useState<boolean>(true)
   const [useAvatar, setUseAvatar] = useState<boolean>(true)
   const [autoPublish, setAutoPublish] = useState<boolean>(false)
+  // Aspect ratio: For images (16:9, 9:16, 1:1), For videos (16:9, 9:16)
+  const [aspectRatio, setAspectRatio] = useState<string>('16:9')
   const [targetAudience, setTargetAudience] = useState<string>('all_clients')
   const [language, setLanguage] = useState<string>('english')
 
@@ -380,6 +382,7 @@ export default function Home() {
           autoPublish,
           targetAudience,
           language,
+          aspectRatio,
           files: fileData,
           avatarId,
           avatarScriptText,
@@ -995,6 +998,10 @@ export default function Home() {
                 onClick={() => {
                   setContentType('faceless-video')
                   setUseAvatar(false)
+                  // Reset to video aspect ratio if current is image-only
+                  if (aspectRatio === '1:1') {
+                    setAspectRatio('16:9')
+                  }
                 }}
                 disabled={isRunning || executingStage !== null}
                 className={`p-4 rounded-lg border-2 transition-all ${
@@ -1011,6 +1018,10 @@ export default function Home() {
                 onClick={() => {
                   setContentType('avatar-video')
                   setUseAvatar(true)
+                  // Reset to video aspect ratio if current is image-only
+                  if (aspectRatio === '1:1') {
+                    setAspectRatio('16:9')
+                  }
                 }}
                 disabled={isRunning || executingStage !== null}
                 className={`p-4 rounded-lg border-2 transition-all ${
@@ -1023,6 +1034,80 @@ export default function Home() {
                 <p className="text-xs opacity-80">AI Avatar</p>
               </button>
             </div>
+          </div>
+
+          {/* Aspect Ratio Selection */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Aspect Ratio
+            </label>
+            {contentType === 'image' ? (
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={() => setAspectRatio('16:9')}
+                  disabled={isRunning || executingStage !== null}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    aspectRatio === '16:9'
+                      ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-blue-300'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <div className="text-sm font-semibold mb-1">16:9</div>
+                  <p className="text-xs opacity-80">Horizontal</p>
+                </button>
+                <button
+                  onClick={() => setAspectRatio('9:16')}
+                  disabled={isRunning || executingStage !== null}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    aspectRatio === '9:16'
+                      ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-blue-300'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <div className="text-sm font-semibold mb-1">9:16</div>
+                  <p className="text-xs opacity-80">Vertical</p>
+                </button>
+                <button
+                  onClick={() => setAspectRatio('1:1')}
+                  disabled={isRunning || executingStage !== null}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    aspectRatio === '1:1'
+                      ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-blue-300'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <div className="text-sm font-semibold mb-1">1:1</div>
+                  <p className="text-xs opacity-80">Square</p>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setAspectRatio('16:9')}
+                  disabled={isRunning || executingStage !== null}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    aspectRatio === '16:9'
+                      ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-blue-300'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <div className="text-sm font-semibold mb-1">16:9</div>
+                  <p className="text-xs opacity-80">Landscape</p>
+                </button>
+                <button
+                  onClick={() => setAspectRatio('9:16')}
+                  disabled={isRunning || executingStage !== null}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    aspectRatio === '9:16'
+                      ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-blue-300'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <div className="text-sm font-semibold mb-1">9:16</div>
+                  <p className="text-xs opacity-80">Portrait</p>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Conditional sections based on contentType */}

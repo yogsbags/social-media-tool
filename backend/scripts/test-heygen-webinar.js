@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Test Script for HeyGen Webinar Client
- * 
+ *
  * Usage:
  *   node test-heygen-webinar.js
- * 
+ *
  * Environment Variables Required:
  *   HEYGEN_API_KEY - Your HeyGen API key
  *   HEYGEN_AVATAR_ID_SIDDHARTH - Avatar ID (optional, defaults to configured value)

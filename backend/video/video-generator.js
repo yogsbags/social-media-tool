@@ -29,7 +29,10 @@ class VideoGenerator {
       aspectRatio: "16:9",      // "16:9" or "9:16"
       resolution: "720p",        // "720p" or "1080p"
       duration: 8,               // 4, 6, or 8 seconds (API may support)
-      personGeneration: "allow_adult", // "allow_adult" is the only supported value
+      // Veo 3.1 personGeneration values (per official docs):
+      // - Text-to-video & Extension: "allow_all" only (REQUIRED)
+      // - Image-to-video, Interpolation, Reference images: "allow_adult" only
+      personGeneration: "allow_all", // Default for text-to-video mode
     };
 
     // Polling configuration
@@ -41,9 +44,19 @@ class VideoGenerator {
    * Initialize Gemini AI client
    */
   async initClient() {
-    if (!this.client && this.apiKey) {
-      const { GoogleGenAI } = await import('@google/genai');
-      this.client = new GoogleGenAI({ apiKey: this.apiKey });
+    if (!this.apiKey) {
+      throw new Error('GEMINI_API_KEY is required. Set it with: export GEMINI_API_KEY="your-key"');
+    }
+
+    if (!this.client) {
+      try {
+        const { GoogleGenAI } = await import('@google/genai');
+        this.client = new GoogleGenAI({ apiKey: this.apiKey });
+        console.log('   ✅ Gemini AI client initialized');
+      } catch (error) {
+        console.error('   ❌ Failed to initialize Gemini AI client:', error.message);
+        throw new Error(`Failed to initialize Gemini AI client: ${error.message}`);
+      }
     }
     return this.client;
   }
@@ -75,11 +88,38 @@ class VideoGenerator {
     console.log(`   Prompt: ${prompt.substring(0, 60)}...`);
     console.log(`   Config: ${JSON.stringify(finalConfig)}`);
 
-    let operation = await ai.models.generateVideos({
-      model: this.defaultModel,
-      prompt: prompt,
-      config: this._buildApiConfig(finalConfig)
-    });
+    if (!ai) {
+      throw new Error('Gemini AI client not initialized');
+    }
+
+    if (!ai.models) {
+      throw new Error('Gemini AI models API not available. Check API key and client initialization.');
+    }
+
+    let operation;
+    try {
+      operation = await ai.models.generateVideos({
+        model: this.defaultModel,
+        prompt: prompt,
+        config: this._buildApiConfig(finalConfig)
+      });
+    } catch (error) {
+      console.error('   ❌ Video generation API call failed:', error.message);
+      console.error('   Error details:', error);
+
+      // Provide helpful error messages
+      if (error.message.includes('fetch failed') || error.message.includes('network')) {
+        throw new Error(`Network error: Unable to connect to Gemini API. Check your internet connection and API key. Original error: ${error.message}`);
+      }
+      if (error.message.includes('401') || error.message.includes('unauthorized')) {
+        throw new Error(`Authentication failed: Invalid GEMINI_API_KEY. Please check your API key.`);
+      }
+      if (error.message.includes('403') || error.message.includes('forbidden')) {
+        throw new Error(`Access forbidden: GEMINI_API_KEY may not have access to Veo 3.1. Check API permissions.`);
+      }
+
+      throw error;
+    }
 
     const result = await this._pollOperation(operation);
     const downloadPath = `/tmp/veo-text-${Date.now()}.mp4`;
@@ -150,13 +190,17 @@ class VideoGenerator {
       referenceType: ref.referenceType || "asset"
     }));
 
+    // For image-to-video with references, Veo 3.1 requires "allow_adult" only
+    const imageToVideoConfig = {
+      ...this._buildApiConfig(finalConfig),
+      referenceImages: apiReferenceImages,
+      personGeneration: "allow_adult"  // Required for reference images mode
+    };
+
     let operation = await ai.models.generateVideos({
       model: this.defaultModel,
       prompt: prompt,
-      config: {
-        ...this._buildApiConfig(finalConfig),
-        referenceImages: apiReferenceImages
-      }
+      config: imageToVideoConfig
     });
 
     const result = await this._pollOperation(operation);
@@ -213,6 +257,16 @@ class VideoGenerator {
     console.log(`🎬 First/Last Frame Video Generation`);
     console.log(`   Prompt: ${prompt.substring(0, 60)}...`);
 
+    // For interpolation (first/last frame), Veo 3.1 requires "allow_adult" only
+    const interpolationConfig = {
+      ...this._buildApiConfig(finalConfig),
+      lastFrame: {
+        imageBytes: lastFrame.imageBytes,
+        mimeType: lastFrame.mimeType || "image/png"
+      },
+      personGeneration: "allow_adult"  // Required for interpolation mode
+    };
+
     let operation = await ai.models.generateVideos({
       model: this.defaultModel,
       prompt: prompt,
@@ -220,13 +274,7 @@ class VideoGenerator {
         imageBytes: firstFrame.imageBytes,
         mimeType: firstFrame.mimeType || "image/png"
       },
-      config: {
-        ...this._buildApiConfig(finalConfig),
-        lastFrame: {
-          imageBytes: lastFrame.imageBytes,
-          mimeType: lastFrame.mimeType || "image/png"
-        }
-      }
+      config: interpolationConfig
     });
 
     const result = await this._pollOperation(operation);
@@ -396,7 +444,7 @@ class VideoGenerator {
    *     aspectRatio: "16:9",
    *     resolution: "1080p",
    *     negativePrompt: "blurry, low quality",
-   *     personGeneration: "allow_all"
+     *     personGeneration: "allow_adult"  // Note: API only supports "allow_adult". Omit for faceless videos.
    *   }
    * });
    */
@@ -485,6 +533,11 @@ class VideoGenerator {
       apiConfig.negativePrompt = config.negativePrompt;
     }
 
+    // Veo 3.1 personGeneration requirements (per official docs):
+    // - Text-to-video & Extension: "allow_all" only (REQUIRED)
+    // - Image-to-video, Interpolation, Reference images: "allow_adult" only
+    // Always include personGeneration as it's required by the API
+    // Note: personGeneration is set per-mode in the calling methods
     if (config.personGeneration) {
       apiConfig.personGeneration = config.personGeneration;
     }

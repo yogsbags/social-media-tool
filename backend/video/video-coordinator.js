@@ -169,7 +169,9 @@ class VideoCoordinator {
       aspectRatio: aspectRatio || '16:9',
       resolution: '720p',
       duration: Math.min(duration, 148), // Cap at VEO limit
-      personGeneration: 'allow_all'
+      // Note: personGeneration will be set by orchestrator
+      // Veo 3.1: Text-to-video requires "allow_all", Image-to-video requires "allow_adult"
+      personGeneration: undefined  // Set by orchestrator based on mode
     };
 
     // Check for reference images from environment variables (set by frontend)

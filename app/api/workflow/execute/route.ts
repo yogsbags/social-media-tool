@@ -1,7 +1,7 @@
-import { NextRequest } from 'next/server'
 import { spawn } from 'child_process'
-import path from 'path'
 import fs from 'fs'
+import { NextRequest } from 'next/server'
+import path from 'path'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -72,8 +72,16 @@ export async function POST(request: NextRequest) {
     duration = 90,
     useVeo = true,
     useAvatar = true,
-    autoPublish = false
+    autoPublish = false,
+    contentType,
+    aspectRatio = '16:9',
+    language = 'english'
   } = body
+
+  // Sync useAvatar with contentType if contentType is explicitly set
+  const finalUseAvatar = contentType === 'avatar-video' ? true : (contentType === 'faceless-video' ? false : useAvatar)
+
+  console.log(`[DEBUG] contentType="${contentType}", useAvatar=${useAvatar}, finalUseAvatar=${finalUseAvatar}`)
 
   // Create SSE response
   const encoder = new TextEncoder()
@@ -102,11 +110,18 @@ export async function POST(request: NextRequest) {
           'campaign',
           campaignType,
           '--topic', topic,
-          '--duration', duration.toString()
+          '--duration', duration.toString(),
+          '--aspect-ratio', aspectRatio,
+          '--language', language
         ]
 
         if (useVeo) args.push('--use-veo')
-        if (useAvatar) args.push('--use-avatar')
+        // Explicitly set avatar mode: pass --use-avatar if true, --no-avatar if false
+        if (finalUseAvatar) {
+          args.push('--use-avatar')
+        } else {
+          args.push('--no-avatar')  // Explicitly disable avatar for faceless videos
+        }
         if (autoPublish) args.push('--auto-publish')
 
         platforms.forEach((platform: string) => {

@@ -272,7 +272,7 @@ class HeyGenWebinarClient {
     if (singleVideo) {
       console.log(`   🎓 Creating Complete HeyGen Webinar Video: ${webinar_title}`);
       console.log(`      Format: Single continuous video (or minimal segments if needed)`);
-      
+
       const fullScript = [
         introduction_text,
         main_content_text,
@@ -513,7 +513,7 @@ class HeyGenWebinarClient {
         currentSegment = paragraph;
       } else {
         // Add paragraph to current segment
-        currentSegment = currentSegment 
+        currentSegment = currentSegment
           ? `${currentSegment}\n\n${paragraph}`
           : paragraph;
       }

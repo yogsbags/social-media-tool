@@ -49,7 +49,7 @@ function parseArgs(argv) {
     simulate: false,
     duration: 60,
     useVeo: false,
-    useAvatar: true,
+    useAvatar: false,  // Default to faceless video (set to true only if --use-avatar flag is passed)
     autoPublish: false,
     waitForCompletion: false,
     limit: null,
@@ -57,7 +57,9 @@ function parseArgs(argv) {
     avatarId: null,
     avatarScriptText: null,
     avatarVoiceId: null,
-    heygenAvatarGroupId: null
+    heygenAvatarGroupId: null,
+    aspectRatio: '16:9',  // Default aspect ratio
+    language: 'english'   // Default language
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -92,6 +94,14 @@ function parseArgs(argv) {
         options.duration = parseInt(argv[i + 1], 10);
         i++;
         break;
+      case '--aspect-ratio':
+        options.aspectRatio = argv[i + 1];
+        i++;
+        break;
+      case '--language':
+        options.language = argv[i + 1];
+        i++;
+        break;
       case '--simulate':
       case '--dry-run':
         options.simulate = true;
@@ -101,6 +111,9 @@ function parseArgs(argv) {
         break;
       case '--use-avatar':
         options.useAvatar = true;
+        break;
+      case '--no-avatar':
+        options.useAvatar = false;
         break;
       case '--auto-publish':
         options.autoPublish = true;
@@ -189,7 +202,8 @@ function printHelp() {
   console.log('      --type <name>          Campaign subtype (myth-busting, testimonial, etc.)');
   console.log('  -d, --duration <secs>      Video duration in seconds (60, 90, 720, etc.)');
   console.log('      --use-veo              Use Veo 3.1 for video generation');
-  console.log('      --use-avatar           Use HeyGen AI avatar (default: true)');
+  console.log('      --use-avatar           Use HeyGen AI avatar (default: false, faceless video)');
+  console.log('      --no-avatar            Explicitly disable avatar mode (faceless video)');
   console.log('      --auto-publish         Auto-publish after generation');
   console.log('      --wait                 Wait for video completion');
   console.log('      --simulate             Dry run without API calls');
@@ -286,7 +300,9 @@ async function run() {
         useVeo: options.useVeo,
         useAvatar: options.useAvatar,
         autoPublish: options.autoPublish,
-        waitForCompletion: options.waitForCompletion
+        waitForCompletion: options.waitForCompletion,
+        aspectRatio: options.aspectRatio,
+        language: options.language
       });
       console.log(`\n✅ Campaign "${options.campaign}" completed!\n`);
       break;

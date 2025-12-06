@@ -248,7 +248,7 @@ const { getHeyGenWebinarClient } = require('./integrations/heygen-webinar-client
 
 async function createCompleteWebinar() {
   const client = getHeyGenWebinarClient();
-  
+
   // 1. Create webinar
   const webinar = await client.createWebinar({
     webinar_title: 'AQUA Strategy Deep Dive',
@@ -258,19 +258,19 @@ async function createCompleteWebinar() {
     main_content_text: 'AQUA stands for Adaptive Quantitative Allocation...',
     conclusion_text: 'Thank you for joining. Visit plindia.com for more...'
   });
-  
+
   // 2. Wait and check status
   console.log(`Created ${webinar.total_segments} segments`);
-  
+
   // 3. Poll for completion
   const videoIds = webinar.segments.map(s => s.video_id);
   let allComplete = false;
-  
+
   while (!allComplete) {
     await new Promise(resolve => setTimeout(resolve, 30000)); // Wait 30 seconds
     const statuses = await client.getWebinarStatus(videoIds);
     allComplete = statuses.every(s => s.status === 'completed');
-    
+
     if (allComplete) {
       console.log('All videos ready!');
       statuses.forEach(s => console.log(`  ${s.video_id}: ${s.video_url}`));

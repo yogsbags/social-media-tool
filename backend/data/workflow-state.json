@@ -130,6 +130,351 @@
       "promptModel": "openai/gpt-oss-120b",
       "stageId": 1,
       "completedAt": "2025-11-25T10:40:46.727Z"
+    },
+    "1-1764929559169": {
+      "id": "1-1764929559169",
+      "topic": "PL Capital's 80‑year legacy of adaptive wealth solutions",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt – Faceless Video (8‑sec) – “80‑Year Legacy of Adaptive Wealth Solutions”**\n\n---\n\n### 1. Core Message  \n**“80 years of adaptive wealth solutions – trusted, innovative, performance‑driven.”**\n\n---\n\n### 2. Visual Direction  \n\n| Element | Detail |\n|---------|--------|\n| **Color Palette** | • **Primary Navy** – #0e0e6a (background, major text) <br>• **Primary Blue** – #3c3cf8 (accent lines, data bars) <br>• **Accent Teal** – #00d084 (highlighted dates, CTA) <br>• **Accent Green** – #66e766 (growth arrow, subtle glow) |\n| **Composition** | • **Frame 0‑1 s** – Full‑bleed navy gradient (top darker, bottom lighter) with PL Capital logo centered, 10 % margin from top. <br>• **Frame 1‑5 s** – Horizontal “timeline” bar runs across the middle third of the frame (left‑to‑right). Key years (1925, 1950, 1975, 2000, 2025) appear as small teal circles on the bar, each paired with a one‑word label (“Founding”, “Growth”, “Diversify”, “Tech”, “Future”). <br>• **Frame 5‑7 s** – A sleek, semi‑transparent line‑graph (blue line with teal data points) animates upward from left to right, ending in a green upward arrow that glows. |\n| **Lighting & Mood** | • Dark navy background illuminated by a soft, cool back‑light (slight rim glow) that gives depth to the timeline and graph. <br>• Light “tech‑grid” pattern (very low‑opacity, #3c3cf8) subtly scrolls behind the timeline, reinforcing a modern, data‑driven feel. |\n| **Camera Angles / Motion** | • Static camera – no panning. <br>• All motion is **kinetic graphics**: timeline circles pop in with a 0.2 s scale‑bounce; line‑graph draws itself with a 0.5 s stroke animation; final arrow pulses once. <br>• Micro‑zoom (1‑2 % scale‑up) on the logo at 0‑0.5 s to give a “focus‑in” cue. |\n| **Typography** | • **Figtree Bold** – 48 pt for the headline “80 Years”. <br>• **Figtree Regular** – 32 pt for supporting words (“adaptive wealth solutions”). <br>• All text is white (#FFFFFF) except highlighted dates (Teal #00d084). |\n| **Style** | Clean, modern corporate with subtle tech motifs (grid, line‑graph). No faces, no stock footage – purely vector‑based motion graphics. |\n\n---\n\n### 3. Tone & Voice  \nProfessional, trustworthy, data‑driven yet approachable. Narration is calm, confident, and paced to match the visual flow. No jargon; each word reinforces the brand values of **Trust**, **Innovation**, **Performance**, **Client‑First**.\n\n---\n\n### 4. Key Elements (must appear)  \n\n1. **PL Capital Logo** – full‑color (navy on teal circle) placed top‑center, 10 % from top edge.  \n2. **Headline Text** – “80 Years” (large, bold).  \n3. **Sub‑headline** – “Adaptive Wealth Solutions”.  \n4. **Timeline Graphic** – five teal circles with year labels.  \n5. **Line‑Graph & Upward Arrow** – visual proof of performance.  \n6. **CTA Text** – “Discover how we can grow your wealth → plcapital.com”.  \n7. **Brand Colors** – exact hex codes as listed.  \n8. **Typography** – Figtree (Bold & Regular).  \n9. **Subtle Tech Grid** – low‑opacity background pattern.  \n\n---\n\n### 5. Call to Action  \n\n- **Copy:** “Discover how we can grow your wealth → plcapital.com”  \n- **Style:** Figtree Regular, 28 pt, white text on a teal (#00d084) rounded rectangle button (opacity 85 %).  \n- **Placement:** Bottom‑right corner, 5 % inset from both edges, appears at **6.0 s** and stays through **8.0 s**.  \n- **Animation:** Button slides in from the right (0.3 s) with a slight bounce, then a soft pulse (scale 1.0 → 1.05 → 1.0) at 7.5 s to draw attention.\n\n---\n\n### 6. Platform Optimization (LinkedIn)  \n\n- **Aspect Ratio:** 1:1 (1080 × 1080 px) – optimal for LinkedIn feed on desktop & mobile.  \n- **File Size:** ≤ 15 MB (max for LinkedIn).  \n- **Caption (optional for posting):** “Celebrating 80 years of adaptive wealth solutions. Trust, innovation, performance – always client‑first. #WealthManagement #Legacy #PLCapital” (under 3000 characters).  \n- **Audio:** Ensure narration is clear on mobile speakers; include subtle ambient “tech‑pulse” sound at –24 LUFS, but keep it low enough not to compete with voice.  \n- **Closed Captions:** Embedded SRT burn‑in for the narration (optional but recommended for silent autoplay).  \n\n---\n\n### 7. Script / Copy (Word‑for‑Word Narration)  \n\n| Timecode | Narration (spoken) | On‑Screen Text |\n|----------|--------------------|----------------|\n| 0.0‑0.5 s | *[soft, confident male voice]* “Eight decades of trust.” | **“80 Years”** (centered, fades in) |\n| 0.5‑1.5 s | “Adaptive wealth solutions.” | **“Adaptive Wealth Solutions”** (appears beneath headline) |\n| 1.5‑3.0 s | “From founding to future‑focused.” | Timeline circles pop with years & labels (no voice) |\n| 3.0‑5.0 s | “Consistent alpha, data‑driven performance.” | Line‑graph draws, green arrow rises |\n| 5.0‑6.0 s | *[pause, slight breath]* | Logo remains, background grid subtly moves |\n| 6.0‑7.5 s | “Discover how we can grow your wealth.” | CTA button slides in |\n| 7.5‑8.0 s | *[soft fade out of voice]* | Fade to navy background, logo stays 0.2 s then fades out at 8.0 s |\n\n*Total narration duration: 7.5 s; last 0.5 s is visual hold.*\n\n---\n\n### 8. Technical Specs  \n\n- **Resolution:** 1080 × 1080 px (1:1).  \n- **Frame Rate:** 30 fps (exact).  \n- **Duration:** 8.00 seconds (exact).  \n- **File Format:** MP4 (H.264 codec), AAC audio 128 kbps.  \n- **Bitrate:** ≤ 8 Mbps (to stay under LinkedIn size limit).  \n- **Color Space:** sRGB, 8‑bit.  \n- **Audio Levels:** Voice at –12 LUFS, ambient tech‑pulse at –24 LUFS.  \n- **Export Settings:** “Fast Start” (moov atom at file beginning) for immediate streaming.  \n- **Naming Convention:** `PLCapital_80YearLegacy_LinkedIn_1080x1080.mp4`.  \n\n---\n\n**End of Creative Prompt** – All elements are defined so a motion‑graphics artist or video editor can produce the final 8‑second faceless video for LinkedIn without further clarification.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T10:12:39.169Z"
+    },
+    "1-1764929804042": {
+      "id": "1-1764929804042",
+      "topic": "Trusted 80‑year legacy delivering alpha across India’s markets",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt – Faceless Video (15‑sec) – “Trusted 80‑Year Legacy Delivering Alpha Across India’s Markets”**  \n\n---\n\n### 1. Core Message  \n“Eight decades of trusted expertise, delivering consistent alpha across every Indian market.”  \n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---------|-------------|\n| **Color Palette** | Primary Navy **#0e0e6a** (background), Primary Blue **#3c3cf8** (key graphics), Accent Teal **#00d084** (highlight pulses), Accent Green **#66e766** (growth markers). |\n| **Background** | Dark‑gradient navy canvas fading from **#0e0e6a** (bottom) to **#3c3cf8** (top). Subtle, low‑opacity circuit‑style tech pattern (thin lines) to convey data‑driven tech without distraction. |\n| **Composition** | 3‑second “timeline” segment (0‑3 s) on left third: a thin vertical line (teal **#00d084**) with 8 evenly spaced dots representing each decade. Each dot animates with a soft pulse as the timeline progresses. <br>Center (3‑10 s): an abstract, animated map of India formed from thin white outlines. Overlaid on major market cities (Mumbai, Delhi, Bangalore, Chennai, Kolkata) appear glowing data‑point icons (green **#66e766**) that expand into mini line‑graph ribbons showing upward trends. <br>Right third (10‑13 s): a sleek, rotating 3‑D bar‑chart silhouette in teal/blue, bars rising in sync with a subtle “alpha” numeric counter (e.g., “+12.4% YoY”). |\n| **Lighting & Motion** | Cool, diffused back‑light glows from the right edge, giving depth to the map and chart. All motion is smooth “ease‑out” keyframes, 30 fps, no abrupt cuts. |\n| **Typography** | All on‑screen copy uses **Figtree** (Weight: Medium 500 for body, Bold 700 for headline). Letter‑spacing 0.5 px, line‑height 1.2. Text color: pure white **#FFFFFF** for contrast; occasional accent teal **#00d084** for emphasis. |\n| **Brand Logo** | PL Capital logo (white version) appears at bottom‑left corner, 8% of frame width, with a faint teal underline that slides in at 13 s and stays through the CTA. |\n\n---\n\n### 3. Tone & Voice  \n\n- **Professional & Trustworthy** – authoritative, data‑focused language.  \n- **Approachable** – concise, no jargon, friendly cadence in narration.  \n- **Confident** – steady tempo, slight upward inflection on “alpha”.  \n\n---\n\n### 4. Key Elements (Must‑Appear)  \n\n1. **PL Capital logo** (white) – bottom‑left, static after 13 s.  \n2. **Timeline of 8 decades** – left third, teal pulses.  \n3. **Animated India map with glowing market nodes** – center.  \n4. **Mini line‑graph ribbons** emerging from each node.  \n5. **Rotating 3‑D bar chart** with numeric “alpha” counter.  \n6. **On‑screen copy** (see Script).  \n7. **CTA text** (see Section 7) – bottom‑right.  \n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Discover how we can grow your portfolio – Connect with PL Capital today.”  \n- **Style:** Figtree Bold 700, 24 pt, white **#FFFFFF** on a semi‑transparent navy overlay (opacity 70%).  \n- **Placement:** Bottom‑right corner, left‑aligned with a small teal arrow icon (**#00d084**) pointing right. Appears at 13 s, stays until end (15 s).  \n\n---\n\n### 6. Platform Optimization (LinkedIn)  \n\n- **Aspect Ratio:** 1:1 (1080 × 1080 px) – optimal for LinkedIn feed and mobile scroll.  \n- **Safe Zone:** Keep all critical text/logos > 8% from edges to avoid cropping on thumbnail generation.  \n- **File Size:** ≤ 20 MB for smooth upload.  \n- **Caption (optional for posting):** “80 years of trusted performance. Our adaptive strategies deliver consistent alpha across every Indian market. #PLCapital #AlphaLeadership #InvestWithConfidence” (under 3000 characters).  \n\n---\n\n### 7. Script / Copy (Word‑for‑Word)  \n\n| Timecode | Visual / Action | Narration (Voice‑over) |\n|----------|----------------|------------------------|\n| **0:00‑0:03** | Timeline line appears left; 8 teal dots pulse sequentially. | “Since 1945, eight decades of expertise…” |\n| **0:03‑0:07** | Map of India fades in center; market nodes glow green. | “…delivering trusted performance across every Indian market.” |\n| **0:07‑0:10** | Mini line‑graph ribbons rise from each node, showing upward curves. | “Our adaptive strategies turn data into consistent alpha.” |\n| **0:10‑0:13** | 3‑D bar chart rotates; numeric counter climbs to **+12.4% YoY**. | “Across sectors, we’ve generated an average **12.4 %** annual alpha.” |\n| **0:13‑0:15** | Logo settles bottom‑left; CTA text slides in bottom‑right. | *(No narration – let the CTA speak visually.)* |\n\n**Narration Style:** Warm male/female professional voice, moderate pace (~150 wpm), clear enunciation, slight upward intonation on “alpha”. Background ambient synth‑tone (low‑key, tech‑inspired) at –30 dB to support voice without overpowering.  \n\n---\n\n### 8. Technical Specs  \n\n- **Resolution:** 1080 × 1080 px (1:1).  \n- **Frame Rate:** 30 fps (progressive).  \n- **Duration:** 15 seconds (exact).  \n- **File Format:** MP4 (H.264 codec), AAC audio @ 128 kbps.  \n- **Bitrate:** Video ≤ 8 Mbps (to stay under 20 MB).  \n- **Color Space:** sRGB, 8‑bit.  \n- **Audio Levels:** Voice‑over normalized to –6 LUFS; ambient music –20 LUFS.  \n- **Export Settings:** “Maximum Render Quality” enabled, “Use Hardware Acceleration” if available.  \n\n---\n\n**End of Creative Prompt** – all elements are defined for immediate production by a motion‑graphics designer or video editor.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T10:16:44.042Z"
+    },
+    "1-1764930256708": {
+      "id": "1-1764930256708",
+      "topic": "Trusted by 160,000 clients for 80 years of financial expertise",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Faceless‑Video – “Trusted by 160,000 Clients for 80 Years of Financial Expertise”**  \n\n---\n\n### 1. Core Message  \n**“80 years of financial expertise. Trusted by 160,000 clients worldwide.”**\n\n---\n\n### 2. Visual Direction  \n\n| Element | Details |\n|---------|---------|\n| **Overall Look & Feel** | Clean, modern corporate aesthetic with subtle tech‑motif motion graphics (e.g., animated line‑charts, data points). All visuals are faceless – no people shown. |\n| **Color Palette** | • **Primary Navy** – #0e0e6a (background base) <br>• **Primary Blue** – #3c3cf8 (accent bars, data‑line) <br>• **Accent Teal** – #00d084 (highlighted numbers) <br>• **Accent Green** – #66e766 (CTA background) |\n| **Background** | Dark navy gradient (top‑left #0e0e6a → bottom‑right #3c3cf8). Subtle, low‑opacity circuit‑style pattern (≈5 % opacity) to convey tech‑savvy. |\n| **Composition** | - **0:00‑0:02**: Upper‑left quadrant displays a sleek, animated line‑chart that draws itself from left to right (blue line #3c3cf8) representing “growth over 80 years”. <br>- **0:02‑0:05**: Center‑screen large numeric “160,000” fades in, each digit building from small data‑point particles (teal #00d084). Below it, a thin, horizontal bar (green #66e766) slides out with the word “Clients”. <br>- **0:05‑0:08**: Bottom‑right corner reveals the PL Capital logo (white version) on a teal badge (rounded rectangle, #00d084). The CTA button slides up from below the logo. |\n| **Lighting & Motion** | Soft back‑light glow on the line‑chart (slight outer‑glow #3c3cf8, 30 % opacity). All motion is eased‑in/out (0.3 s ease) to feel professional, not jittery. |\n| **Camera Angles** | Fixed orthographic “flat” view – no camera movement; all motion is within graphic layers. |\n| **Typography** | **Figtree** (Regular for body, Bold for numbers). All text white (#FFFFFF) unless highlighted (teal #00d084 for “160,000”). Letter‑spacing 0.5 px, line‑height 1.2. |\n\n---\n\n### 3. Tone & Voice  \n\nProfessional, trustworthy, data‑driven yet approachable. Narration is calm, confident, with a measured pace (≈150 wpm). No jargon; focus on “experience” and “trust”.\n\n---\n\n### 4. Key Elements (MUST appear)\n\n1. **PL Capital logo** – white version on teal badge, bottom‑right, 8 % of frame width.  \n2. **Numeric highlight** – “160,000” in large Figtree Bold, teal #00d084.  \n3. **“80 years of financial expertise”** text overlay, white, centered top.  \n4. **Animated line‑chart** (blue #3c3cf8) representing 80‑year timeline.  \n5. **CTA button** – rounded rectangle, background teal #00d084, white text “Discover How We Can Help”.  \n6. **Subtle tech‑motif pattern** in background (low‑opacity).  \n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Discover How We Can Help”  \n- **Placement:** Bottom‑center, just above the logo badge, 8 % of frame height, width 30 % of frame.  \n- **Style:** Figtree Bold, white text on teal #00d084 background, 2 px inner padding, 4 px border radius.  \n- **Animation:** Slides up from off‑screen at 0:05, settles with a soft bounce (0.2 s).  \n\n---\n\n### 6. Platform Optimization (LinkedIn)\n\n- **Aspect Ratio:** 1:1 (1080 × 1080 px) – optimal for LinkedIn feed and mobile.  \n- **File Size:** ≤ 8 MB for smooth autoplay.  \n- **Captions:** Include closed‑caption text layer (optional) for accessibility; use same white Figtree style.  \n- **Thumbnail:** Static frame at 0:02 (line‑chart with “80 years” text) – high contrast for scroll‑stop.  \n- **Alt‑Text (for accessibility):** “PL Capital celebrates 80 years of financial expertise, trusted by 160,000 clients worldwide.”  \n\n---\n\n### 7. Script / Copy (Word‑for‑Word Narration)\n\n| Timecode | Narration (spoken) | On‑Screen Text |\n|----------|-------------------|----------------|\n| 0:00‑0:02 | “Eight decades of financial expertise.” | **“80 years of financial expertise.”** (center‑top, white) |\n| 0:02‑0:05 | “Trusted by one‑hundred‑and‑sixty‑thousand clients worldwide.” | **“160,000”** (large teal) <br> **“Clients”** (green bar) |\n| 0:05‑0:08 | “Discover how we can help you today.” | **CTA button** “Discover How We Can Help” (bottom‑center) <br> **PL Capital logo** (bottom‑right) |\n\n*Voice direction:* Calm male/female voice, neutral American English, slight emphasis on “80 years” and “160,000”. Volume consistent throughout; fade out with the CTA.\n\n---\n\n### 8. Technical Specs  \n\n- **Resolution:** 1080 × 1080 px (1:1).  \n- **Frame Rate:** 30 fps (smooth motion, LinkedIn friendly).  \n- **Duration:** 8 seconds total.  \n- **File Format:** MP4 (H.264 codec), AAC audio, max bitrate 8 Mbps.  \n- **Audio:** 0 dB peak, normalized loudness –23 LUFS (LinkedIn standard).  \n- **Color Space:** sRGB.  \n- **Export Settings:** “High Quality 1080p” preset, “Fast Start” enabled for progressive streaming.  \n\n**Timing Markers (for editor):**  \n\n- **0:00‑0:02** – Background gradient fade‑in, line‑chart draws.  \n- **0:02‑0:05** – “160,000” digits assemble from particles; green bar slides in.  \n- **0:05‑0:08** – CTA slides up, logo fades in, narration completes, final frame holds 0.5 s before fade‑out.  \n\n---\n\n**End of Creative Prompt** – All assets, copy, and specifications are ready for immediate production by the video team.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T10:24:16.709Z"
+    },
+    "1-1764930375988": {
+      "id": "1-1764930375988",
+      "topic": "PL Capital’s Adaptive Quantamental Strategies Deliver Consistent Alpha",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Faceless‑Video – “PL Capital’s Adaptive Quantamental Strategies Deliver Consistent Alpha”**  \n\n---\n\n### 1. Core Message  \n**“Adaptive Quantamental Strategies. Consistent Alpha. Trust PL Capital.”**\n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---------|-------------|\n| **Color Palette** | • **Primary Navy** – #0e0e6a (background, major text) <br>• **Primary Blue** – #3c3cf8 (highlight bars, data lines) <br>• **Accent Teal** – #00d084 (pulse animation, CTA button) <br>• **Accent Green** – #66e766 (positive growth arrows) |\n| **Composition** | • **0:00‑0:03** – Full‑screen abstract data‑grid (low‑opacity diagonal lines) in Navy, slowly panning left‑to‑right. Center‑top holds the PL Capital **logotype** (white) with a subtle drop‑shadow. <br>• **0:03‑0:07** – Split‑screen: left 40% shows a **dynamic line chart** (blue line) rising steadily; right 60% shows a **3‑D rotating globe** rendered in teal wireframe, symbolising global adaptability. <br>• **0:07‑0:11** – Overlay of **iconic “algorithm” glyphs** (tiny hexagons, gears) swirling into a **single upward arrow** (green) that snaps into place at the chart’s peak. <br>• **0:11‑0:13** – Fade to a clean **white rectangle** (90% width, centered) containing the Core Message text in **Figtree Bold, 48 pt**, Navy. |\n| **Lighting & Mood** | • Cool, high‑contrast lighting: subtle rim‑light on the globe and chart to create depth. <br>• Soft back‑glow on the arrow (green) to emphasize “growth”. |\n| **Camera Angles / Motion** | • Slow 2‑second pan across the data‑grid (0:00‑0:03). <br>• Smooth cross‑fade between split‑screen and icon overlay (0:07‑0:11). <br>• Final “zoom‑in” on the Core Message text (0:11‑0:13) ending with a gentle “pop” effect on the CTA button (0:13‑0:15). |\n| **Style** | Clean, modern corporate with subtle tech motifs (grid, hexagons). All motion graphics are vector‑based, no stock footage of people. |\n\n---\n\n### 3. Tone & Voice  \nProfessional, data‑driven, yet approachable. Language is concise, confident, and forward‑looking. Narration is calm, with a measured cadence (≈150 wpm), conveying trust and expertise.\n\n---\n\n### 4. Key Elements (must appear)  \n\n1. **PL Capital Logo** – top‑center, white version, 5 % of frame height.  \n2. **Core Message Text** – “Adaptive Quantamental Strategies. Consistent Alpha. Trust PL Capital.” (Figtree Bold, Navy, centered).  \n3. **Dynamic Line Chart** – blue line, subtle grid, showing upward trend.  \n4. **Rotating Globe** – teal wireframe, 3‑D rotation speed 0.8 rev/sec.  \n5. **Algorithm Glyphs** – small hexagons & gear icons, teal, swirling into a green arrow.  \n6. **CTA Button** – teal rectangle with white text “Learn How” (Figtree Medium, 36 pt).  \n7. **Brand Accent Bar** – thin teal line (2 px) at the bottom edge of the video throughout.  \n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Learn How”  \n- **Placement:** Bottom‑center, inside a teal rounded‑rectangle (corner radius 12 px), 8 % of frame height, appearing at **0:13‑0:15**.  \n- **Interaction Cue:** Subtle pulse animation (scale 1.0 → 1.07 → 1.0) synced with a soft “ding” sound effect (optional).  \n\n---\n\n### 6. Platform Optimization (LinkedIn)  \n\n- **Aspect Ratio:** 1:1 (1080 × 1080 px) – optimal for feed scroll.  \n- **File Size:** ≤ 8 MB.  \n- **Caption (copy for post):**  \n  > Adaptive Quantamental Strategies. Consistent Alpha. Trust PL Capital.  \n  > 🚀 Discover how our data‑driven approach outperforms the market. #Quantamental #Alpha #Investing  \n- **Hashtags:** #Quantamental #Alpha #Investing #AssetManagement #PLCapital  \n- **Alt‑text (accessibility):** “Animated visual of a rising line chart, rotating teal globe, and green upward arrow illustrating PL Capital’s adaptive quantamental strategies delivering consistent alpha, with the tagline ‘Adaptive Quantamental Strategies. Consistent Alpha. Trust PL Capital.’ and a CTA button ‘Learn How’.”  \n\n---\n\n### 7. Script / Copy (Word‑for‑Word Narration)  \n\n| Timecode | Narration (Figtree Regular, 36 pt, White) |\n|----------|-------------------------------------------|\n| 0:00‑0:03 | *[Soft ambient tone, no voice]* – visual intro only. |\n| 0:03‑0:07 | “Our adaptive quantamental engine integrates global data…” |\n| 0:07‑0:11 | “…to identify alpha‑generating opportunities in real time.” |\n| 0:11‑0:13 | “Consistent performance, trusted by clients worldwide.” |\n| 0:13‑0:15 | *[No narration]* – CTA appears with subtle chime. |\n\n*(Narrator voice: warm male/female professional, neutral American English, slight reverb for depth.)*  \n\n---\n\n### 8. Technical Specs  \n\n- **Resolution:** 1080 × 1080 px (1:1).  \n- **Frame Rate:** 30 fps.  \n- **Duration:** 15 seconds (exact).  \n- **File Format:** MP4 (H.264 codec), AAC audio, 192 kbps.  \n- **Bitrate:** 8 Mbps (max).  \n- **Color Space:** sRGB.  \n- **Typography:** All on‑screen text in **Figtree** (Bold for headline, Medium for CTA).  \n- **Timing Markers:**  \n  - 0:00‑0:03 – Data‑grid pan + logo fade‑in.  \n  - 0:03‑0:07 – Split‑screen chart & globe animation.  \n  - 0:07‑0:11 – Glyph swirl → green arrow transition.  \n  - 0:11‑0:13 – Core Message fade‑in, zoom‑in.  \n  - 0:13‑0:15 – CTA button pulse + exit fade (0.5 s).  \n\n---\n\n**End of Creative Prompt** – All elements are defined for immediate production by a motion‑graphics designer or video editor without further clarification.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T10:26:15.988Z"
+    },
+    "1-1764930774930": {
+      "id": "1-1764930774930",
+      "topic": "PL Capital: 80+ Years of Trusted Wealth Growth for Every Investor",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Faceless‑Video – “PL Capital: 80+ Years of Trusted Wealth Growth for Every Investor”**\n\n---\n\n### 1. Core Message  \n**“80 + years of trusted wealth growth – adaptive strategies, quantitative excellence, consistent alpha for every investor.”**\n\n---\n\n### 2. Visual Direction  \n\n| Aspect | Details |\n|--------|---------|\n| **Color Palette** | • **Primary Navy** – #0e0e6a (background, lower thirds) <br>• **Primary Blue** – #3c3cf8 (graph lines, accent bars) <br>• **Accent Teal** – #00d084 (highlighted data points) <br>• **Accent Green** – #66e766 (growth arrows, CTA button) |\n| **Typography** | **Figtree** – Bold for headline (28 pt), Medium for body (20 pt), Light for CTA (24 pt). All text set in white (#FFFFFF) on dark backgrounds or navy on light accent panels for contrast. |\n| **Composition & Layout** | • **0:00‑0:03** – Full‑bleed dark‑gradient background (navy fading to blue) with a subtle, animated “digital‑grid” motif (thin teal lines) moving slowly left‑to‑right. <br>• **0:03‑0:07** – Center‑left 40 % of frame: animated line chart showing a steady upward trajectory (blue line) with three highlighted data points (teal circles). <br>• **0:07‑0:11** – Center‑right 40 %: a stylized, faceless silhouette of a portfolio folder (flat‑design, navy outline) that morphs into a rising arrow (green). <br>• **0:11‑0:13** – Bottom third: clean white bar with the headline text (see Script) centered. <br>• **0:13‑0:15** – Bottom‑right corner: PL Capital logo (white on navy) and CTA button (green #66e766 with white text). |\n| **Lighting & Mood** | • Soft, cool back‑light glow behind the chart and arrow (blue‑teal hue) to emphasize “growth”. <br>• No harsh shadows – all elements are flat‑design with subtle depth (2 dp drop shadow, #00000033). |\n| **Camera Angles & Motion** | • Virtual “camera” is static; motion is achieved through kinetic typography and smooth 0.4 s ease‑in‑out transitions between elements. <br>• The line chart draws itself from left to right (0:03‑0:07). <br>• The folder‑to‑arrow morph animates with a 0.3 s morph‑warp effect (0:07‑0:11). |\n| **Transitions** | • Fade‑in (0:00‑0:01) from black to gradient background. <br>• Slide‑in of chart from left (0:03). <br>• Morph‑wipe of folder to arrow (0:07). <br>• Text fade‑up (0:11). <br>• CTA button pop‑scale (0:13‑0:14). |\n\n---\n\n### 3. Tone & Voice  \nProfessional, data‑driven, yet approachable. Narrative is confident and concise, using active verbs (“grow”, “trust”, “deliver”) and quantifiable language (“80 + years”, “consistent alpha”).\n\n---\n\n### 4. Key Elements (must appear)  \n\n1. **PL Capital logo** – white version, bottom‑right, 10 % of frame width, 2 s fade‑in at 0:13.  \n2. **Headline text** – exact copy from Script, centered on bottom white bar, white Figtree Bold.  \n3. **Animated line chart** – blue line (#3c3cf8), teal data points (#00d084).  \n4. **Faceless portfolio folder → arrow graphic** – navy outline morphing to green arrow (#66e766).  \n5. **CTA button** – green background (#66e766), white text “Discover Your Path”, rounded corners (8 px).  \n6. **Subtle digital‑grid background** – teal lines (#00d084) at 0.5 % opacity.  \n7. **Narration audio** – professional male voice, neutral American accent, spoken at 150 wpm.  \n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Discover Your Path”  \n- **Placement:** Bottom‑right corner, inside a rounded‑corner button (green #66e766, white text).  \n- **Timing:** Appears at 0:13, stays until 0:15, with a slight pop‑scale (1.0 → 1.1 → 1.0) to draw attention.  \n- **Link placeholder:** (Will be added in LinkedIn post caption).  \n\n---\n\n### 6. Platform Optimization (LinkedIn)  \n\n| Requirement | Implementation |\n|-------------|----------------|\n| **Aspect Ratio** | 1.91:1 (1920 × 1080) – optimal for LinkedIn feed auto‑play. |\n| **Safe Zone** | Keep all critical text/logo > 90 px from left/right edges and > 60 px from top/bottom to avoid cropping on mobile. |\n| **File Size** | ≤ 8 MB, H.264 codec, MP4 container. |\n| **Caption Length** | ≤ 3000 characters – use the Core Message plus a brief value proposition and the CTA link. |\n| **Audio** | Enable sound; LinkedIn auto‑plays muted, so ensure visual CTA is clear without audio. |\n| **Thumbnail** | Static frame at 0:11 (headline bar) with logo overlay; export as JPG 1200 × 628. |\n\n---\n\n### 7. Script / Copy (Word‑for‑Word Narration)\n\n| Timecode | Narration (Professional Male Voice) | On‑Screen Text |\n|----------|--------------------------------------|----------------|\n| **0:00‑0:01** | *[soft ambient synth rise, no narration]* | — |\n| **0:01‑0:03** | “For over eight decades…” | — |\n| **0:03‑0:07** | “…PL Capital has delivered trusted wealth growth…” | — |\n| **0:07‑0:11** | “…through adaptive strategies and quantitative excellence.” | — |\n| **0:11‑0:13** | “Consistent alpha for every investor.” | **Headline (center):** *“80 + years of trusted wealth growth”* |\n| **0:13‑0:15** | “Discover your path with PL Capital.” | **CTA Button:** *“Discover Your Path”* |\n\n*All narration is paced to finish exactly at the end of each visual segment; total duration 15 seconds.*\n\n---\n\n### 8. Technical Specs  \n\n- **Resolution / Aspect Ratio:** 1920 × 1080 px (16:9) – LinkedIn feed optimal.  \n- **Frame Rate:** 30 fps (smooth motion for line‑draw).  \n- **Duration:** 15 seconds (exact timestamps as above).  \n- **File Format:** MP4 (H.264 codec, AAC audio 128 kbps).  \n- **Color Space:** sRGB.  \n- **Bitrate:** 8 Mbps (VBR).  \n- **Audio:** Normalized to -6 LUFS, no background music (only subtle synth ambience).  \n- **Export Settings:** “Maximum Render Quality” on, “Use Pre‑Multiplied Alpha” disabled (opaque background).  \n\n---\n\n**End of Creative Prompt** – All visual, textual, and technical details are ready for immediate hand‑off to the motion‑graphics team.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T10:32:54.930Z"
+    },
+    "1-1764931580562": {
+      "id": "1-1764931580562",
+      "topic": "Real Client Stories Show PL Capital’s Alpha-Driven Success",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Faceless‑Video – “Real Client Stories Show PL Capital’s Alpha‑Driven Success”**\n\n---\n\n### 1. Core Message  \n“PL Capital’s data‑driven strategies consistently deliver alpha for our clients – hear the results, see the numbers, join the performance.”\n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---------|-------------|\n| **Overall Look & Feel** | Clean, modern corporate aesthetic with subtle kinetic‑tech motifs (e.g., faint line‑grid overlays, animated data streams). |\n| **Color Palette** | <ul><li>Primary Navy – **#0e0e6a** (background, lower thirds)</li><li>Primary Blue – **#3c3cf8** (accent bars, progress fills)</li><li>Accent Teal – **#00d084** (highlighted numbers, call‑to‑action button)</li><li>Accent Green – **#66e766** (positive trend arrows)</li></ul> |\n| **Typography** | **Figtree** – Regular for body copy, Semi‑Bold for headings, all caps for CTA. |\n| **Lighting & Mood** | Dark‑tone background lit by a soft cool backlight (blue hue) that creates a subtle glow on the central data graphics; no harsh shadows. |\n| **Camera Angles / Motion** | • 2‑second opening pan from left to right across a sleek, animated “client dashboard” UI. <br>• Quick 0.5‑second “zoom‑in” on a key performance metric (alpha %). <br>• 2‑second lateral slide to a stylized client silhouette (faceless, abstract shape) with a floating speech‑bubble containing a short testimonial quote. <br>• 3‑second “data‑flow” transition (thin line‑grid sweeps across screen) revealing a stacked bar chart of quarterly alpha results. <br>• Final 3‑second fade‑out to the PL Capital logo with CTA. |\n| **Graphics Style** | Flat‑design icons (chart, arrow, briefcase) with subtle depth (drop‑shadow 2 px, opacity 15%). All motion eased‑in/out (0.3 s). |\n| **Background** | Dark navy gradient (top **#0e0e6a** → bottom **#15155f**) with a low‑opacity tech mesh (0.08 opacity). |\n\n---\n\n### 3. Tone & Voice  \n\nProfessional, trustworthy, data‑driven yet approachable. Narration speaks in confident, measured cadence—no jargon overload, focus on measurable outcomes.\n\n---\n\n### 4. Key Elements (Must Appear)\n\n1. **PL Capital Logo** – top‑left corner, 8% of screen width, white version on dark background.  \n2. **Client Silhouette** – abstract, faceless, navy outline, placed center‑right (40% width).  \n3. **Testimonial Quote** – “Our portfolio outperformed the market by 4.2% α in Q3 – PL Capital made it happen.” – displayed in a semi‑transparent teal speech‑bubble attached to silhouette.  \n4. **Performance Metric** – large numeric “+4.2% α” in bold Figtree Semi‑Bold, blue (**#3c3cf8**), centered at 0:04‑0:06.  \n5. **Quarterly Bar Chart** – three stacked bars (Q1‑Q3) in teal/green gradients, with numeric labels.  \n6. **CTA Button** – rounded rectangle, teal background (**#00d084**), white text “Discover Alpha”. Positioned bottom‑center, 12% of screen height.  \n7. **Data‑Flow Animation** – thin line‑grid sweep (teal) across the whole frame at 0:09‑0:11.  \n8. **Narration Subtitles** – bottom‑left, white, 14 pt Figtree, 80% opacity, synced to voice‑over.\n\n---\n\n### 5. Call to Action  \n\n**Text:** “Discover Alpha”  \n**Placement:** Bottom‑center, 10% above the frame edge, centered horizontally.  \n**Style:** Rounded rectangle, teal fill (**#00d084**), white Figtree Semi‑Bold, 18 pt.  \n**Interaction Cue:** Subtle pulse (scale 1.0 → 1.05) every 2 seconds during the final 4 seconds.\n\n---\n\n### 6. Platform Optimization (LinkedIn)\n\n- **Aspect Ratio:** 16:9 (1920 × 1080).  \n- **Safe Zone:** Keep all critical text/logo > 150 px from left/right edges to avoid clipping on mobile feed.  \n- **File Size:** ≤ 8 MB for fast loading.  \n- **Caption:** Add the exact script as post copy for accessibility and SEO.  \n- **Thumbnail:** Use the “+4.2% α” metric graphic with navy background; ensure high contrast for thumb visibility in feed.  \n- **Professional Tone:** No slang, focus on performance data and client‑first language.\n\n---\n\n### 7. Script / Copy (15‑second narration with timing)\n\n| Timecode | Visual | Narration (Word‑for‑Word) |\n|----------|--------|---------------------------|\n| **0:00‑0:02** | Pan across animated client‑dashboard UI (navy background, blue data tiles). | “At PL Capital, we turn data into decisive alpha.” |\n| **0:02‑0:04** | Zoom‑in on bold “+4.2% α” metric (center). | “Our clients saw a 4.2 % alpha boost in Q3.” |\n| **0:04‑0:07** | Faceless client silhouette appears; teal speech‑bubble with quote fades in. | “‘Our portfolio outperformed the market by 4.2 % α – PL Capital made it happen.’” |\n| **0:07‑0:09** | Data‑flow line sweeps left‑to‑right, revealing quarterly stacked bar chart. | “Consistent, quantitative excellence across every quarter.” |\n| **0:09‑0:12** | Bars animate upward; green arrows rise; CTA button pulses. | “Ready for performance that leads the market?” |\n| **0:12‑0:15** | Fade to PL Capital logo with CTA button static; background dimmed. | “Discover Alpha with PL Capital today.” |\n\n*All narration is spoken in a calm, confident male voice (≈ 150 wpm). Subtitles appear exactly as written, timed to each line.*\n\n---\n\n### 8. Technical Specs  \n\n- **Resolution:** 1920 × 1080 (Full HD)  \n- **Aspect Ratio:** 16:9  \n- **Frame Rate:** 30 fps (smooth motion for data animations)  \n- **File Format:** MP4 (H.264 codec, High Profile)  \n- **Bitrate:** 8 Mbps (max)  \n- **Audio:** AAC, 44.1 kHz, 128 kbps, stereo, normalized loudness –23 LUFS.  \n- **Duration:** 15.00 seconds (exact timestamps as in script).  \n- **Color Space:** sRGB (compatible with LinkedIn).  \n- **Safe Margin:** 150 px from all edges for text/logo.  \n- **Export Naming Convention:** `PLCapital_AlphaStories_LinkedIn_15s.mp4`\n\n---\n\n**End of Creative Prompt** – All elements above are ready for immediate hand‑off to motion designers, animators, and voice‑over talent. No further clarification needed.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T10:46:20.562Z"
+    },
+    "1-1764932104618": {
+      "id": "1-1764932104618",
+      "topic": "PL Capital’s 80‑year legacy of alpha-driven investing",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt – Avatar‑Video – “80‑Year Legacy of Alpha‑Driven Investing”**\n\n---\n\n### 1. Core Message  \n“ 80 years of delivering consistent alpha through data‑driven innovation. ”\n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---------|-------------|\n| **Aspect Ratio / Resolution** | 1080 × 1080 px (square) – optimal for LinkedIn feed. |\n| **Background** | Deep navy gradient (from #0e0e6a at the top to #3c3cf8 at the bottom) with a subtle, low‑opacity circuit‑board pattern (≈10% opacity) to convey technology. |\n| **Avatar** | Professional, gender‑neutral avatar in a crisp navy suit with a teal (#00d084) lapel pin shaped like an upward arrow. The avatar is positioned 30 % from the left edge, facing slightly right, eyes directed at the camera. |\n| **Lighting** | Soft key light from the front‑right (45°) creating a gentle rim of teal light on the avatar’s shoulders; subtle back‑light (cool blue #3c3cf8) adds depth. |\n| **Motion Graphics** | • **0‑2 s**: Animated timeline bar slides in from the left, marking “1925 → 2025” with small glowing dots at each decade (teal). <br>• **2‑5 s**: A semi‑transparent line chart (green #66e766) rises behind the avatar, peaks aligning with the word “Alpha”. The chart animates upward in sync with the narration. <br>• **5‑8 s**: CTA button fades in at the bottom‑center, pulsing gently. |\n| **Typography** | All text set in **Figtree** (weights: Bold for headline, Regular for body). Headline size 72 pt, body 48 pt. Text color: White (#FFFFFF) with a thin teal (#00d084) drop‑shadow for readability. |\n| **Brand Logo** | PL Capital logo (white version) placed in the top‑right corner, 8 % of frame width, with a 5 px teal outline to ensure contrast against the navy gradient. |\n| **Color Palette** | Primary: Navy #0e0e6a, Blue #3c3cf8 <br>Accent: Teal #00d084, Green #66e766 <br>Neutral: White #FFFFFF |\n\n---\n\n### 3. Tone & Voice  \n\n- **Professional & Trustworthy** – authoritative diction, no slang.  \n- **Data‑Driven yet Approachable** – crisp, factual phrasing with a warm, confident delivery.  \n- **Pacing** – steady, slightly brisk to fit 8 seconds; each phrase enunciated clearly with a calm cadence.\n\n---\n\n### 4. Key Elements (Must Appear)\n\n1. **PL Capital logo** (top‑right).  \n2. **Avatar** (center‑left) delivering the script.  \n3. **Animated timeline** (0‑2 s).  \n4. **Rising line‑chart graphic** (2‑5 s).  \n5. **Core message text overlay** (“80 years of delivering consistent alpha”) – appears at 2‑5 s, centered, fade‑in/out.  \n6. **CTA button** (“Connect for Alpha Insights”) – bottom‑center, 6‑8 s.  \n7. **Subtitles** (white, Figtree Regular, 48 pt) for the entire narration, placed 5 % above the bottom edge, ensuring accessibility.\n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Connect for Alpha Insights”  \n- **Style:** White text on a teal (#00d084) rounded rectangle (corner radius 12 px), slight inner shadow for depth.  \n- **Placement:** Bottom‑center, centered horizontally, 8 % from the bottom edge.  \n- **Animation:** Fade‑in at 6.0 s, subtle pulse (scale 1.0 → 1.05 → 1.0) every 0.8 s until video ends.\n\n---\n\n### 6. Platform Optimization (LinkedIn)\n\n- **File Size:** ≤ 15 MB (MP4, H.264).  \n- **Caption:** Include the same core message plus a short line: “Celebrating 80 years of alpha‑driven performance. #PLCapital #AlphaInvesting”.  \n- **Thumbnail:** Use the avatar with the navy‑gradient background, overlay the PL Capital logo in the top‑right.  \n- **Accessibility:** Closed captions embedded; ensure contrast ratios meet WCAG AA (white text on navy/teal passes).  \n\n---\n\n### 7. Script / Copy (8‑second timing)\n\n| Timecode | Narration (Voice‑Over) | Visual Cue |\n|----------|------------------------|------------|\n| **0.0‑0.5 s** | *(soft ambient tone, no voice)* | Timeline bar slides in, logo already visible. |\n| **0.5‑1.5 s** | “For eight decades,” | Avatar nods slightly, eyes lock on camera. |\n| **1.5‑3.0 s** | “PL Capital has delivered consistent alpha,” | Line‑chart begins rising behind avatar; core message text fades in centered. |\n| **3.0‑4.5 s** | “through data‑driven innovation.” | Chart peaks; teal accent glows on the upward arrow pin. |\n| **4.5‑5.5 s** | *(brief pause, allowing visual emphasis)* | Text overlay fades out, chart holds peak. |\n| **5.5‑6.0 s** | “Join us.” | Avatar smiles subtly, hand gestures invitingly. |\n| **6.0‑8.0 s** | “Connect for Alpha Insights.” | CTA button appears and pulses; subtitles display the same line. |\n\n*Total narration duration: ~7.0 s, leaving 1 s buffer for smooth transitions.*\n\n---\n\n### 8. Technical Specs  \n\n- **Resolution / Aspect Ratio:** 1080 × 1080 px (1:1).  \n- **Frame Rate:** 30 fps.  \n- **Duration:** 8 seconds (exact).  \n- **File Format:** MP4 (H.264 codec), AAC audio (128 kbps).  \n- **Bitrate:** ≤ 8 Mbps (to stay under LinkedIn size limit).  \n- **Audio:** Clean, studio‑recorded voice‑over, normalized to –18 LUFS.  \n- **Color Profile:** sRGB, 8‑bit.  \n- **Export Settings:** “High Quality” preset, “Maximum Render Quality” enabled, “Use Maximum Render Quality” for motion graphics.  \n\n---\n\n**End of Creative Prompt** – All elements are fully defined for immediate production of the 8‑second LinkedIn avatar‑video that showcases PL Capital’s 80‑year legacy of alpha‑driven investing while adhering strictly to brand guidelines.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T10:55:04.618Z"
+    },
+    "1-1764932328107": {
+      "id": "1-1764932328107",
+      "topic": "Real Client Success Stories with PL Capital.",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt – Avatar‑Video – “Real Client Success Stories with PL Capital”**\n\n---\n\n### 1. Core Message  \n“PL Capital’s adaptive strategies delivered a 27% portfolio boost for Acme Tech in just 6 months – real results, real partners.”\n\n---\n\n### 2. Visual Direction  \n\n- **Aspect Ratio / Resolution:** 1920 × 1080 px (16:9), 30 fps, MP4 (H.264).  \n- **Color Palette (strictly from brand guide):**  \n  - Primary Navy: **#0e0e6a** (background & lower thirds)  \n  - Primary Blue: **#3c3cf8** (highlight bars, accent graphics)  \n  - Accent Teal: **#00d084** (call‑to‑action button, data points)  \n  - Accent Green: **#66e766** (growth arrows, success icons)  \n- **Typography:** All on‑screen text in **Figtree** – Bold for headings, Regular for body, 48 pt for main headline, 32 pt for supporting copy.  \n- **Composition & Camera Angles:**  \n  - **0:00‑0:03** – Tight 3‑quarter view of a professional‑looking avatar (mid‑30s, gender‑neutral, business‑casual) positioned in the **right third** of the frame. Soft‑focus corporate office backdrop blurred to #0e0e6a gradient.  \n  - **0:03‑0:07** – Camera pans left to reveal a floating **data‑visual overlay** centered (pie chart + line graph) showing “+27%” in large **#66e766** numerals, with subtle motion (grow‑in effect).  \n  - **0:07‑0:12** – Avatar turns slightly toward the viewer, a **speech‑bubble** appears above the head with the scripted testimonial line (see Script). Background shifts to a faint tech‑grid pattern in **#3c3cf8** at 10% opacity.  \n  - **0:12‑0:15** – Lower third slides up from bottom left: PL Capital logo (white on **#0e0e6a** bar) + CTA button (“Learn How”) in **#00d084** with white text.  \n- **Lighting:** Cool, even key light from top‑right (45°) creating a subtle rim light on the avatar; soft fill light left side; background illuminated with a low‑intensity backlight in **#3c3cf8** to give depth.  \n- **Motion Graphics Style:** Clean, minimal line‑art icons (e.g., upward arrow, bar chart) with a **subtle tech‑motif** (thin circuit‑like traces) that animate in sync with the voiceover. All transitions are **ease‑in‑out** over 0.3 s to maintain a professional flow.\n\n---\n\n### 3. Tone & Voice  \n\n- **Professional & Trustworthy:** Data‑driven language, confident delivery.  \n- **Approachable:** Warm avatar tone, slight smile, conversational cadence.  \n- **Dynamic but Measured:** Pacing brisk enough for 15 s, but never rushed; pauses of ~0.3 s after key figures.\n\n---\n\n### 4. Key Elements (Must‑Appear)  \n\n1. **PL Capital Logo** – white version on navy bar, bottom left, visible throughout after 0:12.  \n2. **Avatar** – realistic 3‑D corporate avatar, gender‑neutral, wearing a navy blazer with subtle blue lapel pin.  \n3. **Client Name & Industry** – “Acme Tech – SaaS” displayed in small **#3c3cf8** text under the avatar (0:03‑0:07).  \n4. **Performance Metric** – “+27%” in large **#66e766**, accompanied by a rising arrow icon.  \n5. **Data Overlay** – simple line‑graph showing upward trend over 6 months, color **#00d084** line, navy grid.  \n6. **Speech‑Bubble Text** – exact copy from script (see Section 7).  \n7. **CTA Button** – “Learn How” in white on **#00d084** rectangle, bottom left, clickable placeholder.  \n8. **Subtle Tech Motif** – faint circuit traces in background, 5% opacity, animated slowly left‑to‑right.\n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Learn How”  \n- **Placement:** Bottom left corner, 20 px margin from edges, 120 × 45 px button.  \n- **Style:** Background **#00d084**, text **Figtree Bold 32 pt**, white (#FFFFFF).  \n- **Animation:** Button fades in at 0:12, subtle pulse (scale 1.0 → 1.05) every 2 s to draw attention.  \n\n---\n\n### 6. Platform Optimization (LinkedIn)  \n\n- **Video Length:** 15 seconds (max for autoplay in feed).  \n- **File Size:** ≤ 30 MB for smooth upload.  \n- **Caption Text (post copy):**  \n  > “When adaptive strategy meets data‑driven execution, results speak for themselves. 🚀 See how PL Capital helped Acme Tech boost portfolio performance by 27% in six months. #ClientSuccess #AlphaPerformance”  \n- **Thumbnail:** Capture frame at 0:04 (graph + “+27%” overlay) with navy background; overlay PL Capital logo in the lower‑right corner.  \n- **Accessibility:** Include closed‑caption file (SRT) matching the script; ensure high contrast (white text on navy/blue backgrounds).  \n\n---\n\n### 7. Script / Copy (Word‑for‑Word, with Timing)\n\n| Timecode | Avatar Dialogue (Voice‑over) | On‑Screen Text |\n|----------|------------------------------|----------------|\n| **0:00‑0:03** | *(soft smile)* “Hi, I’m Maya from Acme Tech.” | “Maya – Acme Tech (SaaS)” (small navy text) |\n| **0:03‑0:07** | “We partnered with PL Capital and saw a **27%** portfolio boost in just six months.” | “+27%” (large **#66e766**), line‑graph animation, “6 Months” label |\n| **0:07‑0:12** | “Their adaptive strategy turned data into consistent alpha.” | Speech‑bubble displays the line above (same wording). |\n| **0:12‑0:15** | *(confident)* “Ready for your own success story?” | CTA button “Learn How” appears; PL Capital logo persists. |\n\n*Pacing notes:*  \n- Speak at ~150 wpm.  \n- Pause 0.3 s after “27%” for visual emphasis.  \n- End with a slight upward intonation on “story?” to cue CTA.\n\n---\n\n### 8. Technical Specs  \n\n- **Resolution / Aspect:** 1920 × 1080 px, 16:9.  \n- **Frame Rate:** 30 fps.  \n- **Duration:** 15 seconds total.  \n- **File Format:** MP4 (H.264 codec), audio AAC 128 kbps.  \n- **Audio:** Stereo, loudness –23 LUFS (LinkedIn standard).  \n- **Color Space:** sRGB, 8‑bit.  \n- **Export Settings:** Maximum bitrate 10 Mbps, keyframe interval 2 seconds.  \n- **Closed Captions:** SRT file synced to script timestamps.  \n- **File Naming Convention:** `PLCapital_RealClientSuccess_AcmeTech_15s_LinkedIn.mp4`\n\n---\n\n**End of Creative Prompt** – All visual, textual, and technical details are locked to PL Capital’s brand guidelines and ready for immediate production by the avatar‑video team.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T10:58:48.107Z"
+    },
+    "1-1764933881525": {
+      "id": "1-1764933881525",
+      "topic": "Trusted by 160k+ clients across 200 cities: PL Capital's 80-year legacy",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "Create a WhatsApp static creative for \"Trusted by 160k+ clients across 200 cities: PL Capital's 80-year legacy\". Focus on a bold headline, single CTA, high contrast, and mobile-friendly 1080x1920 layout. Use PL Capital colors (Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766) and Figtree typography.",
+      "promptModel": "fallback",
+      "stageId": 1,
+      "completedAt": "2025-12-05T11:24:41.525Z"
+    },
+    "1-1764934713961": {
+      "id": "1-1764934713961",
+      "topic": "PL Capital’s 80‑year legacy of adaptive investment excellence",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Faceless‑Video – “80‑Year Legacy of Adaptive Investment Excellence”**\n\n---\n\n### 1. Core Message  \n**“Eight decades of data‑driven adaptability delivering consistent alpha – PL Capital, your trusted partner for performance‑first investing.”**\n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---|---|\n| **Color Palette** | • **Primary Navy** – #0e0e6a (background, lower thirds)  <br>• **Primary Blue** – #3c3cf8 (graph lines, accent bars)  <br>• **Accent Teal** – #00d084 (highlighted data points)  <br>• **Accent Green** – #66e766 (growth arrows, CTA button) |\n| **Typography** | **Figtree** – Bold for headlines (size 72 pt), Regular for body copy (size 36 pt). All text left‑aligned with a 10 pt tracking for readability. |\n| **Composition & Layout** | • **0:00‑0:04** – Full‑bleed dark‑gradient background (Navy fading to Blue) with a subtle, animated “circuit‑grid” pattern (opacity 12 %). <br>• **0:04‑0:09** – Center‑stage kinetic timeline: a thin vertical line (Blue #3c3cf8) runs from bottom to top; 8 milestone “pulses” appear as teal circles, each labeled with a year (e.g., 1945, 1960, 1975, 1990, 2005, 2020, 2025, 2030). The current year pulse (2025) glows brighter and expands slightly. <br>• **0:09‑0:13** – Overlay of a stylized, faceless bar chart that morphs into a rising arrow (Green #66e766) indicating “consistent alpha”. The chart uses thin lines (White) and data bars in Primary Blue with teal highlights on peak points. |\n| **Lighting & Motion** | • Soft, cool back‑light from the top‑right creates a subtle rim on the timeline and chart elements. <br>• Motion easing: “ease‑out‑elastic” for milestone pops, “linear” for chart growth, maintaining a professional, data‑driven feel. |\n| **Camera Angles** | Static “camera” (no actual camera movement) – all motion is generated via motion‑graphics layers to keep the video faceless and clean. |\n| **Brand Logo** | PL Capital logotype (white) appears in the lower‑left corner from 0:00‑0:15, anchored 20 px from the left and bottom edges. Fade‑in at 0:00, steady presence. |\n| **Additional Motifs** | Subtle, semi‑transparent tech‑grid lines (hexagonal) drift horizontally behind the timeline (opacity 5 %) to reinforce “innovation”. |\n\n---\n\n### 3. Tone & Voice  \nProfessional, trustworthy, and data‑driven yet approachable. Narration uses a confident, calm male/female voice (mid‑range, ~150 WPM) with slight emphasis on “adaptive”, “consistent alpha”, and “trusted partner”. No jargon beyond necessary investment terms.\n\n---\n\n### 4. Key Elements (Must‑Appear)  \n\n1. **PL Capital Logo** – white, lower‑left, 20 px margin.  \n2. **Headline Text** – “80 Years of Adaptive Excellence” (0:00‑0:04).  \n3. **Timeline Milestones** – 8 year markers with year labels.  \n4. **Bar‑Chart → Arrow Animation** – visual proof of performance.  \n5. **Core Message Copy** – “Eight decades of data‑driven adaptability delivering consistent alpha.” (0:09‑0:13).  \n6. **CTA Text** – “Discover how we can grow your portfolio.” (0:13‑0:15).  \n7. **CTA Button Graphic** – rounded rectangle, Accent Green (#66e766) with white text, placed bottom‑center, 30 px from bottom edge.  \n\nAll text uses **Figtree** font, white for headlines, teal for highlighted words (“adaptive”, “alpha”).\n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Discover how we can grow your portfolio.”  \n- **Placement:** Bottom‑center, inside a green rounded button (Accent Green #66e766) with white Figtree Regular 36 pt text.  \n- **Duration:** Visible from 0:13‑0:15, button fades in sync with CTA text.  \n- **Interaction Cue:** A subtle pulsing glow (teal) around the button for 0.5 s to attract attention.\n\n---\n\n### 6. Platform Optimization (LinkedIn)  \n\n- **Aspect Ratio:** 16:9 (1920 × 1080).  \n- **Safe Zone:** Keep all critical text/logo > 150 px from edges to avoid cropping on mobile feed.  \n- **File Size:** ≤ 30 MB for fast loading.  \n- **Caption:** Include the Core Message as a native LinkedIn post caption (max 3000 characters, but we’ll use a concise 2‑sentence version).  \n- **Alt‑Text:** “Animated timeline showing PL Capital’s 80‑year history of adaptive investment strategies leading to consistent alpha.”  \n\n---\n\n### 7. Script / Copy (Word‑for‑Word Narration)  \n\n| Timecode | Visual | Narration (English) |\n|---|---|---|\n| **0:00‑0:04** | Dark gradient background, PL Capital logo fades in, headline “80 Years of Adaptive Excellence” appears center‑screen. | *“For eight decades, PL Capital has set the standard in adaptive investing.”* |\n| **0:04‑0:09** | Timeline pulses 8 milestones; each teal circle expands briefly with year label. | *“From 1945 to today, we’ve evolved with every market shift.”* |\n| **0:09‑0:13** | Bar chart morphs into rising green arrow; core message overlay appears. | *“Eight decades of data‑driven adaptability delivering consistent alpha.”* |\n| **0:13‑0:15** | CTA button fades in, text “Discover how we can grow your portfolio.” | *“Partner with us—experience performance‑first investing.”* |\n\n*All narration is recorded in a neutral American English voice, with a slight pause (0.2 s) after each sentence for visual emphasis.*\n\n---\n\n### 8. Technical Specs  \n\n- **Resolution:** 1920 × 1080 (Full HD)  \n- **Aspect Ratio:** 16:9  \n- **Frame Rate:** 30 fps  \n- **Duration:** 15 seconds (exact timestamps as above)  \n- **File Format:** MP4 (H.264 codec, AAC audio)  \n- **Bitrate:** ≤ 8 Mbps (to stay under LinkedIn’s 30 MB limit)  \n- **Audio Level:** -6 dB LUFS (consistent with LinkedIn standards)  \n- **Color Space:** sRGB, 8‑bit  \n- **Safe Zone Margins:** 150 px from all edges for text/logo  \n- **Export Settings:** “Maximum Render Quality”, “Use Hardware Acceleration” enabled.  \n\n---\n\n**End of Creative Prompt** – All elements are fully defined for immediate production of a faceless, brand‑aligned 15‑second LinkedIn video highlighting PL Capital’s 80‑year legacy of adaptive investment excellence.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T11:38:33.961Z"
+    },
+    "1-1764935473440": {
+      "id": "1-1764935473440",
+      "topic": "PL Capital’s 80‑year legacy of adaptive wealth growth",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt – Faceless Video (15 s) – “PL Capital’s 80‑Year Legacy of Adaptive Wealth Growth”**\n\n---\n\n### 1. Core Message  \n*“For 80 years, PL Capital has turned market change into client‑first wealth growth – adaptive strategies, data‑driven performance, consistent alpha.”*\n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---------|-------------|\n| **Overall Look & Feel** | Clean, modern corporate aesthetic with subtle tech‑grid overlays. All motion is smooth and purposeful; no human faces, only abstract data visualizations, timeline graphics, and brand assets. |\n| **Color Palette** | <ul><li>Primary Navy – **#0e0e6a** (background, large blocks)</li><li>Primary Blue – **#3c3cf8** (highlights, line graphs)</li><li>Accent Teal – **#00d084** (progress bars, call‑to‑action accent)</li><li>Accent Green – **#66e766** (positive growth arrows, KPI numbers)</li></ul> |\n| **Typography** | **Figtree** – Bold for headings (40 pt), Medium for body (28 pt). All text left‑aligned unless otherwise noted. |\n| **Lighting & Mood** | Dark navy backdrop with a soft, cool back‑light glow (blue) that gives depth. Highlights on data lines pulse gently to suggest “active” analytics. |\n| **Composition** | • **0:00‑0:03** – Full‑width horizontal timeline (80 years) anchored to the left third, moving rightward. <br>• **0:03‑0:06** – Stacked KPI cards (Alpha + 12%, Client Retention + 95%) centered. <br>• **0:06‑0:10** – Abstract “adaptive algorithm” visual – interlocking hexagons morphing into a rising arrow, centered. <br>• **0:10‑0:13** – Brand logo with tagline overlay. <br>• **0:13‑0:15** – CTA button. |\n| **Camera Angles / Motion** | Virtual “camera” pans slowly left‑to‑right across the timeline (0‑3 s). Quick “zoom‑in” on KPI cards (3‑6 s). Subtle “rotate‑y” on hexagon network (6‑10 s). Final static lock‑frame on logo/CTA (10‑15 s). |\n| **Transitions** | 0‑3 s: Fade‑in from black → timeline slide in from left. <br>3‑6 s: Cross‑fade to KPI cards with a light “data‑pulse” effect. <br>6‑10 s: Morph transition (hexagons dissolve into arrow). <br>10‑13 s: Fade‑to‑logo with a soft glow. <br>13‑15 s: CTA button slides up from bottom with a subtle “pop” bounce. |\n| **Background Audio** | Low‑key ambient corporate synth pad (≈ 30 dB), with a soft “whoosh” on each visual transition. No voice‑over music competing with narration. |\n\n---\n\n### 3. Tone & Voice  \nProfessional, trustworthy, data‑driven yet approachable. Language is concise, active, and forward‑looking. No jargon beyond “alpha,” “adaptive,” “performance.” The narration feels like a senior partner speaking directly to a LinkedIn audience.\n\n---\n\n### 4. Key Elements (Must‑Appear)  \n\n1. **PL Capital Logo** – White version on navy background, placed bottom‑left after 10 s.  \n2. **Timeline Graphic** – 80‑year line with decade markers (1925, 1935 … 2025) in blue (#3c3cf8).  \n3. **KPI Cards** – <ul><li>“Alpha + 12% YoY” (green #66e766)</li><li>“Client Retention 95%” (teal #00d084)</li></ul>  \n4. **Adaptive Algorithm Visual** – Interlocking hexagons (blue/teal) morphing into a rising arrow (green).  \n5. **Copy Overlays** – Exact wording from script (see Section 7).  \n6. **CTA Button** – Rounded rectangle, teal fill (#00d084) with white text, bottom‑center.  \n7. **Brand Font** – All on‑screen text uses **Figtree** (weights as specified).  \n\n---\n\n### 5. Call to Action  \n\n**Text:** “Discover your next growth chapter →”  \n**Style:** White Figtree Bold 32 pt on teal button (#00d084).  \n**Placement:** Bottom‑center, 0:13‑0:15, button slides up 20 px from bottom edge, stays for final 2 seconds.  \n\n---\n\n### 6. Platform Optimization (LinkedIn)\n\n| Requirement | Implementation |\n|-------------|----------------|\n| **Aspect Ratio** | Primary: **1:1 (1080 × 1080)** for feed; secondary export **16:9 (1920 × 1080)** for LinkedIn carousel/ads. |\n| **Safe Zones** | Keep all critical text/logo ≥ 150 px from edges to avoid cropping on mobile. |\n| **Caption/Subtitles** | Include optional closed‑caption track (SRT) matching narration for silent autoplay. |\n| **File Size** | ≤ 30 MB (optimal for LinkedIn). |\n| **Thumbnail** | Use the logo‑plus‑timeline static frame (0:02) with overlay “80 Years of Adaptive Growth”. |\n| **Alt‑Text** | “PL Capital 80‑year timeline showing adaptive wealth‑growth strategies and consistent alpha performance.” |\n\n---\n\n### 7. Script / Copy (Word‑for‑Word)  \n\n| Timecode | Visual | Narration (Voice‑Over) |\n|----------|--------|------------------------|\n| **0:00‑0:03** | Navy background; timeline slides in left → right, decade markers glow. | *“Eight decades of turning market change into opportunity.”* |\n| **0:03‑0:06** | KPI cards fade in center, numbers pulse green/teal. | *“Alpha + 12% year‑over‑year, client retention at 95 %.”* |\n| **0:06‑0:10** | Hexagon network morphs into a rising green arrow. | *“Our adaptive algorithms evolve with every market shift.”* |\n| **0:10‑0:13** | Logo appears bottom‑left, tagline overlay “Adaptive Wealth Growth Since 1925”. | *“PL Capital – trusted, innovative, performance‑first.”* |\n| **0:13‑0:15** | CTA button slides up, background subtle glow. | *“Discover your next growth chapter →”* (spoken in same tone, synced with button appearance). |\n\n*All narration delivered in a warm, confident male/female voice at ~150 wpm, clear enunciation, slight emphasis on “adaptive” and “growth”.*\n\n---\n\n### 8. Technical Specs  \n\n- **Resolution / Aspect Ratio**: 1080 × 1080 px (1:1) **and** 1920 × 1080 px (16:9) export.  \n- **Frame Rate**: 30 fps (progressive).  \n- **Duration**: 15 seconds (exact).  \n- **File Format**: MP4 (H.264 codec), AAC audio 128 kbps.  \n- **Bitrate**: ≤ 8 Mbps (to stay under LinkedIn size limit).  \n- **Color Space**: sRGB, 8‑bit.  \n- **Audio Levels**: Narration peaks at –6 dBFS, ambient track at –18 dBFS.  \n- **Export Naming**: `PLCapital_80YearLegacy_LinkedIn_1080x1080.mp4` (and `_1920x1080.mp4`).  \n\n---\n\n**End of Creative Prompt** – All elements above are ready for immediate hand‑off to motion designers, animators, and copy editors. No further clarification required.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T11:51:13.440Z"
+    },
+    "1-1764936876017": {
+      "id": "1-1764936876017",
+      "topic": "PL Capital’s adaptive quant strategies deliver lasting alpha",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Image – “PL Capital’s Adaptive Quant Strategies Deliver Lasting Alpha”**\n\n---\n\n### 1. Core Message  \n**“Our adaptive quant strategies consistently generate lasting alpha for every client.”**  \n\n*Secondary copy (optional overlay for depth):*  \n“Consistent performance • Data‑driven innovation • Client‑first results”\n\n---\n\n### 2. Visual Direction  \n\n| Element | Description |\n|---------|-------------|\n| **Overall Mood** | Clean, modern, and data‑centric with a confident, forward‑looking vibe. Subtle tech motifs convey quantitative rigor without overwhelming the viewer. |\n| **Color Palette** | - **Primary Navy**: #0e0e6a (background gradient) <br> - **Primary Blue**: #3c3cf8 (highlight bars & line graphs) <br> - **Accent Teal**: #00d084 (glowing data points & CTA accent) <br> - **Accent Green**: #66e766 (optional upward‑trend arrow) |\n| **Background** | Full‑bleed gradient from deep navy (#0e0e6a) at the left edge to a slightly lighter navy‑blue (#1a1a8f) toward the right. Overlaid with a low‑opacity (<15%) abstract network of thin, interconnected lines (circuit‑board style) in teal (#00d084) and blue (#3c3cf8) to suggest adaptive algorithms. |\n| **Foreground Composition** | - **Left third**: A stylized 3‑D bar chart rising from bottom to top, bars in varying shades of blue (#3c3cf8, #5a5aff) with a subtle teal glow on the tallest bar, representing “alpha”. <br> - **Center**: Large, bold headline text (see copy) in **Figtree Bold**, white (#FFFFFF) with a faint teal outer glow for legibility. <br> - **Right third (bottom‑right corner)**: PL Capital logo (white version) on a semi‑transparent navy rectangle (opacity 80%) to ensure contrast. |\n| **Lighting & Effects** | Soft directional light from the top‑left creates a gentle highlight on the left‑side bars, giving them a slight 3‑D lift. A cool backlight (teal hue) subtly outlines the headline text, reinforcing the tech feel. No harsh shadows – keep the look polished and professional. |\n| **Typography** | All text uses **Figtree** family: <br> - Headline: Figtree **Bold**, 48 pt (scaled for final size). <br> - Sub‑copy: Figtree **Regular**, 28 pt, white. <br> - CTA: Figtree **Medium**, 32 pt, teal (#00d084). |\n| **Additional Visual Cue** | A thin upward‑pointing arrow (green #66e766) subtly integrated into the top‑right of the bar chart, indicating “growth” without dominating the scene. |\n\n---\n\n### 3. Tone & Voice  \nProfessional, trustworthy, and data‑driven yet approachable. The copy reads as thought‑leadership: concise, confident, and client‑focused. No jargon overload; the visual language reinforces expertise.\n\n---\n\n### 4. Key Elements (Must‑Appear)  \n\n1. **PL Capital Logo** – white version, placed bottom‑right on a semi‑transparent navy overlay.  \n2. **Headline Text** – “Our adaptive quant strategies consistently generate lasting alpha for every client.” (Figtree Bold, white).  \n3. **Secondary Copy** – “Consistent performance • Data‑driven innovation • Client‑first results” (Figtree Regular, white).  \n4. **Data Visual** – 3‑D bar chart with teal‑glowing peak, abstract network lines in background.  \n5. **CTA Button/Badge** – “Learn how we deliver alpha →” in teal text on a white rounded rectangle with navy border, placed just below the secondary copy, right‑aligned.  \n6. **Brand Colors** – exactly as specified (#0e0e6a, #3c3cf8, #00d084, #66e766).  \n7. **Typography** – Figtree family throughout.\n\n---\n\n### 5. Call to Action  \n\n- **Text:** “Learn how we deliver alpha →”  \n- **Style:** Figtree Medium, teal (#00d084) on white button with navy border (#0e0e6a), subtle drop shadow (2 px, 10% opacity).  \n- **Placement:** Bottom‑center, 30 px above the image edge, aligned horizontally with the secondary copy.  \n\n---\n\n### 6. Platform Optimization (LinkedIn)  \n\n| Specification | Details |\n|----------------|---------|\n| **Aspect Ratio** | 1.91:1 – **1200 × 627 px** (optimal for LinkedIn feed). |\n| **File Format** | PNG (lossless for crisp text) or high‑quality JPEG (< 200 KB). |\n| **Maximum File Size** | 5 MB (LinkedIn limit). |\n| **Alt‑Text (for accessibility)** | “PL Capital showcases adaptive quantitative strategies delivering lasting alpha through a modern data‑visual graphic with navy, blue, teal, and green accents.” |\n| **Copy Length** | Headline ≤ 120 characters, secondary copy ≤ 150 characters – both well within LinkedIn’s 3000‑character limit. |\n| **Brand Consistency** | Use exact brand colors, Figtree font, and maintain the clean corporate aesthetic. |\n\n---\n\n### 7. Technical Specs  \n\n- **Resolution:** 1200 × 627 px (72 dpi for web).  \n- **Color Mode:** RGB.  \n- **File Naming Convention:** `PLCapital_AdaptiveQuant_Alpha_LinkedIn_1200x627.png`.  \n- **Export Settings:** PNG‑24 with transparency for the logo overlay; if JPEG, use 85 % quality.  \n- **Safety Margin:** Keep all critical text and logos ≥ 30 px inside the image edges to avoid clipping on mobile view.  \n\n---\n\n**End of Creative Brief** – All elements are defined to allow a designer or AI image generator to produce a LinkedIn‑ready visual that instantly communicates PL Capital’s adaptive quant expertise and lasting alpha performance.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T12:14:36.018Z"
+    },
+    "1-1764937042766": {
+      "id": "1-1764937042766",
+      "topic": "Unlock Adaptive Alpha with AQUA PMS – Elite Wealth Management for 1Cr+ Investors",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "whatsapp"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Image – “Unlock Adaptive Alpha with AQUA PMS” (WhatsApp Campaign)**  \n\n---\n\n### 1. Core Message  \n**“Unlock Adaptive Alpha – AQUA PMS, Elite Wealth Management for Investors ₹1 Cr+”**\n\n---\n\n### 2. Visual Direction  \n\n- **Canvas Size & Aspect Ratio**: 1080 px × 1080 px (1:1 square) – optimal for WhatsApp image preview.  \n- **Background**  \n  - Gradient from **Navy #0e0e6a** (top‑left) to **Blue #3c3cf8** (bottom‑right).  \n  - Subtle, low‑opacity circuit‑board pattern (≈8 % opacity) in **Teal #00d084** to convey tech‑driven analytics.  \n- **Foreground Composition** (rule‑of‑ thirds, centered focus)  \n  1. **Upper‑left third**: A sleek, semi‑transparent data‑wave overlay (smooth sinusoidal line) in **Green #66e766**, representing adaptive performance.  \n  2. **Center**:  \n     - A high‑resolution, three‑dimensional glass‑like sphere (≈30 % of canvas width) floating slightly above the background, refracting the gradient colors.  \n     - Inside the sphere, a stylized **“AQUA”** monogram formed by interlocking “A” and “Q” in **White #FFFFFF**, rendered with a subtle inner‑glow (≈15 % opacity) to suggest illumination of insight.  \n  3. **Lower‑right third**: A confident, professionally dressed Indian male investor (mid‑30s, wearing a navy blazer) looking toward the sphere, with a faint reflection of the sphere on his glasses. The figure is rendered in realistic photorealistic style, lit with **soft, cool key light** from the top‑right, creating a gentle rim light in **Teal #00d084**.  \n- **Lighting**  \n  - Primary key light: cool, directional from top‑right, 45° angle, 6500 K, 30 % intensity.  \n  - Fill light: subtle bounce from left side, 10 % intensity, tinted with **Blue #3c3cf8**.  \n  - Background backlight: a thin halo glow around the sphere in **Teal #00d084**, radius 150 px, 20 % opacity.  \n- **Typography** (Figtree, all caps for headings, sentence case for body)  \n  - **Headline** (Core Message) placed centrally, just below the sphere:  \n    - Font size: 68 pt, weight **Bold**.  \n    - Color: **White #FFFFFF** with a faint drop‑shadow (2 px, 20 % opacity, #0e0e6a).  \n  - **Sub‑headline** (supporting line) directly under headline:  \n    - Text: “Adaptive Strategies • Quantitative Excellence • Consistent Alpha”  \n    - Font size: 36 pt, weight **Medium**.  \n    - Color: **Teal #00d084**.  \n- **Brand Logo**  \n  - PL Capital logo (white version) placed in the bottom‑center, 80 px height, with 20 px clearance from the bottom edge.  \n  - AQUA PMS product badge (blue background with white “AQUA PMS” text) positioned top‑right corner, 120 px width, rounded corners (8 px).  \n\n---\n\n### 3. Tone & Voice  \n\n- **Professional & Trustworthy** – language is precise, data‑focused, yet approachable.  \n- **Innovative & Exclusive** – conveys elite status for high‑net‑worth investors.  \n- **Direct & Personal** – speaks to the viewer as a valued client, inviting immediate engagement.  \n\n---\n\n### 4. Key Elements (Must‑Appear)  \n\n1. PL Capital brand logo (white).  \n2. AQUA PMS product badge.  \n3. Core Message headline text.  \n4. Sub‑headline supporting line.  \n5. Data‑wave graphic in Green #66e766.  \n6. Central glass sphere with “AQUA” monogram.  \n7. Professional Indian investor portrait.  \n8. Subtle tech circuit pattern background.  \n\n---\n\n### 5. Call to Action  \n\n- **CTA Text**: “Reply ‘ALPHA’ to start your journey”  \n- **Placement**: Bottom‑left corner, inside a rounded rectangle button (background **Teal #00d084**, opacity 90 %).  \n- **Typography**: Figtree Bold, 32 pt, color **White #FFFFFF**, centered vertically and horizontally within the button.  \n- **Button Size**: 300 px × 80 px, 12 px corner radius, 15 px margin from left and bottom edges.  \n\n---\n\n### 6. Platform Optimization (WhatsApp)  \n\n- **File Size**: ≤ 500 KB to ensure quick load on mobile data.  \n- **Format**: JPEG (quality 85 %) or WebP (lossless).  \n- **Visual Hierarchy**: Primary message and CTA are placed within the “safe zone” (central 80 % of canvas) to avoid cropping in WhatsApp preview bubbles.  \n- **Contrast**: Ensure high contrast between text and background for readability on small screens.  \n\n---\n\n### 7. Technical Specs  \n\n| Specification | Detail |\n|---------------|--------|\n| **Resolution** | 1080 × 1080 px |\n| **Aspect Ratio** | 1:1 |\n| **Color Mode** | RGB, sRGB IEC61966‑2.1 |\n| **File Format** | JPEG (85 % quality) **or** WebP (lossless) |\n| **Maximum File Size** | 500 KB |\n| **Typography** | Figtree (Bold, Medium) – embedded or outlined for safety |\n| **Export Settings** | Export with “Maximum Compatibility” (baseline JPEG) |\n| **Safety Margin** | Keep all critical text > 30 px from canvas edges |\n\n---\n\n**End of Creative Prompt** – this brief contains every visual, textual, and technical detail needed for the designer to produce a WhatsApp‑ready image that aligns perfectly with PL Capital’s brand and campaign objectives.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T12:17:22.766Z"
+    },
+    "1-1764938317238": {
+      "id": "1-1764938317238",
+      "topic": "Invitation to Exclusive launch of our new Life Insurance Partner ",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "whatsapp"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Image – “Invitation to Exclusive Launch of Our New Life Insurance Partner”**\n\n---\n\n1. Core Message\n\n“You’re Invited: Join PL Capital for the Exclusive Launch of Our New Life-Insurance Partner – ICICI Prudential Life Insurance.”\n\nSub-copy:\n“Secure Your Future with Trusted Innovation.”\n\n2. Visual Direction\nColor Palette (exact hex codes)\n\nPrimary Navy: #0e0e6a\n\nPrimary Blue: #3c3cf8\n\nAccent Teal: #00d084\n\nAccent Green: #66e766\n\nText: Pure White #FFFFFF\n\nBackground\n\nDiagonal gradient from #0e0e6a → #3c3cf8.\n\nUltra-low-opacity (10%) white circuit-pattern overlay for a modern financial-tech feel.\n\nComposition – 1200×1200 px (WhatsApp optimized)\n\nTop-center: Place PL Capital logo (from Reference Image 1), width 180px.\n\nUpper-left third: Semi-transparent silhouette of a professional in a navy blazer, filled with the gradient.\n\nCenter-right:\n\nHeadline in Figtree Bold 48pt, white, left-aligned, with a thin #00d084 underline extending 10% beyond text width.\n\nShield + Leaf icon below headline in #66e766, size 120px.\n\nBottom band:\n\nFull-width teal bar #00d084 (150px height).\n\nContains CTA button (see below).\n\nInner shadow for depth.\n\nLighting & Depth\n\nSoft highlight from top-right.\n\n2px soft shadow behind headline for readability.\n\nCTA button with inner glow (2px, #66e766) for focus.\n\nNew Partner Logo\n\nICICI Prudential Life Insurance Logo\n\nPlace bottom-right, width 120px.\n\nAdd thin 2px white border for separation.\n\n3. Tone & Personality\n\nProfessional, trustworthy, future-focused.\nExclusive yet approachable.\n\n4. Key Required Elements\nElement\tSpecs\nPL Capital Logo\tUse from uploaded reference; top-center, 180px width.\nICICI Prudential Logo\tBottom-right corner, 120px width, with 2px white border.\nHeadline\t“You’re Invited…” in Figtree Bold 48pt, white.\nSub-copy\t“Secure Your Future with Trusted Innovation” in Figtree Regular 28pt.\nShield-Leaf Icon\t#66e766, 120px height.\nCTA Button\t260×70px, rounded radius 12px, background #00d084, text “RSVP NOW” in white 32pt Bold.\nWhatsApp Icon\t15px white icon inside button, left of text.\nDate & Time\t“Friday, 28th Nov 2025 • 4:00 PM – 5:00 PM” in Figtree Light 22pt white.\nSafe Zone\tKeep all text/logos 60px from edges.\n5. Call-to-Action (CTA)\n\nButton Text: “RSVP NOW”\nSubtle pulsing glow (outer 2px #66e766) recommended.\n\n6. WhatsApp Platform Optimization\n\nSize: 1200×1200 px\n\nFormat: JPEG (90%) or WebP (<500 KB)\n\nAll text must remain ≥20pt when displayed on mobile.\n\nCTA placed within WhatsApp’s natural “tap zone.”\n\n7. Final Script/Copy Layout (Static Image)\n\nTop:\nPL Capital Logo\n\nHeadline:\nYOU’RE INVITED\nJoin PL Capital for the Exclusive Launch of Our New Life-Insurance Partner\nICICI Prudential Life Insurance\n\nSub-copy:\nSecure Your Future with Trusted Innovation\n\nEvent Block:\nFriday, 28th Nov 2025\n4:00 PM to 5:00 PM\n\nSpeaker Block (optional):\nVineet Agarwal\nHead – Insurance\n\nBottom CTA Band:\nRSVP NOW button with WhatsApp icon.\n\nBottom-right:\nICICI Prudential Logo\n\n8. Technical Specs\nSpec\tValue\nCanvas\t1200×1200 px\nDPI\t72\nMode\tRGB\nFormat\tJPEG/WebP\nFile Size\t≤ 500 KB\nTypography\tFigtree (Bold, Regular, Light)\nExport Name\tPLCapital_Invite_ICICIPrudential_1200x1200.jpg\n\n---\n\n**End of Creative Brief** – All visual, textual, and technical details are ready for immediate hand‑off to the design/production team.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T12:38:37.238Z",
+      "updatedAt": "2025-12-05T12:42:35.321Z"
+    },
+    "1-1764938960203": {
+      "id": "1-1764938960203",
+      "topic": "Invitation to launch our new Life insurance partner - ICICI Prudential ",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Image – “Invitation to Launch Our New Life‑Insurance Partner – ICICI Prudential”**  \n\n---\n\n1. Core Message\n\n“You’re Invited: Join PL Capital for the Exclusive Launch of Our New Life-Insurance Partner – ICICI Prudential Life Insurance.”\n\nSub-copy:\n“Secure Your Future with Trusted Innovation.”\n\n2. Visual Direction\nColor Palette (exact hex codes)\n\nPrimary Navy: #0e0e6a\n\nPrimary Blue: #3c3cf8\n\nAccent Teal: #00d084\n\nAccent Green: #66e766\n\nText: Pure White #FFFFFF\n\nBackground\n\nDiagonal gradient from #0e0e6a → #3c3cf8.\n\nUltra-low-opacity (10%) white circuit-pattern overlay for a modern financial-tech feel.\n\nComposition – 1200×1200 px (WhatsApp optimized)\n\nTop-center: Place PL Capital logo (from Reference Image 1), width 180px.\n\nUpper-left third: Semi-transparent silhouette of a professional in a navy blazer, filled with the gradient.\n\nCenter-right:\n\nHeadline in Figtree Bold 48pt, white, left-aligned, with a thin #00d084 underline extending 10% beyond text width.\n\nShield + Leaf icon below headline in #66e766, size 120px.\n\nBottom band:\n\nFull-width teal bar #00d084 (150px height).\n\nContains CTA button (see below).\n\nInner shadow for depth.\n\nLighting & Depth\n\nSoft highlight from top-right.\n\n2px soft shadow behind headline for readability.\n\nCTA button with inner glow (2px, #66e766) for focus.\n\nNew Partner Logo\n\nICICI Prudential Life Insurance Logo\n\nPlace bottom-right, width 120px.\n\nAdd thin 2px white border for separation.\n\n3. Tone & Personality\n\nProfessional, trustworthy, future-focused.\nExclusive yet approachable.\n\n4. Key Required Elements\nElement\tSpecs\nPL Capital Logo\tUse from uploaded reference; top-center, 180px width.\nICICI Prudential Logo\tBottom-right corner, 120px width, with 2px white border.\nHeadline\t“You’re Invited…” in Figtree Bold 48pt, white.\nSub-copy\t“Secure Your Future with Trusted Innovation” in Figtree Regular 28pt.\nShield-Leaf Icon\t#66e766, 120px height.\nCTA Button\t260×70px, rounded radius 12px, background #00d084, text “RSVP NOW” in white 32pt Bold.\nWhatsApp Icon\t15px white icon inside button, left of text.\nDate & Time\t“Friday, 28th Nov 2025 • 4:00 PM – 5:00 PM” in Figtree Light 22pt white.\nSafe Zone\tKeep all text/logos 60px from edges.\n5. Call-to-Action (CTA)\n\nButton Text: “RSVP NOW”\nSubtle pulsing glow (outer 2px #66e766) recommended.\n\n6. WhatsApp Platform Optimization\n\nSize: 1200×1200 px\n\nFormat: JPEG (90%) or WebP (<500 KB)\n\nAll text must remain ≥20pt when displayed on mobile.\n\nCTA placed within WhatsApp’s natural “tap zone.”\n\n7. Final Script/Copy Layout (Static Image)\n\nTop:\nPL Capital Logo\n\nHeadline:\nYOU’RE INVITED\nJoin PL Capital for the Exclusive Launch of Our New Life-Insurance Partner\nICICI Prudential Life Insurance\n\nSub-copy:\nSecure Your Future with Trusted Innovation\n\nEvent Block:\nFriday, 28th Nov 2025\n4:00 PM to 5:00 PM\n\nSpeaker Block (optional):\nVineet Agarwal\nHead – Insurance\n\nBottom CTA Band:\nRSVP NOW button with WhatsApp icon.\n\nBottom-right:\nICICI Prudential Logo\n\n8. Technical Specs\nSpec\tValue\nCanvas\t1200×1200 px\nDPI\t72\nMode\tRGB\nFormat\tJPEG/WebP\nFile Size\t≤ 500 KB\nTypography\tFigtree (Bold, Regular, Light)\nExport Name\tPLCapital_Invite_ICICIPrudential_1200x1200.jpg\n\n---\n\n**End of Creative Brief** – All elements strictly follow PL Capital brand guidelines and are ready for immediate production by the design team.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T12:49:20.204Z",
+      "updatedAt": "2025-12-05T12:49:35.684Z"
+    },
+    "1-1764939559870": {
+      "id": "1-1764939559870",
+      "topic": "About upcoming Incred IPO - insights & financial review ",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": {
+        "model": "veo-3.1",
+        "duration_seconds": 12,
+        "aspect_ratio": "9:16",
+        "fps": 30,
+        "prompt": "Faceless, high-end fintech explainer reel about the upcoming InCred Holdings IPO for PL Capital clients. Vertical 9:16 video with no human faces, no talking heads, only hands, silhouettes, dashboards and animated graphics.\n\nOverall look: deep navy to blue gradient background with subtle data grid lines and softly glowing teal and green accents. Clean motion-graphics style, like a premium investment bank teaser. All text in modern sans-serif font similar to Figtree.\n\nScene 1 (0-3s): Start with a dark navy screen. A glowing PL Capital logo icon appears at the top left as a small pulse of teal light spreads across the background. In the center, big bold kinetic title text animates in: 'InCred IPO – What You Need To Know'. Under it, a slimmer subtitle fades in: 'NBFC unicorn heads to the main board'. No faces, only logo and typography.\n\nScene 2 (3-6s): Camera digitally pushes into a futuristic India city skyline at night made of abstract neon outlines and financial graphs. Over the skyline, animated numbers and icons appear as floating tiles: one tile shows '₹3,000–4,000 Cr' with an IPO icon, another shows 'Confidential DRHP filed with SEBI' with a document icon, another shows 'Parent of InCred Financial Services' with a bank building icon. Thin teal connecting lines link these tiles like a data network. All visuals remain faceless.\n\nScene 3 (6-9s): Transition to a virtual dashboard with animated charts. A bar chart grows upward labelled 'AUM: ₹12,585 Cr, +39% YoY'. Next to it, a circular gauge fills to 'CAR 26%'. A tiny risk meter shows 'Net NPA 0.7%' in green, signalling strong asset quality. Below the charts, a slim data strip scrolls: 'FY25 PAT: ₹372 Cr  |  Total income: ₹1,255 Cr  |  Loans disbursed > ₹25,000 Cr to 4+ lakh customers'. All numbers are presented as on-screen infographics, no people.\n\nScene 4 (9-12s): Final scene returns to a simplified dashboard with a glowing InCred logo icon on the right and a stylised silhouette of a professional investor from the back on the left (head and shoulders only, no face visible, just a dark outline). In the foreground, bold callout text appears: 'Is InCred the next NBFC growth story?' and then a teal button-style graphic animates in with the words: 'PL Capital View: Coming Soon'. Small footer line at the bottom: 'Not investment advice. For educational purposes only.' The whole scene has soft parallax motion and a calm fintech background track.\n\nVisual style keywords: faceless, cinematic fintech, smooth camera moves, motion graphics, neon data lines, corporate India, stock market, IPO roadshow, clean and minimal, no clutter.",
+        "negative_prompt": "visible human faces, talking head video, presenters, microphones, messy backgrounds, memes, cartoons, childish icons, exaggerated emojis, cluttered text, real trading terminals, broker brand names other than PL Capital and InCred, shaky camera, handheld footage, low resolution, pixelation",
+        "audio_style": {
+          "music_description": "Subtle, mid-tempo synthwave / corporate electronic bed, 110–120 BPM, confident and professional, no vocals.",
+          "sound_effects_description": "Soft whoosh on each text transition, gentle ding when key metrics appear, all mixed under -6 LUFS.",
+          "voiceover_required": false
+        },
+        "text_overlays": [
+          {
+            "time_start": 0.3,
+            "time_end": 2.8,
+            "text": "InCred IPO – What You Need To Know",
+            "position": "center",
+            "style": "bold, large, white on subtle navy-to-blue gradient banner"
+          },
+          {
+            "time_start": 0.8,
+            "time_end": 2.8,
+            "text": "NBFC unicorn heads to the main board",
+            "position": "center_bottom",
+            "style": "medium, white, slight teal underline"
+          },
+          {
+            "time_start": 3,
+            "time_end": 5.5,
+            "text": "₹3,000–4,000 Cr issue • Confidential DRHP with SEBI",
+            "position": "upper_center",
+            "style": "medium, white, on translucent navy panel"
+          },
+          {
+            "time_start": 3.4,
+            "time_end": 5.8,
+            "text": "Parent of InCred Financial Services (NBFC)",
+            "position": "lower_center",
+            "style": "small, teal accent icons"
+          },
+          {
+            "time_start": 6,
+            "time_end": 8.5,
+            "text": "AUM ₹12,585 Cr | CAR 26% | Net NPA 0.7%",
+            "position": "center",
+            "style": "medium, white, over animated charts"
+          },
+          {
+            "time_start": 6.4,
+            "time_end": 8.9,
+            "text": "FY25 PAT ₹372 Cr | Income ₹1,255 Cr | Loans > ₹25,000 Cr",
+            "position": "bottom_center",
+            "style": "small, ticker-style strip"
+          },
+          {
+            "time_start": 9,
+            "time_end": 11,
+            "text": "Is InCred the next NBFC growth story?",
+            "position": "upper_center",
+            "style": "bold, large, white"
+          },
+          {
+            "time_start": 9.6,
+            "time_end": 11.8,
+            "text": "PL Capital View: Coming Soon",
+            "position": "center",
+            "style": "button-style teal pill with white text"
+          },
+          {
+            "time_start": 10.2,
+            "time_end": 12,
+            "text": "Disclaimer: Not investment advice. For educational purposes only.",
+            "position": "bottom_center",
+            "style": "very small, dim white"
+          }
+        ],
+        "branding": {
+          "primary_colors": [
+            "#0e0e6a",
+            "#3c3cf8"
+          ],
+          "accent_colors": [
+            "#00d084",
+            "#66e766"
+          ],
+          "logo_placeholder": "PL Capital logo in top-left, InCred logo icon in data scenes"
+        }
+      },
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T12:59:19.870Z",
+      "updatedAt": "2025-12-05T13:03:14.168Z"
+    },
+    "1-1764940409706": {
+      "id": "1-1764940409706",
+      "topic": "Upcoming InCred IPO - insights and financial review",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Faceless‑Video – “Upcoming InCred IPO – Insights & Financial Review”**\n\n---\n\n{\n  \"model\": \"veo-3.1\",\n  \"duration_seconds\": 12,\n  \"aspect_ratio\": \"9:16\",\n  \"fps\": 30,\n  \"prompt\": \"Faceless, high-end fintech explainer reel about the upcoming InCred Holdings IPO for PL Capital clients. Vertical 9:16 video with no human faces, no talking heads, only hands, silhouettes, dashboards and animated graphics.\\n\\nOverall look: deep navy to blue gradient background with subtle data grid lines and softly glowing teal and green accents. Clean motion-graphics style, like a premium investment bank teaser. All text in modern sans-serif font similar to Figtree.\\n\\nScene 1 (0-3s): Start with a dark navy screen. A glowing PL Capital logo icon appears at the top left as a small pulse of teal light spreads across the background. In the center, big bold kinetic title text animates in: 'InCred IPO – What You Need To Know'. Under it, a slimmer subtitle fades in: 'NBFC unicorn heads to the main board'. No faces, only logo and typography.\\n\\nScene 2 (3-6s): Camera digitally pushes into a futuristic India city skyline at night made of abstract neon outlines and financial graphs. Over the skyline, animated numbers and icons appear as floating tiles: one tile shows '₹3,000–4,000 Cr' with an IPO icon, another shows 'Confidential DRHP filed with SEBI' with a document icon, another shows 'Parent of InCred Financial Services' with a bank building icon. Thin teal connecting lines link these tiles like a data network. All visuals remain faceless.\\n\\nScene 3 (6-9s): Transition to a virtual dashboard with animated charts. A bar chart grows upward labelled 'AUM: ₹12,585 Cr, +39% YoY'. Next to it, a circular gauge fills to 'CAR 26%'. A tiny risk meter shows 'Net NPA 0.7%' in green, signalling strong asset quality. Below the charts, a slim data strip scrolls: 'FY25 PAT: ₹372 Cr  |  Total income: ₹1,255 Cr  |  Loans disbursed > ₹25,000 Cr to 4+ lakh customers'. All numbers are presented as on-screen infographics, no people.\\n\\nScene 4 (9-12s): Final scene returns to a simplified dashboard with a glowing InCred logo icon on the right and a stylised silhouette of a professional investor from the back on the left (head and shoulders only, no face visible, just a dark outline). In the foreground, bold callout text appears: 'Is InCred the next NBFC growth story?' and then a teal button-style graphic animates in with the words: 'PL Capital View: Coming Soon'. Small footer line at the bottom: 'Not investment advice. For educational purposes only.' The whole scene has soft parallax motion and a calm fintech background track.\\n\\nVisual style keywords: faceless, cinematic fintech, smooth camera moves, motion graphics, neon data lines, corporate India, stock market, IPO roadshow, clean and minimal, no clutter.\",\n  \"negative_prompt\": \"visible human faces, talking head video, presenters, microphones, messy backgrounds, memes, cartoons, childish icons, exaggerated emojis, cluttered text, real trading terminals, broker brand names other than PL Capital and InCred, shaky camera, handheld footage, low resolution, pixelation\",\n  \"audio_style\": {\n    \"music_description\": \"Subtle, mid-tempo synthwave / corporate electronic bed, 110–120 BPM, confident and professional, no vocals.\",\n    \"sound_effects_description\": \"Soft whoosh on each text transition, gentle ding when key metrics appear, all mixed under -6 LUFS.\",\n    \"voiceover_required\": false\n  },\n  \"text_overlays\": [\n    {\n      \"time_start\": 0.3,\n      \"time_end\": 2.8,\n      \"text\": \"InCred IPO – What You Need To Know\",\n      \"position\": \"center\",\n      \"style\": \"bold, large, white on subtle navy-to-blue gradient banner\"\n    },\n    {\n      \"time_start\": 0.8,\n      \"time_end\": 2.8,\n      \"text\": \"NBFC unicorn heads to the main board\",\n      \"position\": \"center_bottom\",\n      \"style\": \"medium, white, slight teal underline\"\n    },\n    {\n      \"time_start\": 3.0,\n      \"time_end\": 5.5,\n      \"text\": \"₹3,000–4,000 Cr issue • Confidential DRHP with SEBI\",\n      \"position\": \"upper_center\",\n      \"style\": \"medium, white, on translucent navy panel\"\n    },\n    {\n      \"time_start\": 3.4,\n      \"time_end\": 5.8,\n      \"text\": \"Parent of InCred Financial Services (NBFC)\",\n      \"position\": \"lower_center\",\n      \"style\": \"small, teal accent icons\"\n    },\n    {\n      \"time_start\": 6.0,\n      \"time_end\": 8.5,\n      \"text\": \"AUM ₹12,585 Cr | CAR 26% | Net NPA 0.7%\",\n      \"position\": \"center\",\n      \"style\": \"medium, white, over animated charts\"\n    },\n    {\n      \"time_start\": 6.4,\n      \"time_end\": 8.9,\n      \"text\": \"FY25 PAT ₹372 Cr | Income ₹1,255 Cr | Loans > ₹25,000 Cr\",\n      \"position\": \"bottom_center\",\n      \"style\": \"small, ticker-style strip\"\n    },\n    {\n      \"time_start\": 9.0,\n      \"time_end\": 11.0,\n      \"text\": \"Is InCred the next NBFC growth story?\",\n      \"position\": \"upper_center\",\n      \"style\": \"bold, large, white\"\n    },\n    {\n      \"time_start\": 9.6,\n      \"time_end\": 11.8,\n      \"text\": \"PL Capital View: Coming Soon\",\n      \"position\": \"center\",\n      \"style\": \"button-style teal pill with white text\"\n    },\n    {\n      \"time_start\": 10.2,\n      \"time_end\": 12.0,\n      \"text\": \"Disclaimer: Not investment advice. For educational purposes only.\",\n      \"position\": \"bottom_center\",\n      \"style\": \"very small, dim white\"\n    }\n  ],\n  \"branding\": {\n    \"primary_colors\": [\"#0e0e6a\", \"#3c3cf8\"],\n    \"accent_colors\": [\"#00d084\", \"#66e766\"],\n    \"logo_placeholder\": \"PL Capital logo in top-left, InCred logo icon in data scenes\"\n  }\n}\n\n---\n\n**End of Creative Prompt** – All elements are defined for immediate production by a motion‑graphics designer or video editor.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T13:13:29.706Z",
+      "updatedAt": "2025-12-05T13:14:06.710Z"
+    },
+    "1-1764940672198": {
+      "id": "1-1764940672198",
+      "topic": "Upcoming Incred IPO - insights and financial review ",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "type": "campaign-planning",
+      "creativePrompt": "**Creative Prompt for Faceless‑Video – “Upcoming Incred IPO – Insights & Financial Review”**\n\n---\n\n{\n  \"model\": \"veo-3.1\",\n  \"duration_seconds\": 12,\n  \"aspect_ratio\": \"9:16\",\n  \"fps\": 30,\n  \"prompt\": \"Faceless, high-end fintech explainer reel about the upcoming InCred Holdings IPO for PL Capital clients. Vertical 9:16 video with no human faces, no talking heads, only hands, silhouettes, dashboards and animated graphics.\\n\\nOverall look: deep navy to blue gradient background with subtle data grid lines and softly glowing teal and green accents. Clean motion-graphics style, like a premium investment bank teaser. All text in modern sans-serif font similar to Figtree.\\n\\nScene 1 (0-3s): Start with a dark navy screen. A glowing PL Capital logo icon appears at the top left as a small pulse of teal light spreads across the background. In the center, big bold kinetic title text animates in: 'InCred IPO – What You Need To Know'. Under it, a slimmer subtitle fades in: 'NBFC unicorn heads to the main board'. No faces, only logo and typography.\\n\\nScene 2 (3-6s): Camera digitally pushes into a futuristic India city skyline at night made of abstract neon outlines and financial graphs. Over the skyline, animated numbers and icons appear as floating tiles: one tile shows '₹3,000–4,000 Cr' with an IPO icon, another shows 'Confidential DRHP filed with SEBI' with a document icon, another shows 'Parent of InCred Financial Services' with a bank building icon. Thin teal connecting lines link these tiles like a data network. All visuals remain faceless.\\n\\nScene 3 (6-9s): Transition to a virtual dashboard with animated charts. A bar chart grows upward labelled 'AUM: ₹12,585 Cr, +39% YoY'. Next to it, a circular gauge fills to 'CAR 26%'. A tiny risk meter shows 'Net NPA 0.7%' in green, signalling strong asset quality. Below the charts, a slim data strip scrolls: 'FY25 PAT: ₹372 Cr  |  Total income: ₹1,255 Cr  |  Loans disbursed > ₹25,000 Cr to 4+ lakh customers'. All numbers are presented as on-screen infographics, no people.\\n\\nScene 4 (9-12s): Final scene returns to a simplified dashboard with a glowing InCred logo icon on the right and a stylised silhouette of a professional investor from the back on the left (head and shoulders only, no face visible, just a dark outline). In the foreground, bold callout text appears: 'Is InCred the next NBFC growth story?' and then a teal button-style graphic animates in with the words: 'PL Capital View: Coming Soon'. Small footer line at the bottom: 'Not investment advice. For educational purposes only.' The whole scene has soft parallax motion and a calm fintech background track.\\n\\nVisual style keywords: faceless, cinematic fintech, smooth camera moves, motion graphics, neon data lines, corporate India, stock market, IPO roadshow, clean and minimal, no clutter.\",\n  \"negative_prompt\": \"visible human faces, talking head video, presenters, microphones, messy backgrounds, memes, cartoons, childish icons, exaggerated emojis, cluttered text, real trading terminals, broker brand names other than PL Capital and InCred, shaky camera, handheld footage, low resolution, pixelation\",\n  \"audio_style\": {\n    \"music_description\": \"Subtle, mid-tempo synthwave / corporate electronic bed, 110–120 BPM, confident and professional, no vocals.\",\n    \"sound_effects_description\": \"Soft whoosh on each text transition, gentle ding when key metrics appear, all mixed under -6 LUFS.\",\n    \"voiceover_required\": false\n  },\n  \"text_overlays\": [\n    {\n      \"time_start\": 0.3,\n      \"time_end\": 2.8,\n      \"text\": \"InCred IPO – What You Need To Know\",\n      \"position\": \"center\",\n      \"style\": \"bold, large, white on subtle navy-to-blue gradient banner\"\n    },\n    {\n      \"time_start\": 0.8,\n      \"time_end\": 2.8,\n      \"text\": \"NBFC unicorn heads to the main board\",\n      \"position\": \"center_bottom\",\n      \"style\": \"medium, white, slight teal underline\"\n    },\n    {\n      \"time_start\": 3.0,\n      \"time_end\": 5.5,\n      \"text\": \"₹3,000–4,000 Cr issue • Confidential DRHP with SEBI\",\n      \"position\": \"upper_center\",\n      \"style\": \"medium, white, on translucent navy panel\"\n    },\n    {\n      \"time_start\": 3.4,\n      \"time_end\": 5.8,\n      \"text\": \"Parent of InCred Financial Services (NBFC)\",\n      \"position\": \"lower_center\",\n      \"style\": \"small, teal accent icons\"\n    },\n    {\n      \"time_start\": 6.0,\n      \"time_end\": 8.5,\n      \"text\": \"AUM ₹12,585 Cr | CAR 26% | Net NPA 0.7%\",\n      \"position\": \"center\",\n      \"style\": \"medium, white, over animated charts\"\n    },\n    {\n      \"time_start\": 6.4,\n      \"time_end\": 8.9,\n      \"text\": \"FY25 PAT ₹372 Cr | Income ₹1,255 Cr | Loans > ₹25,000 Cr\",\n      \"position\": \"bottom_center\",\n      \"style\": \"small, ticker-style strip\"\n    },\n    {\n      \"time_start\": 9.0,\n      \"time_end\": 11.0,\n      \"text\": \"Is InCred the next NBFC growth story?\",\n      \"position\": \"upper_center\",\n      \"style\": \"bold, large, white\"\n    },\n    {\n      \"time_start\": 9.6,\n      \"time_end\": 11.8,\n      \"text\": \"PL Capital View: Coming Soon\",\n      \"position\": \"center\",\n      \"style\": \"button-style teal pill with white text\"\n    },\n    {\n      \"time_start\": 10.2,\n      \"time_end\": 12.0,\n      \"text\": \"Disclaimer: Not investment advice. For educational purposes only.\",\n      \"position\": \"bottom_center\",\n      \"style\": \"very small, dim white\"\n    }\n  ],\n  \"branding\": {\n    \"primary_colors\": [\"#0e0e6a\", \"#3c3cf8\"],\n    \"accent_colors\": [\"#00d084\", \"#66e766\"],\n    \"logo_placeholder\": \"PL Capital logo in top-left, InCred logo icon in data scenes\"\n  }\n}\n\n---\n\n**End of Creative Prompt** – All assets, timings, colors, fonts, and copy are fully defined for immediate production by the PL Capital creative team.",
+      "promptModel": "openai/gpt-oss-120b",
+      "stageId": 1,
+      "completedAt": "2025-12-05T13:17:52.198Z",
+      "updatedAt": "2025-12-05T13:18:17.053Z"
     }
   },
   "content": {
@@ -183,6 +528,214 @@
       "model": "openai/gpt-oss-120b",
       "stageId": 2,
       "completedAt": "2025-11-25T10:41:14.020Z"
+    },
+    "2-1764929568912": {
+      "id": "2-1764929568912",
+      "topic": "PL Capital's 80‑year legacy of adaptive wealth solutions",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: PL Capital's 80‑year legacy of adaptive wealth solutions\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T10:12:48.912Z"
+    },
+    "2-1764929805956": {
+      "id": "2-1764929805956",
+      "topic": "Trusted 80‑year legacy delivering alpha across India’s markets",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: Trusted 80‑year legacy delivering alpha across India’s markets\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T10:16:45.956Z"
+    },
+    "2-1764930258509": {
+      "id": "2-1764930258509",
+      "topic": "Trusted by 160,000 clients for 80 years of financial expertise",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: Trusted by 160,000 clients for 80 years of financial expertise\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T10:24:18.509Z"
+    },
+    "2-1764930383017": {
+      "id": "2-1764930383017",
+      "topic": "PL Capital’s Adaptive Quantamental Strategies Deliver Consistent Alpha",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: PL Capital’s Adaptive Quantamental Strategies Deliver Consistent Alpha\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T10:26:23.017Z"
+    },
+    "2-1764930776335": {
+      "id": "2-1764930776335",
+      "topic": "PL Capital: 80+ Years of Trusted Wealth Growth for Every Investor",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: PL Capital: 80+ Years of Trusted Wealth Growth for Every Investor\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T10:32:56.335Z"
+    },
+    "2-1764931585819": {
+      "id": "2-1764931585819",
+      "topic": "Real Client Stories Show PL Capital’s Alpha-Driven Success",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: Real Client Stories Show PL Capital’s Alpha-Driven Success\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T10:46:25.819Z"
+    },
+    "2-1764932117430": {
+      "id": "2-1764932117430",
+      "topic": "PL Capital’s 80‑year legacy of alpha-driven investing",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: PL Capital’s 80‑year legacy of alpha-driven investing\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T10:55:17.430Z"
+    },
+    "2-1764932359001": {
+      "id": "2-1764932359001",
+      "topic": "Real Client Success Stories with PL Capital.",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: Real Client Success Stories with PL Capital.\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T10:59:19.002Z"
+    },
+    "2-1764933885249": {
+      "id": "2-1764933885249",
+      "topic": "Trusted by 160k+ clients across 200 cities: PL Capital's 80-year legacy",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: Trusted by 160k+ clients across 200 cities: PL Capital's 80-year legacy\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T11:24:45.249Z"
+    },
+    "2-1764934776792": {
+      "id": "2-1764934776792",
+      "topic": "PL Capital’s 80‑year legacy of adaptive investment excellence",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: PL Capital’s 80‑year legacy of adaptive investment excellence\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T11:39:36.792Z"
+    },
+    "2-1764935474951": {
+      "id": "2-1764935474951",
+      "topic": "PL Capital’s 80‑year legacy of adaptive wealth growth",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: linkedin\n   Format: testimonial\n   Topic: PL Capital’s 80‑year legacy of adaptive wealth growth\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T11:51:14.951Z"
+    },
+    "2-1764937486741": {
+      "id": "2-1764937486741",
+      "topic": "Unlock Adaptive Alpha with AQUA PMS – Elite Wealth Management for 1Cr+ Investors",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "whatsapp"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: whatsapp\n   Format: creative\n   Topic: Unlock Adaptive Alpha with AQUA PMS – Elite Wealth Management for 1Cr+ Investors\n\n   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...\n   🖼️  Applying reference image: https://i.ibb.co/JwBsgGq9/f9fd6c8e4d4b.png\n🎨 Image Editing (GEMINI)\n   Instruction: High-contrast, text-forward static image for WhatsApp about ...\n   Provider: Gemini 3 Pro Image Preview\n   Model: gemini-3-pro-image-preview\n   Mode: Mask-free editing\n   Image Size: 4K\n   Grounding: Google Search enabled\n   ✅ Image edited successfully with gemini-3-pro-image-preview\n   ☁️  Uploading WhatsApp creative to ImgBB...\n   ✅ Uploaded to ImgBB: https://i.ibb.co/6049WFtK/d7f45f9e297d.jpg\n   ✅ WhatsApp creative generated\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T12:24:46.742Z"
+    },
+    "2-1764939049679": {
+      "id": "2-1764939049679",
+      "topic": "Invitation to launch our new Life insurance partner - ICICI Prudential ",
+      "campaignType": "whatsapp-creative",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: whatsapp\n   Format: creative\n   Topic: Invitation to launch our new Life insurance partner - ICICI Prudential \n\n   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...\n   🖼️  Applying reference image: https://i.ibb.co/FLDLbHxY/f6c6d33a9575.jpg\n🎨 Image Editing (GEMINI)\n   Instruction: High-contrast, text-forward static image for WhatsApp about ...\n   Provider: Gemini 3 Pro Image Preview\n   Model: gemini-3-pro-image-preview\n   Mode: Mask-free editing\n   📥 Fetching image from URL (attempt 1/3): https://i.ibb.co/FLDLbHxY/f6c6d33a9575.jpg...\n   ⚠️ Fetch attempt 1 failed (fetch failed), retrying in 2s...\n   📥 Fetching image from URL (attempt 2/3): https://i.ibb.co/FLDLbHxY/f6c6d33a9575.jpg...\n   ✅ Image fetched successfully (88.34 KB)\n   Image Size: 4K\n   Grounding: Google Search enabled\n   ✅ Image edited successfully with gemini-3-pro-image-preview\n   ☁️  Uploading WhatsApp creative to ImgBB...\n   ✅ Uploaded to ImgBB: https://i.ibb.co/PsZnYrRR/957f6610630c.jpg\n   ✅ WhatsApp creative generated\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T12:50:49.679Z"
+    },
+    "2-1764939800387": {
+      "id": "2-1764939800387",
+      "topic": "About upcoming Incred IPO - insights & financial review ",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: instagram\n   Format: reel\n   Topic: About upcoming Incred IPO - insights & financial review \n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T13:03:20.387Z"
+    },
+    "2-1764940454389": {
+      "id": "2-1764940454389",
+      "topic": "Upcoming InCred IPO - insights and financial review",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: instagram\n   Format: reel\n   Topic: Upcoming InCred IPO - insights and financial review\n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T13:14:14.389Z"
+    },
+    "2-1764940701352": {
+      "id": "2-1764940701352",
+      "topic": "Upcoming Incred IPO - insights and financial review ",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: CONTENT\n\n✍️  Stage 2: Content Generation\n   Platform: instagram\n   Format: reel\n   Topic: Upcoming Incred IPO - insights and financial review \n\n   🎬 Video content format detected\n   ℹ️  Using creative prompt from Stage 1 for video generation\n   ✅ Proceeding to video production stage\n\n✅ Stage \"content\" completed!\n\n",
+      "type": "content-generation",
+      "stageId": 2,
+      "completedAt": "2025-12-05T13:18:21.352Z"
     }
   },
   "visuals": {
@@ -192,6 +745,188 @@
       "type": "image",
       "url": "https://example.com/image.jpg",
       "status": "completed"
+    },
+    "3-1764929571009": {
+      "id": "3-1764929571009",
+      "topic": "PL Capital's 80‑year legacy of adaptive wealth solutions",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T10:12:51.009Z"
+    },
+    "3-1764929807856": {
+      "id": "3-1764929807856",
+      "topic": "Trusted 80‑year legacy delivering alpha across India’s markets",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T10:16:47.856Z"
+    },
+    "3-1764930260102": {
+      "id": "3-1764930260102",
+      "topic": "Trusted by 160,000 clients for 80 years of financial expertise",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T10:24:20.102Z"
+    },
+    "3-1764930385466": {
+      "id": "3-1764930385466",
+      "topic": "PL Capital’s Adaptive Quantamental Strategies Deliver Consistent Alpha",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T10:26:25.466Z"
+    },
+    "3-1764930777571": {
+      "id": "3-1764930777571",
+      "topic": "PL Capital: 80+ Years of Trusted Wealth Growth for Every Investor",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T10:32:57.571Z"
+    },
+    "3-1764931587804": {
+      "id": "3-1764931587804",
+      "topic": "Real Client Stories Show PL Capital’s Alpha-Driven Success",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T10:46:27.804Z"
+    },
+    "3-1764932120904": {
+      "id": "3-1764932120904",
+      "topic": "PL Capital’s 80‑year legacy of alpha-driven investing",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T10:55:20.904Z"
+    },
+    "3-1764932365733": {
+      "id": "3-1764932365733",
+      "topic": "Real Client Success Stories with PL Capital.",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T10:59:25.733Z"
+    },
+    "3-1764933890456": {
+      "id": "3-1764933890456",
+      "topic": "Trusted by 160k+ clients across 200 cities: PL Capital's 80-year legacy",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T11:24:50.456Z"
+    },
+    "3-1764934779486": {
+      "id": "3-1764934779486",
+      "topic": "PL Capital’s 80‑year legacy of adaptive investment excellence",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T11:39:39.486Z"
+    },
+    "3-1764935476559": {
+      "id": "3-1764935476559",
+      "topic": "PL Capital’s 80‑year legacy of adaptive wealth growth",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: linkedin\n   Format: testimonial\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T11:51:16.559Z"
+    },
+    "3-1764939810400": {
+      "id": "3-1764939810400",
+      "topic": "About upcoming Incred IPO - insights & financial review ",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: instagram\n   Format: reel\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T13:03:30.400Z"
+    },
+    "3-1764940457004": {
+      "id": "3-1764940457004",
+      "topic": "Upcoming InCred IPO - insights and financial review",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: instagram\n   Format: reel\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T13:14:17.004Z"
+    },
+    "3-1764940702745": {
+      "id": "3-1764940702745",
+      "topic": "Upcoming Incred IPO - insights and financial review ",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VISUALS\n\n🎨 Stage 3: Visual Asset Production\n   Platform: instagram\n   Format: reel\n   🎬 Video-only format detected (faceless video)\n   ⏭️  Skipping image generation - proceeding directly to video production\n\n✅ Stage \"visuals\" completed!\n\n",
+      "type": "visual-assets",
+      "stageId": 3,
+      "completedAt": "2025-12-05T13:18:22.745Z"
     }
   },
   "videos": {
@@ -201,6 +936,228 @@
       "url": "https://example.com/video.mp4",
       "duration": 30,
       "status": "completed"
+    },
+    "4-1764929572773": {
+      "id": "4-1764929572773",
+      "topic": "PL Capital's 80‑year legacy of adaptive wealth solutions",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 8s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 + Avatar\n\n\n🎬 HeyGen Avatar Mode (Siddharth Vora)\n   Provider: HeyGen\n   Avatar: Siddharth Vora (Custom)\n   Duration: 8s\n\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 8,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T10:12:52.773Z"
+    },
+    "4-1764929812053": {
+      "id": "4-1764929812053",
+      "topic": "Trusted 80‑year legacy delivering alpha across India’s markets",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 + Avatar\n\n\n🎬 HeyGen Avatar Mode (Siddharth Vora)\n   Provider: HeyGen\n   Avatar: Siddharth Vora (Custom)\n   Duration: 15s\n\n   📝 Script: [Auto-generated for Trusted 80‑year legacy delivering alpha across India’s markets]\n   👤 HeyGen Avatar ID: 9da4afb2c22441b5aab73369dda7f65d\n   🎙️  HeyGen Voice ID: c8d184ef4d81484a97d70c94bb76fec3\n   🔍 HeyGen API Request:\n      Endpoint: POST https://api.heygen.com/v2/video/generate\n      Body: {\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"avatar\",\n        \"avatar_id\": \"9da4afb2c22441b5aab73369dda7f65d\",\n        \"avatar_style\": \"normal\"\n      },\n      \"voice\": {\n        \"...\n   📡 HeyGen API Response (200): {\"error\":null,\"data\":{\"video_id\":\"52017bfc335442a380fd2fdaac131ee4\"}}...\n   ✅ HeyGen video initiated: 52017bfc335442a380fd2fdaac131ee4\n   ✅ HeyGen video generation started\n   Video ID: 52017bfc335442a380fd2fdaac131ee4\n   ℹ️  HeyGen video generation started (async mode)\n   Video ID: 52017bfc335442a380fd2fdaac131ee4\n\n✅ HeyGen avatar video generation completed!\n   Duration: 15s\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T10:16:52.053Z"
+    },
+    "4-1764930263373": {
+      "id": "4-1764930263373",
+      "topic": "Trusted by 160,000 clients for 80 years of financial expertise",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 8s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 + Avatar\n\n\n🎬 HeyGen Avatar Mode (Siddharth Vora)\n   Provider: HeyGen\n   Avatar: Siddharth Vora (Custom)\n   Duration: 8s\n\n   📝 Script: [Auto-generated for Trusted by 160,000 clients for 80 years of financial expertise]\n   👤 HeyGen Avatar ID: 9da4afb2c22441b5aab73369dda7f65d\n   🎙️  HeyGen Voice ID: c8d184ef4d81484a97d70c94bb76fec3\n   🔍 HeyGen API Request:\n      Endpoint: POST https://api.heygen.com/v2/video/generate\n      Body: {\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"avatar\",\n        \"avatar_id\": \"9da4afb2c22441b5aab73369dda7f65d\",\n        \"avatar_style\": \"normal\"\n      },\n      \"voice\": {\n        \"...\n   📡 HeyGen API Response (200): {\"error\":null,\"data\":{\"video_id\":\"e37da465f01f4227a6a6600ae3fd9433\"}}...\n   ✅ HeyGen video initiated: e37da465f01f4227a6a6600ae3fd9433\n   ✅ HeyGen video generation started\n   Video ID: e37da465f01f4227a6a6600ae3fd9433\n   ℹ️  HeyGen video generation started (async mode)\n   Video ID: e37da465f01f4227a6a6600ae3fd9433\n\n✅ HeyGen avatar video generation completed!\n   Duration: 8s\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 8,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T10:24:23.373Z"
+    },
+    "4-1764930388887": {
+      "id": "4-1764930388887",
+      "topic": "PL Capital’s Adaptive Quantamental Strategies Deliver Consistent Alpha",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 + Avatar\n\n\n🎬 HeyGen Avatar Mode (Siddharth Vora)\n   Provider: HeyGen\n   Avatar: Siddharth Vora (Custom)\n   Duration: 15s\n\n   📝 Script: [Auto-generated for PL Capital’s Adaptive Quantamental Strategies Deliver Consistent Alpha]\n   👤 HeyGen Avatar ID: 9da4afb2c22441b5aab73369dda7f65d\n   🎙️  HeyGen Voice ID: c8d184ef4d81484a97d70c94bb76fec3\n   🔍 HeyGen API Request:\n      Endpoint: POST https://api.heygen.com/v2/video/generate\n      Body: {\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"avatar\",\n        \"avatar_id\": \"9da4afb2c22441b5aab73369dda7f65d\",\n        \"avatar_style\": \"normal\"\n      },\n      \"voice\": {\n        \"...\n   📡 HeyGen API Response (200): {\"error\":null,\"data\":{\"video_id\":\"067baa44f9814f07b18c7768deff3a08\"}}...\n   ✅ HeyGen video initiated: 067baa44f9814f07b18c7768deff3a08\n   ✅ HeyGen video generation started\n   Video ID: 067baa44f9814f07b18c7768deff3a08\n   ℹ️  HeyGen video generation started (async mode)\n   Video ID: 067baa44f9814f07b18c7768deff3a08\n\n✅ HeyGen avatar video generation completed!\n   Duration: 15s\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T10:26:28.887Z"
+    },
+    "4-1764931746376": {
+      "id": "4-1764931746376",
+      "topic": "Real Client Stories Show PL Capital’s Alpha-Driven Success",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 + Avatar\n\n   🎭 Avatar mode detected (VEO-based)\n   📝 Script: [Auto-generated for Real Client Stories Show PL Capital’s Alpha-Driven Success]\n   👤 Avatar: Indian male professional in formal business attire, confident posture, warm expression\n   🎙️  Voice: Deep, confident Indian male voice with slight accent, clear articulation\n   ✅ Avatar prompt constructed\n\n\n📹 Generating video with auto scene extension...\n   Provider: VEO 3.1 (Scene Extension)\n   Target Duration: 15s\n   Mode: Avatar\n   Auto Scenes: 2\n\n\n🎬 Long Video Generation with Native Extension\n   Base + 1 extensions\n   Total Duration: ~15s\n\n📹 Clip 1/2 (BASE - 8s)\n🎬 Text-to-Video Generation\n   Prompt: Professional video featuring Indian male professional in for...\n   Config: {\"aspectRatio\":\"16:9\",\"resolution\":\"720p\",\"duration\":8,\"personGeneration\":\"allow_all\"}\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Video saved to /tmp/veo-text-1764931657253.mp4\n\n📹 Clip 2/2 (EXTENSION - 7s)\n🎬 Video Extension\n   Extension Prompt: Professional video featuring Indian male professional in for...\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Extended video saved to /tmp/veo-extended-1764931726247.mp4\n\n✅ Long Video Complete\n   Total Clips: 2\n   Total Duration: 15s\n\n✅ Video generation completed!\n   Video path: /tmp/veo-extended-1764931726247.mp4\n   Duration: 15s\n   ☁️  Uploading video to Cloudinary...\n   ✅ Video uploaded to Cloudinary: https://res.cloudinary.com/dscxiwsqm/video/upload/v1764931744/social-media/docyrcdjzknxur9eofvs.mp4\n      Public ID: social-media/docyrcdjzknxur9eofvs\n      Duration: 15s\n      Size: 6.94 MB\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T10:49:06.376Z"
+    },
+    "4-1764932211877": {
+      "id": "4-1764932211877",
+      "topic": "PL Capital’s 80‑year legacy of alpha-driven investing",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 8s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 + Avatar\n\n   🎭 Avatar mode detected (VEO-based)\n   📝 Script: [Auto-generated for PL Capital’s 80‑year legacy of alpha-driven investing]\n   👤 Avatar: Indian male professional in formal business attire, confident posture, warm expression\n   🎙️  Voice: Deep, confident Indian male voice with slight accent, clear articulation\n   ✅ Avatar prompt constructed\n\n\n📹 Generating video...\n   Provider: VEO 3.1\n   Mode: text-to-video\n\n🎬 Video Generation Coordinator\n================================\n📋 Configuration:\n   Prompt: Professional video featuring Indian male professional in formal business attire,...\n   Duration: 8s\n   Mode: text-to-video\n   Provider: veo\n   Aspect Ratio: 16:9\n🎬 Text-to-Video Generation\n   Prompt: Professional video featuring Indian male professional in for...\n   Config: {\"aspectRatio\":\"16:9\",\"resolution\":\"720p\",\"duration\":8,\"personGeneration\":\"allow_all\"}\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   [7/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Video saved to /tmp/veo-text-1764932201043.mp4\n\n✅ Video generation completed successfully!\n   Provider: veo\n   Duration: 8s\n   Video URL: /tmp/veo-text-1764932201043.mp4\n   Local Path: /tmp/veo-text-1764932201043.mp4\n\n✅ Video generation completed!\n   Video path: /tmp/veo-text-1764932201043.mp4\n   Duration: 8s\n   ☁️  Uploading video to Cloudinary...\n   ✅ Video uploaded to Cloudinary: https://res.cloudinary.com/dscxiwsqm/video/upload/v1764932210/social-media/opbzvdazr8newiitnuqi.mp4\n      Public ID: social-media/opbzvdazr8newiitnuqi\n      Duration: 8s\n      Size: 3.77 MB\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 8,
+      "useVeo": true,
+      "useAvatar": true,
+      "avatarId": "6f268f0fa28a41ce8b1fe4e83ac3867b",
+      "avatarVoiceId": "ef5765a5c2ee49e58f7dd942e67fb6f2",
+      "stageId": 4,
+      "completedAt": "2025-12-05T10:56:51.877Z"
+    },
+    "4-1764932369353": {
+      "id": "4-1764932369353",
+      "topic": "Real Client Success Stories with PL Capital.",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 + Avatar\n\n\n🎬 HeyGen Avatar Mode (Siddharth Vora)\n   Provider: HeyGen\n   Avatar: Siddharth Vora (Custom)\n   Duration: 15s\n\n   📝 Script: [Auto-generated for Real Client Success Stories with PL Capital.]\n   👤 HeyGen Avatar ID: 9da4afb2c22441b5aab73369dda7f65d\n   🎙️  HeyGen Voice ID: c8d184ef4d81484a97d70c94bb76fec3\n   🔍 HeyGen API Request:\n      Endpoint: POST https://api.heygen.com/v2/video/generate\n      Body: {\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"avatar\",\n        \"avatar_id\": \"9da4afb2c22441b5aab73369dda7f65d\",\n        \"avatar_style\": \"normal\"\n      },\n      \"voice\": {\n        \"...\n   📡 HeyGen API Response (200): {\"error\":null,\"data\":{\"video_id\":\"df1e8774ca904bc2aa3eb050fc608319\"}}...\n   ✅ HeyGen video initiated: df1e8774ca904bc2aa3eb050fc608319\n   ✅ HeyGen video generation started\n   Video ID: df1e8774ca904bc2aa3eb050fc608319\n   ℹ️  HeyGen video generation started (async mode)\n   Video ID: df1e8774ca904bc2aa3eb050fc608319\n\n✅ HeyGen avatar video generation completed!\n   Duration: 15s\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": true,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T10:59:29.353Z"
+    },
+    "4-1764933892544": {
+      "id": "4-1764933892544",
+      "topic": "Trusted by 160k+ clients across 200 cities: PL Capital's 80-year legacy",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 \n\n\n📹 Generating video with auto scene extension...\n   Provider: VEO 3.1 (Scene Extension)\n   Target Duration: 15s\n   Mode: Faceless\n   Auto Scenes: 2\n\n\n🎬 Long Video Generation with Native Extension\n   Base + 1 extensions\n   Total Duration: ~15s\n\n📹 Clip 1/2 (BASE - 8s)\n🎬 Text-to-Video Generation\n   Prompt: Faceless professional testimonial video about Trusted by 160...\n   Config: {\"aspectRatio\":\"16:9\",\"resolution\":\"720p\",\"duration\":8,\"personGeneration\":\"disallow_all\"}\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T11:24:52.544Z"
+    },
+    "4-1764934795845": {
+      "id": "4-1764934795845",
+      "topic": "PL Capital’s 80‑year legacy of adaptive investment excellence",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 \n\n\n📹 Generating video with auto scene extension...\n   Provider: VEO 3.1 (Scene Extension)\n   Target Duration: 15s\n   Mode: Faceless\n   Auto Scenes: 2\n\n\n🎬 Long Video Generation with Native Extension\n   Base + 1 extensions\n   Total Duration: ~15s\n\n📹 Clip 1/2 (BASE - 8s)\n   ✅ Gemini AI client initialized\n🎬 Text-to-Video Generation\n   Prompt: Faceless professional testimonial video about PL Capital’s 8...\n   Config: {\"aspectRatio\":\"16:9\",\"resolution\":\"720p\",\"duration\":8,\"personGeneration\":\"disallow\"}\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T11:39:55.845Z"
+    },
+    "4-1764935652529": {
+      "id": "4-1764935652529",
+      "topic": "PL Capital’s 80‑year legacy of adaptive wealth growth",
+      "campaignType": "linkedin-testimonial",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: linkedin\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 \n\n\n📹 Generating video with auto scene extension...\n   Provider: VEO 3.1 (Scene Extension)\n   Target Duration: 15s\n   Mode: Faceless\n   Auto Scenes: 2\n\n\n🎬 Long Video Generation with Native Extension\n   Base + 1 extensions\n   Total Duration: ~15s\n\n📹 Clip 1/2 (BASE - 8s)\n   ✅ Gemini AI client initialized\n🎬 Text-to-Video Generation\n   Prompt: Faceless professional testimonial video about PL Capital’s 8...\n   Config: {\"aspectRatio\":\"16:9\",\"resolution\":\"720p\",\"duration\":8,\"personGeneration\":\"allow_all\"}\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Video saved to /tmp/veo-text-1764935547620.mp4\n\n📹 Clip 2/2 (EXTENSION - 7s)\n🎬 Video Extension\n   Extension Prompt: Faceless professional testimonial video about PL Capital’s 8...\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   [7/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Extended video saved to /tmp/veo-extended-1764935630076.mp4\n\n✅ Long Video Complete\n   Total Clips: 2\n   Total Duration: 15s\n\n✅ Video generation completed!\n   Video path: /tmp/veo-extended-1764935630076.mp4\n   Duration: 15s\n   ☁️  Uploading video to Cloudinary...\n   ✅ Video uploaded to Cloudinary: https://res.cloudinary.com/dscxiwsqm/video/upload/v1764935651/social-media/tx6pkmuymnaot6ma9rdc.mp4\n      Public ID: social-media/tx6pkmuymnaot6ma9rdc\n      Duration: 15s\n      Size: 5.83 MB\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T11:54:12.529Z"
+    },
+    "4-1764940060730": {
+      "id": "4-1764940060730",
+      "topic": "About upcoming Incred IPO - insights & financial review ",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: instagram\n   Duration: 60s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 \n\n\n📹 Generating video with auto scene extension...\n   Provider: VEO 3.1 (Scene Extension)\n   Target Duration: 60s\n   Mode: Faceless\n   Auto Scenes: 9\n\n\n🎬 Long Video Generation with Native Extension\n   Base + 8 extensions\n   Total Duration: ~64s\n\n📹 Clip 1/9 (BASE - 8s)\n   ✅ Gemini AI client initialized\n🎬 Text-to-Video Generation\n   Prompt: Faceless engaging reel video about About upcoming Incred IPO...\n   Config: {\"aspectRatio\":\"16:9\",\"resolution\":\"720p\",\"duration\":8,\"personGeneration\":\"allow_all\"}\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   [7/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Video saved to /tmp/veo-text-1764939888413.mp4\n\n📹 Clip 2/9 (EXTENSION - 7s)\n🎬 Video Extension\n   Extension Prompt: Faceless engaging reel video about About upcoming Incred IPO...\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Extended video saved to /tmp/veo-extended-1764939961507.mp4\n\n📹 Clip 3/9 (EXTENSION - 7s)\n🎬 Video Extension\n   Extension Prompt: Faceless engaging reel video about About upcoming Incred IPO...\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   [7/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Extended video saved to /tmp/veo-extended-1764940047549.mp4\n\n📹 Clip 4/9 (EXTENSION - 7s)\n🎬 Video Extension\n   Extension Prompt: Faceless engaging reel video about About upcoming Incred IPO...\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 60,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T13:07:40.731Z"
+    },
+    "4-1764940460750": {
+      "id": "4-1764940460750",
+      "topic": "Upcoming InCred IPO - insights and financial review",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: instagram\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 \n\n\n📹 Generating video with auto scene extension...\n   Provider: VEO 3.1 (Scene Extension)\n   Target Duration: 15s\n   Mode: Faceless\n   Auto Scenes: 2\n\n\n🎬 Long Video Generation with Native Extension\n   Base + 1 extensions\n   Total Duration: ~15s\n\n📹 Clip 1/2 (BASE - 8s)\n   ✅ Gemini AI client initialized\n🎬 Text-to-Video Generation\n   Prompt: Faceless engaging reel video about Upcoming InCred IPO - ins...\n   Config: {\"aspectRatio\":\"16:9\",\"resolution\":\"720p\",\"duration\":8,\"personGeneration\":\"allow_all\"}\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T13:14:20.750Z"
+    },
+    "4-1764940890275": {
+      "id": "4-1764940890275",
+      "topic": "Upcoming Incred IPO - insights and financial review ",
+      "campaignType": "instagram-reel",
+      "platforms": [
+        "instagram"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n║                                                                   ║\n║   Platforms: LinkedIn │ Instagram │ YouTube │ Facebook │ Twitter  ║\n║   Video: Veo 3.1 │ HeyGen │ Shotstack │ Flux                      ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\n\n🎬 EXECUTING STAGE: VIDEO\n\n🎥 Stage 4: Video Production\n   Platform: instagram\n   Duration: 15s\n   Aspect Ratio: 16:9\n   Method: Veo 3.1 \n\n\n📹 Generating video with auto scene extension...\n   Provider: VEO 3.1 (Scene Extension)\n   Target Duration: 15s\n   Mode: Faceless\n   Auto Scenes: 2\n\n\n🎬 Long Video Generation with Native Extension\n   Base + 1 extensions\n   Total Duration: ~15s\n\n📹 Clip 1/2 (BASE - 8s)\n   ✅ Gemini AI client initialized\n🎬 Text-to-Video Generation\n   Prompt: Faceless engaging reel video about Upcoming Incred IPO - ins...\n   Config: {\"aspectRatio\":\"16:9\",\"resolution\":\"720p\",\"duration\":8,\"personGeneration\":\"allow_all\"}\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Video saved to /tmp/veo-text-1764940769474.mp4\n\n📹 Clip 2/2 (EXTENSION - 7s)\n🎬 Video Extension\n   Extension Prompt: Faceless engaging reel video about Upcoming Incred IPO - ins...\n   [1/60] Polling operation...\n   [2/60] Polling operation...\n   [3/60] Polling operation...\n   [4/60] Polling operation...\n   [5/60] Polling operation...\n   [6/60] Polling operation...\n   [7/60] Polling operation...\n   Operation response keys: [ 'generatedVideos' ]\n   ✅ Extended video saved to /tmp/veo-extended-1764940855138.mp4\n\n✅ Long Video Complete\n   Total Clips: 2\n   Total Duration: 15s\n\n✅ Video generation completed!\n   Video path: /tmp/veo-extended-1764940855138.mp4\n   Duration: 15s\n   ☁️  Uploading video to Cloudinary...\n   ✅ Video uploaded to Cloudinary: https://res.cloudinary.com/dscxiwsqm/video/upload/v1764940889/social-media/t5shubomtaqcuyxxugix.mp4\n      Public ID: social-media/t5shubomtaqcuyxxugix\n      Duration: 15s\n      Size: 14.42 MB\n\n✅ Stage \"video\" completed!\n\n",
+      "type": "video-production",
+      "duration": 15,
+      "useVeo": true,
+      "useAvatar": false,
+      "avatarId": "siddharth-vora",
+      "stageId": 4,
+      "completedAt": "2025-12-05T13:21:30.275Z"
     }
   },
   "published": {
