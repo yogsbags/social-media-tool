@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 type StageDataModalProps = {
   isOpen: boolean
@@ -28,6 +28,9 @@ export default function StageDataModal({
   const [showPreview, setShowPreview] = useState(true)
   const [copied, setCopied] = useState(false)
 
+  // Video preview state
+  const [previewingVideoUrl, setPreviewingVideoUrl] = useState<string | null>(null)
+
   useEffect(() => {
     if (isOpen && data) {
       // Initialize form data from the data object
@@ -35,6 +38,7 @@ export default function StageDataModal({
       setFormData(flattenedData)
       setSaveError(null)
       setSaveSuccess(false)
+      setPreviewingVideoUrl(null) // Reset video preview when modal opens
     }
   }, [isOpen, data])
 
@@ -49,7 +53,18 @@ export default function StageDataModal({
       if (value && typeof value === 'object' && !Array.isArray(value)) {
         Object.assign(flattened, flattenObject(value, newKey))
       } else if (Array.isArray(value)) {
-        flattened[newKey] = JSON.stringify(value)
+        // Handle arrays - flatten array items that are objects
+        if (value.length > 0 && typeof value[0] === 'object') {
+          value.forEach((item, index) => {
+            if (item && typeof item === 'object') {
+              Object.assign(flattened, flattenObject(item, `${newKey}.${index}`))
+            } else {
+              flattened[`${newKey}.${index}`] = item
+            }
+          })
+        } else {
+          flattened[newKey] = JSON.stringify(value)
+        }
       } else {
         flattened[newKey] = value
       }
@@ -127,12 +142,116 @@ export default function StageDataModal({
   const renderField = (key: string, value: any) => {
     const isLongText = typeof value === 'string' && value.length > 100
 
+    // Check if this is an image URL (from imgbb)
+    // Handles: imgbb.com URLs, or fields like "images.0.hostedUrl", "hostedUrl" in image context
+    const isImageUrl = typeof value === 'string' && value.trim() !== '' && (
+      value.includes('imgbb.com') ||
+      value.includes('i.ibb.co') ||
+      (key.toLowerCase().includes('hostedurl') && (
+        key.toLowerCase().includes('image') ||
+        key.toLowerCase().includes('images')
+      ))
+    )
+
+    // Check if this is a video URL (from cloudinary)
+    // Handles: cloudinary.com URLs, or fields like "hostedUrl" in video context
+    const isVideoUrl = typeof value === 'string' && value.trim() !== '' && (
+      value.includes('cloudinary.com') ||
+      value.includes('res.cloudinary.com') ||
+      (key.toLowerCase().includes('hostedurl') && (
+        key.toLowerCase().includes('video') ||
+        value.includes('.mp4') ||
+        value.includes('.mov') ||
+        value.includes('.webm')
+      ))
+    )
+
     return (
       <div key={key} className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {getFieldLabel(key)}
         </label>
-        {isLongText ? (
+        {isImageUrl ? (
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={value || ''}
+              onChange={(e) => handleFieldChange(key, e.target.value)}
+              className="flex-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+            />
+            <a
+              href={value}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold whitespace-nowrap flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              View Image
+            </a>
+          </div>
+        ) : isVideoUrl ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={value || ''}
+                onChange={(e) => handleFieldChange(key, e.target.value)}
+                className="flex-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+              />
+              <button
+                onClick={() => setPreviewingVideoUrl(value)}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold whitespace-nowrap flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Preview Video
+              </button>
+              <a
+                href={value}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold whitespace-nowrap flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                View Video
+              </a>
+            </div>
+            {previewingVideoUrl === value && (
+              <div className="border-2 border-indigo-300 rounded-lg bg-gray-900 overflow-hidden">
+                <div className="bg-indigo-100 px-3 py-2 flex items-center justify-between border-b-2 border-indigo-300">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-indigo-800">Video Preview</span>
+                  </div>
+                  <button
+                    onClick={() => setPreviewingVideoUrl(null)}
+                    className="text-indigo-600 hover:text-indigo-800 transition-colors"
+                    title="Close preview"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="p-4 bg-black">
+                  <video
+                    src={value}
+                    controls
+                    className="w-full max-h-[500px] rounded-lg"
+                    style={{ aspectRatio: '16/9' }}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : isLongText ? (
           <textarea
             value={value || ''}
             onChange={(e) => handleFieldChange(key, e.target.value)}
