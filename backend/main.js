@@ -148,8 +148,12 @@ function parseArgs(argv) {
         options.help = true;
         break;
       default:
-        if (!arg.startsWith('-') && !options.command) {
-          options.command = arg;
+        if (!arg.startsWith('-')) {
+          if (!options.command) {
+            options.command = arg;
+          } else if (!options.campaign && options.command === 'campaign') {
+            options.campaign = arg;
+          }
         }
         break;
     }
