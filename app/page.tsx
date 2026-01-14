@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import FileUpload from './components/FileUpload'
 import PromptEditor from './components/PromptEditor'
 import PublishingQueue from './components/PublishingQueue'
@@ -29,6 +31,39 @@ type StageData = {
   summary?: {
     [key: string]: any
   }
+}
+
+// Helper function to detect if text contains markdown
+function isMarkdown(text: string): boolean {
+  const markdownPatterns = [
+    /^#{1,6}\s/m,           // Headers
+    /\*\*[^*]+\*\*/,        // Bold
+    /\*[^*]+\*/,            // Italic
+    /^\s*[-*+]\s/m,         // Unordered lists
+    /^\s*\d+\.\s/m,         // Ordered lists
+    /\[.+\]\(.+\)/,         // Links
+    /^>\s/m,                // Blockquotes
+  ];
+  return markdownPatterns.some(pattern => pattern.test(text));
+}
+
+// LogEntry component to render logs with markdown support
+function LogEntry({ text, index }: { text: string; index: number }) {
+  if (isMarkdown(text)) {
+    return (
+      <div key={index} className="text-green-400 mb-2 prose prose-invert prose-sm max-w-none">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {text}
+        </ReactMarkdown>
+      </div>
+    );
+  }
+
+  return (
+    <div key={index} className="text-green-400 mb-1">
+      {text}
+    </div>
+  );
 }
 
 export default function Home() {
@@ -1985,9 +2020,7 @@ export default function Home() {
               <p className="text-gray-500 italic">Waiting for campaign execution...</p>
             ) : (
               logs.map((log, index) => (
-                <div key={index} className="text-green-400 mb-1">
-                  {log}
-                </div>
+                <LogEntry key={index} text={log} index={index} />
               ))
             )}
           </div>

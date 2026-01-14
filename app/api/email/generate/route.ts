@@ -60,14 +60,13 @@ Your task is to generate a complete, production-ready HTML email newsletter foll
 
 Layout reference (use this structure and styling cues):
 - 600px wide, single-column responsive layout
-- Header/hero image with logo (link to plindia.com) and top banner using:
+- Header section with logo (link to plindia.com) using:
   * Header image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/xtp/w8t/1aj/Asset%201.png
-  * Hero/banner image slot (keep 600px width)
+- Hero section with compelling headline and colored background (NO hero banner image - just text with brand color background)
 - Intro paragraph and section dividers
-- “Market Highlights” section
-- 3-column story grid with image + headline + “Read more” button (rounded 24px, #00b34e background, white text, Figtree bold 12px, generous horizontal padding)
+- "Market Highlights" section
+- 3-column text-based content grid with headline + brief description + "Read more" button (NO images, text-only cards with borders, rounded 24px buttons, #00b34e background, white text, Figtree bold 12px, generous horizontal padding)
 - CTA section to visit PL Capital News
-- “Trending Web Stories” section with another 3-column grid and buttons
 - Closing tagline and footer image:
   * Footer image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/9wn/vw0/ds6/Asset%202.png
 - Fonts: Figtree (load via Google Fonts); Colors: Navy/Blue (#0000a0 accents), CTA buttons #00b34e, body text #000
@@ -126,6 +125,17 @@ Campaign Details:
 ${creativePrompt ? `Creative Direction:\n${creativePrompt}\n` : ''}
 
 ${brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: You MUST use these exact brand colors in the email HTML.` : ''}
+
+CONTENT REQUIREMENTS:
+You MUST create content that is:
+1. SPECIFICALLY about the topic "${topic}" - not generic financial advice
+2. Tailored to the "${purpose}" purpose - ensure the content serves this exact goal
+3. Written for "${targetAudience}" - use appropriate language, examples, and context for this audience
+4. Include specific insights, data points, or strategies relevant to the topic
+5. Each section should provide unique, actionable information
+6. Avoid generic statements - be specific and provide real value
+7. Use the creative direction above to guide tone, messaging, and content structure
+8. Make every paragraph count - no filler content
 
 Generate a complete JSON response with:
 
