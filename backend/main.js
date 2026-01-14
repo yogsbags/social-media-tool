@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const SocialMediaOrchestrator = require('./core/orchestrator');
 
-const ENV_FILES = ['.env'];
+const ENV_FILES = ['.env', '.env.local'];
 
 /**
  * Load environment variables from .env files

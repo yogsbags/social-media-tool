@@ -283,10 +283,3 @@ async function createCompleteWebinar() {
 createCompleteWebinar();
 ```
 
-
-
-
-
-
-
-

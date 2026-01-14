@@ -280,92 +280,13 @@ class SocialMediaOrchestrator {
 
   async stagePlanning(options) {
     console.log('📋 Stage 1: Campaign Planning');
-    console.log('   - Generating creative brief and campaign strategy');
-    console.log('   - Defining visual guidelines and messaging\n');
+    console.log('   - Selecting campaign type');
+    console.log('   - Defining target platforms');
+    console.log('   - Setting success metrics\n');
 
+    // Placeholder for planning logic
     if (this.simulate) {
       console.log('   [SIMULATED] Planning completed');
-      return;
-    }
-
-    // Generate creative prompt using Groq
-    const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) {
-      console.log('   ⚠️  GROQ_API_KEY not set. Skipping AI creative brief generation.');
-      return;
-    }
-
-    try {
-      console.log('   🤖 Generating AI creative brief...\n');
-
-      const systemPrompt = `You are a creative director for PL Capital, a financial services company. Generate a comprehensive creative brief for a social media campaign. Format your response in clean, readable markdown with proper headings and bullet points.`;
-
-      const userPrompt = `Generate a creative brief for this campaign:
-
-**Campaign Type:** ${options.campaignType || 'general'}
-**Platform:** ${options.platform || 'multi-platform'}
-**Topic:** ${options.topic || 'financial services'}
-**Target Audience:** ${options.targetAudience || 'investors and wealth builders'}
-**Language:** ${this._getLanguageName(options.language || 'english')}
-
-Include:
-1. **Campaign Objective** - Clear goal and KPIs
-2. **Target Audience** - Demographics and psychographics
-3. **Key Messaging** - 3-5 core messages
-4. **Visual Guidelines** - Color palette, imagery style, design elements
-5. **Tone & Voice** - Communication style
-6. **Content Strategy** - Format-specific recommendations
-7. **Call to Action** - Primary and secondary CTAs
-
-Make it specific, actionable, and optimized for ${options.platform || 'the platform'}.`;
-
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${groqKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 2000
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Groq API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const creativeBrief = data.choices[0]?.message?.content || '';
-
-      if (creativeBrief) {
-        console.log('   ✅ Creative Brief Generated:\n');
-        console.log(creativeBrief);
-        console.log('\n');
-
-        // Save creative brief to state
-        const briefId = `brief-${Date.now()}`;
-        await this.stateManager.addContent({
-          id: briefId,
-          type: 'creative-brief',
-          topic: options.topic,
-          platform: options.platform,
-          campaignType: options.campaignType,
-          content: creativeBrief,
-          status: 'ready'
-        });
-      }
-
-      return { success: true, creativeBrief };
-
-    } catch (error) {
-      console.error(`   ❌ Creative brief generation failed: ${error.message}`);
-      return { success: false, error: error.message };
     }
   }
 
@@ -407,11 +328,10 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     }
 
     // For WhatsApp static creative, delegate to visual generation now
-    // IMPORTANT: Only treat as WhatsApp when platform/type explicitly indicate it.
-    // Generic image formats (e.g. LinkedIn static image) should NOT be forced to WhatsApp.
     const isWhatsAppImage = (options.platform && options.platform.includes('whatsapp')) ||
       (options.type && options.type.includes('whatsapp')) ||
-      options.format === 'whatsapp';
+      options.format === 'whatsapp' ||
+      options.format === 'image';
 
     if (isWhatsAppImage) {
       console.log('   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...');
@@ -513,118 +433,8 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       return;
     }
 
-    // Generic AI content generation for non-video, non-WhatsApp platforms
-    const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) {
-      console.log('   ⚠️  GROQ_API_KEY not set. Skipping AI content generation.');
-      return;
-    }
-
-    try {
-      console.log('   🤖 Generating AI content for social posts...\n');
-
-      const platform = options.platform || 'linkedin';
-      const format = options.format || 'post';
-      const languageName = this._getLanguageName(options.language || 'english');
-
-      const systemPrompt = `You are a senior social media copywriter for PL Capital, a financial services company.
-You create COMPLETE, production-ready content for campaigns across LinkedIn, Instagram, YouTube, Facebook, Twitter, and WhatsApp.
-
-Your output MUST be valid, readable markdown that can be pasted directly into a CMS.`;
-
-      const userPrompt = `Generate campaign content for:
-
-- Platform: ${platform}
-- Format: ${format}
-- Topic: ${options.topic || 'financial services'}
-- Campaign Type: ${options.campaignType || 'general'}
-- Target Audience: ${options.targetAudience || 'investors and wealth builders'}
-- Language: ${languageName}
-
-Content requirements:
-
-1. **Hooks & Angles**
-   - 3-5 strong hooks tailored for ${platform}
-   - Each hook must be 1–2 short sentences.
-
-2. **Primary Post Copy**
-   - 1 long-form caption (150–300 words) optimized for ${platform}.
-   - Use clear sections with headings or bold labels where helpful.
-
-3. **Alternative Captions**
-   - 2 shorter alternative captions (50–120 words) with different angles.
-
-4. **Hashtags**
-   - A hashtag block with 12–18 relevant hashtags.
-   - Mix broad and niche tags; avoid spammy tags.
-
-5. **CTA Ideas**
-   - 3 call-to-action options specific to this campaign.
-
-6. **Platform-Specific Notes**
-   - Brief guidance on how to adapt the content for at least one other platform (e.g., turn LinkedIn post into Instagram carousel).
-
-Formatting:
-- Use markdown headings (##) to clearly separate sections.
-- Use bullet lists where appropriate.
-- Do NOT include any JSON or code fences.
-- Everything should be ready to copy-paste into the UI as rich text.`;
-
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${groqKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 3000
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Groq API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const generatedContent = data.choices[0]?.message?.content || '';
-
-      if (!generatedContent) {
-        console.log('   ⚠️  No content generated from Groq');
-        return;
-      }
-
-      console.log('   ✅ AI content generated:\n');
-      console.log(generatedContent);
-      console.log('\n');
-
-      // Save generated content to workflow state
-      const contentId = `content-${Date.now()}`;
-      await this.stateManager.addContent({
-        id: contentId,
-        type: 'campaign-content',
-        topic: options.topic,
-        platform: platform,
-        format: format,
-        campaignType: options.campaignType,
-        content: generatedContent,
-        status: 'ready'
-      });
-
-      return {
-        success: true,
-        contentId,
-        content: generatedContent
-      };
-    } catch (error) {
-      console.error(`   ❌ Content generation failed: ${error.message}`);
-      return { success: false, error: error.message };
-    }
+    // TODO: Implement other AI content generation
+    console.log('   ⚠️  Content generation not yet implemented for this platform');
   }
 
   async stageVisuals(options) {
@@ -690,52 +500,10 @@ Formatting:
       console.log(`   ✅ Visual generated: ${result.images[0]?.path || 'success'}`);
       console.log(`   Features: ${result.features?.join(', ') || 'N/A'}`);
 
-      // Attempt to upload the first generated image to ImgBB for a shareable URL
-      let hostedUrl = null;
-      if (process.env.IMGBB_API_KEY && result.images && result.images.length > 0) {
-        const firstImage = result.images[0];
-        const imagePath = firstImage.path || firstImage.url;
-
-        if (imagePath && fs.existsSync(imagePath)) {
-          try {
-            console.log('   ☁️  Uploading creative to ImgBB...');
-            const imgBuffer = fs.readFileSync(imagePath);
-            const b64 = imgBuffer.toString('base64');
-            const payload = new URLSearchParams();
-            payload.append('key', process.env.IMGBB_API_KEY);
-            payload.append('image', b64);
-
-            const uploadResp = await fetch('https://api.imgbb.com/1/upload', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: payload
-            });
-
-            if (uploadResp.ok) {
-              const json = await uploadResp.json();
-              hostedUrl = json?.data?.url || null;
-              if (hostedUrl) {
-                console.log(`   ✅ Uploaded to ImgBB: ${hostedUrl}`);
-                // Persist URL back into result
-                result.images[0].hostedUrl = hostedUrl;
-              }
-            } else {
-              const text = await uploadResp.text();
-              console.log(`   ⚠️ ImgBB upload failed: ${uploadResp.status} ${text}`);
-            }
-          } catch (err) {
-            console.log(`   ⚠️ ImgBB upload error: ${err instanceof Error ? err.message : 'unknown'}`);
-          }
-        }
-      } else {
-        console.log('   ℹ️  ImgBB upload skipped (no API key or image path missing)');
-      }
-
       return {
         success: true,
         images: result.images,
-        features: result.features,
-        hostedUrl
+        features: result.features
       };
     } catch (error) {
       console.error(`   ❌ Visual generation failed: ${error.message}`);
