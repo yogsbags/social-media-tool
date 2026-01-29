@@ -1,13 +1,53 @@
-import { NextRequest, NextResponse } from 'next/server'
-import Groq from 'groq-sdk'
+import Groq from "groq-sdk";
+import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = 'nodejs'
+export const runtime = "nodejs";
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || ''
-})
+  apiKey: process.env.GROQ_API_KEY || "",
+});
 
-const MODEL = 'openai/gpt-oss-120b'
+const MODEL = "openai/gpt-oss-120b";
+
+const HEADER_IMAGE_URL =
+  "https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/xtp/w8t/1aj/Asset%201.png";
+const FOOTER_IMAGE_URL =
+  "https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/9wn/vw0/ds6/Asset%202.png";
+const BEE_SOCIAL_ICON_BASE =
+  "https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/circle-color/";
+
+function sanitizeNewsletterHtml(html: string) {
+  const allowlistedBases = [HEADER_IMAGE_URL, FOOTER_IMAGE_URL, BEE_SOCIAL_ICON_BASE];
+  const isAllowed = (src: string) => allowlistedBases.some((base) => src.startsWith(base));
+
+  let headerCount = 0;
+  let footerCount = 0;
+
+  const stripDisallowedImgTags = (input: string) =>
+    input.replace(/<img\b[^>]*>/gi, (tag) => {
+      const quoted =
+        tag.match(/\bsrc\s*=\s*["']([^"']+)["']/i) ||
+        tag.match(/\bsrc\s*=\s*([^\s>]+)/i);
+      const src = quoted?.[1]?.replace(/^['"]|['"]$/g, "")?.trim();
+
+      if (!src) return "";
+      if (!isAllowed(src)) return "";
+
+      if (src === HEADER_IMAGE_URL) {
+        headerCount += 1;
+        return headerCount === 1 ? tag : "";
+      }
+
+      if (src === FOOTER_IMAGE_URL) {
+        footerCount += 1;
+        return footerCount === 1 ? tag : "";
+      }
+
+      return tag;
+    });
+
+  return stripDisallowedImgTags(html);
+}
 
 /**
  * Generate HTML email newsletter with subject line using best practices
@@ -15,25 +55,22 @@ const MODEL = 'openai/gpt-oss-120b'
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const body = await request.json();
     const {
       topic,
       purpose,
       targetAudience,
       creativePrompt, // From Stage 1
       brandSettings,
-      language = 'en'
-    } = body
+      language = "en",
+    } = body;
 
     if (!topic) {
-      return NextResponse.json(
-        { error: 'Topic is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
 
     // Build brand guidelines
-    let brandGuidance = ''
+    let brandGuidance = "";
     if (brandSettings?.useBrandGuidelines) {
       brandGuidance = `
 **PL Capital Brand Guidelines:**
@@ -44,31 +81,37 @@ export async function POST(request: NextRequest) {
 - **Visual Style**: Clean, modern, corporate with subtle tech motifs
 - **Key Values**: Trust, Innovation, Performance, Client-First
 - **Messaging**: Focus on adaptive strategies, quantitative excellence, consistent alpha
-`
-    } else if (brandSettings?.customColors || brandSettings?.customTone || brandSettings?.customInstructions) {
+`;
+    } else if (
+      brandSettings?.customColors ||
+      brandSettings?.customTone ||
+      brandSettings?.customInstructions
+    ) {
       brandGuidance = `
 **Custom Brand Guidelines:**
-${brandSettings.customColors ? `- **Brand Colors**: ${brandSettings.customColors}` : ''}
-${brandSettings.customTone ? `- **Brand Tone**: ${brandSettings.customTone}` : ''}
-${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettings.customInstructions}` : ''}
-`
+${brandSettings.customColors ? `- **Brand Colors**: ${brandSettings.customColors}` : ""}
+${brandSettings.customTone ? `- **Brand Tone**: ${brandSettings.customTone}` : ""}
+${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettings.customInstructions}` : ""}
+`;
     }
 
-const systemPrompt = `You are an expert email marketing specialist and HTML email designer.
+    const systemPrompt = `You are an expert email marketing specialist and HTML email designer.
 
 Your task is to generate a complete, production-ready HTML email newsletter following industry best practices.
 
 Layout reference (use this structure and styling cues):
 - 600px wide, single-column responsive layout
-- Header/hero image with logo (link to plindia.com) and top banner using:
+- Header section (DO NOT change): keep exactly this header image linked to plindia.com
   * Header image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/xtp/w8t/1aj/Asset%201.png
-  * Hero/banner image slot (keep 600px width)
+- Hero section: TEXT-ONLY (no <img>) with compelling headline + 1 supporting line on a solid/gradient brand-color background
 - Intro paragraph and section dividers
-- “Market Highlights” section
-- 3-column story grid with image + headline + “Read more” button (rounded 24px, #00b34e background, white text, Figtree bold 12px, generous horizontal padding)
+- "Market Highlights" section
+- 3-column content grid: TEXT-ONLY cards (NO images). Each card must have:
+  * headline
+  * 1–2 sentence description
+  * "Read more" button (rounded 24px, #00b34e background, white text, Figtree bold 12px, generous horizontal padding)
 - CTA section to visit PL Capital News
-- “Trending Web Stories” section with another 3-column grid and buttons
-- Closing tagline and footer image:
+- Closing tagline and footer image (DO NOT change): keep exactly this footer image
   * Footer image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/9wn/vw0/ds6/Asset%202.png
 - Fonts: Figtree (load via Google Fonts); Colors: Navy/Blue (#0000a0 accents), CTA buttons #00b34e, body text #000
 - Dividers: 1px solid #0000a0 consistent throughout sections
@@ -79,6 +122,12 @@ Layout reference (use this structure and styling cues):
   * YouTube: https://www.youtube.com/@PrabhudasLilladherIndia
   * Telegram: https://t.me/PLIndiaOnline
   Use 32px circle-color icons (e.g., https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/circle-color/linkedin@2x.png etc.) in a single horizontal row (centered) — use a table with inline-block cells and equal padding so icons do NOT stack vertically on desktop or mobile.
+
+CRITICAL CONSTRAINTS:
+- Do NOT add any logos/brand marks beyond the provided header + footer images (do not introduce a new logo, watermark, or badge).
+- Do NOT use any placeholder images/URLs (no via.placeholder.com, no dummy banners).
+- The ONLY images allowed in the entire email are: the provided header image, the provided footer image, and the social icon set.
+- Do NOT repeat the header image anywhere else (especially not as a hero image).
 
 📧 SUBJECT LINE BEST PRACTICES (from subjectline.com):
 1. **Length**: 40-60 characters (optimal for mobile preview)
@@ -123,9 +172,20 @@ Campaign Details:
 - Target Audience: ${targetAudience}
 - Language: ${language}
 
-${creativePrompt ? `Creative Direction:\n${creativePrompt}\n` : ''}
+${creativePrompt ? `Creative Direction:\n${creativePrompt}\n` : ""}
 
-${brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: You MUST use these exact brand colors in the email HTML.` : ''}
+${brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: You MUST use these exact brand colors in the email HTML.` : ""}
+
+CONTENT REQUIREMENTS:
+You MUST create content that is:
+1. SPECIFICALLY about the topic "${topic}" - not generic financial advice
+2. Tailored to the "${purpose}" purpose - ensure the content serves this exact goal
+3. Written for "${targetAudience}" - use appropriate language, examples, and context for this audience
+4. Include specific insights, data points, or strategies relevant to the topic
+5. Each section should provide unique, actionable information
+6. Avoid generic statements - be specific and provide real value
+7. Use the creative direction above to guide tone, messaging, and content structure
+8. Make every paragraph count - no filler content
 
 Generate a complete JSON response with:
 
@@ -166,75 +226,94 @@ Use the brand colors specified in the guidelines for:
 - Links
 - Footer background
 
-Make the HTML production-ready - it should render beautifully in all email clients.`
+Make the HTML production-ready - it should render beautifully in all email clients.`;
 
-    console.log('Generating email newsletter with GPT-OSS-120B...')
+    console.log("Generating email newsletter with GPT-OSS-120B...");
 
     const completion = await groq.chat.completions.create({
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Generate a professional email newsletter for: ${topic}` }
+        { role: "system", content: systemPrompt },
+        {
+          role: "user",
+          content: `Generate a professional email newsletter for: ${topic}`,
+        },
       ],
       model: MODEL,
       temperature: 0.7,
       max_tokens: 8000,
-    })
+    });
 
-    const generatedContent = completion.choices[0]?.message?.content || ''
+    const generatedContent = completion.choices[0]?.message?.content || "";
 
     if (!generatedContent) {
-      throw new Error('No email content generated from GPT-OSS-120B')
+      throw new Error("No email content generated from GPT-OSS-120B");
     }
 
     // Try to parse as JSON first
-    let emailData
+    let emailData;
     try {
       // Extract JSON from markdown code blocks if present
       const jsonMatch = generatedContent.match(/```json\n([\s\S]*?)\n```/) ||
-                       generatedContent.match(/```\n([\s\S]*?)\n```/) ||
-                       [null, generatedContent]
+        generatedContent.match(/```\n([\s\S]*?)\n```/) || [
+          null,
+          generatedContent,
+        ];
 
-      const jsonContent = jsonMatch[1] || generatedContent
-      emailData = JSON.parse(jsonContent)
+      const jsonContent = jsonMatch[1] || generatedContent;
+      emailData = JSON.parse(jsonContent);
     } catch (parseError) {
       // If not valid JSON, try to extract components manually
-      console.warn('Failed to parse as JSON, attempting manual extraction')
+      console.warn("Failed to parse as JSON, attempting manual extraction");
 
-      const subjectMatch = generatedContent.match(/"subject":\s*"([^"]+)"/) ||
-                          generatedContent.match(/Subject:\s*(.+)/i)
-      const preheaderMatch = generatedContent.match(/"preheader":\s*"([^"]+)"/) ||
-                            generatedContent.match(/Preheader:\s*(.+)/i)
-      const htmlMatch = generatedContent.match(/"html":\s*"([\s\S]*?)"(?=,\s*"plainText"|$)/) ||
-                       generatedContent.match(/<!DOCTYPE[\s\S]*<\/html>/i)
+      const subjectMatch =
+        generatedContent.match(/"subject":\s*"([^"]+)"/) ||
+        generatedContent.match(/Subject:\s*(.+)/i);
+      const preheaderMatch =
+        generatedContent.match(/"preheader":\s*"([^"]+)"/) ||
+        generatedContent.match(/Preheader:\s*(.+)/i);
+      const htmlMatch =
+        generatedContent.match(/"html":\s*"([\s\S]*?)"(?=,\s*"plainText"|$)/) ||
+        generatedContent.match(/<!DOCTYPE[\s\S]*<\/html>/i);
 
       emailData = {
-        subject: subjectMatch ? subjectMatch[1].trim() : `${topic} - Newsletter`,
-        preheader: preheaderMatch ? preheaderMatch[1].trim() : `Discover insights about ${topic}`,
+        subject: subjectMatch
+          ? subjectMatch[1].trim()
+          : `${topic} - Newsletter`,
+        preheader: preheaderMatch
+          ? preheaderMatch[1].trim()
+          : `Discover insights about ${topic}`,
         subjectVariations: [
           `${topic} - Exclusive Insights`,
-          `Your Guide to ${topic}`
+          `Your Guide to ${topic}`,
         ],
-        html: htmlMatch ? (htmlMatch[1] || htmlMatch[0]).replace(/\\n/g, '\n').replace(/\\"/g, '"') : generatedContent,
-        plainText: `${topic}\n\nView this email in your browser for the best experience.`
-      }
+        html: htmlMatch
+          ? (htmlMatch[1] || htmlMatch[0])
+              .replace(/\\n/g, "\n")
+              .replace(/\\"/g, '"')
+          : generatedContent,
+        plainText: `${topic}\n\nView this email in your browser for the best experience.`,
+      };
     }
 
-    console.log('Email newsletter generated successfully')
+    console.log("Email newsletter generated successfully");
 
     return NextResponse.json({
       ...emailData,
+      html:
+        typeof emailData?.html === "string"
+          ? sanitizeNewsletterHtml(emailData.html)
+          : emailData?.html,
       model: MODEL,
-      usage: completion.usage
-    })
-
+      usage: completion.usage,
+    });
   } catch (error) {
-    console.error('Error generating email newsletter:', error)
+    console.error("Error generating email newsletter:", error);
     return NextResponse.json(
       {
-        error: 'Failed to generate email newsletter',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to generate email newsletter",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

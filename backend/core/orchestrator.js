@@ -280,13 +280,92 @@ class SocialMediaOrchestrator {
 
   async stagePlanning(options) {
     console.log('📋 Stage 1: Campaign Planning');
-    console.log('   - Selecting campaign type');
-    console.log('   - Defining target platforms');
-    console.log('   - Setting success metrics\n');
+    console.log('   - Generating creative brief and campaign strategy');
+    console.log('   - Defining visual guidelines and messaging\n');
 
-    // Placeholder for planning logic
     if (this.simulate) {
       console.log('   [SIMULATED] Planning completed');
+      return;
+    }
+
+    // Generate creative prompt using Groq
+    const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) {
+      console.log('   ⚠️  GROQ_API_KEY not set. Skipping AI creative brief generation.');
+      return;
+    }
+
+    try {
+      console.log('   🤖 Generating AI creative brief...\n');
+
+      const systemPrompt = `You are a creative director for PL Capital, a financial services company. Generate a comprehensive creative brief for a social media campaign. Format your response in clean, readable markdown with proper headings and bullet points.`;
+
+      const userPrompt = `Generate a creative brief for this campaign:
+
+**Campaign Type:** ${options.campaignType || 'general'}
+**Platform:** ${options.platform || 'multi-platform'}
+**Topic:** ${options.topic || 'financial services'}
+**Target Audience:** ${options.targetAudience || 'investors and wealth builders'}
+**Language:** ${this._getLanguageName(options.language || 'english')}
+
+Include:
+1. **Campaign Objective** - Clear goal and KPIs
+2. **Target Audience** - Demographics and psychographics
+3. **Key Messaging** - 3-5 core messages
+4. **Visual Guidelines** - Color palette, imagery style, design elements
+5. **Tone & Voice** - Communication style
+6. **Content Strategy** - Format-specific recommendations
+7. **Call to Action** - Primary and secondary CTAs
+
+Make it specific, actionable, and optimized for ${options.platform || 'the platform'}.`;
+
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${groqKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 2000
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Groq API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const creativeBrief = data.choices[0]?.message?.content || '';
+
+      if (creativeBrief) {
+        console.log('   ✅ Creative Brief Generated:\n');
+        console.log(creativeBrief);
+        console.log('\n');
+
+        // Save creative brief to state
+        const briefId = `brief-${Date.now()}`;
+        await this.stateManager.addContent({
+          id: briefId,
+          type: 'creative-brief',
+          topic: options.topic,
+          platform: options.platform,
+          campaignType: options.campaignType,
+          content: creativeBrief,
+          status: 'ready'
+        });
+      }
+
+      return { success: true, creativeBrief };
+
+    } catch (error) {
+      console.error(`   ❌ Creative brief generation failed: ${error.message}`);
+      return { success: false, error: error.message };
     }
   }
 
@@ -560,13 +639,16 @@ class SocialMediaOrchestrator {
       ? ` All text, labels, and content must be in ${languageName}.`
       : '';
 
+    const exampleStyle = 'Style reference: PL Capital example creatives with high-contrast navy/blue gradient background, modern geometric shapes (blue/green accents), big bold white headline, 2–4 supporting bullets with checkmark icons OR a simple numbered step row, and a single green rounded CTA button. Clean whitespace, crisp typography (Figtree-like), modern corporate aesthetic.';
+    const noLogo = 'Do NOT add any logo/watermark/brand mark. If branding is needed later, reserve clean empty space in the top-right.';
+
     const basePrompts = {
-      linkedin: `Professional ${safeFormat} graphic for LinkedIn about ${topic || 'financial investment'}. Corporate blue and green color scheme, clean modern design, trust-building aesthetic.${languageInstruction}`,
-      instagram: `Eye-catching ${safeFormat} visual for Instagram about ${topic || 'investment growth'}. Vibrant colors, modern gradient background, engaging social media aesthetic.${languageInstruction}`,
-      youtube: `High-quality ${safeFormat} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design.${languageInstruction}`,
-      facebook: `Engaging ${safeFormat} post graphic for Facebook about ${topic || 'financial planning'}. Community-focused, accessible design, clear messaging.${languageInstruction}`,
-      twitter: `Concise ${safeFormat} visual for Twitter about ${topic || 'market insights'}. Clean, minimal design optimized for quick engagement.${languageInstruction}`,
-      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors.${languageInstruction} ${brandGuidance}`
+      linkedin: `Professional ${safeFormat} graphic for LinkedIn about ${topic || 'financial investment'}. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
+      instagram: `Eye-catching ${safeFormat} visual for Instagram about ${topic || 'investment growth'}. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
+      youtube: `High-quality ${safeFormat} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
+      facebook: `Engaging ${safeFormat} post graphic for Facebook about ${topic || 'financial planning'}. Clear, friendly messaging with strong hierarchy. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
+      twitter: `Concise ${safeFormat} visual for Twitter about ${topic || 'market insights'}. Minimal but high-contrast layout optimized for quick scan. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
+      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`
     };
 
     return basePrompts[platform] || basePrompts.linkedin;
