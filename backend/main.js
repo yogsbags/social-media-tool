@@ -328,6 +328,9 @@ async function run() {
           videoUrl: stageResult.videoUrl || null
         }));
       }
+      if (stageName === 'visuals' && stageResult?.images?.length > 0) {
+        console.log('__STAGE3_IMAGES__' + JSON.stringify(stageResult.images));
+      }
       console.log(`\n✅ Stage "${stageName}" completed!\n`);
       break;
 

@@ -1,84 +1,73 @@
-import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
+import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const stageKeys: Record<number, string> = {
+  1: 'campaigns',
+  2: 'content',
+  3: 'visuals',
+  4: 'videos',
+  5: 'published',
+  6: 'metrics'
+}
 
 /**
- * Save edited stage data back to workflow-state.json
+ * POST /api/workflow/data/save
+ * Body: { stageId, dataId, editedData }
+ * Updates one stage entry in workflow-state.json.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { stageId, dataId, editedData } = body
+    const { stageId, dataId, editedData } = body as { stageId: number; dataId: string; editedData: any }
 
-    if (!stageId || !dataId) {
+    if (!Number.isInteger(stageId) || stageId < 1 || stageId > 6 || !dataId || editedData === undefined) {
       return NextResponse.json(
-        { error: 'Missing stageId or dataId' },
+        { error: 'Missing or invalid stageId, dataId, or editedData' },
         { status: 400 }
       )
     }
 
-    // Path to workflow state file
     const backendRoot = path.join(process.cwd(), 'backend')
     const stateFilePath = path.join(backendRoot, 'data', 'workflow-state.json')
 
-    if (!fs.existsSync(stateFilePath)) {
-      return NextResponse.json(
-        { error: 'Workflow state file not found' },
-        { status: 404 }
-      )
+    let state: Record<string, Record<string, any>> = {
+      campaigns: {},
+      content: {},
+      visuals: {},
+      videos: {},
+      published: {},
+      metrics: {}
     }
 
-    // Read current state
-    const stateContent = fs.readFileSync(stateFilePath, 'utf-8')
-    const state = JSON.parse(stateContent)
-
-    // Map stage IDs to state keys
-    const stageKeys: Record<number, string> = {
-      1: 'campaigns',
-      2: 'content',
-      3: 'visuals',
-      4: 'videos',
-      5: 'published',
-      6: 'metrics'
+    if (fs.existsSync(stateFilePath)) {
+      const stateContent = fs.readFileSync(stateFilePath, 'utf-8')
+      state = JSON.parse(stateContent)
     }
 
-    const stageKey = stageKeys[stageId]
-    if (!stageKey) {
-      return NextResponse.json(
-        { error: 'Invalid stage ID' },
-        { status: 400 }
-      )
+    const key = stageKeys[stageId]
+    if (!key || !state[key] || !state[key][dataId]) {
+      return NextResponse.json({ error: 'Stage entry not found' }, { status: 404 })
     }
 
-    // Update the specific data entry
-    if (!state[stageKey] || !state[stageKey][dataId]) {
-      return NextResponse.json(
-        { error: 'Data entry not found' },
-        { status: 404 }
-      )
-    }
-
-    // Merge edited data with existing data
-    state[stageKey][dataId] = {
-      ...state[stageKey][dataId],
+    state[key][dataId] = {
+      ...state[key][dataId],
       ...editedData,
-      updatedAt: new Date().toISOString()
+      id: dataId,
+      stageId,
+      completedAt: state[key][dataId].completedAt || new Date().toISOString()
     }
 
-    // Write updated state back to file
     fs.writeFileSync(stateFilePath, JSON.stringify(state, null, 2))
 
-    return NextResponse.json({
-      success: true,
-      message: 'Data saved successfully',
-      data: state[stageKey][dataId]
-    })
+    return NextResponse.json({ ok: true })
   } catch (error) {
-    console.error('Error saving stage data:', error)
+    console.error('Error saving workflow data:', error)
     return NextResponse.json(
-      { error: 'Failed to save data' },
+      { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

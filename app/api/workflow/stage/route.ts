@@ -604,6 +604,23 @@ export async function POST(request: NextRequest) {
               stageData.type = 'analytics'
             }
 
+            // Stage 3: merge backend output images (with hostedUrl from ImgBB) so edit popup has image URL and View Image
+            if (stageId === 3 && outputBuffer) {
+              const match = outputBuffer.match(/__STAGE3_IMAGES__([^\n]+)/)
+              if (match) {
+                try {
+                  const images = JSON.parse(match[1]) as Array<{ path?: string; url?: string; hostedUrl?: string }>
+                  if (Array.isArray(images) && images.length > 0) {
+                    stageData.images = images
+                    const first = images[0]
+                    stageData.imageUrl = first?.hostedUrl || first?.url || ''
+                  }
+                } catch (_) {
+                  // ignore parse errors
+                }
+              }
+            }
+
             // Save to workflow state file
             saveStageData(stageId, stageData)
 

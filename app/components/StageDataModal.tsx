@@ -148,11 +148,12 @@ export default function StageDataModal({
   const renderField = (key: string, value: any) => {
     const isLongText = typeof value === 'string' && value.length > 100
 
-    // Check if this is an image URL (from imgbb)
-    // Handles: imgbb.com URLs, or fields like "images.0.hostedUrl", "hostedUrl" in image context
+    // Check if this is an image URL (from imgbb or stage 3 visuals)
+    // Handles: imgbb.com URLs, imageUrl from Stage 3, or fields like "images.0.hostedUrl"
     const isImageUrl = typeof value === 'string' && value.trim() !== '' && (
       value.includes('imgbb.com') ||
       value.includes('i.ibb.co') ||
+      key === 'imageUrl' ||
       (key.toLowerCase().includes('hostedurl') && (
         key.toLowerCase().includes('image') ||
         key.toLowerCase().includes('images')
