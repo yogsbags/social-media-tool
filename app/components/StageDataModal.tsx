@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 type StageDataModalProps = {
   isOpen: boolean
@@ -31,6 +33,9 @@ export default function StageDataModal({
   // Video preview state
   const [previewingVideoUrl, setPreviewingVideoUrl] = useState<string | null>(null)
 
+  // Stage 1: toggle between rich text (markdown rendered) and edit (textarea)
+  const [isEditingCreativePrompt, setIsEditingCreativePrompt] = useState(false)
+
   useEffect(() => {
     if (isOpen && data) {
       // Initialize form data from the data object
@@ -39,6 +44,7 @@ export default function StageDataModal({
       setSaveError(null)
       setSaveSuccess(false)
       setPreviewingVideoUrl(null) // Reset video preview when modal opens
+      setIsEditingCreativePrompt(false) // Reset to rich text view when modal opens
     }
   }, [isOpen, data])
 
@@ -276,24 +282,45 @@ export default function StageDataModal({
 
     return (
       <div className="mb-6 p-4 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-300 rounded-xl">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-2xl">🎨</span>
-          <div>
-            <label className="block text-base font-bold text-purple-900">
-              Creative Prompt
-            </label>
-            <p className="text-xs text-purple-700 mt-0.5">
-              This prompt will be used to generate content in the next stages. Edit to refine the creative direction.
-            </p>
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🎨</span>
+            <div>
+              <label className="block text-base font-bold text-purple-900">
+                Creative Prompt
+              </label>
+              <p className="text-xs text-purple-700 mt-0.5">
+                This prompt will be used to generate content in the next stages. Edit to refine the creative direction.
+              </p>
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setIsEditingCreativePrompt((prev) => !prev)}
+            className="shrink-0 px-3 py-1.5 text-sm font-medium text-purple-700 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 transition-colors"
+          >
+            {isEditingCreativePrompt ? 'Preview' : 'Edit'}
+          </button>
         </div>
-        <textarea
-          value={promptValue}
-          onChange={(e) => handleFieldChange('creativePrompt', e.target.value)}
-          rows={12}
-          placeholder="Creative prompt will be generated here..."
-          className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none text-sm font-mono bg-white shadow-inner resize-vertical"
-        />
+        {isEditingCreativePrompt ? (
+          <textarea
+            value={promptValue}
+            onChange={(e) => handleFieldChange('creativePrompt', e.target.value)}
+            rows={12}
+            placeholder="Creative prompt will be generated here..."
+            className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none text-sm font-mono bg-white shadow-inner resize-vertical"
+          />
+        ) : (
+          <div className="w-full min-h-[200px] px-4 py-3 border-2 border-purple-200 rounded-lg bg-white text-sm prose prose-sm prose-purple max-w-none">
+            {promptValue ? (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {promptValue}
+              </ReactMarkdown>
+            ) : (
+              <p className="text-gray-500 italic">No creative prompt yet.</p>
+            )}
+          </div>
+        )}
         <div className="mt-2 flex items-center gap-2 text-xs text-purple-600">
           <span>💡</span>
           <span>Tip: Be specific about visual style, tone, messaging, and platform requirements</span>
