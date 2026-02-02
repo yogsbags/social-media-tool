@@ -1201,7 +1201,8 @@ ${brandGuidance}`;
         console.log(`   Target Duration: ${requestedDuration}s`);
         console.log(`   Mode: ${isAvatarMode ? 'Avatar' : 'Faceless'}`);
 
-        const autoScenePrompts = this._generateAutoScenePrompts(prompt, requestedDuration, isAvatarMode);
+        const avatarScript = options.scriptText || options.avatarScriptText;
+        const autoScenePrompts = this._generateAutoScenePrompts(prompt, requestedDuration, isAvatarMode, avatarScript);
         console.log(`   Auto Scenes: ${autoScenePrompts.length}\n`);
 
         // Initialize VEO generator
@@ -1745,21 +1746,36 @@ ${brandGuidance}`;
   }
 
   /**
-   * Auto-generate scene variations from a single prompt
-   * Creates base + extension prompts for scene extension without JSON timeline
+   * Auto-generate scene variations from a single prompt (Veo 3.1 best practices)
+   * Creates base + extension prompts for scene extension without JSON timeline.
+   * Extension prompts follow Veo 3.1 format: continuation + segment timing + (avatar: script chunk) + cinematography + constraints.
    * @private
-   * @param {string} basePrompt - The original video prompt
+   * @param {string} basePrompt - The original video prompt (already Veo 3.1-style from _buildVideoPrompt)
    * @param {number} targetDuration - Desired video duration in seconds
    * @param {boolean} isAvatarMode - Whether this is avatar video (vs faceless)
-   * @returns {Array<string>} Array of scene prompts [base, variations...]
+   * @param {string} [avatarScript] - Full script for avatar mode; split by segment for extension prompts
+   * @returns {Array<string>} Array of scene prompts [base, extensions...]
    */
-  _generateAutoScenePrompts(basePrompt, targetDuration, isAvatarMode = false) {
-    // Calculate number of extensions needed
-    // Base = 8s, each extension = 7s
+  _generateAutoScenePrompts(basePrompt, targetDuration, isAvatarMode = false, avatarScript = null) {
+    // Base = 8s, each extension = 7s (Veo 3.1)
     const extensionsNeeded = Math.max(0, Math.ceil((targetDuration - 8) / 7));
-    const scenePrompts = [basePrompt]; // Base scene
+    const scenePrompts = [basePrompt];
 
-    // Scene variation phrases based on mode
+    // Split script by segment for avatar extensions (~2.2 words/sec for clear speech)
+    const wordsPerBase = Math.round(8 * 2.2);   // ~18 words for 8s
+    const wordsPerExtension = Math.round(7 * 2.2); // ~15 words per 7s
+    let scriptChunks = [];
+    if (isAvatarMode && avatarScript && typeof avatarScript === 'string') {
+      const words = avatarScript.trim().split(/\s+/).filter(Boolean);
+      let start = wordsPerBase;
+      for (let i = 0; i < extensionsNeeded && i < 20; i++) {
+        const end = Math.min(start + wordsPerExtension, words.length);
+        scriptChunks.push(words.slice(start, end).join(' '));
+        start = end;
+      }
+    }
+
+    // Veo 3.1 extension best practices: continuation + segment timing + cinematography + same constraints
     const facelessVariations = [
       'Camera orbits around the visual elements with dynamic lighting transitions',
       'Zoom into key data points revealing intricate details and patterns',
@@ -1784,11 +1800,27 @@ ${brandGuidance}`;
 
     const variations = isAvatarMode ? avatarVariations : facelessVariations;
 
-    // Generate extension prompts with variations
     for (let i = 0; i < extensionsNeeded && i < 20; i++) {
+      const segmentStart = 8 + i * 7;
+      const segmentEnd = segmentStart + 7;
+      const timeRange = `Segment ${segmentStart}-${segmentEnd}s`;
       const variation = variations[i % variations.length];
-      const extensionPrompt = `${basePrompt} ${variation}.`;
-      scenePrompts.push(extensionPrompt);
+
+      if (isAvatarMode) {
+        // Avatar: continuation + segment + script for this segment + camera variation + same speaker/setting
+        const scriptChunk = scriptChunks[i];
+        const scriptPart = scriptChunk
+          ? `Speaking the next part of the script: "${scriptChunk}". `
+          : '';
+        scenePrompts.push(
+          `Continue the same shot. ${timeRange}. ${scriptPart}${variation}. Same speaker, setting, and professional delivery.`
+        );
+      } else {
+        // Faceless: continuation + segment + cinematography + reinforce NO PEOPLE (Veo 3.1 best practice)
+        scenePrompts.push(
+          `Continue the same scene. ${timeRange}. ${variation}. Same subject, style, and visual language. NO PEOPLE, NO FACES, NO HUMANS.`
+        );
+      }
     }
 
     return scenePrompts;

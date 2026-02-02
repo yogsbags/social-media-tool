@@ -223,6 +223,17 @@ You MUST create content that is:
 7. Use the creative direction above to guide tone, messaging, and content structure
 8. Make every paragraph count - no filler content
 
+CONTENT REQUIREMENTS:
+You MUST create content that is:
+1. SPECIFICALLY about the topic "${topic}" - not generic financial advice
+2. Tailored to the "${purpose}" purpose - ensure the content serves this exact goal
+3. Written for "${targetAudience}" - use appropriate language, examples, and context for this audience
+4. Include specific insights, data points, or strategies relevant to the topic
+5. Each section should provide unique, actionable information
+6. Avoid generic statements - be specific and provide real value
+7. Use the creative direction above to guide tone, messaging, and content structure
+8. Make every paragraph count - no filler content
+
 Generate a complete JSON response with:
 
 {

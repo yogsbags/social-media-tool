@@ -172,6 +172,26 @@ export async function POST(request: NextRequest) {
                 : null
             const baseUrl = envBase || requestOrigin
 
+            // Ingest reference images: upload to ImgBB so we have URLs to pass to prompt generator
+            let referenceImageUrls: string[] = []
+            if (files?.referenceImages?.length > 0) {
+              sendEvent({ log: `🖼️  Ingesting ${files.referenceImages.length} reference image(s) for creative brief...` })
+              for (let i = 0; i < files.referenceImages.length; i++) {
+                const ref = files.referenceImages[i]
+                const dataUrl = ref.data?.startsWith('data:') ? ref.data : `data:image/png;base64,${ref.data}`
+                const url = process.env.IMGBB_API_KEY ? await uploadToImgbb(dataUrl) : null
+                if (url) {
+                  referenceImageUrls.push(url)
+                  sendEvent({ log: `   ✅ Reference image ${i + 1}: uploaded` })
+                }
+              }
+              if (referenceImageUrls.length > 0) {
+                sendEvent({ log: `   Reference images will be passed downstream to image/video stages.` })
+              } else if (files.referenceImages.length > 0) {
+                sendEvent({ log: `   ⚠️ Set IMGBB_API_KEY to upload references for Stage 1; they will still be passed when running Stage 3/4.` })
+              }
+            }
+
             const promptResponse = await fetch(`${baseUrl}/api/prompt/generate`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -184,7 +204,10 @@ export async function POST(request: NextRequest) {
                 contentType,
                 duration,
                 language,
-                brandSettings
+                aspectRatio,
+                brandSettings,
+                referenceImageUrls: referenceImageUrls.length > 0 ? referenceImageUrls : undefined,
+                referenceImagesProvided: files?.referenceImages?.length > 0
               })
             })
 
@@ -197,7 +220,7 @@ export async function POST(request: NextRequest) {
 
             sendEvent({ log: '✅ Creative prompt generated successfully!' })
 
-            // Save the generated prompt as stage 1 data
+            // Save the generated prompt as stage 1 data (include reference image URLs so downstream knows they were ingested)
             const stageData = {
               topic,
               campaignType,
@@ -205,7 +228,8 @@ export async function POST(request: NextRequest) {
               status: 'completed',
               type: 'campaign-planning',
               creativePrompt: generatedPrompt,
-              promptModel: promptData.model
+              promptModel: promptData.model,
+              ...(referenceImageUrls.length > 0 && { referenceImageUrls })
             }
 
             saveStageData(stageId, stageData)

@@ -25,7 +25,10 @@ export async function POST(request: NextRequest) {
       contentType,
       duration,
       language,
-      brandSettings
+      aspectRatio = '16:9',
+      brandSettings,
+      referenceImageUrls,
+      referenceImagesProvided
     } = body
 
     if (!topic || !campaignType) {
@@ -49,13 +52,26 @@ export async function POST(request: NextRequest) {
       return `${p}: ${specs[p] || 'Standard social media best practices'}`
     }).join('\n')
 
-    // Build content type guidance
+    // Build content type guidance (Gemini image best practices: https://ai.google.dev/gemini-api/docs/image-generation#prompt_7)
     let contentGuidance = ''
     if (contentType === 'image') {
+      const geminiImageBestPractices = `
+**Gemini image generation best practices (MUST follow when output includes a direct image prompt):**
+- **Describe the scene, don't list keywords:** Output a single narrative, descriptive paragraph for direct use with Gemini image models—not a list of disconnected words.
+- **Camera & lighting:** Use photographic language: shot type (close-up, wide-angle, macro), lens feel (e.g. 85mm portrait, soft bokeh), lighting (golden hour, soft diffused, three-point, backlight), and mood.
+- **Aspect ratio in prompt:** State the format in the prompt text (e.g. "Vertical portrait orientation", "Square image", "16:9 widescreen") and match platform (e.g. 9:16 for stories/reels).
+- **Be hyper-specific:** Include concrete details (colors with hex if brand, textures, composition, key elements) so the model has clear control.
+- **Context and intent:** Weave in purpose and audience (e.g. "for a professional LinkedIn post", "mobile-first WhatsApp creative") so the image serves the campaign goal.
+- **Semantic positive description:** Describe what you WANT (e.g. "empty, serene street") rather than negative prompts (e.g. "no cars").
+- **Reference images (if provided later):** If reference images will be used at generation time, include one short line on how they should be used (e.g. "Match the style and palette of the reference; keep headline and CTA as specified.").`
       if (campaignType === 'infographic') {
-        contentGuidance = 'Generate a detailed infographic design prompt with: data visualization elements (charts, graphs, icons), information hierarchy, layout structure, color coding for different sections, typography for headings and body text, visual flow from top to bottom, key statistics and numbers prominently displayed, icons and illustrations to represent concepts, clear sections and divisions, call-to-action placement. The prompt should be optimized for creating an educational, data-rich infographic that presents information clearly and visually.'
+        contentGuidance = `Generate a detailed infographic design prompt with: data visualization elements (charts, graphs, icons), information hierarchy, layout structure, color coding for different sections, typography for headings and body text, visual flow from top to bottom, key statistics and numbers prominently displayed, icons and illustrations to represent concepts, clear sections and divisions, call-to-action placement. The prompt should be optimized for creating an educational, data-rich infographic that presents information clearly and visually.
+${geminiImageBestPractices}
+Also provide one **Direct image prompt** paragraph (narrative, 2–4 sentences) that follows the best practices above and can be sent as-is to Gemini for image generation.`
       } else {
-        contentGuidance = 'Generate a detailed image generation prompt aligned to PL Capital example creatives: high-contrast navy/blue gradient background, modern geometric shapes (blue/green accents), big bold white headline, 2–4 supporting bullets with checkmark icons OR a simple numbered step row, and a single green rounded CTA button. Clean whitespace, crisp typography (Figtree-like), modern corporate aesthetic. IMPORTANT: do NOT add any logo/watermark; if branding is needed later, reserve clean empty space in the top-right.'
+        contentGuidance = `Generate a detailed image generation prompt with visual descriptions, composition, colors, mood, and style.
+${geminiImageBestPractices}
+You MUST also provide one **Direct image prompt** paragraph: a single narrative scene description (2–5 sentences) that can be used directly with Gemini image models. It should describe the scene (shot type, subject, action, environment, lighting, camera/lens, aspect ratio), reflect brand colors and tone from the guidelines, and state context/intent (platform and audience). Do not use bullet lists in this paragraph—use flowing prose.`
       }
     } else if (contentType === 'faceless-video') {
       // Veo 3.1-optimized: output a single prompt (or timestamped segments) for direct use by Veo 3.1
@@ -141,6 +157,7 @@ Campaign Details:
 - Content Type: ${contentType}
 - Duration: ${duration} seconds (if video)
 - Language: ${language}
+- Aspect ratio: ${aspectRatio} (MUST state this explicitly in the Direct image prompt, e.g. "16:9 widescreen", "9:16 vertical", "1:1 square")
 
 Platform Requirements:
 ${platformGuidance}
@@ -149,6 +166,9 @@ Content Type Requirements:
 ${contentGuidance}
 
 ${brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: You MUST strictly adhere to these brand guidelines. All colors, typography, tone, and visual style MUST match the specified brand requirements.` : ''}
+${(referenceImageUrls?.length || referenceImagesProvided) ? `
+**Reference images (INGESTED):** The user has provided reference image(s).${referenceImageUrls?.length ? ` URLs: ${referenceImageUrls.join(', ')}.` : ''} The creative brief and the **Direct image prompt** MUST instruct the image generator to match the style, palette, and key visual elements of the provided reference image(s). Include one clear sentence in the Direct image prompt such as: "Match the style and visual language of the provided reference image(s); preserve [brand] colors and CTA as specified."
+` : ''}
 
 Generate a detailed, specific, and actionable creative prompt with these sections:
 
@@ -165,6 +185,16 @@ ${campaignType === 'infographic' ? `
 10. **Call to Action**: CTA text and placement within the infographic
 11. **Platform Optimization**: Adaptations for each platform (LinkedIn: professional, Instagram: vibrant, etc.)
 12. **Technical Specs**: Exact aspect ratios (recommended: 1080x1920 for vertical, 1920x1080 for horizontal), file format (PNG/JPG)
+13. **Direct image prompt** (REQUIRED): One narrative paragraph (2–4 sentences) for Gemini image generation, following the best practices above.
+` : contentType === 'image' ? `
+1. **Core Message**: The main takeaway (write the actual message, not instructions)
+2. **Visual Direction**: Specific descriptions of look, feel, colors (#hex codes), composition, lighting, camera angles (use photographic language: shot type, lens, lighting setup)
+3. **Tone & Voice**: How the messaging sounds (professional, friendly, urgent, etc.)
+4. **Key Elements**: What MUST appear in the content (logos, text overlays, specific imagery)
+5. **Call to Action**: The exact CTA text and placement
+6. **Platform Optimization**: Specific adaptations for each platform; state aspect ratio (e.g. 9:16 for stories, 1:1 for feed)
+7. **Technical Specs**: Exact aspect ratios (e.g., 1080x1920 for vertical, 1920x1080 horizontal), file format (PNG/JPG)
+8. **Direct image prompt** (REQUIRED): One narrative paragraph (2–5 sentences) for Gemini image generation. Describe the scene in prose (shot type, subject, environment, lighting, camera feel). You MUST state the aspect ratio explicitly in this paragraph (e.g. "16:9 widescreen", "9:16 vertical", "1:1 square") using the Campaign aspect ratio above. Reflect brand guidelines and context (platform/audience). No bullet points in this paragraph.
 ` : `
 1. **Core Message**: The main takeaway (write the actual message, not instructions)
 2. **Visual Direction**: Specific descriptions of look, feel, colors (#hex codes), composition, lighting, camera angles
@@ -196,7 +226,9 @@ Make the prompt so detailed and specific that a designer or video editor could e
     const isReelOrShort = platforms?.some((p: string) => /instagram|youtube/i.test(p))
     const userMessage = isFacelessVideo
       ? `Generate a single Veo 3.1 video prompt for topic: ${topic}.${isReelOrShort ? ' Optimize for a viral reel: strong hook in first 1–2s, punchy pacing, loopable ending, clear on-screen CTA moment.' : ''} Output ONLY the prompt text (one paragraph or 4 timestamped lines for 8s).`
-      : `Generate a creative prompt for: ${topic}`
+      : contentType === 'image'
+        ? `Generate a creative prompt for: ${topic}. Include all sections above and a single narrative "Direct image prompt" paragraph suitable for Gemini image generation (best practices: scene description, camera/lighting, aspect ratio, brand, context).`
+        : `Generate a creative prompt for: ${topic}`
 
     const completion = await groq.chat.completions.create({
       messages: [
