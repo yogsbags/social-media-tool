@@ -995,7 +995,132 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         provider: 'gemini'
       });
 
-      // Generate platform-specific graphics using Gemini 3 Pro
+      const uploadToImgBB = async (imagePath) => {
+        if (!process.env.IMGBB_API_KEY) return null;
+        if (!imagePath || !fs.existsSync(imagePath)) return null;
+        try {
+          const imgBuffer = fs.readFileSync(imagePath);
+          const b64 = imgBuffer.toString('base64');
+          const payload = new URLSearchParams();
+          payload.append('key', process.env.IMGBB_API_KEY);
+          payload.append('image', b64);
+          const uploadResp = await fetch('https://api.imgbb.com/1/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: payload
+          });
+          if (!uploadResp.ok) {
+            const text = await uploadResp.text().catch(() => '');
+            console.log(`   ⚠️ ImgBB upload failed: ${uploadResp.status} ${text}`);
+            return null;
+          }
+          const json = await uploadResp.json();
+          return json?.data?.url || null;
+        } catch (err) {
+          console.log(`   ⚠️ ImgBB upload error: ${err instanceof Error ? err.message : 'unknown'}`);
+          return null;
+        }
+      };
+
+      // Carousel (LinkedIn/Instagram): generate one image per slide, then upload each to ImgBB
+      const isCarousel = options.format === 'carousel' && (options.platform === 'linkedin' || options.platform === 'instagram');
+      if (isCarousel) {
+        const carouselPlatform = options.platform;
+        const platformLabel = carouselPlatform === 'instagram' ? 'Instagram' : 'LinkedIn';
+        console.log(`   🧩 ${platformLabel} carousel detected — generating slide images...`);
+
+        const contentEntries = Object.values(this.stateManager?.state?.content || {}).filter(Boolean);
+        const byCompletedAtDesc = (a, b) => {
+          const aTs = new Date(a?.completedAt || a?.updatedAt || a?.createdAt || 0).getTime();
+          const bTs = new Date(b?.completedAt || b?.updatedAt || b?.createdAt || 0).getTime();
+          return bTs - aTs;
+        };
+        const topic = (options.topic || '').trim();
+        const withCarousel = contentEntries.filter((e) => e?.contentPack?.platforms?.[carouselPlatform]?.carousel);
+        const latestContent =
+          (withCarousel.length > 0
+            ? (topic ? withCarousel.filter((e) => (e?.topic || '').trim() === topic).sort(byCompletedAtDesc)[0] : null) || withCarousel.sort(byCompletedAtDesc)[0]
+            : null) || (topic ? contentEntries.filter((e) => (e?.topic || '').trim() === topic).sort(byCompletedAtDesc)[0] : null) || contentEntries.sort(byCompletedAtDesc)[0] || null;
+
+        const carousel = latestContent?.contentPack?.platforms?.[carouselPlatform]?.carousel || null;
+        const slideCount = Math.min(12, Math.max(5, Number(carousel?.slideCount || 7)));
+        const coverText = carousel?.coverText || options.topic || 'Quick Investing Checklist';
+        const slides = Array.isArray(carousel?.slides) ? carousel.slides : [];
+        const finalSlideCta = carousel?.finalSlideCta || 'Save this checklist • Follow PL Capital';
+        const disclaimerLine = carousel?.disclaimerLine || 'Market risks apply.';
+
+        const clampWords = (text, maxWords) => {
+          const words = String(text || '').trim().split(/\s+/).filter(Boolean);
+          if (words.length <= maxWords) return text;
+          return words.slice(0, maxWords).join(' ');
+        };
+        const clampLines = (text, maxLines, maxCharsPerLine) => {
+          const raw = String(text || '').trim();
+          const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+          const limited = (lines.length ? lines : [raw]).slice(0, maxLines).map((l) => l.length <= maxCharsPerLine ? l : `${l.slice(0, maxCharsPerLine - 1).trim()}…`);
+          return limited.join('\n');
+        };
+
+        const resolvedSlides = Array.from({ length: slideCount }).map((_, idx) => {
+          const s = slides[idx] || {};
+          const isCover = idx === 0;
+          const isFinal = idx === slideCount - 1;
+          if (isCover) return { title: coverText, body: s.body || 'Swipe →', highlight: s.highlight || 'Checklist', visualCue: s.visualCue || 'Bold cover headline, minimal icons' };
+          if (isFinal) return { title: s.title || 'Quick recap', body: s.body || `${finalSlideCta}\n${disclaimerLine}`, highlight: s.highlight || 'Save', visualCue: s.visualCue || 'Checklist icons + CTA' };
+          return { title: s.title || `Point ${idx}`, body: s.body || 'One clear takeaway.', highlight: s.highlight || 'Key idea', visualCue: s.visualCue || 'Simple icon + mini chart' };
+        });
+
+        const generatedImages = [];
+        for (let i = 0; i < resolvedSlides.length; i++) {
+          const slide = resolvedSlides[i];
+          const slideNumber = i + 1;
+          const total = resolvedSlides.length;
+          const maxBodyChars = carouselPlatform === 'instagram' ? 32 : 40;
+          const safeTitle = clampWords(slide.title, 6);
+          const safeBody = clampLines(slide.body, 2, maxBodyChars);
+          const safeHighlight = clampLines(slide.highlight, 1, 18);
+          const safeVisualCue = clampLines(slide.visualCue, 2, 60);
+          const slidePrompt = carouselPlatform === 'instagram'
+            ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. Premium, clean, no exaggerated claims.`
+            : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. Professional, shareable, no exaggerated claims.`;
+
+          console.log(`   ⏳ Generating carousel slide ${slideNumber}/${total}...`);
+          const slideResult = await generator.generateSocialGraphic(slidePrompt, carouselPlatform, {
+            imageSize: '4K',
+            useGrounding: false,
+            aspectRatio: '1:1',
+            language: options.language,
+            numberOfImages: 1
+          });
+          const first = slideResult?.images?.[0];
+          if (first) {
+            generatedImages.push(first);
+            console.log(`   ✅ Slide ${slideNumber} generated: ${first.path || first.url || 'success'}`);
+          }
+        }
+
+        if (process.env.IMGBB_API_KEY && generatedImages.length > 0) {
+          console.log('   ☁️  Uploading carousel slides to ImgBB...');
+          for (const img of generatedImages) {
+            const imagePath = img.path || img.url;
+            const hostedUrl = await uploadToImgBB(imagePath);
+            if (hostedUrl) {
+              img.hostedUrl = hostedUrl;
+              console.log(`   ✅ Uploaded to ImgBB: ${hostedUrl}`);
+            }
+          }
+        } else {
+          console.log('   ℹ️  ImgBB upload skipped (no API key or no images)');
+        }
+
+        return {
+          success: true,
+          images: generatedImages,
+          features: ['carousel', 'multi-slide']
+        };
+      }
+
+      // Single image (non-carousel): generate one visual, then upload to ImgBB
       const prompt = options.prompt || this._buildVisualPrompt(options);
       console.log(`   Prompt: ${prompt.substring(0, 80)}...`);
       console.log('   ⏳ Generating image (Gemini 3 Pro, 4K)...\n');
@@ -1009,6 +1134,20 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
 
       console.log(`   ✅ Visual generated: ${result.images[0]?.path || 'success'}`);
       console.log(`   Features: ${result.features?.join(', ') || 'N/A'}`);
+
+      if (process.env.IMGBB_API_KEY && result.images && result.images.length > 0) {
+        console.log('   ☁️  Uploading visual(s) to ImgBB...');
+        for (const img of result.images) {
+          const imagePath = img.path || img.url;
+          const hostedUrl = await uploadToImgBB(imagePath);
+          if (hostedUrl) {
+            img.hostedUrl = hostedUrl;
+            console.log(`   ✅ Uploaded to ImgBB: ${hostedUrl}`);
+          }
+        }
+      } else {
+        console.log('   ℹ️  ImgBB upload skipped (no API key or no images)');
+      }
 
       return {
         success: true,

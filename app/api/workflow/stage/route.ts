@@ -579,6 +579,15 @@ export async function POST(request: NextRequest) {
               stageData.type = 'campaign-planning'
             } else if (stageId === 2) {
               stageData.type = 'content-generation'
+              // WhatsApp creative: merge image URL from backend so edit popup View Image works
+              const whatsappMatch = outputBuffer.match(/__STAGE2_WHATSAPP_IMAGE__([^\n]+)/)
+              if (whatsappMatch) {
+                try {
+                  const parsed = JSON.parse(whatsappMatch[1]) as { imageUrl?: string; images?: Array<{ path?: string; url?: string; hostedUrl?: string }> }
+                  if (parsed.imageUrl) stageData.imageUrl = parsed.imageUrl
+                  if (Array.isArray(parsed.images) && parsed.images.length > 0) stageData.images = parsed.images
+                } catch (_) { /* ignore */ }
+              }
             } else if (stageId === 3) {
               stageData.type = 'visual-assets'
             } else if (stageId === 4) {

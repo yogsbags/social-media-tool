@@ -331,6 +331,9 @@ async function run() {
       if (stageName === 'visuals' && stageResult?.images?.length > 0) {
         console.log('__STAGE3_IMAGES__' + JSON.stringify(stageResult.images));
       }
+      if (stageName === 'content' && stageResult?.images?.[0]?.hostedUrl) {
+        console.log('__STAGE2_WHATSAPP_IMAGE__' + JSON.stringify({ imageUrl: stageResult.images[0].hostedUrl, images: stageResult.images }));
+      }
       console.log(`\n✅ Stage "${stageName}" completed!\n`);
       break;
 
