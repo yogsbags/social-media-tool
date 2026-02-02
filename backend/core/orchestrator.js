@@ -33,10 +33,10 @@ class SocialMediaOrchestrator {
       return bTs - aTs;
     };
 
-    const normalizedTopic = (topic || '').trim();
+    const normalizedTopic = (topic || '').trim().replace(/\s+/g, ' ');
     if (normalizedTopic) {
       const match = planningEntries
-        .filter((e) => (e?.topic || '').trim() === normalizedTopic)
+        .filter((e) => (e?.topic || '').trim().replace(/\s+/g, ' ') === normalizedTopic)
         .sort(byCompletedAtDesc)[0];
       if (match) return match;
     }
@@ -60,7 +60,8 @@ class SocialMediaOrchestrator {
     if (!match) return null;
 
     const startIdx = text.indexOf(match[0]) + match[0].length;
-    const afterMarker = text.slice(startIdx).trim();
+    let afterMarker = text.slice(startIdx).trim();
+    afterMarker = afterMarker.replace(/^\s*\*+\s*/, '');
     const endOfParagraph = afterMarker.search(/\n\s*\n/);
     const paragraph = (endOfParagraph === -1 ? afterMarker : afterMarker.slice(0, endOfParagraph)).trim();
     return paragraph.length > 30 ? paragraph : null;
@@ -314,11 +315,14 @@ Output a single JSON object with exactly these keys:
 - "finalSlideCta": string, call-to-action for last slide (e.g. "Save this checklist • Follow PL Capital")
 - "disclaimerLine": string, exact compliance line (e.g. "Market risks apply.")
 
-Rules: No guaranteed returns, no "sure-shot" claims. Professional, compliant, scroll-stopping. Platform: ${platform}.`;
+Rules: No guaranteed returns, no "sure-shot" claims. Professional, compliant, scroll-stopping. Platform: ${platform}.
+
+IMPORTANT – Continuation and theme: The carousel must read as one coherent story. Each slide must logically continue from the previous (same theme, narrative flow, and key points in order). Keep the same brand voice and visual language across all slides so the generated images can share one consistent look (colors, typography, style).`;
 
     const userPrompt = `Create carousel content for topic: ${topic}
 Language: ${language}
 Platform: ${platform}
+Slides must form a logical sequence: cover → key points in order → final CTA. Same theme and brand tone throughout so visuals stay consistent.
 ${planningText ? `Optional creative direction from planning:\n${planningText}\n` : ''}
 Output ONLY the JSON object, no other text.`;
 
@@ -784,12 +788,17 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       console.log('   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...');
       let prompt = options.prompt || null;
       if (!prompt) {
+        await this.stateManager.initialize();
         const planning = this._getLatestCampaignPlanningEntry(options.topic);
         const creativePrompt = (planning?.creativePrompt || planning?.output || '').trim();
         const directPrompt = creativePrompt ? this._extractDirectImagePrompt(creativePrompt) : null;
         if (directPrompt) {
           prompt = directPrompt;
           console.log('   📋 Using Direct image prompt from Stage 1 planning');
+        } else if (creativePrompt) {
+          console.log('   ⚠️ Stage 1 creative prompt found but no "Direct image prompt" paragraph; using fallback.');
+        } else {
+          console.log('   ⚠️ No Stage 1 planning found for topic; using fallback prompt.');
         }
       }
       if (!prompt) {
@@ -1104,6 +1113,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           return { title: s.title || `Point ${idx}`, body: s.body || 'One clear takeaway.', highlight: s.highlight || 'Key idea', visualCue: s.visualCue || 'Simple icon + mini chart' };
         });
 
+        const brandStyle = 'PL Capital brand: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766), Figtree typography. Professional, clean, no exaggerated claims.';
         const generatedImages = [];
         for (let i = 0; i < resolvedSlides.length; i++) {
           const slide = resolvedSlides[i];
@@ -1114,22 +1124,78 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           const safeBody = clampLines(slide.body, 2, maxBodyChars);
           const safeHighlight = clampLines(slide.highlight, 1, 18);
           const safeVisualCue = clampLines(slide.visualCue, 2, 60);
-          const slidePrompt = carouselPlatform === 'instagram'
-            ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. Premium, clean, no exaggerated claims.`
-            : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. Professional, shareable, no exaggerated claims.`;
+          const platformLabel = carouselPlatform === 'instagram' ? 'Instagram' : 'LinkedIn';
 
-          console.log(`   ⏳ Generating carousel slide ${slideNumber}/${total}...`);
-          const slideResult = await generator.generateSocialGraphic(slidePrompt, carouselPlatform, {
-            imageSize: '4K',
-            useGrounding: false,
-            aspectRatio: '1:1',
-            language: options.language,
-            numberOfImages: 1
-          });
-          const first = slideResult?.images?.[0];
-          if (first) {
-            generatedImages.push(first);
-            console.log(`   ✅ Slide ${slideNumber} generated: ${first.path || first.url || 'success'}`);
+          if (i === 0) {
+            const slidePrompt = carouselPlatform === 'instagram'
+              ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`
+              : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`;
+
+            console.log(`   ⏳ Generating carousel slide ${slideNumber}/${total} (first slide)...`);
+            const slideResult = await generator.generateSocialGraphic(slidePrompt, carouselPlatform, {
+              imageSize: '4K',
+              useGrounding: false,
+              aspectRatio: '1:1',
+              language: options.language,
+              numberOfImages: 1
+            });
+            const first = slideResult?.images?.[0];
+            if (first) {
+              generatedImages.push(first);
+              console.log(`   ✅ Slide ${slideNumber} generated: ${first.path || first.url || 'success'}`);
+            }
+          } else {
+            const prevImage = generatedImages[i - 1];
+            const prevPath = prevImage?.path || prevImage?.url;
+            if (!prevPath) {
+              console.log(`   ⚠️ No previous slide image; generating slide ${slideNumber} standalone.`);
+              const fallbackPrompt = carouselPlatform === 'instagram'
+                ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`
+                : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`;
+              const fallbackResult = await generator.generateSocialGraphic(fallbackPrompt, carouselPlatform, {
+                imageSize: '4K',
+                useGrounding: false,
+                aspectRatio: '1:1',
+                language: options.language,
+                numberOfImages: 1
+              });
+              const first = fallbackResult?.images?.[0];
+              if (first) generatedImages.push(first);
+              continue;
+            }
+
+            const continuationPrompt = `Create the NEXT ${platformLabel} carousel slide (1:1). Match the exact visual style, color palette, typography, and brand look of the reference image (same PL Capital branding). This is slide ${slideNumber} of ${total}. New content for THIS slide only: Headline: "${safeTitle}". Body: "${safeBody}". Highlight: "${safeHighlight}". Visual: ${safeVisualCue}. Do not copy the reference image; create a new slide that continues the carousel with the same theme and brand guidelines.`;
+
+            console.log(`   ⏳ Generating carousel slide ${slideNumber}/${total} (continuation from previous)...`);
+            let editResult;
+            try {
+              editResult = await generator.editImage(continuationPrompt, prevPath, {
+                aspectRatio: '1:1',
+                imageSize: '4K',
+                useGrounding: false,
+                language: options.language
+              });
+            } catch (err) {
+              console.log(`   ⚠️ Continuation edit failed for slide ${slideNumber}, generating standalone: ${err.message}`);
+              const fallbackPrompt = carouselPlatform === 'instagram'
+                ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`
+                : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`;
+              const fallbackResult = await generator.generateSocialGraphic(fallbackPrompt, carouselPlatform, {
+                imageSize: '4K',
+                useGrounding: false,
+                aspectRatio: '1:1',
+                language: options.language,
+                numberOfImages: 1
+              });
+              const first = fallbackResult?.images?.[0];
+              if (first) generatedImages.push(first);
+              continue;
+            }
+            const first = editResult?.images?.[0];
+            if (first) {
+              generatedImages.push(first);
+              console.log(`   ✅ Slide ${slideNumber} generated (continuation): ${first.path || first.url || 'success'}`);
+            }
           }
         }
 
