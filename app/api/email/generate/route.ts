@@ -1,13 +1,9 @@
-import Groq from "groq-sdk";
+import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || "",
-});
-
-const MODEL = "openai/gpt-oss-120b";
+const MODEL = "gemini-3-flash-preview";
 
 const HEADER_IMAGE_URL =
   "https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/xtp/w8t/1aj/Asset%201.png";
@@ -15,6 +11,32 @@ const FOOTER_IMAGE_URL =
   "https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/9wn/vw0/ds6/Asset%202.png";
 const BEE_SOCIAL_ICON_BASE =
   "https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/circle-color/";
+
+async function getGeminiText(response: any) {
+  if (!response) return "";
+
+  try {
+    if (typeof response.text === "function") {
+      const maybe = response.text();
+      if (maybe && typeof maybe.then === "function") return await maybe;
+      return maybe || "";
+    }
+  } catch {
+    // ignore and fall back
+  }
+
+  if (typeof response.text === "string") return response.text;
+
+  const parts = response?.candidates?.[0]?.content?.parts;
+  if (Array.isArray(parts)) {
+    return parts
+      .map((p: any) => (typeof p?.text === "string" ? p.text : ""))
+      .filter(Boolean)
+      .join("");
+  }
+
+  return "";
+}
 
 function sanitizeNewsletterHtml(html: string) {
   const allowlistedBases = [HEADER_IMAGE_URL, FOOTER_IMAGE_URL, BEE_SOCIAL_ICON_BASE];
@@ -55,6 +77,18 @@ function sanitizeNewsletterHtml(html: string) {
  */
 export async function POST(request: NextRequest) {
   try {
+    const geminiApiKey = process.env.GEMINI_API_KEY || "";
+    if (!geminiApiKey) {
+      return NextResponse.json(
+        {
+          error: "GEMINI_API_KEY is not set",
+          details:
+            "Set GEMINI_API_KEY in your environment (e.g., Railway variables) to generate newsletters with Gemini.",
+        },
+        { status: 500 },
+      );
+    }
+
     const body = await request.json();
     const {
       topic,
@@ -105,7 +139,7 @@ Layout reference (use this structure and styling cues):
   * Header image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/xtp/w8t/1aj/Asset%201.png
 - Hero section: TEXT-ONLY (no <img>) with compelling headline + 1 supporting line on a solid/gradient brand-color background
 - Intro paragraph and section dividers
-- "Market Highlights" section
+- One main content section (TEXT-ONLY) with a heading and body that is directly relevant to the campaign purpose and target audience. Choose a section title and content focus that fits the purpose (e.g. "Key Insights", "What You Need to Know", "Strategies for [audience]", "Why This Matters for You") and write for the specified target audience. No images in this section.
 - 3-column content grid: TEXT-ONLY cards (NO images). Each card must have:
   * headline
   * 1–2 sentence description
@@ -228,25 +262,27 @@ Use the brand colors specified in the guidelines for:
 
 Make the HTML production-ready - it should render beautifully in all email clients.`;
 
-    console.log("Generating email newsletter with GPT-OSS-120B...");
+    console.log(`Generating email newsletter with ${MODEL}...`);
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        { role: "system", content: systemPrompt },
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+    const response = await ai.models.generateContent({
+      model: MODEL,
+      contents: [
         {
-          role: "user",
-          content: `Generate a professional email newsletter for: ${topic}`,
+          text: `${systemPrompt}\n\nUser request: Generate a professional email newsletter for: ${topic}`,
         },
       ],
-      model: MODEL,
-      temperature: 0.7,
-      max_tokens: 8000,
+      config: {
+        temperature: 0.7,
+        maxOutputTokens: 8000,
+        responseMimeType: "application/json",
+      },
     });
 
-    const generatedContent = completion.choices[0]?.message?.content || "";
+    const generatedContent = await getGeminiText(response);
 
     if (!generatedContent) {
-      throw new Error("No email content generated from GPT-OSS-120B");
+      throw new Error(`No email content generated from ${MODEL}`);
     }
 
     // Try to parse as JSON first
@@ -304,7 +340,7 @@ Make the HTML production-ready - it should render beautifully in all email clien
           ? sanitizeNewsletterHtml(emailData.html)
           : emailData?.html,
       model: MODEL,
-      usage: completion.usage,
+      usage: (response as any)?.usageMetadata || null,
     });
   } catch (error) {
     console.error("Error generating email newsletter:", error);

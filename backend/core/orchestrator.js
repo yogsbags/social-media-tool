@@ -15,6 +15,133 @@ class SocialMediaOrchestrator {
     this.stateManager = new StateManager(path.join(this.projectRoot, 'data'));
   }
 
+  _getLatestCampaignPlanningEntry(topic) {
+    const campaigns = this.stateManager?.state?.campaigns || {};
+    const entries = Object.values(campaigns).filter(Boolean);
+
+    const planningEntries = entries.filter((entry) => {
+      const stageId = entry?.stageId;
+      const type = typeof entry?.type === 'string' ? entry.type : '';
+      return stageId === 1 || type.includes('campaign-planning');
+    });
+
+    if (planningEntries.length === 0) return null;
+
+    const byCompletedAtDesc = (a, b) => {
+      const aTs = new Date(a?.completedAt || a?.updatedAt || a?.createdAt || 0).getTime();
+      const bTs = new Date(b?.completedAt || b?.updatedAt || b?.createdAt || 0).getTime();
+      return bTs - aTs;
+    };
+
+    const normalizedTopic = (topic || '').trim();
+    if (normalizedTopic) {
+      const match = planningEntries
+        .filter((e) => (e?.topic || '').trim() === normalizedTopic)
+        .sort(byCompletedAtDesc)[0];
+      if (match) return match;
+    }
+
+    return planningEntries.sort(byCompletedAtDesc)[0];
+  }
+
+  async _generateHeyGenScript(options) {
+    const topic = options.topic || 'PL Capital investing insights';
+    const platform = options.platform || 'instagram';
+    const format = options.format || 'reel';
+    const duration = Number(options.duration || 8);
+    const language = options.language || 'english';
+
+    const wordsTarget = Math.max(12, Math.round(duration * 2.2)); // ~2.2 wps for clear speech
+    const groqKey = process.env.GROQ_API_KEY;
+
+    const planning = this._getLatestCampaignPlanningEntry(topic);
+    const planningText = (planning?.creativePrompt || planning?.output || '').trim();
+
+    if (!groqKey) {
+      const needsDisclaimer = /(english|hinglish)/i.test(language);
+      const disclaimer = needsDisclaimer ? 'Market risks apply.' : '';
+      const hook = platform === 'instagram' ? 'Stop scrolling—quick money tip.' : 'Quick update.';
+      return `${hook} ${topic}. Want a simple plan? Talk to PL Capital today. ${disclaimer}`.trim();
+    }
+
+    const systemPrompt = `You write short, natural spoken scripts for a financial services video avatar.
+Return ONLY the spoken script as plain text. No bullet points. No headings. No stage directions. No meta-instructions.`;
+
+    const languageName = this._getLanguageName(language);
+    const isInstagramReel = platform === 'instagram' || /reel/i.test(format || '');
+    const needsDisclaimer = /(english|hinglish)/i.test(language);
+    const styleGuidance = isInstagramReel
+      ? `Style (Instagram Reels, Indian audience):
+- Hook in the first sentence (pattern interrupt).
+- Short punchy sentences, spoken like a credible Indian finfluencer (not cheesy).
+- Use everyday India cues where relevant (₹, SIP, tax, salary day) without giving personalized advice.
+- Close with a strong CTA: "Save this", "Share", "Follow", or "Comment 'PLAN'".`
+      : '';
+    const userPrompt = `Write a single spoken script for an AI avatar video.
+
+Constraints:
+- Platform: ${platform}
+- Format: ${format}
+- Topic: ${topic}
+- Duration: ${duration} seconds
+- Language: ${languageName}
+- Tone: confident, warm, professional, Indian business style.
+- Length: about ${wordsTarget} words (max ${wordsTarget + 6}).
+- Compliance: no guaranteed returns, no exaggerated claims, no personalized investment advice.
+- If language is English or Hinglish, end with the exact disclaimer: "Market risks apply." (exactly once).
+
+${styleGuidance ? styleGuidance : ''}
+
+Optional context from Stage 1 planning (may include purpose/audience/tone):
+${planningText ? planningText.slice(0, 2000) : '(none)'}
+
+Output rules:
+- Output ONLY the script text the avatar should speak.
+- Do NOT include quotation marks or labels like "Script:".`;
+
+    const model = process.env.GROQ_HEYGEN_SCRIPT_MODEL || 'llama-3.3-70b-versatile';
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${groqKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.6,
+        max_tokens: 400
+      })
+    });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(text || `Groq API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    let script = (data.choices?.[0]?.message?.content || '').trim();
+
+    script = script.replace(/^```[\s\S]*?$/gm, '').trim();
+    script = script.replace(/^\s*script\s*:\s*/i, '').trim();
+    script = script.replace(/^["']|["']$/g, '').trim();
+
+    const words = script.split(/\s+/).filter(Boolean);
+    if (words.length > wordsTarget + 12) {
+      script = words.slice(0, wordsTarget + 12).join(' ').trim();
+    }
+
+    if (needsDisclaimer && !/market risks apply\.?$/i.test(script)) {
+      script = `${script.replace(/\.*\s*$/, '')}. Market risks apply.`;
+    }
+
+    return script;
+  }
+
   /**
    * Initialize the workflow system
    */
@@ -616,7 +743,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
    * Build visual prompt based on options
    */
   _buildVisualPrompt(options) {
-    const { platform, format, topic, type, brandSettings, language = 'english' } = options;
+    const { platform, format, topic, type, brandSettings, language = 'english', whatsapp } = options;
     const languageName = this._getLanguageName(language);
 
     const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';
@@ -648,7 +775,45 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       youtube: `High-quality ${safeFormat} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
       facebook: `Engaging ${safeFormat} post graphic for Facebook about ${topic || 'financial planning'}. Clear, friendly messaging with strong hierarchy. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
       twitter: `Concise ${safeFormat} visual for Twitter about ${topic || 'market insights'}. Minimal but high-contrast layout optimized for quick scan. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
-      whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`
+      whatsapp: (() => {
+        const headline = whatsapp?.headline ? String(whatsapp.headline).trim() : '';
+        const body = whatsapp?.body ? String(whatsapp.body).trim() : '';
+        const cta = whatsapp?.cta ? String(whatsapp.cta).trim() : '';
+
+        const contentSpec = (headline || body || cta)
+          ? `Text to render (exact):
+Headline: ${headline || (topic || 'Your offer')}
+Body: ${body || 'One clear benefit.\nOne clear next step.'}
+CTA: ${cta || 'Learn more'}`
+          : `Text-forward layout with a bold headline and a single CTA.`;
+
+        return `Design a visually stunning, premium WhatsApp creative poster for PL Capital (India, finance).
+Format: 1080x1920 (9:16). Mobile-first readability. High-contrast. Modern and clean.
+Goal: instantly communicate the message + drive action (tap/click/forward).
+
+Layout system (STRICT):
+- Safe margins: 80px on all sides. Keep all text inside safe area.
+- Hierarchy: (1) Headline (2) Body (3) CTA button (4) Small disclaimer footer.
+- Headline: big, bold, max 2 lines, 28–44 chars/line.
+- Body: max 2 lines, 28–40 chars/line, supportive and clear.
+- CTA: button pill with solid fill (#00b34e / #66e766), white text, 2–4 words.
+- Footer: tiny disclaimer line (e.g., "Market risks apply.") in 10–12px.
+- Optional: small icon/illustration on the side (simple, not cluttered).
+
+Brand & style:
+- Use PL palette (navy/blue base with green accents). Use Figtree-like sans font.
+- Add subtle gradients/texture, but keep background clean (no noisy patterns).
+- Use ONE highlight element (badge/chip) to emphasize a key term/number if present.
+- No stock-photo faces; avoid busy scenes. Prefer abstract finance motifs (₹, chart line, calendar, shield/trust icon).
+
+Copy accuracy (VERY IMPORTANT):
+${contentSpec}
+
+Compliance constraints:
+- No guaranteed returns, no "sure-shot", no exaggerated claims.
+${languageInstruction}
+${brandGuidance}`;
+      })()
     };
 
     return basePrompts[platform] || basePrompts.linkedin;
@@ -730,7 +895,14 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
 
       // Check if this is avatar mode (VEO-based avatar generation)
       const isAvatarMode = options.useAvatar === true;
-      const isHeyGenAvatar = options.avatarId === 'siddharth-vora'; // Later: route to HeyGen
+      const looksLikeHeyGenAvatarId = (value) =>
+        typeof value === 'string' && /^[a-f0-9]{32}$/i.test(value.trim());
+
+      const isHeyGenAvatar =
+        options.avatarId === 'siddharth-vora' ||
+        looksLikeHeyGenAvatarId(options.avatarId) ||
+        Boolean(options.heygenAvatarGroupId) ||
+        Boolean(options.heygenAvatarId);
 
       // For avatar mode (non-HeyGen), augment prompt with avatar and voice descriptions
       if (isAvatarMode && !isHeyGenAvatar) {
@@ -739,11 +911,12 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         const avatarDescription = options.avatarDescription || 'Indian male professional in formal business attire, confident posture, warm expression';
         const voiceDescription = options.voiceDescription || 'Deep, confident Indian male voice with slight accent, clear articulation';
 
-        // Auto-generate script instruction if not provided
+        // Auto-generate script instruction if not provided (frontend sends avatarScriptText)
+        const userScript = options.scriptText || options.avatarScriptText;
         let scriptInstruction;
-        if (options.scriptText) {
-          scriptInstruction = `speaking the following script: "${options.scriptText}"`;
-          console.log(`   📝 Script: ${options.scriptText.substring(0, 60)}...`);
+        if (userScript) {
+          scriptInstruction = `speaking the following script: "${userScript}"`;
+          console.log(`   📝 Script: ${userScript.substring(0, 60)}...`);
         } else {
           // Generate script instruction based on platform and topic
           const topic = options.topic || 'financial services and investment opportunities';
@@ -769,11 +942,22 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         console.log('   ✅ Avatar prompt constructed\n');
       }
 
-      // HeyGen avatar routing for Siddharth Vora
+      // HeyGen avatar routing (Siddharth Vora + other avatars from /api/avatars mapping)
       if (isAvatarMode && isHeyGenAvatar) {
-        console.log('\n🎬 HeyGen Avatar Mode (Siddharth Vora)');
+        const prettyAvatarId = (value) => {
+          if (!value) return '';
+          const s = String(value).trim();
+          return s.length > 12 ? `${s.slice(0, 8)}…` : s;
+        };
+
+        const avatarDisplayName =
+          options.avatarId === 'siddharth-vora'
+            ? 'Siddharth Vora (Custom)'
+            : `HeyGen Avatar (${prettyAvatarId(options.avatarId || options.heygenAvatarId)})`;
+
+        console.log('\n🎬 HeyGen Avatar Mode');
         console.log(`   Provider: HeyGen`);
-        console.log(`   Avatar: Siddharth Vora (Custom)`);
+        console.log(`   Avatar: ${avatarDisplayName}`);
         console.log(`   Duration: ${requestedDuration}s\n`);
 
         // Check for HeyGen API key
@@ -781,29 +965,65 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           throw new Error('HEYGEN_API_KEY environment variable is required for HeyGen avatar generation');
         }
 
-        // Generate or use script
+        // Generate or use script (frontend sends avatarScriptText; CLI may send scriptText)
+        const userScript = options.scriptText || options.avatarScriptText;
         let scriptText;
-        if (options.scriptText) {
-          scriptText = options.scriptText;
+        if (userScript) {
+          scriptText = userScript;
           console.log(`   📝 Script: ${scriptText.substring(0, 60)}...`);
         } else {
-          // Auto-generate script based on topic
-          const topic = options.topic || 'financial services and investment opportunities';
-          const platform = options.platform || 'linkedin';
-          const format = options.format || 'testimonial';
-
-          const languageName = this._getLanguageName(options.language || 'english');
-          const languageInstruction = options.language && options.language !== 'english'
-            ? ` All speech and dialogue must be in ${languageName}.`
-            : '';
-          scriptText = `Generate natural, engaging speech that is informative, trustworthy, and appropriate for the platform. Include key points, benefits, and a clear message. Speech should be conversational yet professional, matching Indian business communication style.${languageInstruction}`;
-
-          console.log(`   📝 Script: [Auto-generated for ${topic}]`);
+          try {
+            scriptText = await this._generateHeyGenScript({
+              topic: options.topic,
+              platform: options.platform,
+              format: options.format,
+              duration: requestedDuration,
+              language: options.language
+            });
+          } catch (error) {
+            console.log(`   ⚠️  Script generation failed; using fallback: ${error.message}`);
+            const topic = options.topic || 'PL Capital investing insights';
+            scriptText = `Hi, quick update from PL Capital. ${topic}. If you want a portfolio review or a plan, talk to us today. Market risks apply.`;
+          }
+          console.log(`   📝 Script: ${scriptText.substring(0, 60)}...`);
         }
 
-        // Get HeyGen avatar and voice IDs from options or use defaults
-        const heygenAvatarId = options.heygenAvatarId || process.env.HEYGEN_AVATAR_ID_SIDDHARTH;
-        const heygenVoiceId = options.heygenVoiceId || process.env.HEYGEN_VOICE_ID_SIDDHARTH;
+        // Avatar/voice resolution aligned with martech (multiple HeyGen avatars + mapped voices)
+        // - Siddharth Vora: env or hardcoded Siddharth defaults
+        // - Other HeyGen avatars (32-char groupId): options.avatarId + options.avatarVoiceId or voice from mapping
+        const SIDDHARTH_AVATAR_ID = '9da4afb2c22441b5aab73369dda7f65d';
+        const SIDDHARTH_VOICE_ID = 'c8d184ef4d81484a97d70c94bb76fec3';
+        const isSiddharthVora = options.avatarId === 'siddharth-vora';
+        const isGroupIdAvatar = looksLikeHeyGenAvatarId(options.avatarId);
+
+        let heygenAvatarId;
+        let heygenVoiceId;
+
+        if (isSiddharthVora) {
+          heygenAvatarId =
+            options.heygenAvatarId ||
+            process.env.HEYGEN_AVATAR_ID_SIDDHARTH ||
+            process.env.HEYGEN_AVATAR_ID ||
+            SIDDHARTH_AVATAR_ID;
+          heygenVoiceId =
+            options.heygenVoiceId ||
+            options.avatarVoiceId ||
+            process.env.HEYGEN_VOICE_ID_SIDDHARTH ||
+            process.env.HEYGEN_VOICE_ID ||
+            SIDDHARTH_VOICE_ID;
+        } else if (isGroupIdAvatar) {
+          heygenAvatarId = options.heygenAvatarId || options.avatarId;
+          heygenVoiceId =
+            options.heygenVoiceId ||
+            options.avatarVoiceId ||
+            this._getVoiceIdFromAvatarMapping(options.avatarId);
+          if (!heygenVoiceId) {
+            throw new Error(`HeyGen voice not found for avatar ${options.avatarId}. Pass avatarVoiceId or add voiceId in config/heygen-native-voice-mapping.json`);
+          }
+        } else {
+          heygenAvatarId = options.heygenAvatarId || process.env.HEYGEN_AVATAR_ID_SIDDHARTH || process.env.HEYGEN_AVATAR_ID || SIDDHARTH_AVATAR_ID;
+          heygenVoiceId = options.heygenVoiceId || options.avatarVoiceId || process.env.HEYGEN_VOICE_ID_SIDDHARTH || process.env.HEYGEN_VOICE_ID || SIDDHARTH_VOICE_ID;
+        }
 
         if (!heygenAvatarId) {
           throw new Error('HeyGen avatar ID not configured. Set HEYGEN_AVATAR_ID_SIDDHARTH or pass heygenAvatarId');
@@ -1078,13 +1298,27 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       ? ` All on-screen text, labels, captions, and any spoken content must be in ${languageName}.`
       : '';
 
-    // Faceless video prompts with explicit "no people" constraints
+    // Faceless video prompts with explicit "no people" constraints (Instagram/YouTube India-aligned with martech)
     const basePrompts = {
       linkedin: `Faceless professional ${format || 'business'} video about ${topic || 'financial services'}. NO PEOPLE, NO FACES, NO HUMANS. Abstract data visualizations, animated charts and graphs, geometric shapes, motion graphics only. Corporate blue and teal color palette with navy accents. Dynamic camera movements orbiting around 3D data elements. Volumetric lighting with soft glows. Modern, clean, premium aesthetic. Cinematic quality. 16:9 aspect ratio.${languageInstruction}`,
 
-      instagram: `Faceless engaging ${format || 'reel'} video about ${topic || 'investment tips'}. NO PEOPLE, NO FACES, NO HUMANS. Vibrant abstract visuals, animated infographics, colorful geometric patterns, particle effects, data-driven motion graphics. Dynamic camera zoom and rotation. Trendy gradient backgrounds (purple to teal). High-energy pacing. Modern social media aesthetic. 9:16 vertical format optimized.${languageInstruction}`,
+      instagram: `Instagram Reels-style faceless ${format || 'reel'} about ${topic || 'money tips'} for an Indian audience. NO PEOPLE, NO FACES, NO HUMANS.
+Editing & format: 9:16 vertical, 0.5–1.2s fast cuts, strong hook in first 1–2 seconds, loopable ending, bold subtitles throughout, high contrast, trending finfluencer pacing.
+Visual style: clean motion graphics + relatable India cues (₹ symbol, SIP, tax calendar, salary-day motif, Indian market charts) WITHOUT giving personalized advice. Use modern gradients, kinetic typography, animated charts, icons, quick zooms, whip transitions.
+On-screen text: short punchy lines (max ~36 chars/line), 6–8 lines across the video; emphasize 1–2 key numbers (e.g., "₹100 SIP", "3-step checklist") without promises.
+Audio note: suggest energetic background beat (no copyrighted lyrics). End with a clear CTA on screen like "Save this" / "Follow for more".${languageInstruction}`,
 
-      youtube: `Faceless educational ${format || 'explainer'} video about ${topic || 'wealth building'}. NO PEOPLE, NO FACES, NO HUMANS. Animated educational graphics, step-by-step visual diagrams, 3D charts and statistics, icon animations, timeline visualizations. Clear visual hierarchy. Professional presentation with smooth transitions. Clean modern design with focus on information delivery. 16:9 landscape format.${languageInstruction}`,
+      youtube: (() => {
+        const isShort = /short/i.test(format || '') || /youtube-short/i.test(type || '');
+        if (isShort) {
+          return `YouTube Shorts-style faceless video about ${topic || 'money tips'} for an Indian audience. NO PEOPLE, NO FACES, NO HUMANS.
+Format: 9:16 vertical, 20–35s, ultra-fast pacing, hook in first 1s, pattern interrupts every ~2s, loopable ending.
+Visuals: kinetic typography + bold subtitles, animated charts (Nifty/Sensex style), ₹ symbol, SIP/tax calendar motifs. Clean, high-contrast, modern finance look.
+On-screen text: 7–10 short lines, max ~32 chars/line; highlight 1–2 key numbers/terms without promises.
+Editing: jump cuts, zooms, whip transitions, whoosh SFX (no copyrighted music/lyrics). End screen CTA: "Save + Follow for more".${languageInstruction}`;
+        }
+        return `Faceless educational ${format || 'explainer'} video about ${topic || 'wealth building'}. NO PEOPLE, NO FACES, NO HUMANS. Animated educational graphics, step-by-step visual diagrams, 3D charts and statistics, icon animations, timeline visualizations. Clear visual hierarchy. Professional presentation with smooth transitions. Clean modern design with focus on information delivery. 16:9 landscape format.${languageInstruction}`;
+      })(),
 
       facebook: `Faceless community-focused ${format || 'post'} video about ${topic || 'financial planning'}. NO PEOPLE, NO FACES, NO HUMANS. Friendly animated graphics, simple infographics, icon-based storytelling, warm color palette, accessible visual language. Relatable abstract symbols and metaphors. Clear messaging through visuals and text overlays. 1:1 or 16:9 format.${languageInstruction}`,
 
@@ -1553,6 +1787,34 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     }
 
     return scenePrompts;
+  }
+
+  /**
+   * Resolve HeyGen voiceId for a groupId from the same mapping the frontend uses
+   * (/api/avatars reads config/heygen-native-voice-mapping.json or avatar-voice-mapping.json)
+   * @private
+   * @param {string} groupId - HeyGen avatar group ID (32 hex chars)
+   * @returns {string|null} voiceId or null if not found
+   */
+  _getVoiceIdFromAvatarMapping(groupId) {
+    if (!groupId || typeof groupId !== 'string') return null;
+    const configPaths = [
+      path.join(this.projectRoot, 'backend', 'config', 'heygen-native-voice-mapping.json'),
+      path.join(this.projectRoot, 'config', 'heygen-native-voice-mapping.json'),
+      path.join(this.projectRoot, 'backend', 'config', 'avatar-voice-mapping.json')
+    ];
+    for (const configPath of configPaths) {
+      try {
+        if (fs.existsSync(configPath)) {
+          const raw = fs.readFileSync(configPath, 'utf8');
+          const mapping = JSON.parse(raw);
+          const entry = mapping[groupId] || (typeof mapping === 'object' && mapping.avatars ? mapping.avatars[groupId] : null);
+          const voiceId = entry?.voiceId || null;
+          if (voiceId) return voiceId;
+        }
+      } catch (_) { /* ignore */ }
+    }
+    return null;
   }
 
   /**

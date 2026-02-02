@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import FileUpload from './components/FileUpload'
 import PromptEditor from './components/PromptEditor'
 import PublishingQueue from './components/PublishingQueue'
@@ -29,6 +31,39 @@ type StageData = {
   summary?: {
     [key: string]: any
   }
+}
+
+// Helper function to detect if text contains markdown
+function isMarkdown(text: string): boolean {
+  const markdownPatterns = [
+    /^#{1,6}\s/m,           // Headers
+    /\*\*[^*]+\*\*/,        // Bold
+    /\*[^*]+\*/,            // Italic
+    /^\s*[-*+]\s/m,         // Unordered lists
+    /^\s*\d+\.\s/m,         // Ordered lists
+    /\[.+\]\(.+\)/,         // Links
+    /^>\s/m,                // Blockquotes
+  ];
+  return markdownPatterns.some(pattern => pattern.test(text));
+}
+
+// LogEntry component to render logs with markdown support
+function LogEntry({ text, index }: { text: string; index: number }) {
+  if (isMarkdown(text)) {
+    return (
+      <div key={index} className="text-green-400 mb-2 prose prose-invert prose-sm max-w-none">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {text}
+        </ReactMarkdown>
+      </div>
+    );
+  }
+
+  return (
+    <div key={index} className="text-green-400 mb-1">
+      {text}
+    </div>
+  );
 }
 
 export default function Home() {
@@ -73,6 +108,8 @@ export default function Home() {
   const [avatarId, setAvatarId] = useState<string>('siddharth-vora')
   const [avatarScriptText, setAvatarScriptText] = useState<string>('')
   const [avatarVoiceId, setAvatarVoiceId] = useState<string>('')
+  const [generatingScript, setGeneratingScript] = useState<boolean>(false)
+  const [scriptError, setScriptError] = useState<string | null>(null)
   const [availableAvatars, setAvailableAvatars] = useState<Array<{
     id: string
     name: string
@@ -269,6 +306,7 @@ export default function Home() {
           platforms: selectedPlatforms,
           topic,
           duration,
+          aspectRatio,
           contentType,
           useVeo,
           useAvatar,
@@ -1560,12 +1598,51 @@ export default function Home() {
                   </label>
                   <textarea
                     value={avatarScriptText}
-                    onChange={(e) => setAvatarScriptText(e.target.value)}
+                    onChange={(e) => {
+                      setAvatarScriptText(e.target.value)
+                      if (scriptError) setScriptError(null)
+                    }}
                     placeholder="Leave empty to auto-generate based on campaign topic and purpose..."
                     rows={4}
                     disabled={isRunning || executingStage !== null}
                     className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
+                  <div className="mt-2 flex items-center gap-3 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setScriptError(null)
+                        setGeneratingScript(true)
+                        try {
+                          const res = await fetch('/api/workflow/generate-script', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              topic: topic.trim() || 'PL Capital investing insights',
+                              duration,
+                              platform: selectedPlatforms?.[0] || 'instagram',
+                              format: 'reel',
+                              language
+                            })
+                          })
+                          const data = await res.json()
+                          if (!res.ok) throw new Error(data.error || 'Failed to generate script')
+                          setAvatarScriptText(data.script ?? '')
+                        } catch (e) {
+                          setScriptError(e instanceof Error ? e.message : 'Failed to generate script')
+                        } finally {
+                          setGeneratingScript(false)
+                        }
+                      }}
+                      disabled={isRunning || executingStage !== null || generatingScript}
+                      className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {generatingScript ? 'Generating…' : 'Generate'}
+                    </button>
+                    {scriptError && (
+                      <span className="text-sm text-red-600">{scriptError}</span>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500 mt-1">
                     If left empty, AI will generate a contextually appropriate script based on your campaign configuration
                   </p>
@@ -1985,9 +2062,7 @@ export default function Home() {
               <p className="text-gray-500 italic">Waiting for campaign execution...</p>
             ) : (
               logs.map((log, index) => (
-                <div key={index} className="text-green-400 mb-1">
-                  {log}
-                </div>
+                <LogEntry key={index} text={log} index={index} />
               ))
             )}
           </div>
