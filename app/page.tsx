@@ -86,7 +86,7 @@ export default function Home() {
   const [selectedStageData, setSelectedStageData] = useState<{ stageId: number; stageName: string; data: any; dataId: string } | null>(null)
 
   // Campaign configuration
-  const [campaignType, setCampaignType] = useState<string>('linkedin-testimonial')
+  const [campaignType, setCampaignType] = useState<string>('linkedin-carousel')
   const [purpose, setPurpose] = useState<string>('brand-awareness')
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['linkedin'])
   const [topic, setTopic] = useState<string>('')
@@ -168,13 +168,11 @@ export default function Home() {
 
   const campaignTypes = [
     { value: 'linkedin-carousel', label: 'LinkedIn Carousel', platforms: ['linkedin'] },
-    { value: 'linkedin-testimonial', label: 'LinkedIn Testimonial', platforms: ['linkedin'] },
-    { value: 'linkedin-data-viz', label: 'LinkedIn Data Viz', platforms: ['linkedin'] },
     { value: 'instagram-reel', label: 'Instagram Reel', platforms: ['instagram'] },
     { value: 'instagram-carousel', label: 'Instagram Carousel', platforms: ['instagram'] },
     { value: 'youtube-explainer', label: 'YouTube Explainer', platforms: ['youtube'] },
     { value: 'youtube-short', label: 'YouTube Short', platforms: ['youtube'] },
-    { value: 'facebook-community', label: 'Facebook Community', platforms: ['facebook'] },
+    { value: 'facebook-reel', label: 'Facebook Reel', platforms: ['facebook'] },
     { value: 'twitter-thread', label: 'Twitter Thread', platforms: ['twitter'] },
     { value: 'whatsapp-creative', label: 'WhatsApp Creative', platforms: ['whatsapp'] },
     { value: 'email-newsletter', label: 'Email Newsletter', platforms: ['email'] },

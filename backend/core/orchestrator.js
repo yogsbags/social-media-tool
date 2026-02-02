@@ -143,6 +143,115 @@ Output rules:
   }
 
   /**
+   * Generate Twitter/X thread content (array of tweets, each ≤280 chars).
+   * Uses Gemini gemini-3-flash-preview when GEMINI_API_KEY is set; otherwise falls back to Groq.
+   * @private
+   */
+  async _generateThreadContent(options) {
+    const topic = (options.topic || 'Quick Finance Thread').trim();
+    const language = options.language || 'english';
+    const planning = this._getLatestCampaignPlanningEntry(topic);
+    const planningText = (planning?.creativePrompt || planning?.output || '').trim().slice(0, 2000);
+
+    const defaults = {
+      tweets: [
+        `🧵 Thread: ${topic || 'Quick finance insights'}`,
+        'Key point 1 — clear, punchy. No fluff.',
+        'Key point 2 — one idea per tweet. Max 280 chars.',
+        'Key point 3 — actionable or memorable.',
+        'Recap + CTA: Save this thread • Follow for more. Market risks apply.'
+      ]
+    };
+
+    const systemPrompt = `You are an expert at creating Twitter/X thread content for PL Capital (finance). Your output MUST be valid JSON only, no markdown or explanation.
+
+Output a single JSON object with exactly one key:
+- "tweets": array of strings. Each string is ONE tweet (max 280 characters). Typically 5–12 tweets for a thread.
+  - First tweet: hook (number the thread e.g. "1/7" or "🧵", punchy opener).
+  - Middle tweets: one clear idea per tweet, educational or insight, compliant (no guaranteed returns).
+  - Last tweet: recap or CTA (e.g. "Save this thread • Follow @PLCapital. Market risks apply.").
+
+Rules: No guaranteed returns, no "sure-shot", no exaggerated claims. Professional, scroll-stopping, thread-native. Language: ${language}.`;
+
+    const userPrompt = `Create a Twitter/X thread for topic: ${topic}
+Language: ${language}
+${planningText ? `Optional creative direction from planning:\n${planningText}\n` : ''}
+Output ONLY the JSON object, no other text.`;
+
+    const parseAndNormalize = (raw) => {
+      raw = (raw || '').trim().replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
+      const parsed = JSON.parse(raw);
+      const tweets = Array.isArray(parsed.tweets) ? parsed.tweets : defaults.tweets;
+      return {
+        tweets: tweets.slice(0, 15).map((t) => {
+          const s = typeof t === 'string' ? t.trim() : String(t).trim();
+          return s.length > 280 ? s.slice(0, 277) + '...' : s;
+        }).filter(Boolean)
+      };
+    };
+
+    const geminiKey = process.env.GEMINI_API_KEY;
+    if (geminiKey) {
+      try {
+        const { GoogleGenAI } = await import('@google/genai');
+        const ai = new GoogleGenAI({ apiKey: geminiKey });
+        const model = 'gemini-3-flash-preview';
+        const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+        const response = await ai.models.generateContent({
+          model,
+          contents: fullPrompt,
+          config: { temperature: 0.6, maxOutputTokens: 2000 }
+        });
+        let raw = (response?.text ?? '').trim();
+        if (!raw && response?.candidates?.[0]?.content?.parts) {
+          const textPart = response.candidates[0].content.parts.find((p) => p.text != null);
+          raw = (textPart?.text ?? '').trim();
+        }
+        if (!raw) {
+          console.log('   ⚠️ Gemini thread: empty response');
+          return defaults;
+        }
+        return parseAndNormalize(raw);
+      } catch (err) {
+        console.log(`   ⚠️ Gemini thread failed: ${err instanceof Error ? err.message : 'unknown'}`);
+      }
+    }
+
+    const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) return defaults;
+
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${groqKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: process.env.GROQ_THREAD_MODEL || 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.6,
+          max_tokens: 2000
+        })
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        console.log(`   ⚠️ Groq thread API error: ${response.status} ${text}`);
+        return defaults;
+      }
+      const data = await response.json();
+      const raw = (data.choices?.[0]?.message?.content || '').trim();
+      return parseAndNormalize(raw);
+    } catch (err) {
+      console.log(`   ⚠️ Thread content generation failed: ${err instanceof Error ? err.message : 'unknown'}`);
+      return defaults;
+    }
+  }
+
+  /**
    * Initialize the workflow system
    */
   async initialize() {
@@ -238,7 +347,7 @@ Output rules:
       'instagram-carousel': this.runInstagramCarousel.bind(this),
       'youtube-explainer': this.runYouTubeExplainer.bind(this),
       'youtube-short': this.runYouTubeShort.bind(this),
-      'facebook-community': this.runFacebookCommunity.bind(this),
+      'facebook-reel': this.runFacebookReel.bind(this),
       'twitter-thread': this.runTwitterThread.bind(this),
       'email-newsletter': this.runEmailNewsletter.bind(this)
     };
@@ -639,6 +748,45 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       return;
     }
 
+    // Twitter/X thread: generate tweet list and save (text-only, no Stage 3 visuals)
+    const isThreadContent = options.format === 'thread' && options.platform === 'twitter';
+    if (isThreadContent) {
+      console.log('   🧵 Generating Twitter/X thread content (tweets)...');
+
+      const thread = await this._generateThreadContent({
+        topic: options.topic,
+        language: options.language
+      });
+
+      const contentPack = {
+        platforms: {
+          twitter: {
+            thread: {
+              tweets: thread.tweets
+            }
+          }
+        }
+      };
+
+      const contentId = `CONT-thread-${Date.now()}`;
+      await this.stateManager.addContent({
+        id: contentId,
+        topic: (options.topic || '').trim() || 'Twitter Thread',
+        contentPack,
+        status: 'completed',
+        completedAt: new Date().toISOString()
+      });
+
+      console.log(`   ✅ Thread content saved (${thread.tweets.length} tweets) — ready to copy or publish`);
+      return {
+        success: true,
+        contentId,
+        tweetCount: thread.tweets.length,
+        tweets: thread.tweets,
+        message: 'Twitter/X thread content generated'
+      };
+    }
+
     // TODO: Implement other AI content generation
     console.log('   ⚠️  Content generation not yet implemented for this platform');
   }
@@ -941,8 +1089,8 @@ ${brandGuidance}`;
         console.log(`   👤 Avatar: ${avatarDescription}`);
         console.log(`   🎙️  Voice: ${voiceDescription}`);
 
-        // Viral reel optimization for Instagram Reels / YouTube Shorts
-        const isReelOrShort = options.platform === 'instagram' || options.platform === 'youtube' || /reel|short/i.test(options.format || '') || /youtube-short/i.test(options.type || '');
+        // Viral reel optimization for Instagram Reels / Facebook Reels / YouTube Shorts
+        const isReelOrShort = options.platform === 'instagram' || options.platform === 'facebook' || options.platform === 'youtube' || /reel|short/i.test(options.format || '') || /youtube-short/i.test(options.type || '');
         const viralGuidance = isReelOrShort
           ? ' Pacing: viral reel style — strong visual hook in the first 1–2 seconds (avatar catches attention immediately), punchy delivery, ending that feels loopable. Include a clear on-screen CTA moment (e.g. "Save this", "Follow for more").'
           : '';
@@ -1627,12 +1775,59 @@ ${brandGuidance}`;
     console.log('📱 YouTube Short - Not yet implemented');
   }
 
-  async runFacebookCommunity(options) {
-    console.log('👥 Facebook Community - Not yet implemented');
+  async runFacebookReel(options) {
+    console.log('📱 Facebook Reel Campaign');
+    console.log(`   Topic: ${options.topic}`);
+    console.log(`   Duration: ${options.duration}s\n`);
+
+    // Same flow as Instagram Reel: short-form vertical video for Facebook
+    await this.stageContent({
+      platform: 'facebook',
+      format: 'reel',
+      topic: options.topic,
+      duration: options.duration,
+      language: options.language
+    });
+
+    await this.stageVideo({
+      platform: 'facebook',
+      format: 'reel',
+      aspectRatio: options.aspectRatio || '9:16',
+      duration: options.duration,
+      useVeo: options.useVeo,
+      useAvatar: options.useAvatar,
+      language: options.language,
+      waitForCompletion: options.waitForCompletion
+    });
+
+    if (options.autoPublish) {
+      await this.stagePublishing({ platform: 'facebook' });
+    }
+
+    console.log('\n✅ Facebook reel ready!');
   }
 
   async runTwitterThread(options) {
-    console.log('🐦 Twitter Thread - Not yet implemented');
+    console.log('🐦 Twitter/X Thread Campaign');
+    console.log(`   Topic: ${options.topic}`);
+    if (options.language) {
+      console.log(`   Language: ${this._getLanguageName(options.language)}`);
+    }
+    console.log('');
+
+    // Stage 2: Generate thread content (tweets), save to state
+    await this.stageContent({
+      platform: 'twitter',
+      format: 'thread',
+      topic: options.topic,
+      language: options.language
+    });
+
+    if (options.autoPublish) {
+      await this.stagePublishing({ platform: 'twitter' });
+    }
+
+    console.log('\n✅ Twitter thread ready!');
   }
 
   async runEmailNewsletter(options) {

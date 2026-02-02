@@ -189,7 +189,7 @@ function printHelp() {
   console.log('  instagram-carousel     - Image carousel post');
   console.log('  youtube-explainer      - Long-form educational video');
   console.log('  youtube-short          - 60s vertical video');
-  console.log('  facebook-community     - Community discussion post');
+  console.log('  facebook-reel         - Short-form vertical video (same flow as Instagram Reel)');
   console.log('  twitter-thread         - Educational thread');
   console.log('');
   console.log('WORKFLOW STAGES:');
