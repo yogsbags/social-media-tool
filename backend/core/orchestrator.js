@@ -341,8 +341,6 @@ Output ONLY the JSON object, no other text.`;
   async runCampaign(campaignType, options = {}) {
     const campaignHandlers = {
       'linkedin-carousel': this.runLinkedInCarousel.bind(this),
-      'linkedin-testimonial': this.runLinkedInTestimonial.bind(this),
-      'linkedin-data-viz': this.runLinkedInDataViz.bind(this),
       'instagram-reel': this.runInstagramReel.bind(this),
       'instagram-carousel': this.runInstagramCarousel.bind(this),
       'youtube-explainer': this.runYouTubeExplainer.bind(this),
