@@ -153,17 +153,16 @@ export default function StageDataModal({
       ))
     )
 
-    // Check if this is a video URL (from cloudinary)
-    // Handles: cloudinary.com URLs, or fields like "hostedUrl" in video context
-    const isVideoUrl = typeof value === 'string' && value.trim() !== '' && (
+    // Check if this is a video URL (Cloudinary, HeyGen, or hostedUrl/videoUrl with http)
+    const isVideoUrl = typeof value === 'string' && value.trim() !== '' && value.startsWith('http') && (
       value.includes('cloudinary.com') ||
       value.includes('res.cloudinary.com') ||
-      (key.toLowerCase().includes('hostedurl') && (
-        key.toLowerCase().includes('video') ||
-        value.includes('.mp4') ||
-        value.includes('.mov') ||
-        value.includes('.webm')
-      ))
+      value.includes('heygen.ai') ||
+      value.includes('.mp4') ||
+      value.includes('.mov') ||
+      value.includes('.webm') ||
+      key.toLowerCase().includes('hostedurl') ||
+      key.toLowerCase().includes('videourl')
     )
 
     return (
@@ -240,10 +239,12 @@ export default function StageDataModal({
                 </div>
                 <div className="p-4 bg-black">
                   <video
+                    key={value}
                     src={value}
                     controls
                     className="w-full max-h-[500px] rounded-lg"
                     style={{ aspectRatio: '16/9' }}
+                    playsInline
                   >
                     Your browser does not support the video tag.
                   </video>

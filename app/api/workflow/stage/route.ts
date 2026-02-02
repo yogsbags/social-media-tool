@@ -533,6 +533,15 @@ export async function POST(request: NextRequest) {
               if (avatarId) stageData.avatarId = avatarId
               if (avatarScriptText) stageData.avatarScriptText = avatarScriptText
               if (avatarVoiceId) stageData.avatarVoiceId = avatarVoiceId
+              // Parse video URL from backend stdout so preview/view work in StageDataModal
+              const videoResultMatch = outputBuffer.match(/__VIDEO_RESULT__(.+)/)
+              if (videoResultMatch) {
+                try {
+                  const parsed = JSON.parse(videoResultMatch[1].trim())
+                  if (parsed.hostedUrl) stageData.hostedUrl = parsed.hostedUrl
+                  if (parsed.videoUrl) stageData.videoUrl = parsed.videoUrl
+                } catch (_) { /* ignore parse errors */ }
+              }
             } else if (stageId === 5) {
               stageData.type = 'publishing'
             } else if (stageId === 6) {

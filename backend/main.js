@@ -320,7 +320,14 @@ async function run() {
       }
       orchestrator.displayBanner();
       console.log(`\n🎬 EXECUTING STAGE: ${stageName.toUpperCase()}\n`);
-      await orchestrator.runStage(stageName, options);
+      const stageResult = await orchestrator.runStage(stageName, options);
+      // Emit video result so frontend stage route can persist hostedUrl/videoUrl
+      if (stageName === 'video' && stageResult && (stageResult.hostedUrl || stageResult.videoUrl)) {
+        console.log('__VIDEO_RESULT__' + JSON.stringify({
+          hostedUrl: stageResult.hostedUrl || null,
+          videoUrl: stageResult.videoUrl || null
+        }));
+      }
       console.log(`\n✅ Stage "${stageName}" completed!\n`);
       break;
 
