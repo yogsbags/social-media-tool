@@ -61,7 +61,7 @@ async function generateImageWithGemini(prompt, name) {
   console.log(`\n🎨 Generating image for ${name}...`);
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

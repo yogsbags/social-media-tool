@@ -41,7 +41,7 @@ class ImageGenerator {
 
     // Gemini Models (Primary: Gemini 3 Pro Image Preview for 4K native generation)
     this.geminiModels = {
-      primary: "gemini-3-pro-image-preview",     // 4K native, grounded generation, text rendering
+      primary: "gemini-3-flash-preview",     // 4K native, grounded generation, text rendering
       fallback: "gemini-2.5-flash-image"         // Fast fallback for simpler tasks
     };
     this.defaultModel = options.model || this.geminiModels.primary;
@@ -137,7 +137,7 @@ class ImageGenerator {
     if (need4K || needGrounding || priority === 'quality' || useCase === 'branding') {
       return {
         provider: 'gemini',
-        model: 'gemini-3-pro-image-preview',
+        model: 'gemini-3-flash-preview',
         reasoning: 'Gemini 3 Pro Image Preview offers native 4K generation, Google Search grounding, and best-in-class text rendering',
         features: [
           'Native 4K image generation',
@@ -183,7 +183,7 @@ class ImageGenerator {
     // Default to Gemini 3 Pro for best quality
     return {
       provider: 'gemini',
-      model: 'gemini-3-pro-image-preview',
+      model: 'gemini-3-flash-preview',
       reasoning: 'Gemini 3 Pro Image Preview provides the best balance of quality (4K), accuracy (grounding), and text rendering',
       features: [
         'Native 4K image generation',

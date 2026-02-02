@@ -475,6 +475,19 @@
       "stageId": 1,
       "completedAt": "2025-12-05T13:17:52.198Z",
       "updatedAt": "2025-12-05T13:18:17.053Z"
+    },
+    "1-1765871805392": {
+      "id": "1-1765871805392",
+      "type": "campaign-planning",
+      "topic": "Start Investing from 5L",
+      "campaignType": "linkedin-carousel",
+      "platforms": [
+        "linkedin"
+      ],
+      "status": "completed",
+      "output": "📦 Initializing workflow state...\n✅ Workflow state loaded\n\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   🚀 SOCIAL MEDIA CAMPAIGN AUTOMATION                             ║\n║   AI-Powered Multi-Platform Content & Video Production            ║\n",
+      "stageId": 1,
+      "completedAt": "2025-12-16T07:56:45.392Z"
     }
   },
   "content": {
