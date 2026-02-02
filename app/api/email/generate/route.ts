@@ -97,6 +97,7 @@ export async function POST(request: NextRequest) {
       creativePrompt, // From Stage 1
       brandSettings,
       language = "en",
+      referenceExamples, // From examples/newsletter-reference.md
     } = body;
 
     if (!topic) {
@@ -206,6 +207,7 @@ Campaign Details:
 - Target Audience: ${targetAudience}
 - Language: ${language}
 
+${referenceExamples ? `Reference examples (use for tone, structure, and messaging inspiration — align with these campaign themes and style cues):\n${referenceExamples.slice(0, 3000)}\n\n` : ""}
 ${creativePrompt ? `Creative Direction:\n${creativePrompt}\n` : ""}
 
 ${brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: You MUST use these exact brand colors in the email HTML.` : ""}

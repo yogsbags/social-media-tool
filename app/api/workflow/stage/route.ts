@@ -272,6 +272,15 @@ export async function POST(request: NextRequest) {
               }
             }
 
+            // Load newsletter reference from examples folder (tone/structure inspiration)
+            let referenceExamples = ''
+            const examplesDir = path.join(process.cwd(), '..', 'examples')
+            const newsletterRefPath = path.join(examplesDir, 'newsletter-reference.md')
+            if (fs.existsSync(newsletterRefPath)) {
+              referenceExamples = fs.readFileSync(newsletterRefPath, 'utf-8').trim()
+              sendEvent({ log: '📁 Using newsletter reference from examples' })
+            }
+
             const requestOrigin = new URL(request.url).origin
             const envBase = process.env.NEXT_API_PUBLIC_URL
               ? (process.env.NEXT_API_PUBLIC_URL.startsWith('http') ? process.env.NEXT_API_PUBLIC_URL : `https://${process.env.NEXT_API_PUBLIC_URL}`)
@@ -289,7 +298,8 @@ export async function POST(request: NextRequest) {
                 targetAudience,
                 creativePrompt,
                 brandSettings,
-                language
+                language,
+                referenceExamples: referenceExamples || undefined
               })
             })
 
