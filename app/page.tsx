@@ -527,7 +527,7 @@ export default function Home() {
     try {
       setIsGeneratingTopic(true)
       setTopicError(null)
-      addLog('Generating campaign topic with Gemini 3 Pro Preview...')
+      addLog('Generating campaign topic...')
 
       const response = await fetch('/api/topic/generate', {
         method: 'POST',
