@@ -79,7 +79,7 @@ export default function Home() {
   const [logs, setLogs] = useState<string[]>([])
   const [stageData, setStageData] = useState<Record<number, StageData>>({})
   const [campaignData, setCampaignData] = useState<CampaignData>({})
-  const [executionMode, setExecutionMode] = useState<'full' | 'staged'>('full')
+  const [executionMode, setExecutionMode] = useState<'full' | 'staged'>('staged')
   const [executingStage, setExecutingStage] = useState<number | null>(null)
   const [expandedStage, setExpandedStage] = useState<number | null>(null)
   const [showDataModal, setShowDataModal] = useState(false)

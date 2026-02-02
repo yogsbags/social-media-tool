@@ -41,7 +41,7 @@ class ImageGenerator {
 
     // Gemini Models (Primary: Gemini 3 Pro Image Preview for 4K native generation)
     this.geminiModels = {
-      primary: "gemini-3-flash-preview",     // 4K native, grounded generation, text rendering
+      primary: "gemini-3-pro-image-preview",     // 4K native, grounded generation, image gen
       fallback: "gemini-2.5-flash-image"         // Fast fallback for simpler tasks
     };
     this.defaultModel = options.model || this.geminiModels.primary;
@@ -137,7 +137,7 @@ class ImageGenerator {
     if (need4K || needGrounding || priority === 'quality' || useCase === 'branding') {
       return {
         provider: 'gemini',
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3-pro-image-preview',
         reasoning: 'Gemini 3 Pro Image Preview offers native 4K generation, Google Search grounding, and best-in-class text rendering',
         features: [
           'Native 4K image generation',
@@ -183,7 +183,7 @@ class ImageGenerator {
     // Default to Gemini 3 Pro for best quality
     return {
       provider: 'gemini',
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3-pro-image-preview',
       reasoning: 'Gemini 3 Pro Image Preview provides the best balance of quality (4K), accuracy (grounding), and text rendering',
       features: [
         'Native 4K image generation',
@@ -252,8 +252,10 @@ class ImageGenerator {
     // Determine which model to use
     const model = config.model || this.defaultModel;
     const isGemini3Pro = model.includes('gemini-3-pro');
+    // gemini-3-flash-preview is text-only; treat any gemini-3 as potentially needing fallback for image gen
+    const isGemini3Family = model.includes('gemini-3');
 
-    console.log(`   Provider: ${isGemini3Pro ? 'Gemini 3 Pro Image Preview' : 'Gemini 2.5 Flash Image'}`);
+    console.log(`   Provider: ${isGemini3Pro ? 'Gemini 3 Pro Image Preview' : isGemini3Family ? 'Gemini 3 (image fallback if needed)' : 'Gemini 2.5 Flash Image'}`);
     console.log(`   Model: ${model}`);
     console.log(`   Number of Images: ${config.numberOfImages || 1}`);
 
@@ -313,9 +315,9 @@ class ImageGenerator {
         features: isGemini3Pro ? ['4K', 'grounding'] : ['fast']
       };
     } catch (error) {
-      // Fallback to Gemini 2.5 Flash if Gemini 3 Pro fails
-      if (isGemini3Pro && this.geminiModels.fallback) {
-        console.log(`   ⚠️  Gemini 3 Pro failed, falling back to ${this.geminiModels.fallback}`);
+      // Fallback to Gemini 2.5 Flash Image if Gemini 3 (Pro or Flash) fails - e.g. gemini-3-flash-preview is text-only
+      if ((isGemini3Pro || isGemini3Family) && this.geminiModels.fallback) {
+        console.log(`   ⚠️  ${model} failed (may not support image gen), falling back to ${this.geminiModels.fallback}`);
         console.log(`   Error: ${error.message}`);
 
         // Retry with fallback model

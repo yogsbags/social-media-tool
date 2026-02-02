@@ -252,6 +252,118 @@ Output ONLY the JSON object, no other text.`;
   }
 
   /**
+   * Generate carousel content (slide count, cover, slides) for LinkedIn/Instagram using Groq.
+   * Returns { slideCount, coverText, slides: [{ title, body, highlight, visualCue }], finalSlideCta, disclaimerLine }.
+   * @private
+   */
+  async _generateCarouselContent(options) {
+    const topic = (options.topic || 'Quick Investing Checklist').trim();
+    const platform = options.platform || 'linkedin';
+    const language = options.language || 'english';
+    const planning = this._getLatestCampaignPlanningEntry(topic);
+    const planningText = (planning?.creativePrompt || planning?.output || '').trim().slice(0, 2000);
+
+    const defaults = {
+      slideCount: 7,
+      coverText: topic || 'Quick Investing Checklist',
+      slides: [
+        { title: 'Myth 1', body: 'Swipe for the truth.', highlight: 'Busted', visualCue: 'Bold myth vs fact icon' },
+        { title: 'Myth 2', body: 'One clear takeaway.', highlight: 'Key idea', visualCue: 'Simple icon + mini chart' },
+        { title: 'Myth 3', body: 'One actionable step.', highlight: 'Tip', visualCue: 'Checklist icon' },
+        { title: 'Myth 4', body: 'One clear takeaway.', highlight: 'Key idea', visualCue: 'Simple icon' },
+        { title: 'Myth 5', body: 'One actionable step.', highlight: 'Tip', visualCue: 'Mini chart' },
+        { title: 'Quick recap', body: 'Save this checklist • Follow PL Capital', highlight: 'Save', visualCue: 'Checklist icons + CTA' }
+      ],
+      finalSlideCta: 'Save this checklist • Follow PL Capital',
+      disclaimerLine: 'Market risks apply.'
+    };
+
+    const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) {
+      return defaults;
+    }
+
+    const systemPrompt = `You are an expert at creating carousel post content for financial services (PL Capital). Your output MUST be valid JSON only, no markdown or explanation.
+
+Output a single JSON object with exactly these keys:
+- "slideCount": number between 5 and 12 (total slides including cover and final)
+- "coverText": string, punchy headline for the cover slide (max 6 words)
+- "slides": array of objects. Each object has: "title" (short headline, max 6 words), "body" (1-2 lines, very short), "highlight" (one word or short badge, e.g. "Tip", "Busted"), "visualCue" (short description for the image, e.g. "Simple icon + mini chart"). Length of slides array should equal slideCount (cover = index 0, final = last index). Cover slide: title = coverText, body = "Swipe →" or "Swipe →\\nSave later" for Instagram. Final slide: CTA and disclaimer.
+- "finalSlideCta": string, call-to-action for last slide (e.g. "Save this checklist • Follow PL Capital")
+- "disclaimerLine": string, exact compliance line (e.g. "Market risks apply.")
+
+Rules: No guaranteed returns, no "sure-shot" claims. Professional, compliant, scroll-stopping. Platform: ${platform}.`;
+
+    const userPrompt = `Create carousel content for topic: ${topic}
+Language: ${language}
+Platform: ${platform}
+${planningText ? `Optional creative direction from planning:\n${planningText}\n` : ''}
+Output ONLY the JSON object, no other text.`;
+
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${groqKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: process.env.GROQ_CAROUSEL_MODEL || 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.6,
+          max_tokens: 2000
+        })
+      });
+
+      if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        console.log(`   ⚠️ Groq carousel API error: ${response.status} ${text}`);
+        return defaults;
+      }
+
+      const data = await response.json();
+      let raw = (data.choices?.[0]?.message?.content || '').trim();
+      raw = raw.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
+      const parsed = JSON.parse(raw);
+
+      const slideCount = Math.min(12, Math.max(5, Number(parsed.slideCount) || 7));
+      const coverText = typeof parsed.coverText === 'string' ? parsed.coverText.trim() : defaults.coverText;
+      const slides = Array.isArray(parsed.slides) ? parsed.slides.slice(0, slideCount) : defaults.slides;
+      const finalSlideCta = typeof parsed.finalSlideCta === 'string' ? parsed.finalSlideCta.trim() : defaults.finalSlideCta;
+      const disclaimerLine = typeof parsed.disclaimerLine === 'string' ? parsed.disclaimerLine.trim() : defaults.disclaimerLine;
+
+      const normalizedSlides = slides.map((s, i) => ({
+        title: typeof s?.title === 'string' ? s.title.trim() : (i === 0 ? coverText : `Point ${i + 1}`),
+        body: typeof s?.body === 'string' ? s.body.trim() : 'One clear takeaway.',
+        highlight: typeof s?.highlight === 'string' ? s.highlight.trim() : 'Key idea',
+        visualCue: typeof s?.visualCue === 'string' ? s.visualCue.trim() : 'Simple icon + mini chart'
+      }));
+      while (normalizedSlides.length < slideCount) {
+        normalizedSlides.push({
+          title: `Point ${normalizedSlides.length + 1}`,
+          body: 'One clear takeaway.',
+          highlight: 'Key idea',
+          visualCue: 'Simple icon + mini chart'
+        });
+      }
+
+      return {
+        slideCount,
+        coverText,
+        slides: normalizedSlides.slice(0, slideCount),
+        finalSlideCta,
+        disclaimerLine
+      };
+    } catch (err) {
+      console.log(`   ⚠️ Carousel content generation failed: ${err instanceof Error ? err.message : 'unknown'}`);
+      return defaults;
+    }
+  }
+
+  /**
    * Initialize the workflow system
    */
   async initialize() {
@@ -744,6 +856,52 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
 
       console.log('   ⚠️ WhatsApp creative generation failed or returned no result');
       return;
+    }
+
+    // Carousel (LinkedIn/Instagram): generate slide structure and save to state for Stage 3
+    const isCarousel = options.format === 'carousel' && (options.platform === 'linkedin' || options.platform === 'instagram');
+    if (isCarousel) {
+      const carouselPlatform = options.platform;
+      const platformLabel = carouselPlatform === 'instagram' ? 'Instagram' : 'LinkedIn';
+      console.log(`   🧩 Generating ${platformLabel} carousel content (slides + copy)...`);
+
+      const carousel = await this._generateCarouselContent({
+        topic: options.topic,
+        platform: carouselPlatform,
+        language: options.language
+      });
+
+      const contentPack = {
+        platforms: {
+          [carouselPlatform]: {
+            carousel: {
+              slideCount: carousel.slideCount,
+              coverText: carousel.coverText,
+              slides: carousel.slides,
+              finalSlideCta: carousel.finalSlideCta,
+              disclaimerLine: carousel.disclaimerLine
+            }
+          }
+        }
+      };
+
+      const contentId = `CONT-carousel-${Date.now()}`;
+      await this.stateManager.addContent({
+        id: contentId,
+        topic: (options.topic || '').trim() || 'Carousel',
+        contentPack,
+        status: 'completed',
+        completedAt: new Date().toISOString()
+      });
+
+      console.log(`   ✅ Carousel content saved (${carousel.slideCount} slides) — ready for Stage 3 visuals`);
+      return {
+        success: true,
+        contentId,
+        slideCount: carousel.slideCount,
+        coverText: carousel.coverText,
+        message: `${platformLabel} carousel content generated`
+      };
     }
 
     // Twitter/X thread: generate tweet list and save (text-only, no Stage 3 visuals)
