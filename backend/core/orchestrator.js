@@ -44,6 +44,28 @@ class SocialMediaOrchestrator {
     return planningEntries.sort(byCompletedAtDesc)[0];
   }
 
+  /**
+   * Extract the "Direct image prompt" paragraph from Stage 1 creative prompt text.
+   * Used so WhatsApp creative image generation adheres to the detailed prompt from planning.
+   * @param {string} creativePromptText - Full Stage 1 creative prompt (may include markdown)
+   * @returns {string|null} The direct image prompt paragraph, or null if not found
+   */
+  _extractDirectImagePrompt(creativePromptText) {
+    if (!creativePromptText || typeof creativePromptText !== 'string') return null;
+    const text = creativePromptText.trim();
+    if (!text) return null;
+
+    const marker = /Direct image prompt\s*(?:\([^)]*\))?\s*:?\s*/i;
+    const match = text.match(marker);
+    if (!match) return null;
+
+    const startIdx = text.indexOf(match[0]) + match[0].length;
+    const afterMarker = text.slice(startIdx).trim();
+    const endOfParagraph = afterMarker.search(/\n\s*\n/);
+    const paragraph = (endOfParagraph === -1 ? afterMarker : afterMarker.slice(0, endOfParagraph)).trim();
+    return paragraph.length > 30 ? paragraph : null;
+  }
+
   async _generateHeyGenScript(options) {
     const topic = options.topic || 'PL Capital investing insights';
     const platform = options.platform || 'instagram';
@@ -760,13 +782,25 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
 
     if (isWhatsAppImage) {
       console.log('   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...');
-      const prompt = options.prompt || this._buildVisualPrompt({
-        platform: 'whatsapp',
-        format: 'image',
-        topic: options.topic,
-        type: options.type,
-        brandSettings: options.brandSettings
-      });
+      let prompt = options.prompt || null;
+      if (!prompt) {
+        const planning = this._getLatestCampaignPlanningEntry(options.topic);
+        const creativePrompt = (planning?.creativePrompt || planning?.output || '').trim();
+        const directPrompt = creativePrompt ? this._extractDirectImagePrompt(creativePrompt) : null;
+        if (directPrompt) {
+          prompt = directPrompt;
+          console.log('   📋 Using Direct image prompt from Stage 1 planning');
+        }
+      }
+      if (!prompt) {
+        prompt = this._buildVisualPrompt({
+          platform: 'whatsapp',
+          format: 'image',
+          topic: options.topic,
+          type: options.type,
+          brandSettings: options.brandSettings
+        });
+      }
 
       // If a reference image path is provided (via env), use edit mode
       const referenceImagePath = process.env.REFERENCE_IMAGE_PATH;
