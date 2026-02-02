@@ -28,6 +28,19 @@ function isEchoOrInvalid(text: string | undefined, userPrompt: string): boolean 
   return false
 }
 
+/** Returns true if the topic is a generic "80 years / wealth creation / PL Capital solutions" tagline we want to avoid */
+function isGenericTagline(text: string | undefined): boolean {
+  if (!text || text.length < 15) return false
+  const t = text.toLowerCase()
+  const hasEightyYears = /\b80\s*years\b|\b80\+?\s*years\b|\beighty\s*years\b/i.test(text)
+  const hasWealthCreation = /wealth\s*creation|wealth\s*creation\s*expertise/i.test(t)
+  const hasPlSolutions = /pl\s*capital\s*solutions?|solutions?\s*with\s*pl\s*capital/i.test(t)
+  const isMostlyTagline = (hasEightyYears && (hasWealthCreation || hasPlSolutions)) ||
+    (hasWealthCreation && hasPlSolutions) ||
+    (t.includes('expertise') && t.includes('pl capital') && text.split(/\s+/).length <= 12)
+  return isMostlyTagline
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: GenerateBody = await request.json()
@@ -46,11 +59,12 @@ export async function POST(request: NextRequest) {
       body.purpose ? `Purpose: ${body.purpose}` : null,
       body.targetAudience ? `Audience: ${body.targetAudience}` : null,
       body.platforms?.length ? `Platforms: ${body.platforms.join(', ')}` : null,
-      hasReference ? `Product context (optional):\n${reference.substring(0, 1500)}` : null,
+      hasReference ? `Product context (for ideas only; do not copy taglines):\n${reference.substring(400, 1800)}` : null,
     ].filter(Boolean) as string[]
 
     const userPrompt = [
       'Generate exactly one short campaign topic for PL Capital (finance). Max 15 words.',
+      'Do NOT use generic taglines like "80 years of wealth creation", "PL Capital solutions", or "expertise with PL Capital". Give a specific, campaign-style topic (e.g. tax-saving strategies, mutual fund basics, IPO investing).',
       ...contextLines,
       'Reply with only the topic line, no labels or quotes. Example: 5 tax-saving strategies for HNIs in 2025',
     ].join('\n')
@@ -73,7 +87,7 @@ export async function POST(request: NextRequest) {
           messages: [
             {
               role: 'system',
-              content: 'You are a creative marketing expert for PL Capital (financial services). Your reply must be ONLY one short campaign topic (max 15 words). No labels, no "Topic:", no quotes, no explanation. Example format: 5 tax-saving strategies for HNIs in 2025'
+              content: 'You are a creative marketing expert for PL Capital (financial services). Your reply must be ONLY one short, specific campaign topic (max 15 words). Do NOT use generic taglines like "80 years of wealth creation" or "PL Capital solutions". Prefer concrete topics: tax saving, mutual funds, IPO, options, portfolio tips, market outlook, etc. No labels, no "Topic:", no quotes. Example: 5 tax-saving strategies for HNIs in 2025'
             },
             {
               role: 'user',
@@ -137,8 +151,9 @@ export async function POST(request: NextRequest) {
     }
     topic = topic?.replace(/^["']|["']$/g, '').trim()
 
-    if (isEchoOrInvalid(topic, userPrompt) || !topic || topic.length < 5) {
-      console.error('Topic invalid or echo, retrying with fallback model')
+    if (isEchoOrInvalid(topic, userPrompt) || isGenericTagline(topic) || !topic || topic.length < 5) {
+      if (isGenericTagline(topic)) console.error('Topic is generic tagline, retrying')
+      else console.error('Topic invalid or echo, retrying with fallback model')
       const fallbackResponse = await fetch(GROQ_API_URL, {
         method: 'POST',
         headers: {
@@ -148,8 +163,8 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           model: MODEL_FALLBACK,
           messages: [
-            { role: 'system', content: 'Reply with only one short campaign topic for PL Capital (max 15 words). No labels, no quotes. Example: 5 tax-saving strategies for HNIs in 2025' },
-            { role: 'user', content: `Campaign: ${body.campaignType || 'general'}. Purpose: ${body.purpose || 'brand-awareness'}. Audience: ${body.targetAudience || 'all'}. Give one topic line only.` }
+            { role: 'system', content: 'Reply with one short, specific campaign topic for PL Capital (max 15 words). Do NOT use "80 years", "wealth creation expertise", or "PL Capital solutions". Use a concrete topic like tax saving, mutual funds, IPO, or market tips. No labels, no quotes. Example: 5 tax-saving strategies for HNIs in 2025' },
+            { role: 'user', content: `Campaign: ${body.campaignType || 'general'}. Purpose: ${body.purpose || 'brand-awareness'}. Audience: ${body.targetAudience || 'all'}. Give one specific topic line only (e.g. tax saving, mutual funds, IPO), not a generic tagline.` }
           ],
           temperature: 0.7,
           max_tokens: 80
@@ -175,6 +190,14 @@ export async function POST(request: NextRequest) {
       console.error('Failed to extract valid topic from response:', result)
       return NextResponse.json(
         { error: 'No valid topic generated from Groq response', debug: result },
+        { status: 500 }
+      )
+    }
+
+    if (isGenericTagline(topic)) {
+      console.error('Topic rejected as generic tagline:', topic)
+      return NextResponse.json(
+        { error: 'Generated topic was too generic. Please try again for a more specific topic.' },
         { status: 500 }
       )
     }
