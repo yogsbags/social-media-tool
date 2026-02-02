@@ -58,7 +58,8 @@ export async function POST(request: NextRequest) {
         contentGuidance = 'Generate a detailed image generation prompt aligned to PL Capital example creatives: high-contrast navy/blue gradient background, modern geometric shapes (blue/green accents), big bold white headline, 2–4 supporting bullets with checkmark icons OR a simple numbered step row, and a single green rounded CTA button. Clean whitespace, crisp typography (Figtree-like), modern corporate aesthetic. IMPORTANT: do NOT add any logo/watermark; if branding is needed later, reserve clean empty space in the top-right.'
       }
     } else if (contentType === 'faceless-video') {
-      contentGuidance = `Generate a video script with scene descriptions, visuals, transitions, and narration for a ${duration}-second video.`
+      // Veo 3.1-optimized: output a single prompt (or timestamped segments) for direct use by Veo 3.1
+      contentGuidance = `Generate a VEO 3.1 VIDEO PROMPT ONLY — a single, direct prompt (or 4 timestamped lines for an 8-second clip) that will be passed to Google Veo 3.1. Use the Veo 3.1 formula: [Cinematography] + [Subject] + [Action] + [Context] + [Style & Ambiance]. Constraints: NO PEOPLE, NO FACES, NO HUMANS — use only motion graphics, data visualizations, animated charts, abstract shapes, kinetic typography, dashboard-style elements. For 8s clips use timestamp format: [00:00-00:02] ..., [00:02-00:04] ..., [00:04-00:06] ..., [00:06-00:08] .... Do NOT output a creative brief with numbered sections; output ONLY the Veo prompt text (one paragraph or 4 timestamped lines).`
     } else if (contentType === 'avatar-video') {
       contentGuidance = `Generate an avatar video script with dialogue, tone, pacing, and visual suggestions for a ${duration}-second video.`
     }
@@ -87,8 +88,28 @@ ${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettin
 `
     }
 
-    // System prompt for creative generation
-    const systemPrompt = `You are an expert creative director and prompt engineer for PL Capital's marketing campaigns.
+    // For faceless-video, output a Veo 3.1-ready prompt only (no creative brief)
+    const isFacelessVideo = contentType === 'faceless-video'
+    const systemPrompt = isFacelessVideo
+      ? `You are an expert prompt engineer for Google Veo 3.1 video generation. Your output must be a single, direct VIDEO PROMPT that will be passed to Veo 3.1 — not a creative brief or document.
+
+Veo 3.1 best practices (use these):
+- Formula: [Cinematography] + [Subject] + [Action] + [Context] + [Style & Ambiance]
+- Cinematography: camera work (close-up, wide shot, tracking shot, crane shot, dolly), composition
+- Subject: what is on screen (e.g. animated line graph, dashboard card, data visualization) — NEVER people or faces
+- Action: what the subject does (rising, rotating, fading in, sweeping across)
+- Context: environment (deep navy gradient, soft blue glow, clean canvas)
+- Style: aesthetic (motion graphics, corporate, clean, modern)
+
+Constraints: NO PEOPLE, NO FACES, NO HUMANS. Use only abstract visuals: motion graphics, animated charts, kinetic typography, geometric shapes, dashboard-style tiles. Describe what to exclude in natural language (e.g. "faceless motion graphics only") rather than bullet lists.
+
+Treat the "topic" as the campaign subject and translate it into a concrete visual scene (e.g. "Budget Analysis 2026" → animated budget trajectory graph, metric tiles, strategy wheel). Output ONLY the prompt text — no headings, no "Creative Prompt for...", no numbered sections. Describe colors and style in natural language (e.g. "deep navy gradient", "teal accents") — do not use hex codes in the output.
+
+Viral reel optimization (when platform is Instagram Reels or YouTube Shorts): Build in a strong visual hook in the first 1–2 seconds (bold motion or key stat), punchy pacing with a clear beat or pattern interrupt mid-way, loopable ending so the last frame flows back to the start, and a clear on-screen CTA moment (e.g. "Save this", "Follow for more", or a single bold action phrase). Describe these in the prompt so the generated clip feels scroll-stopping and shareable.
+
+Campaign context: Topic: ${topic}. Duration: ${duration} seconds. Platforms: ${platforms?.join(', ')}.${purpose ? ` Purpose: ${purpose}.` : ''}
+${brandGuidance ? `\nBrand (reflect in Style & Ambiance): ${brandGuidance.replace(/\*\*/g, '').replace(/\n/g, ' ').trim()}` : ''}`
+      : `You are an expert creative director and prompt engineer for PL Capital's marketing campaigns.
 
 🚨 CRITICAL INSTRUCTION: Your output MUST be a detailed CREATIVE BRIEF for generating actual ${contentType} content (images, videos, graphics).
 
@@ -172,10 +193,15 @@ Make the prompt so detailed and specific that a designer or video editor could e
 
     console.log('Generating creative prompt with GPT-OSS-120B...')
 
+    const isReelOrShort = platforms?.some((p: string) => /instagram|youtube/i.test(p))
+    const userMessage = isFacelessVideo
+      ? `Generate a single Veo 3.1 video prompt for topic: ${topic}.${isReelOrShort ? ' Optimize for a viral reel: strong hook in first 1–2s, punchy pacing, loopable ending, clear on-screen CTA moment.' : ''} Output ONLY the prompt text (one paragraph or 4 timestamped lines for 8s).`
+      : `Generate a creative prompt for: ${topic}`
+
     const completion = await groq.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Generate a creative prompt for: ${topic}` }
+        { role: 'user', content: userMessage }
       ],
       model: MODEL,
       temperature: 0.7,

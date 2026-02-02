@@ -63,13 +63,13 @@ export async function POST(request: NextRequest) {
     const systemPrompt = `You write short, natural spoken scripts for a financial services video avatar.
 Return ONLY the spoken script as plain text. No bullet points. No headings. No stage directions. No meta-instructions.`
 
-    const styleGuidance = isInstagramReel
-      ? `Style (Instagram Reels, Indian audience):
-- Hook in the first sentence (pattern interrupt).
+    const isYouTubeShort = platform === 'youtube' || /short/i.test(format)
+    const viralReelStyle = `Style (viral reel/short, Indian audience):
+- Hook in the first sentence (pattern interrupt — stop the scroll).
 - Short punchy sentences, spoken like a credible Indian finfluencer (not cheesy).
 - Use everyday India cues where relevant (₹, SIP, tax, salary day) without giving personalized advice.
 - Close with a strong CTA: "Save this", "Share", "Follow", or "Comment 'PLAN'".`
-      : ''
+    const styleGuidance = (isInstagramReel || isYouTubeShort) ? viralReelStyle : ''
 
     const userPrompt = `Write a single spoken script for an AI avatar video.
 

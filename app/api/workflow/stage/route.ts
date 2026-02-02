@@ -481,12 +481,38 @@ export async function POST(request: NextRequest) {
         }
 
 
-        // Pass LongCat configuration as environment variables for video stage
-        if (stageId === 4 && longCatConfig) {
-          nodeEnv.LONGCAT_ENABLED = longCatConfig.enabled ? 'true' : 'false'
-          nodeEnv.LONGCAT_MODE = longCatConfig.mode || 'text-to-video'
-          nodeEnv.LONGCAT_PROMPT = longCatConfig.prompt || ''
-          nodeEnv.LONGCAT_DURATION = longCatConfig.duration?.toString() || duration.toString()
+        // Pass LongCat configuration as environment variables for video stage.
+        // For faceless-video, prefer Stage 1 creative prompt (Veo 3.1-style) when available.
+        if (stageId === 4) {
+          let effectiveLongCatEnabled = longCatConfig?.enabled ?? false
+          let effectiveLongCatPrompt = longCatConfig?.prompt ?? ''
+          if (contentType === 'faceless-video' && !effectiveLongCatPrompt) {
+            const backendRoot = path.join(process.cwd(), 'backend')
+            const stateFilePath = path.join(backendRoot, 'data', 'workflow-state.json')
+            if (fs.existsSync(stateFilePath)) {
+              try {
+                const stateContent = fs.readFileSync(stateFilePath, 'utf-8')
+                const state = JSON.parse(stateContent)
+                const campaigns = Object.values(state.campaigns || {}) as any[]
+                const matching = campaigns
+                  .filter((c: any) => c.topic === topic)
+                  .sort((a: any, b: any) => new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime())[0]
+                if (matching?.creativePrompt?.trim()) {
+                  effectiveLongCatPrompt = matching.creativePrompt.trim()
+                  effectiveLongCatEnabled = true
+                  sendEvent({ log: '📋 Using Stage 1 Veo 3.1 prompt for faceless video' })
+                }
+              } catch (_) {
+                // ignore
+              }
+            }
+          }
+          if (effectiveLongCatEnabled || longCatConfig) {
+            nodeEnv.LONGCAT_ENABLED = effectiveLongCatEnabled ? 'true' : (longCatConfig?.enabled ? 'true' : 'false')
+            nodeEnv.LONGCAT_MODE = longCatConfig?.mode || 'text-to-video'
+            nodeEnv.LONGCAT_PROMPT = effectiveLongCatPrompt || longCatConfig?.prompt || ''
+            nodeEnv.LONGCAT_DURATION = (longCatConfig?.duration ?? duration)?.toString() || duration.toString()
+          }
         }
 
         sendEvent({ log: `🚀 Command: node ${args.slice(1).join(' ')}` })

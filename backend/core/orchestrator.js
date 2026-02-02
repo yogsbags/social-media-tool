@@ -69,14 +69,14 @@ Return ONLY the spoken script as plain text. No bullet points. No headings. No s
 
     const languageName = this._getLanguageName(language);
     const isInstagramReel = platform === 'instagram' || /reel/i.test(format || '');
+    const isYouTubeShort = platform === 'youtube' || /short/i.test(format || '') || /youtube-short/i.test(options.type || '');
     const needsDisclaimer = /(english|hinglish)/i.test(language);
-    const styleGuidance = isInstagramReel
-      ? `Style (Instagram Reels, Indian audience):
-- Hook in the first sentence (pattern interrupt).
+    const viralReelStyle = `Style (viral reel/short, Indian audience):
+- Hook in the first sentence (pattern interrupt — stop the scroll).
 - Short punchy sentences, spoken like a credible Indian finfluencer (not cheesy).
 - Use everyday India cues where relevant (₹, SIP, tax, salary day) without giving personalized advice.
-- Close with a strong CTA: "Save this", "Share", "Follow", or "Comment 'PLAN'".`
-      : '';
+- Close with a strong CTA: "Save this", "Share", "Follow", or "Comment 'PLAN'".`;
+    const styleGuidance = (isInstagramReel || isYouTubeShort) ? viralReelStyle : '';
     const userPrompt = `Write a single spoken script for an AI avatar video.
 
 Constraints:
@@ -908,8 +908,14 @@ ${brandGuidance}`;
       if (isAvatarMode && !isHeyGenAvatar) {
         console.log('   🎭 Avatar mode detected (VEO-based)');
 
-        const avatarDescription = options.avatarDescription || 'Indian male professional in formal business attire, confident posture, warm expression';
-        const voiceDescription = options.voiceDescription || 'Deep, confident Indian male voice with slight accent, clear articulation';
+        // Male/female from avatarId (generic-indian-male / generic-indian-female) or options
+        const isFemale = options.avatarGender === 'female' || (options.avatarId && String(options.avatarId).toLowerCase().includes('female'));
+        const genderTerm = isFemale ? 'female' : 'male';
+        const voiceGender = isFemale ? 'Confident Indian female voice, clear articulation, professional tone' : 'Deep, confident Indian male voice with slight accent, clear articulation';
+
+        const skinRealism = 'Hyperrealistic, photorealistic skin with visible pores, subtle skin texture and natural blemishes; no smooth or plastic AI skin; documentary-style realism.';
+        const avatarDescription = options.avatarDescription || `Indian ${genderTerm} professional in formal business attire, confident posture, warm expression. ${skinRealism}`;
+        const voiceDescription = options.voiceDescription || voiceGender;
 
         // Auto-generate script instruction if not provided (frontend sends avatarScriptText)
         const userScript = options.scriptText || options.avatarScriptText;
@@ -935,8 +941,15 @@ ${brandGuidance}`;
         console.log(`   👤 Avatar: ${avatarDescription}`);
         console.log(`   🎙️  Voice: ${voiceDescription}`);
 
-        // Augment prompt with avatar and voice context
-        const avatarPrompt = `Professional video featuring ${avatarDescription}. ${voiceDescription} ${scriptInstruction}. Camera: Medium shot, professional framing, slight depth of field. Lighting: Soft key light, professional studio setup with subtle rim lighting. Background: Elegant office environment with soft bokeh, professional corporate setting. ${prompt}`;
+        // Viral reel optimization for Instagram Reels / YouTube Shorts
+        const isReelOrShort = options.platform === 'instagram' || options.platform === 'youtube' || /reel|short/i.test(options.format || '') || /youtube-short/i.test(options.type || '');
+        const viralGuidance = isReelOrShort
+          ? ' Pacing: viral reel style — strong visual hook in the first 1–2 seconds (avatar catches attention immediately), punchy delivery, ending that feels loopable. Include a clear on-screen CTA moment (e.g. "Save this", "Follow for more").'
+          : '';
+
+        // Veo 3.1 best practices for avatar: [Cinematography] + [Subject] + [Action] + [Context] + [Style & Ambiance]. Do not append faceless base prompt.
+        const topicContext = options.topic ? ` Topic/context: ${options.topic}.` : '';
+        const avatarPrompt = `Professional video featuring ${avatarDescription}. ${voiceDescription} ${scriptInstruction}. Camera: Medium shot, professional framing, slight depth of field. Lighting: Soft key light, professional studio setup with subtle rim lighting. Skin: hyperrealistic, natural pores and subtle texture, avoid smooth plastic AI skin. Background: Elegant office environment with soft bokeh, professional corporate setting.${viralGuidance}${topicContext}`;
 
         prompt = avatarPrompt;
         console.log('   ✅ Avatar prompt constructed\n');
@@ -1286,43 +1299,35 @@ ${brandGuidance}`;
   }
 
   /**
-   * Build video generation prompt based on options
-   * Updated to generate faceless videos by default with explicit constraints
+   * Build video generation prompt based on options.
+   * Uses Veo 3.1 formula: [Cinematography] + [Subject] + [Action] + [Context] + [Style & Ambiance].
+   * Faceless only: no people, faces, or humans.
    */
   _buildVideoPrompt(options) {
     const { platform, format, topic, type, language = 'english' } = options;
     const languageName = this._getLanguageName(language);
-
-    // Language instruction for video content
+    const t = topic || 'financial insights';
     const languageInstruction = language !== 'english'
-      ? ` All on-screen text, labels, captions, and any spoken content must be in ${languageName}.`
+      ? ` On-screen text and labels in ${languageName}.`
       : '';
 
-    // Faceless video prompts with explicit "no people" constraints (Instagram/YouTube India-aligned with martech)
+    // Veo 3.1-style: cinematography + subject + action + context + style; faceless motion graphics only
     const basePrompts = {
-      linkedin: `Faceless professional ${format || 'business'} video about ${topic || 'financial services'}. NO PEOPLE, NO FACES, NO HUMANS. Abstract data visualizations, animated charts and graphs, geometric shapes, motion graphics only. Corporate blue and teal color palette with navy accents. Dynamic camera movements orbiting around 3D data elements. Volumetric lighting with soft glows. Modern, clean, premium aesthetic. Cinematic quality. 16:9 aspect ratio.${languageInstruction}`,
+      linkedin: `Wide shot, abstract data visualizations and animated charts, rising and evolving across the frame, on a deep navy gradient background with soft blue and teal glow, corporate motion-graphics style, clean and premium. No people, faces, or humans. 16:9. Topic: ${t}.${languageInstruction}`,
 
-      instagram: `Instagram Reels-style faceless ${format || 'reel'} about ${topic || 'money tips'} for an Indian audience. NO PEOPLE, NO FACES, NO HUMANS.
-Editing & format: 9:16 vertical, 0.5–1.2s fast cuts, strong hook in first 1–2 seconds, loopable ending, bold subtitles throughout, high contrast, trending finfluencer pacing.
-Visual style: clean motion graphics + relatable India cues (₹ symbol, SIP, tax calendar, salary-day motif, Indian market charts) WITHOUT giving personalized advice. Use modern gradients, kinetic typography, animated charts, icons, quick zooms, whip transitions.
-On-screen text: short punchy lines (max ~36 chars/line), 6–8 lines across the video; emphasize 1–2 key numbers (e.g., "₹100 SIP", "3-step checklist") without promises.
-Audio note: suggest energetic background beat (no copyrighted lyrics). End with a clear CTA on screen like "Save this" / "Follow for more".${languageInstruction}`,
+      instagram: `Close-up to wide shot, animated line graph and dashboard-style metric tiles, sweeping left to right and fading in with ease-out motion, on a deep navy to blue gradient canvas with subtle teal accents, clean motion graphics and kinetic typography for Indian finance audience. No people, faces, or humans. 9:16 vertical, punchy and loopable. Topic: ${t}.${languageInstruction}`,
 
       youtube: (() => {
         const isShort = /short/i.test(format || '') || /youtube-short/i.test(type || '');
         if (isShort) {
-          return `YouTube Shorts-style faceless video about ${topic || 'money tips'} for an Indian audience. NO PEOPLE, NO FACES, NO HUMANS.
-Format: 9:16 vertical, 20–35s, ultra-fast pacing, hook in first 1s, pattern interrupts every ~2s, loopable ending.
-Visuals: kinetic typography + bold subtitles, animated charts (Nifty/Sensex style), ₹ symbol, SIP/tax calendar motifs. Clean, high-contrast, modern finance look.
-On-screen text: 7–10 short lines, max ~32 chars/line; highlight 1–2 key numbers/terms without promises.
-Editing: jump cuts, zooms, whip transitions, whoosh SFX (no copyrighted music/lyrics). End screen CTA: "Save + Follow for more".${languageInstruction}`;
+          return `Tracking shot, animated charts and bold text cards, appearing in sequence with quick zooms and transitions, on high-contrast navy and teal background, kinetic typography and modern finance look. No people, faces, or humans. 9:16 vertical. Topic: ${t}.${languageInstruction}`;
         }
-        return `Faceless educational ${format || 'explainer'} video about ${topic || 'wealth building'}. NO PEOPLE, NO FACES, NO HUMANS. Animated educational graphics, step-by-step visual diagrams, 3D charts and statistics, icon animations, timeline visualizations. Clear visual hierarchy. Professional presentation with smooth transitions. Clean modern design with focus on information delivery. 16:9 landscape format.${languageInstruction}`;
+        return `Wide shot, step-by-step animated diagrams and 3D charts, building and transitioning smoothly, on a clean dark gradient with soft lighting, educational motion graphics and clear visual hierarchy. No people, faces, or humans. 16:9. Topic: ${t}.${languageInstruction}`;
       })(),
 
-      facebook: `Faceless community-focused ${format || 'post'} video about ${topic || 'financial planning'}. NO PEOPLE, NO FACES, NO HUMANS. Friendly animated graphics, simple infographics, icon-based storytelling, warm color palette, accessible visual language. Relatable abstract symbols and metaphors. Clear messaging through visuals and text overlays. 1:1 or 16:9 format.${languageInstruction}`,
+      facebook: `Medium shot, friendly animated graphics and icon-based visuals, gently animating and transitioning, on a warm gradient background, accessible motion graphics and clear messaging. No people, faces, or humans.${languageInstruction}`,
 
-      twitter: `Faceless concise ${format || 'update'} video about ${topic || 'market insights'}. NO PEOPLE, NO FACES, NO HUMANS. Quick-cut motion graphics, animated statistics, bold data visualizations, minimal design. High contrast colors for attention. Fast-paced transitions. Optimized for quick engagement and shareability. Clean professional look. 16:9 format.${languageInstruction}`,
+      twitter: `Close-up, animated statistics and data visualizations, quick cuts and bold transitions, on high-contrast background, minimal motion graphics. No people, faces, or humans. Topic: ${t}.${languageInstruction}`,
 
       whatsapp: `High-contrast, text-forward static image for WhatsApp about ${topic || 'your offer'}. 1080x1920 portrait-friendly layout, bold headline, single CTA, clear brand colors.${languageInstruction}`
     };
