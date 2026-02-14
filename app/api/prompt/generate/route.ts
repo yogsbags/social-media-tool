@@ -38,6 +38,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const isLiveNewsCampaign = campaignType === 'live-news'
+
     // Build platform-specific guidance
     const platformGuidance = platforms?.map((p: string) => {
       const specs: Record<string, string> = {
@@ -104,6 +106,21 @@ ${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettin
 `
     }
 
+    // Editorial guidance derived from PL India news page patterns (headline, dateline, factual style)
+    const liveNewsEditorialGuidance = isLiveNewsCampaign
+      ? `
+**PL India News-Style Editorial Rules (derived from recent news posts):**
+- **Headline format:** Use a specific, market-focused headline in title case. Optional colon is allowed to separate trigger and impact.
+- **Dateline style:** Open with a city + date lead-in (e.g., "Mumbai, 5 May –") before the first paragraph in long-form article copy.
+- **Lead paragraph:** First paragraph should answer what happened and why it matters in one concise block.
+- **Evidence-first writing:** Use concrete numbers/indices (%, bps, NIFTY/Sensex levels, flows, sector moves) when available.
+- **Structured sections:** Use short subheads for clarity (e.g., "Sector Watch", "Market Breadth", "Bottomline").
+- **Tone:** Neutral, analytical, newsroom/business style; avoid hype and promotional adjectives.
+- **Compliance:** No investment recommendations or advisory language (no buy/sell/hold, no "what investors should do").
+- **Attribution:** Attribute claims to data, institutions, or report context (RBI, Fed, exchange data, filings) instead of vague statements.
+`
+      : ''
+
     // For faceless-video, output a Veo 3.1-ready prompt only (no creative brief)
     const isFacelessVideo = contentType === 'faceless-video'
     const systemPrompt = isFacelessVideo
@@ -166,6 +183,7 @@ Content Type Requirements:
 ${contentGuidance}
 
 ${brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: You MUST strictly adhere to these brand guidelines. All colors, typography, tone, and visual style MUST match the specified brand requirements.` : ''}
+${liveNewsEditorialGuidance}
 ${(referenceImageUrls?.length || referenceImagesProvided) ? `
 **Reference images (INGESTED):** The user has provided reference image(s).${referenceImageUrls?.length ? ` URLs: ${referenceImageUrls.join(', ')}.` : ''} The creative brief and the **Direct image prompt** MUST instruct the image generator to match the style, palette, and key visual elements of the provided reference image(s). Include one clear sentence in the Direct image prompt such as: "Match the style and visual language of the provided reference image(s); preserve [brand] colors and CTA as specified."
 ` : ''}

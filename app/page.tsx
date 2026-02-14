@@ -176,6 +176,7 @@ export default function Home() {
     { value: 'twitter-thread', label: 'Twitter Thread', platforms: ['twitter'] },
     { value: 'whatsapp-creative', label: 'WhatsApp Creative', platforms: ['whatsapp'] },
     { value: 'email-newsletter', label: 'Email Newsletter', platforms: ['email'] },
+    { value: 'live-news', label: 'Live News Update', platforms: ['linkedin', 'twitter', 'youtube'] },
     { value: 'infographic', label: 'Infographic', platforms: ['linkedin', 'instagram', 'facebook', 'twitter'] },
   ]
 
@@ -527,7 +528,9 @@ export default function Home() {
     try {
       setIsGeneratingTopic(true)
       setTopicError(null)
-      addLog('Generating campaign topic...')
+      addLog(campaignType === 'live-news'
+        ? 'Generating live-news campaign topic with web search...'
+        : 'Generating campaign topic...')
 
       const response = await fetch('/api/topic/generate', {
         method: 'POST',

@@ -518,6 +518,142 @@ export default function StageDataModal({
     )
   }
 
+  const renderLiveNewsArticle = () => {
+    const headline = formData['headline'] || ''
+    const subheadline = formData['subheadline'] || ''
+    const summary = formData['summary'] || ''
+    const articleHtml = formData['articleHtml'] || ''
+    const articleText = formData['articleText'] || ''
+
+    const normalizePreviewHtml = (html: string) => {
+      if (!html) return ''
+      const hasStructuralTags = /<(h1|h2|p|ol|ul|li|pre|blockquote)\b/i.test(html)
+      if (hasStructuralTags) return html
+      return html
+        .split(/\n\n+/)
+        .map((block: string) => block.trim())
+        .filter(Boolean)
+        .map((block: string) => `<p>${block.replace(/\n/g, '<br/>')}</p>`)
+        .join('')
+    }
+
+    const articleBodyPreviewHtml = normalizePreviewHtml(articleHtml)
+      .replace(/<h1\b[^>]*>[\s\S]*?<\/h1>/i, '')
+      .trim()
+
+    const stripSourcesFromHtml = (html: string) => {
+      if (!html) return ''
+      return html
+        .replace(/<h2>\s*Sources\s*<\/h2>\s*<ol>[\s\S]*?<\/ol>/i, '')
+        .replace(/<h2>\s*SEO Metadata\s*<\/h2>\s*<ul>[\s\S]*?<\/ul>/i, '')
+        .replace(/<h2>\s*FAQ Schema\s*<\/h2>\s*<pre>[\s\S]*?<\/pre>/i, '')
+        .replace(/<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/i, '')
+        .trim()
+    }
+
+    const buildDownloadHtml = () => {
+      const cleanBody = stripSourcesFromHtml(articleHtml)
+      return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${headline || 'Live News Article'}</title>
+    <style>
+      body {
+        font-family: Georgia, "Times New Roman", serif;
+        line-height: 1.7;
+        color: #1f2937;
+        max-width: 760px;
+        margin: 40px auto;
+        padding: 0 16px;
+      }
+      h1 { font-size: 2rem; line-height: 1.2; margin-bottom: 0.5rem; color: #111827; }
+      p { margin: 0 0 1rem; font-size: 1.05rem; }
+      .subheadline { font-size: 1.15rem; color: #374151; margin-bottom: 1rem; }
+      .summary { background: #f9fafb; border-left: 4px solid #2563eb; padding: 0.8rem 1rem; margin: 1rem 0 1.5rem; }
+    </style>
+  </head>
+  <body>
+    ${headline ? `<h1>${headline}</h1>` : ''}
+    ${subheadline ? `<p class="subheadline">${subheadline}</p>` : ''}
+    ${summary ? `<p class="summary">${summary}</p>` : ''}
+    ${cleanBody}
+  </body>
+</html>`
+    }
+
+    const downloadArticleHtml = () => {
+      const html = buildDownloadHtml()
+      const blob = new Blob([html], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `live-news-article-${Date.now()}.html`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    }
+
+    return (
+      <div className="space-y-6">
+        <div className="p-4 bg-gradient-to-br from-blue-50 to-sky-50 border-2 border-blue-300 rounded-xl">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">📰</span>
+              <div>
+                <label className="block text-base font-bold text-blue-900">
+                  Live News Article
+                </label>
+                <p className="text-xs text-blue-700 mt-0.5">
+                  Preview and export clean reader-friendly HTML (sources hidden in download)
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={downloadArticleHtml}
+              className="px-3 py-1 text-xs font-semibold bg-white border-2 border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors"
+            >
+              ⬇️ Download HTML
+            </button>
+          </div>
+
+          <div className="border-2 border-blue-300 rounded-lg bg-white overflow-hidden">
+            <div className="bg-blue-100 px-3 py-2 text-xs font-semibold text-blue-800 border-b-2 border-blue-300">
+              Article Preview
+            </div>
+            <div className="p-5 max-w-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h1]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:leading-snug [&_h2]:mt-6 [&_h2]:mb-2 [&_p]:text-[16px] [&_p]:leading-7 [&_p]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_pre]:whitespace-pre-wrap [&_pre]:break-words">
+              {headline && <h1 className="!mb-2 !font-bold">{headline}</h1>}
+              {subheadline && <p className="!mt-0 !text-gray-700"><em>{subheadline}</em></p>}
+              {summary && (
+                <div className="bg-gray-50 border-l-4 border-blue-600 px-3 py-2 my-3">
+                  <p className="!my-0 text-gray-700">{summary}</p>
+                </div>
+              )}
+              <div dangerouslySetInnerHTML={{ __html: articleBodyPreviewHtml }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl">📝</span>
+            <label className="block text-sm font-bold text-gray-900">
+              Raw Article Text
+            </label>
+          </div>
+          <textarea
+            value={articleText}
+            onChange={(e) => handleFieldChange('articleText', e.target.value)}
+            rows={10}
+            className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white resize-vertical"
+          />
+        </div>
+      </div>
+    )
+  }
+
   if (!isOpen) return null
 
   return (
@@ -571,6 +707,15 @@ export default function StageDataModal({
             </>
           )}
 
+          {/* For Stage 2: Display live-news article with preview/download */}
+          {stageId === 2 && formData['contentType'] === 'live-news-article' && formData['articleHtml'] && (
+            <>
+              {renderLiveNewsArticle()}
+              <div className="my-6 border-t-2 border-gray-200"></div>
+              <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Additional Details</h3>
+            </>
+          )}
+
           <div className="space-y-4">
             {Object.entries(formData)
               .filter(([key]) => {
@@ -578,6 +723,9 @@ export default function StageDataModal({
                 if (key === 'creativePrompt' && stageId === 1) return false
                 if (stageId === 2 && formData['contentType'] === 'email-newsletter') {
                   return !['html', 'subject', 'preheader', 'plainText', 'subjectVariations', 'contentType'].includes(key)
+                }
+                if (stageId === 2 && formData['contentType'] === 'live-news-article') {
+                  return !['headline', 'subheadline', 'summary', 'articleText', 'articleHtml', 'contentType'].includes(key)
                 }
                 return true
               })

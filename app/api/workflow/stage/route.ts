@@ -367,6 +367,74 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Special handling for Stage 2: Generate grounded live-news article
+        if (stageId === 2 && campaignType === 'live-news') {
+          sendEvent({ log: '📰 Generating grounded live-news article with Gemini...' })
+
+          try {
+            const requestOrigin = new URL(request.url).origin
+            const envBase = process.env.NEXT_API_PUBLIC_URL
+              ? (process.env.NEXT_API_PUBLIC_URL.startsWith('http') ? process.env.NEXT_API_PUBLIC_URL : `https://${process.env.NEXT_API_PUBLIC_URL}`)
+              : process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')
+                ? process.env.NEXT_PUBLIC_API_URL
+                : null
+            const baseUrl = envBase || requestOrigin
+
+            const articleResponse = await fetch(`${baseUrl}/api/article/generate`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                topic,
+                purpose,
+                targetAudience,
+                campaignType,
+                language
+              })
+            })
+
+            if (!articleResponse.ok) {
+              const errText = await articleResponse.text()
+              throw new Error(errText || 'Failed to generate grounded live-news article')
+            }
+
+            const article = await articleResponse.json()
+
+            sendEvent({ log: '✅ Live-news article generated successfully!' })
+            sendEvent({ log: `🗞️ Headline: ${article.headline}` })
+            sendEvent({ log: `🔎 Grounded sources: ${article.factCheck?.sourceCount || article.sources?.length || 0}` })
+
+            const stageData = {
+              topic,
+              campaignType,
+              platforms,
+              status: 'completed',
+              type: 'content-generation',
+              contentType: 'live-news-article',
+              headline: article.headline,
+              subheadline: article.subheadline,
+              summary: article.summary,
+              articleText: article.articleText,
+              articleHtml: article.articleHtml,
+              tags: article.tags,
+              sources: article.sources,
+              factCheck: article.factCheck,
+              model: article.model,
+              generatedAt: article.generatedAt
+            }
+
+            saveStageData(stageId, stageData)
+            sendEvent({ stage: stageId, status: 'completed', message: 'Live-news article generated', data: stageData })
+            sendEvent({ log: '✅ Stage 2 completed successfully!' })
+            controller.close()
+            return
+          } catch (error) {
+            sendEvent({ log: `❌ Live-news article generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
+            sendEvent({ stage: stageId, status: 'error', message: 'Live-news article generation failed' })
+            controller.close()
+            return
+          }
+        }
+
         // Path to backend (monorepo structure: frontend/backend/)
         const workingDir = path.join(process.cwd(), 'backend')
         const mainScript = path.join(workingDir, 'main.js')

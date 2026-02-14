@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { GoogleGenAI } from '@google/genai'
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 
@@ -17,6 +18,104 @@ const MODEL_PRIMARY = process.env.GROQ_TOPIC_MODEL || 'llama-3.3-70b-versatile'
 const MODEL_FALLBACK = 'llama-3.3-70b-versatile'
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const REFERENCE_FILENAME = 'pl-products-reference.md'
+const LIVE_NEWS_MODEL = 'gemini-3-flash-preview'
+const TOPIC_HISTORY_FILENAME = 'topic-history.json'
+
+function getTopicHistoryPath(): string {
+  return path.join(process.cwd(), 'backend', 'data', TOPIC_HISTORY_FILENAME)
+}
+
+function loadRecentTopics(limit = 8): string[] {
+  try {
+    const filePath = getTopicHistoryPath()
+    if (!fs.existsSync(filePath)) return []
+    const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+    const entries = Array.isArray(parsed?.entries) ? parsed.entries : []
+    return entries
+      .map((e: any) => String(e?.topic || '').trim())
+      .filter(Boolean)
+      .slice(-limit)
+      .reverse()
+  } catch {
+    return []
+  }
+}
+
+function saveTopicToHistory(topic: string): void {
+  try {
+    const filePath = getTopicHistoryPath()
+    fs.mkdirSync(path.dirname(filePath), { recursive: true })
+    const existing = fs.existsSync(filePath)
+      ? JSON.parse(fs.readFileSync(filePath, 'utf8'))
+      : { entries: [] }
+    const entries = Array.isArray(existing?.entries) ? existing.entries : []
+    entries.push({ topic, createdAt: new Date().toISOString() })
+    const trimmed = entries.slice(-60)
+    fs.writeFileSync(filePath, JSON.stringify({ entries: trimmed }, null, 2))
+  } catch {
+    // ignore persistence errors
+  }
+}
+
+function normalizeTopicForSimilarity(text: string): string[] {
+  const stopWords = new Set([
+    'the', 'a', 'an', 'in', 'on', 'for', 'to', 'of', 'and', 'with', 'as', 'by', 'at',
+    'is', 'are', 'was', 'were', 'this', 'that', 'these', 'those', 'india', 'indian',
+    'market', 'markets', 'stock', 'stocks'
+  ])
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((t) => !stopWords.has(t))
+}
+
+function topicSimilarityScore(a: string, b: string): number {
+  const ta = new Set(normalizeTopicForSimilarity(a))
+  const tb = new Set(normalizeTopicForSimilarity(b))
+  if (ta.size === 0 || tb.size === 0) return 0
+  let inter = 0
+  for (const tok of ta) if (tb.has(tok)) inter += 1
+  return inter / Math.max(ta.size, tb.size)
+}
+
+function isTooSimilarToRecent(topic: string, recentTopics: string[]): boolean {
+  const t = topic.toLowerCase()
+  return recentTopics.some((recent) => {
+    const r = recent.toLowerCase()
+    if (!r) return false
+    if (t === r) return true
+    if (t.includes(r) || r.includes(t)) return true
+    return topicSimilarityScore(topic, recent) >= 0.55
+  })
+}
+
+async function getGeminiText(response: any): Promise<string> {
+  if (!response) return ''
+
+  try {
+    if (typeof response.text === 'function') {
+      const maybe = response.text()
+      if (maybe && typeof maybe.then === 'function') return await maybe
+      return maybe || ''
+    }
+  } catch {
+    // ignore and fall back
+  }
+
+  if (typeof response.text === 'string') return response.text
+
+  const parts = response?.candidates?.[0]?.content?.parts
+  if (Array.isArray(parts)) {
+    return parts
+      .map((p: any) => (typeof p?.text === 'string' ? p.text : ''))
+      .filter(Boolean)
+      .join('')
+  }
+
+  return ''
+}
 
 /** Returns true if the text looks like our instruction (echo) rather than a topic */
 function isEchoOrInvalid(text: string | undefined, userPrompt: string): boolean {
@@ -45,6 +144,181 @@ export async function POST(request: NextRequest) {
   try {
     const body: GenerateBody = await request.json()
     const groqKey = process.env.GROQ_API_KEY
+    const geminiKey = process.env.GEMINI_API_KEY
+
+    const fillerPatterns = [
+      /^So something like[:\s]+/i,
+      /^Here'?s? a topic[:\s]+/i,
+      /^Topic[:\s]+/i,
+      /^Campaign topic[:\s]+/i,
+      /^How about[:\s]+/i,
+      /^Try this[:\s]+/i,
+      /^Reply with only[:\s]+/i,
+      /^Example[:\s]+/i,
+      /^Unleash [^:]+:\s*/i,
+      /^Discover [^:]+:\s*/i,
+      /^Unlock [^:]+:\s*/i,
+      /^Experience [^:]+:\s*/i,
+      /^Transform [^:]+:\s*/i,
+      /^[A-Z][^:]{0,40}:\s*(?=[A-Z])/,
+    ]
+
+    const normalizeTopic = (text: string | undefined) => {
+      let topic = text?.trim() || ''
+      topic = topic.replace(/^["']|["']$/g, '').trim()
+      for (const pattern of fillerPatterns) {
+        topic = topic.replace(pattern, '').trim()
+      }
+      return topic.replace(/^["']|["']$/g, '').trim()
+    }
+
+    const extractBestTopic = (text: string | undefined) => {
+      const raw = text?.trim() || ''
+      if (!raw) return ''
+
+      const lines = raw
+        .split('\n')
+        .map((line) => line.trim())
+        .map((line) => line.replace(/^[-*•\d.)\s]+/, '').trim())
+        .filter(Boolean)
+
+      if (!lines.length) return ''
+
+      const blockedLinePatterns = [
+        /^(here are|top|option|options|recommended|recommendation|suggestion|headline|topic)/i,
+        /^(based on|using|from (the )?news|i found)/i,
+      ]
+
+      const candidates = lines
+        .map((line) => normalizeTopic(line))
+        .filter((line) => line.length >= 5)
+        .filter((line) => line.length <= 120)
+        .filter((line) => !blockedLinePatterns.some((pattern) => pattern.test(line)))
+
+      if (candidates.length > 0) return candidates[0]
+      return normalizeTopic(lines[0])
+    }
+
+    const sanitizeNewsHeadline = (text: string) => {
+      return text
+        // Strip emoji/pictographic symbols
+        .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]|\uFE0F/g, '')
+        // Keep newsroom-safe punctuation and remove decorative symbols
+        .replace(/[^A-Za-z0-9\s.,:;!?'"()%&\-+\/₹$]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+    }
+
+    const isAdvisoryOrGenericNewsLine = (text: string) => {
+      const t = text.toLowerCase()
+      const advisoryPatterns = [
+        /\b(buy|sell|hold|invest|accumulate|book profits?)\b/,
+        /\b(opportunit(y|ies)|expert insights?|navigating|strategy|strategies)\b/,
+        /\b(what to do|how to|tips?|guide|outlook for investors?)\b/,
+      ]
+      const vaguePatterns = [
+        /\b(markets? (update|news|today)|latest market update)\b/,
+        /\b(financial news|business news)\b/,
+      ]
+      return advisoryPatterns.some((p) => p.test(t)) || vaguePatterns.some((p) => p.test(t))
+    }
+
+    if (body.campaignType === 'live-news') {
+      if (!geminiKey) {
+        return NextResponse.json(
+          { error: 'GEMINI_API_KEY is required for live-news topic generation' },
+          { status: 500 }
+        )
+      }
+
+      const ai = new GoogleGenAI({ apiKey: geminiKey })
+      const recentTopics = loadRecentTopics(10)
+      const avoidLine = recentTopics.length > 0
+        ? `Avoid near-duplicates/paraphrases of these recent generated topics: ${recentTopics.join(' | ')}`
+        : ''
+      const angleHints = [
+        'policy impact (RBI/Fed/rates/budget/regulatory trigger)',
+        'commodity movement (gold/silver/oil impact)',
+        'flows & positioning (FII/DII, volume, breadth)',
+        'sector rotation (IT/banks/auto/pharma leadership shift)',
+        'currency/bond linkage (INR, yields, debt-market effect)',
+        'corporate earnings or guidance impact',
+      ]
+
+      const prompts = angleHints.map((angle) => [
+        'Use Google Search to find current, trending finance or markets news relevant to PL Capital audiences in India.',
+        'Prioritize very recent developments and high-interest stories.',
+        body.purpose ? `Purpose: ${body.purpose}` : '',
+        body.targetAudience ? `Audience: ${body.targetAudience}` : '',
+        body.platforms?.length ? `Platforms: ${body.platforms.join(', ')}` : '',
+        `Focus angle for this attempt: ${angle}.`,
+        'Output exactly one short campaign topic in headline style (5 to 15 words).',
+        'Ensure the line is complete and readable, not truncated.',
+        'Use neutral news wording, not advice/recommendations.',
+        'Preferred angle styles: market-impact or explainer headline.',
+        'Example styles (do not copy verbatim): "US-India trade deal impact on export sectors", "What is causing the silver rally in India?"',
+        avoidLine,
+        'No labels, no quotes, no bullets.',
+      ].filter(Boolean).join('\n'))
+      let topic = ''
+      let lastRawTopic = ''
+      let lastFinishReason = ''
+
+      for (let attempt = 0; attempt < 2 && !topic; attempt += 1) {
+        for (const prompt of prompts) {
+          const response = await ai.models.generateContent({
+            model: LIVE_NEWS_MODEL,
+            contents: [{ text: prompt }],
+            config: {
+              temperature: 0.4,
+              maxOutputTokens: 512,
+              responseMimeType: 'text/plain',
+              tools: [{ googleSearch: {} }],
+            },
+          })
+
+          const rawTopic = await getGeminiText(response)
+          const extracted = extractBestTopic(rawTopic)
+          const finishReason = response?.candidates?.[0]?.finishReason || ''
+          const cleaned = sanitizeNewsHeadline(extracted)
+          const wordCount = cleaned ? cleaned.split(/\s+/).filter(Boolean).length : 0
+          const looksTruncated = /[-:;,]$/.test(cleaned)
+          const hitMaxTokens = String(finishReason).toUpperCase() === 'MAX_TOKENS'
+
+          lastRawTopic = rawTopic
+          lastFinishReason = finishReason
+
+          if (
+            cleaned &&
+            cleaned.length >= 5 &&
+            wordCount >= 5 &&
+            wordCount <= 15 &&
+            !looksTruncated &&
+            !hitMaxTokens &&
+            !isTooSimilarToRecent(cleaned, recentTopics) &&
+            !isAdvisoryOrGenericNewsLine(cleaned) &&
+            !isGenericTagline(cleaned)
+          ) {
+            topic = cleaned
+            break
+          }
+        }
+      }
+
+      if (!topic) {
+        console.error('Live-news topic invalid', {
+          rawTopic: lastRawTopic?.slice(0, 300),
+          finishReason: lastFinishReason,
+        })
+        return NextResponse.json(
+          { error: 'No valid live-news topic generated. Please try again.' },
+          { status: 500 }
+        )
+      }
+
+      saveTopicToHistory(topic)
+      return NextResponse.json({ topic, model: LIVE_NEWS_MODEL, source: 'google-search' })
+    }
 
     if (!groqKey) {
       return NextResponse.json({ error: 'GROQ_API_KEY is not configured' }, { status: 500 })
@@ -130,26 +404,7 @@ export async function POST(request: NextRequest) {
 
     topic = topic?.replace(/^["']|["']$/g, '').trim()
 
-    const fillerPatterns = [
-      /^So something like[:\s]+/i,
-      /^Here'?s? a topic[:\s]+/i,
-      /^Topic[:\s]+/i,
-      /^Campaign topic[:\s]+/i,
-      /^How about[:\s]+/i,
-      /^Try this[:\s]+/i,
-      /^Reply with only[:\s]+/i,
-      /^Example[:\s]+/i,
-      /^Unleash [^:]+:\s*/i,
-      /^Discover [^:]+:\s*/i,
-      /^Unlock [^:]+:\s*/i,
-      /^Experience [^:]+:\s*/i,
-      /^Transform [^:]+:\s*/i,
-      /^[A-Z][^:]{0,40}:\s*(?=[A-Z])/,
-    ]
-    for (const pattern of fillerPatterns) {
-      topic = topic?.replace(pattern, '').trim() ?? ''
-    }
-    topic = topic?.replace(/^["']|["']$/g, '').trim()
+    topic = normalizeTopic(topic)
 
     if (isEchoOrInvalid(topic, userPrompt) || isGenericTagline(topic) || !topic || topic.length < 5) {
       if (isGenericTagline(topic)) console.error('Topic is generic tagline, retrying')
@@ -177,13 +432,7 @@ export async function POST(request: NextRequest) {
         )
       }
       const fallbackResult = await fallbackResponse.json()
-      topic = fallbackResult?.choices?.[0]?.message?.content?.trim()
-      if (topic?.includes('\n')) topic = topic.split('\n')[0].trim()
-      topic = topic?.replace(/^["']|["']$/g, '').trim()
-      for (const pattern of fillerPatterns) {
-        topic = topic?.replace(pattern, '').trim() ?? ''
-      }
-      topic = topic?.replace(/^["']|["']$/g, '').trim()
+      topic = normalizeTopic(fallbackResult?.choices?.[0]?.message?.content?.trim())
     }
 
     if (!topic || topic.length < 5) {
