@@ -76,7 +76,9 @@ function topicSimilarityScore(a: string, b: string): number {
   const tb = new Set(normalizeTopicForSimilarity(b))
   if (ta.size === 0 || tb.size === 0) return 0
   let inter = 0
-  for (const tok of ta) if (tb.has(tok)) inter += 1
+  Array.from(ta).forEach((tok) => {
+    if (tb.has(tok)) inter += 1
+  })
   return inter / Math.max(ta.size, tb.size)
 }
 
