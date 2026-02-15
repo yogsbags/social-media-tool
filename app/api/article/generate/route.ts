@@ -12,11 +12,21 @@ type GenerateArticleBody = {
   targetAudience?: string
   campaignType?: string
   language?: string
+  researchPDFs?: Array<{ name?: string; data?: string; size?: number }>
 }
 
 type ArticleFaq = {
   question: string
   answer: string
+}
+
+type RetryTrace = {
+  attempt: number
+  promptVariant: string
+  maxOutputTokens: number
+  status: 'success' | 'invalid-json' | 'missing-fields' | 'advisory-rejected' | 'model-error'
+  detail?: string
+  elapsedMs: number
 }
 
 function extractJsonObject(input: string): string {
@@ -105,12 +115,21 @@ function collectGroundedSources(response: any): Array<{ title: string; url: stri
   const seen = new Set<string>()
   const sources: Array<{ title: string; url: string }> = []
 
+  const isValidHttpUrl = (value: string): boolean => {
+    try {
+      const parsed = new URL(value)
+      return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && Boolean(parsed.hostname)
+    } catch {
+      return false
+    }
+  }
+
   for (const chunk of chunks) {
     const web = chunk?.web
-    const url = web?.uri
-    if (!url || seen.has(url)) continue
-    seen.add(url)
-    sources.push({ title: web?.title || 'Source', url })
+    const rawUrl = String(web?.uri || '').trim()
+    if (!rawUrl || !isValidHttpUrl(rawUrl) || seen.has(rawUrl)) continue
+    seen.add(rawUrl)
+    sources.push({ title: String(web?.title || 'Source').trim() || 'Source', url: rawUrl })
     if (sources.length >= 8) break
   }
   return sources
@@ -123,6 +142,33 @@ function escapeHtml(text: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+}
+
+function normalizeBase64Data(data?: string): string {
+  if (!data) return ''
+  const m = data.match(/^data:.*?;base64,(.*)$/)
+  return (m ? m[1] : data).trim()
+}
+
+function buildPdfParts(pdfs: Array<{ name?: string; data?: string; size?: number }> | undefined) {
+  if (!Array.isArray(pdfs) || pdfs.length === 0) return []
+  const MAX_FILES = 2
+  const MAX_BYTES_PER_FILE = 20 * 1024 * 1024 // 20MB safety for inline payloads
+
+  return pdfs
+    .slice(0, MAX_FILES)
+    .map((pdf) => {
+      const base64 = normalizeBase64Data(pdf.data)
+      if (!base64) return null
+      if (typeof pdf.size === 'number' && pdf.size > MAX_BYTES_PER_FILE) return null
+      return {
+        inlineData: {
+          mimeType: 'application/pdf',
+          data: base64
+        }
+      }
+    })
+    .filter(Boolean) as Array<{ inlineData: { mimeType: string; data: string } }>
 }
 
 export async function POST(request: NextRequest) {
@@ -142,6 +188,12 @@ export async function POST(request: NextRequest) {
     const language = body.language || 'english'
     const purpose = body.purpose || 'brand-awareness'
     const targetAudience = body.targetAudience || 'all_clients'
+    const pdfParts = buildPdfParts(body.researchPDFs)
+    const hasReferenceDocs = pdfParts.length > 0
+    const referenceDocNames = (body.researchPDFs || [])
+      .slice(0, pdfParts.length)
+      .map((p) => String(p?.name || 'Reference PDF').trim())
+      .filter(Boolean)
 
     const promptDetailed = [
       'Use Google Search grounding to fact-check and generate a current Indian markets live-news article.',
@@ -149,6 +201,9 @@ export async function POST(request: NextRequest) {
       `Campaign purpose: ${purpose}`,
       `Target audience: ${targetAudience}`,
       `Language: ${language}`,
+      hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
+      hasReferenceDocs ? 'Use attached PDFs as authoritative context (for example DRHP details, issue size, dates, risks, objects, valuation, peers).' : '',
+      hasReferenceDocs ? 'When PDF facts are used, mention them in article context and in FAQ/source attribution.' : '',
       'Write in a neutral newsroom tone similar to professional business news portals.',
       'Do NOT include recommendations, advisory calls, buy/sell/hold language, or investor tips.',
       'Focus on what happened, why it matters, and relevant market context.',
@@ -169,6 +224,8 @@ export async function POST(request: NextRequest) {
     const promptCompact = [
       'Use Google Search grounding and write a concise, factual Indian market news article.',
       `Topic: ${topic}`,
+      hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
+      hasReferenceDocs ? 'Use document facts as primary context where relevant.' : '',
       'Return strict JSON only.',
       'Required keys: headline, subheadline, summary, articleText, articleHtml, tags, seoTitle, metaDescription, focusKeywords, faqs.',
       'Write articleText as 4 substantial paragraphs with strong factual detail.',
@@ -177,6 +234,7 @@ export async function POST(request: NextRequest) {
     const promptAdvisorySafe = [
       'Use Google Search grounding and rewrite as strict business-news copy.',
       `Topic: ${topic}`,
+      hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
       'Return strict JSON only with the same keys.',
       'Hard constraint: do not include ANY advisory words or actions.',
       'Forbidden words/phrases: buy, sell, hold, invest, should investors, strategy, tips, recommendation.',
@@ -187,55 +245,109 @@ export async function POST(request: NextRequest) {
     let parsed: any = null
     let responseForSources: any = null
     let lastRaw = ''
+    const retryTrace: RetryTrace[] = []
+    const startedAt = Date.now()
 
     const attempts = [
-      { prompt: promptDetailed, maxOutputTokens: 4096 },
-      { prompt: promptCompact, maxOutputTokens: 3072 },
-      { prompt: promptAdvisorySafe, maxOutputTokens: 3072 },
+      { name: 'detailed', prompt: promptDetailed, maxOutputTokens: 4096 },
+      { name: 'compact', prompt: promptCompact, maxOutputTokens: 3072 },
+      { name: 'advisory-safe', prompt: promptAdvisorySafe, maxOutputTokens: 3072 },
     ]
 
-    for (const attempt of attempts) {
-      const response = await ai.models.generateContent({
-        model: MODEL,
-        contents: [{ text: attempt.prompt }],
-        config: {
-          temperature: 0.3,
-          maxOutputTokens: attempt.maxOutputTokens,
-          responseMimeType: 'application/json',
-          tools: [{ googleSearch: {} }],
-        },
-      })
-
-      const raw = await getGeminiText(response)
-      const jsonText = extractJsonObject(raw)
-      lastRaw = raw
-
+    for (let index = 0; index < attempts.length; index += 1) {
+      const attempt = attempts[index]
+      const attemptStartedAt = Date.now()
       try {
-        const candidate = JSON.parse(jsonText)
-        const cHeadline = String(candidate?.headline || '').trim()
-        const cSubheadline = String(candidate?.subheadline || '').trim()
-        const cSummary = String(candidate?.summary || '').trim()
-        const cArticleText = String(candidate?.articleText || '').trim()
-        const cArticleHtml = String(candidate?.articleHtml || '').trim()
-        const candidateText = [cHeadline, cSubheadline, cSummary, cArticleText].join(' ')
-        if (!cHeadline || !cArticleText || !cArticleHtml) {
-          continue
-        }
-        if (hasAdvisoryLanguage(candidateText)) {
-          continue
-        }
+        const response = await ai.models.generateContent({
+          model: MODEL,
+          contents: [{ role: 'user', parts: [{ text: attempt.prompt }, ...pdfParts] }],
+          config: {
+            temperature: 0.3,
+            maxOutputTokens: attempt.maxOutputTokens,
+            responseMimeType: 'application/json',
+            tools: [{ googleSearch: {} }],
+          },
+        })
 
-        parsed = candidate
-        responseForSources = response
-        break
-      } catch {
-        // try next attempt
+        const raw = await getGeminiText(response)
+        const jsonText = extractJsonObject(raw)
+        lastRaw = raw
+
+        try {
+          const candidate = JSON.parse(jsonText)
+          const cHeadline = String(candidate?.headline || '').trim()
+          const cSubheadline = String(candidate?.subheadline || '').trim()
+          const cSummary = String(candidate?.summary || '').trim()
+          const cArticleText = String(candidate?.articleText || '').trim()
+          const cArticleHtml = String(candidate?.articleHtml || '').trim()
+          const candidateText = [cHeadline, cSubheadline, cSummary, cArticleText].join(' ')
+          if (!cHeadline || !cArticleText || !cArticleHtml) {
+            retryTrace.push({
+              attempt: index + 1,
+              promptVariant: attempt.name,
+              maxOutputTokens: attempt.maxOutputTokens,
+              status: 'missing-fields',
+              detail: 'Required fields missing (headline/articleText/articleHtml).',
+              elapsedMs: Date.now() - attemptStartedAt,
+            })
+            continue
+          }
+          if (hasAdvisoryLanguage(candidateText)) {
+            retryTrace.push({
+              attempt: index + 1,
+              promptVariant: attempt.name,
+              maxOutputTokens: attempt.maxOutputTokens,
+              status: 'advisory-rejected',
+              detail: 'Advisory or recommendation language detected.',
+              elapsedMs: Date.now() - attemptStartedAt,
+            })
+            continue
+          }
+
+          retryTrace.push({
+            attempt: index + 1,
+            promptVariant: attempt.name,
+            maxOutputTokens: attempt.maxOutputTokens,
+            status: 'success',
+            elapsedMs: Date.now() - attemptStartedAt,
+          })
+          parsed = candidate
+          responseForSources = response
+          break
+        } catch {
+          retryTrace.push({
+            attempt: index + 1,
+            promptVariant: attempt.name,
+            maxOutputTokens: attempt.maxOutputTokens,
+            status: 'invalid-json',
+            detail: 'Model response was not valid JSON for the expected schema.',
+            elapsedMs: Date.now() - attemptStartedAt,
+          })
+          // try next attempt
+        }
+      } catch (err) {
+        retryTrace.push({
+          attempt: index + 1,
+          promptVariant: attempt.name,
+          maxOutputTokens: attempt.maxOutputTokens,
+          status: 'model-error',
+          detail: err instanceof Error ? err.message : 'Unknown model error',
+          elapsedMs: Date.now() - attemptStartedAt,
+        })
       }
     }
 
     if (!parsed) {
       return NextResponse.json(
-        { error: 'Failed to parse grounded article response', raw: lastRaw?.slice(0, 600) || '' },
+        {
+          error: 'Failed to parse grounded article response',
+          raw: lastRaw?.slice(0, 600) || '',
+          retryTrace,
+          generationMeta: {
+            attempts: attempts.length,
+            totalElapsedMs: Date.now() - startedAt,
+          },
+        },
         { status: 500 }
       )
     }
@@ -345,6 +457,16 @@ export async function POST(request: NextRequest) {
         length: lengthQuality(bodyWordCount, bodyParagraphCount),
         bodyWordCount,
         bodyParagraphCount
+      },
+      retryTrace,
+      generationMeta: {
+        attempts: retryTrace.length,
+        totalElapsedMs: Date.now() - startedAt,
+      },
+      referenceDocuments: {
+        attached: hasReferenceDocs,
+        count: pdfParts.length,
+        names: referenceDocNames
       },
       sources: groundedSources,
     }

@@ -293,7 +293,7 @@ export default function Home() {
     try {
       // Prepare file data
       addLog('Preparing reference materials...')
-      const fileData = await prepareFilesForAPI()
+      const fileData = await prepareFilesForAPI(stageId)
 
       const response = await fetch('/api/workflow/stage', {
         method: 'POST',
@@ -575,7 +575,7 @@ export default function Home() {
     })
   }
 
-  const prepareFilesForAPI = async () => {
+  const prepareFilesForAPI = async (stageId?: number) => {
     const fileData: {
       researchPDFs?: Array<{ name: string; data: string; size: number }>
       referenceImages?: Array<{ name: string; data: string; size: number }>
@@ -585,8 +585,10 @@ export default function Home() {
       longCatReferenceImage?: { name: string; data: string; size: number }
     } = {}
 
-    // Convert PDFs
-    if (researchPDFs.length > 0) {
+    const includeResearchPDFs = campaignType === 'live-news' && (stageId === undefined || stageId === 2)
+
+    // Convert PDFs only for live-news generation (kept in memory, never persisted)
+    if (includeResearchPDFs && researchPDFs.length > 0) {
       fileData.researchPDFs = await Promise.all(
         researchPDFs.map(async (file) => ({
           name: file.name,

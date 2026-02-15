@@ -89,6 +89,12 @@ export async function POST(request: NextRequest) {
     avatarVoiceId
   } = body
 
+  // Keep PDF payloads in-memory only for live-news Stage 2 generation.
+  const researchPDFs =
+    stageId === 2 && campaignType === 'live-news' && Array.isArray(files?.researchPDFs)
+      ? files.researchPDFs
+      : []
+
   // Sync useAvatar with contentType if contentType is explicitly set
   const finalUseAvatar = contentType === 'avatar-video' ? true : (contentType === 'faceless-video' ? false : useAvatar)
 
@@ -388,20 +394,48 @@ export async function POST(request: NextRequest) {
                 purpose,
                 targetAudience,
                 campaignType,
-                language
+                language,
+                researchPDFs
               })
             })
 
             if (!articleResponse.ok) {
               const errText = await articleResponse.text()
+              try {
+                const errJson = JSON.parse(errText)
+                if (Array.isArray(errJson?.retryTrace)) {
+                  sendEvent({ log: '🔁 Gemini retry trace:' })
+                  for (const trace of errJson.retryTrace) {
+                    sendEvent({
+                      log: `   Attempt ${trace.attempt}/${errJson.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
+                    })
+                  }
+                }
+              } catch {
+                // ignore non-JSON error payload
+              }
               throw new Error(errText || 'Failed to generate grounded live-news article')
             }
 
             const article = await articleResponse.json()
 
             sendEvent({ log: '✅ Live-news article generated successfully!' })
+            if (Array.isArray(article.retryTrace) && article.retryTrace.length > 0) {
+              sendEvent({ log: '🔁 Gemini retry trace:' })
+              for (const trace of article.retryTrace) {
+                sendEvent({
+                  log: `   Attempt ${trace.attempt}/${article.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
+                })
+              }
+            }
+            if (article.generationMeta?.totalElapsedMs) {
+              sendEvent({ log: `⏱️ Article generation time: ${article.generationMeta.totalElapsedMs}ms` })
+            }
             sendEvent({ log: `🗞️ Headline: ${article.headline}` })
             sendEvent({ log: `🔎 Grounded sources: ${article.factCheck?.sourceCount || article.sources?.length || 0}` })
+            if (article.referenceDocuments?.attached) {
+              sendEvent({ log: `📄 Reference PDFs used: ${article.referenceDocuments.count}` })
+            }
 
             const stageData = {
               topic,
@@ -416,7 +450,12 @@ export async function POST(request: NextRequest) {
               articleText: article.articleText,
               articleHtml: article.articleHtml,
               tags: article.tags,
+              seo: article.seo,
+              faqs: article.faqs,
+              faqSchema: article.faqSchema,
+              quality: article.quality,
               sources: article.sources,
+              referenceDocuments: article.referenceDocuments,
               factCheck: article.factCheck,
               model: article.model,
               generatedAt: article.generatedAt
