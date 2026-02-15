@@ -48,17 +48,14 @@ export async function POST(request: NextRequest) {
 
     const groqKey = process.env.GROQ_API_KEY
     if (!groqKey) {
-      const needsDisclaimer = /(english|hinglish)/i.test(language)
-      const disclaimer = needsDisclaimer ? 'Market risks apply.' : ''
       const hook = platform === 'instagram' ? 'Stop scrolling—quick money tip.' : 'Quick update.'
-      const fallback = `${hook} ${topic}. Want a simple plan? Talk to PL Capital today. ${disclaimer}`.trim()
+      const fallback = `${hook} ${topic}. Want a simple plan? Talk to PL Capital today.`.trim()
       return NextResponse.json({ script: fallback })
     }
 
     const wordsTarget = Math.max(12, Math.round(duration * 2.2))
     const languageName = getLanguageName(language)
     const isInstagramReel = platform === 'instagram' || /reel/i.test(format)
-    const needsDisclaimer = /(english|hinglish)/i.test(language)
 
     const systemPrompt = `You write short, natural spoken scripts for a financial services video avatar.
 Return ONLY the spoken script as plain text. No bullet points. No headings. No stage directions. No meta-instructions.`
@@ -82,7 +79,7 @@ Constraints:
 - Tone: confident, warm, professional, Indian business style.
 - Length: about ${wordsTarget} words (max ${wordsTarget + 6}).
 - Compliance: no guaranteed returns, no exaggerated claims, no personalized investment advice.
-- If language is English or Hinglish, end with the exact disclaimer: "Market risks apply." (exactly once).
+- Do not include disclaimers in the spoken script (caption handles disclaimers separately).
 
 ${styleGuidance}
 
@@ -133,9 +130,8 @@ Output rules:
       script = words.slice(0, wordsTarget + 12).join(' ').trim()
     }
 
-    if (needsDisclaimer && !/market risks apply\.?$/i.test(script)) {
-      script = `${script.replace(/\.*\s*$/, '')}. Market risks apply.`
-    }
+    // Caption handles compliance disclaimer separately; keep spoken script clean.
+    script = script.replace(/\bmarket risks apply\.?/gi, '').replace(/\s+/g, ' ').trim()
 
     return NextResponse.json({ script })
   } catch (e) {
