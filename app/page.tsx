@@ -289,6 +289,7 @@ export default function Home() {
   const executeStage = async (stageId: number) => {
     setExecutingStage(stageId)
     addLog(`Starting Stage ${stageId} execution...`)
+    let terminalStatus: WorkflowStage['status'] | null = null
 
     try {
       // Prepare file data
@@ -368,6 +369,9 @@ export default function Home() {
                 if (data.stage) {
                   await updateStage(data.stage, data.status, data.message)
                   addLog(`Stage ${data.stage}: ${data.message}`)
+                  if (data.stage === stageId && (data.status === 'completed' || data.status === 'error')) {
+                    terminalStatus = data.status
+                  }
                 } else if (data.log) {
                   addLog(data.log)
                 } else if (data.campaignData) {
@@ -381,7 +385,13 @@ export default function Home() {
         }
       }
 
-      addLog(`Stage ${stageId} completed!`)
+      if (terminalStatus === 'completed') {
+        addLog(`Stage ${stageId} completed!`)
+      } else if (terminalStatus === 'error') {
+        addLog(`Stage ${stageId} failed`)
+      } else {
+        addLog(`Stage ${stageId} ended without terminal status`)
+      }
     } catch (error) {
       addLog(`Error in Stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
       console.error('Stage error:', error)
@@ -523,7 +533,7 @@ export default function Home() {
   }
 
   const generateTopic = async () => {
-    if (isRunning || executingStage !== null || isGeneratingTopic) return
+    if (isGeneratingTopic) return
 
     try {
       setIsGeneratingTopic(true)
@@ -930,9 +940,9 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={generateTopic}
-                  disabled={isRunning || executingStage !== null || isGeneratingTopic}
+                  disabled={isGeneratingTopic}
                   className={`absolute right-2 whitespace-nowrap px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${
-                    isRunning || executingStage !== null
+                    isGeneratingTopic
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
                   } ${isGeneratingTopic ? 'opacity-80 cursor-wait' : ''}`}
@@ -1980,18 +1990,18 @@ export default function Home() {
                           {stage.id === 1 ? (
                             <button
                               onClick={() => executeStage(stage.id)}
-                              disabled={executingStage !== null || isRunning || stage.status === 'completed' || !topic}
+                              disabled={executingStage !== null || isRunning || !topic}
                               className={`text-sm px-4 py-2 rounded-lg font-semibold transition-all ${
                                 executingStage === stage.id
                                   ? 'bg-purple-400 text-white cursor-wait'
-                                  : stage.status === 'completed'
-                                  ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                                   : !topic
                                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                  : stage.status === 'completed'
+                                  ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-md hover:shadow-lg'
                                   : 'bg-purple-500 text-white hover:bg-purple-600 shadow-md hover:shadow-lg'
                               }`}
                             >
-                              {executingStage === stage.id ? 'Executing...' : stage.status === 'completed' ? 'Completed' : 'Execute Stage'}
+                              {executingStage === stage.id ? 'Executing...' : stage.status === 'completed' ? 'Re-run Stage' : 'Execute Stage'}
                             </button>
                           ) : (
                             <button
@@ -1999,25 +2009,24 @@ export default function Home() {
                               disabled={
                                 executingStage !== null ||
                                 isRunning ||
-                                stage.status === 'completed' ||
                                 stages[stage.id - 2]?.status !== 'completed'
                               }
                               className={`text-sm px-4 py-2 rounded-lg font-semibold transition-all ${
                                 executingStage === stage.id
                                   ? 'bg-purple-400 text-white cursor-wait'
-                                  : stage.status === 'completed'
-                                  ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                                   : stages[stage.id - 2]?.status !== 'completed'
                                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                  : stage.status === 'completed'
+                                  ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-md hover:shadow-lg'
                                   : 'bg-purple-500 text-white hover:bg-purple-600 shadow-md hover:shadow-lg'
                               }`}
                             >
                               {executingStage === stage.id
                                 ? 'Executing...'
-                                : stage.status === 'completed'
-                                ? 'Completed'
                                 : stages[stage.id - 2]?.status !== 'completed'
                                 ? 'Waiting'
+                                : stage.status === 'completed'
+                                ? 'Re-run Stage'
                                 : 'Approve & Continue'}
                             </button>
                           )}

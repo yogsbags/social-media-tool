@@ -623,7 +623,7 @@ export default function StageDataModal({
             <div className="bg-blue-100 px-3 py-2 text-xs font-semibold text-blue-800 border-b-2 border-blue-300">
               Article Preview
             </div>
-            <div className="p-5 max-w-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h1]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:leading-snug [&_h2]:mt-6 [&_h2]:mb-2 [&_p]:text-[16px] [&_p]:leading-7 [&_p]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_pre]:whitespace-pre-wrap [&_pre]:break-words">
+            <div className="p-5 max-w-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h1]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:leading-snug [&_h2]:mt-6 [&_h2]:mb-2 [&_p]:text-[16px] [&_p]:leading-7 [&_p]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-1 [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_table]:w-full [&_table]:border-collapse [&_table]:my-4 [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-100 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:text-sm [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-3 [&_td]:py-2 [&_td]:text-sm">
               {headline && <h1 className="!mb-2 !font-bold">{headline}</h1>}
               {subheadline && <p className="!mt-0 !text-gray-700"><em>{subheadline}</em></p>}
               {summary && (

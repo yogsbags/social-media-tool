@@ -786,6 +786,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
 
     if (isWhatsAppImage) {
       console.log('   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...');
+      const effectiveBrandSettings = this._getEffectiveBrandSettings(options);
       let prompt = options.prompt || null;
       if (!prompt) {
         await this.stateManager.initialize();
@@ -807,9 +808,11 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           format: 'image',
           topic: options.topic,
           type: options.type,
-          brandSettings: options.brandSettings
+          brandSettings: effectiveBrandSettings
         });
       }
+      prompt = this._appendBrandConstraintsToPrompt(prompt, effectiveBrandSettings);
+      console.log('   🎨 Enforcing brand guidelines from input settings');
 
       // If a reference image path is provided (via env), use edit mode
       const referenceImagePath = process.env.REFERENCE_IMAGE_PATH;
@@ -824,6 +827,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         topic: options.topic,
         type: options.type,
         prompt,
+        brandSettings: effectiveBrandSettings,
         aspectRatio: options.aspectRatio,  // Pass aspectRatio from options
         language: options.language  // Pass language from options
       };
@@ -1282,11 +1286,56 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     return languageMap[languageCode] || 'English';
   }
 
+  _getEffectiveBrandSettings(options = {}) {
+    const direct = options?.brandSettings;
+    if (direct && typeof direct === 'object') return direct;
+
+    const raw = process.env.BRAND_SETTINGS_JSON;
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (e) {
+      console.log(`   ⚠️ Failed to parse BRAND_SETTINGS_JSON: ${e.message}`);
+      return null;
+    }
+  }
+
+  _buildBrandConstraintBlock(brandSettings) {
+    const usingCustom = brandSettings?.useBrandGuidelines === false;
+    const customColors = String(brandSettings?.customColors || '').trim();
+    const customTone = String(brandSettings?.customTone || '').trim();
+    const customInstructions = String(brandSettings?.customInstructions || '').trim();
+    const defaultColors = 'Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766';
+    const palette = usingCustom && customColors ? customColors : defaultColors;
+    const tone = usingCustom && customTone ? customTone : 'professional, trustworthy, data-driven';
+    const extra = usingCustom && customInstructions ? customInstructions : 'Maintain PL Capital look-and-feel across color, typography, and hierarchy.';
+
+    return [
+      'Brand requirements (must follow exactly):',
+      `- Palette: ${palette}.`,
+      '- Typography: Figtree or close geometric sans-serif.',
+      `- Tone: ${tone}.`,
+      '- Keep high contrast and clean financial visual hierarchy.',
+      '- No random brand style deviations.',
+      `- Additional guidance: ${extra}`
+    ].join('\n');
+  }
+
+  _appendBrandConstraintsToPrompt(prompt, brandSettings) {
+    if (!prompt || typeof prompt !== 'string') return prompt;
+    const marker = 'Brand requirements (must follow exactly):';
+    if (prompt.includes(marker)) return prompt;
+    const brandBlock = this._buildBrandConstraintBlock(brandSettings);
+    return `${prompt.trim()}\n\n${brandBlock}`;
+  }
+
   /**
    * Build visual prompt based on options
    */
   _buildVisualPrompt(options) {
-    const { platform, format, topic, type, brandSettings, language = 'english', whatsapp } = options;
+    const { platform, format, topic, type, language = 'english', whatsapp } = options;
+    const brandSettings = this._getEffectiveBrandSettings(options) || options.brandSettings;
     const languageName = this._getLanguageName(language);
 
     const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';

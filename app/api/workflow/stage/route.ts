@@ -7,6 +7,7 @@ import path from 'path'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+export const maxDuration = 900
 
 // Helper function to save stage data
 function saveStageData(stageId: number, data: any) {
@@ -385,19 +386,49 @@ export async function POST(request: NextRequest) {
                 ? process.env.NEXT_PUBLIC_API_URL
                 : null
             const baseUrl = envBase || requestOrigin
+            const requestUrl = new URL(request.url)
+            const inferredPort = requestUrl.port || (requestUrl.protocol === 'https:' ? '443' : '80')
+            const fallbackLocalUrl = `http://127.0.0.1:${inferredPort}`
+            const baseCandidates = Array.from(new Set([baseUrl, fallbackLocalUrl]))
+            const requestPayload = {
+              topic,
+              purpose,
+              targetAudience,
+              campaignType,
+              language,
+              researchPDFs
+            }
 
-            const articleResponse = await fetch(`${baseUrl}/api/article/generate`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                topic,
-                purpose,
-                targetAudience,
-                campaignType,
-                language,
-                researchPDFs
-              })
-            })
+            let articleResponse: Response | null = null
+            let lastFetchError: Error | null = null
+
+            for (const candidateBase of baseCandidates) {
+              const endpoint = `${candidateBase}/api/article/generate`
+              sendEvent({ log: `🌐 Calling grounded article API: ${endpoint}` })
+              let timeout: NodeJS.Timeout | null = null
+              try {
+                const controller = new AbortController()
+                timeout = setTimeout(() => controller.abort(), 9 * 60 * 1000)
+                articleResponse = await fetch(endpoint, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(requestPayload),
+                  signal: controller.signal
+                })
+                // If upstream responded (even non-2xx), stop fallback attempts.
+                // Fallback to alternate base URL is only for transport-level failures.
+                break
+              } catch (err) {
+                lastFetchError = err instanceof Error ? err : new Error('Unknown fetch error')
+                sendEvent({ log: `⚠️ Grounded article API call failed at ${candidateBase}: ${lastFetchError.message}` })
+              } finally {
+                if (timeout) clearTimeout(timeout)
+              }
+            }
+
+            if (!articleResponse) {
+              throw new Error(lastFetchError?.message || 'Failed to call grounded article API')
+            }
 
             if (!articleResponse.ok) {
               const errText = await articleResponse.text()
@@ -560,6 +591,14 @@ export async function POST(request: NextRequest) {
           ...process.env,
           NODE_PATH: parentNodeModules + (process.env.NODE_PATH ? ':' + process.env.NODE_PATH : '')
         } as NodeJS.ProcessEnv
+
+        if (brandSettings && typeof brandSettings === 'object') {
+          try {
+            nodeEnv.BRAND_SETTINGS_JSON = JSON.stringify(brandSettings)
+          } catch {
+            // ignore serialization issues and continue with defaults
+          }
+        }
 
         // Inject reference images for visual generation and video production
         if (files?.referenceImages?.length > 0) {
