@@ -1,4 +1,5 @@
 import { GoogleGenAI } from '@google/genai'
+import { DeleteObjectCommand, GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
@@ -13,6 +14,7 @@ type GenerateArticleBody = {
   targetAudience?: string
   campaignType?: string
   language?: string
+  researchPdfRefs?: Array<{ fileId?: string; bucket?: string; name?: string; size?: number; url?: string }>
   researchPDFs?: Array<{ name?: string; data?: string; size?: number }>
 }
 
@@ -774,6 +776,91 @@ function buildPdfParts(pdfs: Array<{ name?: string; data?: string; size?: number
     .filter(Boolean) as Array<{ inlineData: { mimeType: string; data: string } }>
 }
 
+function buildR2Client(): S3Client | null {
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID || ''
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || ''
+  const endpoint = process.env.R2_ENDPOINT || ''
+  if (!accessKeyId || !secretAccessKey || !endpoint) return null
+
+  return new S3Client({
+    region: 'auto',
+    endpoint,
+    credentials: { accessKeyId, secretAccessKey },
+    forcePathStyle: true,
+  })
+}
+
+async function buildPdfPartsFromRefs(
+  refs: Array<{ fileId?: string; bucket?: string; name?: string; size?: number; url?: string }> | undefined
+): Promise<Array<{ inlineData: { mimeType: string; data: string } }>> {
+  if (!Array.isArray(refs) || refs.length === 0) return []
+  const client = buildR2Client()
+  const MAX_FILES = 2
+  const MAX_BYTES_PER_FILE = 50 * 1024 * 1024
+  const parts: Array<{ inlineData: { mimeType: string; data: string } }> = []
+
+  for (const ref of refs.slice(0, MAX_FILES)) {
+    try {
+      if (typeof ref.size === 'number' && ref.size > MAX_BYTES_PER_FILE) continue
+
+      let bytes: Uint8Array | null = null
+      if (ref.url) {
+        const resp = await fetch(ref.url)
+        if (!resp.ok) continue
+        bytes = new Uint8Array(await resp.arrayBuffer())
+      } else if (client && ref.fileId && ref.bucket) {
+        const out = await client.send(
+          new GetObjectCommand({
+            Bucket: ref.bucket,
+            Key: ref.fileId,
+          })
+        )
+        if (!out.Body) continue
+        bytes = await out.Body.transformToByteArray()
+      }
+
+      if (!bytes || bytes.byteLength === 0 || bytes.byteLength > MAX_BYTES_PER_FILE) continue
+      parts.push({
+        inlineData: {
+          mimeType: 'application/pdf',
+          data: Buffer.from(bytes).toString('base64'),
+        }
+      })
+    } catch {
+      // ignore bad ref and continue
+    }
+  }
+  return parts
+}
+
+async function cleanupR2Refs(
+  refs: Array<{ fileId?: string; bucket?: string; name?: string; size?: number; url?: string }> | undefined
+): Promise<void> {
+  const enabled = String(process.env.R2_DELETE_AFTER_USE || 'true').toLowerCase() !== 'false'
+  if (!enabled) return
+  if (!Array.isArray(refs) || refs.length === 0) return
+
+  const client = buildR2Client()
+  if (!client) return
+
+  for (const ref of refs) {
+    const bucket = String(ref?.bucket || '').trim()
+    const key = String(ref?.fileId || '').trim()
+    if (!bucket || !key) continue
+    if (!key.startsWith('research-pdfs/')) continue
+    try {
+      await client.send(
+        new DeleteObjectCommand({
+          Bucket: bucket,
+          Key: key,
+        })
+      )
+    } catch (error) {
+      console.warn('Failed to delete R2 reference PDF:', { bucket, key, error })
+    }
+  }
+}
+
 function isIpoTopic(topic: string): boolean {
   return /\b(ipo|drhp|rhp|red herring|sme issue|book built issue)\b/i.test(topic || '')
 }
@@ -802,6 +889,7 @@ function hasAllIpoSections(text: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  let refsToCleanup: Array<{ fileId?: string; bucket?: string; name?: string; size?: number; url?: string }> = []
   try {
     const geminiApiKey = process.env.GEMINI_API_KEY || ''
     if (!geminiApiKey) {
@@ -809,6 +897,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: GenerateArticleBody = await request.json()
+    refsToCleanup = Array.isArray(body.researchPdfRefs) ? body.researchPdfRefs : []
     const topic = (body.topic || '').trim()
     if (!topic) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 })
@@ -818,9 +907,11 @@ export async function POST(request: NextRequest) {
     const language = body.language || 'english'
     const purpose = body.purpose || 'brand-awareness'
     const targetAudience = body.targetAudience || 'all_clients'
-    const pdfParts = buildPdfParts(body.researchPDFs)
+    const pdfPartsFromRefs = await buildPdfPartsFromRefs(body.researchPdfRefs)
+    const pdfPartsInline = buildPdfParts(body.researchPDFs)
+    const pdfParts = pdfPartsFromRefs.length > 0 ? pdfPartsFromRefs : pdfPartsInline
     const hasReferenceDocs = pdfParts.length > 0
-    const referenceDocNames = (body.researchPDFs || [])
+    const referenceDocNames = (pdfPartsFromRefs.length > 0 ? body.researchPdfRefs || [] : body.researchPDFs || [])
       .slice(0, pdfParts.length)
       .map((p) => String(p?.name || 'Reference PDF').trim())
       .filter(Boolean)
@@ -1304,5 +1395,7 @@ export async function POST(request: NextRequest) {
       { error: error instanceof Error ? error.message : 'Failed to generate live news article' },
       { status: 500 }
     )
+  } finally {
+    await cleanupR2Refs(refsToCleanup)
   }
 }

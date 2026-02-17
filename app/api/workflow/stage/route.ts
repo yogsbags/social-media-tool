@@ -90,7 +90,13 @@ export async function POST(request: NextRequest) {
     avatarVoiceId
   } = body
 
-  // Keep PDF payloads in-memory only for live-news Stage 2 generation.
+  // Keep uploaded PDF refs for live-news Stage 2 generation.
+  const researchPdfRefs =
+    stageId === 2 && campaignType === 'live-news' && Array.isArray(files?.researchPdfRefs)
+      ? files.researchPdfRefs
+      : []
+
+  // Legacy inline PDF payloads fallback.
   const researchPDFs =
     stageId === 2 && campaignType === 'live-news' && Array.isArray(files?.researchPDFs)
       ? files.researchPDFs
@@ -396,6 +402,7 @@ export async function POST(request: NextRequest) {
               targetAudience,
               campaignType,
               language,
+              researchPdfRefs,
               researchPDFs
             }
 

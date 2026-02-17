@@ -634,8 +634,68 @@ export default function Home() {
     })
   }
 
+  const SERVER_UPLOAD_MAX_BYTES = 50 * 1024 * 1024
+
+  const uploadResearchPdfDirectToR2 = async (file: File): Promise<{ fileId: string; bucket: string; name: string; size: number }> => {
+    const signResp = await fetch('/api/files/upload-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: file.name,
+        size: file.size,
+        contentType: file.type || 'application/pdf'
+      })
+    })
+
+    if (!signResp.ok) {
+      const errText = await signResp.text()
+      throw new Error(errText || `Failed to initialize direct upload for ${file.name}`)
+    }
+
+    const signData = await signResp.json() as {
+      uploadUrl: string
+      fileId: string
+      bucket: string
+    }
+
+    const putResp = await fetch(signData.uploadUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': file.type || 'application/pdf' },
+      body: file
+    })
+
+    if (!putResp.ok) {
+      const errText = await putResp.text()
+      throw new Error(errText || `Direct upload failed for ${file.name}`)
+    }
+
+    return {
+      fileId: signData.fileId,
+      bucket: signData.bucket,
+      name: file.name,
+      size: file.size
+    }
+  }
+
+  const uploadResearchPdfViaServer = async (file: File): Promise<{ fileId: string; bucket: string; name: string; size: number }> => {
+    const form = new FormData()
+    form.append('file', file)
+    const uploadResp = await fetch('/api/files/upload', {
+      method: 'POST',
+      body: form
+    })
+
+    if (!uploadResp.ok) {
+      const errText = await uploadResp.text()
+      throw new Error(errText || `Failed to upload PDF: ${file.name}`)
+    }
+
+    return await uploadResp.json()
+  }
+
   const prepareFilesForAPI = async (stageId?: number) => {
     const fileData: {
+      researchPdfRefs?: Array<{ fileId: string; bucket: string; name: string; size: number }>
       researchPDFs?: Array<{ name: string; data: string; size: number }>
       referenceImages?: Array<{ name: string; data: string; size: number }>
       referenceVideo?: { name: string; data: string; size: number }
@@ -646,15 +706,24 @@ export default function Home() {
 
     const includeResearchPDFs = campaignType === 'live-news' && (stageId === undefined || stageId === 2)
 
-    // Convert PDFs only for live-news generation (kept in memory, never persisted)
+    // Upload PDFs first and pass only references to Stage 2 payload
     if (includeResearchPDFs && researchPDFs.length > 0) {
-      fileData.researchPDFs = await Promise.all(
-        researchPDFs.map(async (file) => ({
-          name: file.name,
-          data: await fileToBase64(file),
-          size: file.size
-        }))
+      addLog(`Uploading ${researchPDFs.length} PDF(s) to R2...`)
+      fileData.researchPdfRefs = await Promise.all(
+        researchPDFs.map(async (file) => {
+          try {
+            return await uploadResearchPdfDirectToR2(file)
+          } catch (error) {
+            // Fallback path keeps smaller uploads working when bucket CORS is not configured yet.
+            if (file.size <= SERVER_UPLOAD_MAX_BYTES) {
+              addLog(`Direct upload failed for ${file.name}; retrying server upload fallback...`)
+              return await uploadResearchPdfViaServer(file)
+            }
+            throw error
+          }
+        })
       )
+      addLog('PDF upload completed')
     }
 
     // Convert reference images
