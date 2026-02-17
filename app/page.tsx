@@ -354,12 +354,38 @@ export default function Home() {
       const decoder = new TextDecoder()
 
       if (reader) {
+        let sseBuffer = ''
         while (true) {
           const { done, value } = await reader.read()
-          if (done) break
+          if (done) {
+            if (sseBuffer.trim()) {
+              const finalLine = sseBuffer.trim()
+              if (finalLine.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(finalLine.slice(6))
+                  if (data.stage) {
+                    await updateStage(data.stage, data.status, data.message)
+                    addLog(`Stage ${data.stage}: ${data.message}`)
+                    if (data.stage === stageId && (data.status === 'completed' || data.status === 'error')) {
+                      terminalStatus = data.status
+                    }
+                  } else if (data.log) {
+                    addLog(data.log)
+                  } else if (data.campaignData) {
+                    setCampaignData(prev => ({ ...prev, ...data.campaignData }))
+                  }
+                } catch (e) {
+                  console.error('Parse error:', e)
+                }
+              }
+            }
+            break
+          }
 
-          const chunk = decoder.decode(value)
-          const lines = chunk.split('\n\n')
+          const chunk = decoder.decode(value, { stream: true })
+          sseBuffer += chunk
+          const lines = sseBuffer.split('\n\n')
+          sseBuffer = lines.pop() || ''
 
           for (const line of lines) {
             if (line.startsWith('data: ')) {
@@ -469,12 +495,35 @@ export default function Home() {
       const decoder = new TextDecoder()
 
       if (reader) {
+        let sseBuffer = ''
         while (true) {
           const { done, value } = await reader.read()
-          if (done) break
+          if (done) {
+            if (sseBuffer.trim()) {
+              const finalLine = sseBuffer.trim()
+              if (finalLine.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(finalLine.slice(6))
+                  if (data.stage) {
+                    updateStage(data.stage, data.status, data.message)
+                    addLog(`Stage ${data.stage}: ${data.message}`)
+                  } else if (data.log) {
+                    addLog(data.log)
+                  } else if (data.campaignData) {
+                    setCampaignData(prev => ({ ...prev, ...data.campaignData }))
+                  }
+                } catch (e) {
+                  console.error('Parse error:', e)
+                }
+              }
+            }
+            break
+          }
 
-          const chunk = decoder.decode(value)
-          const lines = chunk.split('\n\n')
+          const chunk = decoder.decode(value, { stream: true })
+          sseBuffer += chunk
+          const lines = sseBuffer.split('\n\n')
+          sseBuffer = lines.pop() || ''
 
           for (const line of lines) {
             if (line.startsWith('data: ')) {
