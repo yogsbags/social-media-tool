@@ -14,6 +14,9 @@ type GenerateArticleBody = {
   targetAudience?: string
   campaignType?: string
   language?: string
+  userPrompt?: string
+  seedArticleText?: string
+  generationSeed?: number
   researchPdfRefs?: Array<{ fileId?: string; bucket?: string; name?: string; size?: number; url?: string }>
   researchPDFs?: Array<{ name?: string; data?: string; size?: number }>
 }
@@ -242,26 +245,50 @@ function firstWords(input: string, count: number): string {
     .trim()
 }
 
+function clipAtSentenceOrWords(input: string, maxWords: number): string {
+  const text = String(input || '').replace(/\s+/g, ' ').trim()
+  if (!text) return ''
+  const words = text.split(' ').filter(Boolean)
+  if (words.length <= maxWords) return text
+
+  const sentenceMatches = text.match(/[^.!?]+[.!?](?=\s|$)/g) || []
+  if (sentenceMatches.length > 0) {
+    const picked: string[] = []
+    let total = 0
+    for (const sentence of sentenceMatches) {
+      const wc = sentence.trim().split(/\s+/).filter(Boolean).length
+      if (wc === 0) continue
+      if (picked.length > 0 && total + wc > maxWords) break
+      picked.push(sentence.trim())
+      total += wc
+      if (total >= Math.floor(maxWords * 0.75)) break
+    }
+    if (picked.length > 0) return picked.join(' ').trim()
+  }
+
+  return firstWords(text, maxWords).trim()
+}
+
 function deriveSummaryFromArticleText(articleText: string): string {
   const text = String(articleText || '').trim()
   if (!text) return ''
 
   const summaryMatch = text.match(/(?:^|\n)(?:\d+\.\s*)?Summary:\s*([\s\S]*?)(?:\n(?:\d+\.\s*)?[A-Z][^\n]+|\n\n|$)/i)
   if (summaryMatch?.[1]) {
-    return firstWords(summaryMatch[1].replace(/\s+/g, ' ').trim(), 80)
+    return clipAtSentenceOrWords(summaryMatch[1], 80)
   }
 
   const firstParagraph = text
     .split(/\n\n+/)
     .map((p) => p.trim())
     .find(Boolean) || ''
-  return firstWords(firstParagraph.replace(/\s+/g, ' ').trim(), 80)
+  return clipAtSentenceOrWords(firstParagraph, 80)
 }
 
 function deriveSubheadline(summary: string, headline: string): string {
-  const fromSummary = firstWords(String(summary || '').trim(), 22)
+  const fromSummary = clipAtSentenceOrWords(String(summary || '').trim(), 22)
   if (fromSummary) return fromSummary
-  const fromHeadline = firstWords(String(headline || '').trim(), 14)
+  const fromHeadline = clipAtSentenceOrWords(String(headline || '').trim(), 14)
   return fromHeadline ? `${fromHeadline}.` : ''
 }
 
@@ -587,6 +614,112 @@ function extractBracketedJson(text: string): string {
   return ''
 }
 
+function normalizeLineForCompare(value: string): string {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function dropRepeatedLeadingHeadlineLines(articleText: string, headline: string): string {
+  const lines = String(articleText || '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+  if (lines.length === 0) return ''
+
+  const headlineNorm = normalizeLineForCompare(headline)
+  if (!headlineNorm) return lines.join('\n')
+
+  let idx = 0
+  while (idx < lines.length && normalizeLineForCompare(lines[idx]) === headlineNorm) idx += 1
+  return (idx > 0 ? lines.slice(idx) : lines).join('\n').trim()
+}
+
+function dropLeadingMetaEchoes(articleText: string, subheadline: string, summary: string): string {
+  const norm = (v: string) =>
+    String(v || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+  const subNorm = norm(subheadline)
+  const sumNorm = norm(summary)
+  const lines = String(articleText || '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+
+  let i = 0
+  while (i < lines.length) {
+    const ln = norm(lines[i])
+    const isSubEcho = subNorm && (ln === subNorm || ln.includes(subNorm) || subNorm.includes(ln))
+    const isSumEcho = sumNorm && (ln === sumNorm || ln.includes(sumNorm) || sumNorm.includes(ln))
+    if (!isSubEcho && !isSumEcho) break
+    i += 1
+  }
+
+  const trimmed = lines.slice(i).join('\n').trim()
+  if (!trimmed) return trimmed
+
+  // Also trim first paragraph if it's largely a repeat of summary.
+  const blocks = trimmed.split(/\n\n+/).map((b) => b.trim()).filter(Boolean)
+  if (blocks.length === 0) return trimmed
+  const firstNorm = norm(blocks[0])
+  const sumPrefix = sumNorm.slice(0, Math.min(sumNorm.length, 180))
+  if (sumPrefix && firstNorm.length > 80 && (firstNorm.includes(sumPrefix) || sumNorm.includes(firstNorm))) {
+    blocks.shift()
+  }
+  return blocks.join('\n\n').trim()
+}
+
+function tokenOverlapRatio(a: string, b: string): number {
+  const norm = (v: string) =>
+    String(v || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+  const ta = new Set(norm(a).split(' ').filter((t) => t.length > 2))
+  const tb = new Set(norm(b).split(' ').filter((t) => t.length > 2))
+  if (ta.size === 0 || tb.size === 0) return 0
+  let inter = 0
+  Array.from(ta).forEach((t) => {
+    if (tb.has(t)) inter += 1
+  })
+  return inter / Math.max(ta.size, tb.size)
+}
+
+function sanitizeFaqSchemaObject(input: any): any | null {
+  if (!input || typeof input !== 'object') return null
+  const entities = Array.isArray(input.mainEntity) ? input.mainEntity : []
+  const normalized = entities
+    .map((item: any) => {
+      const name = cleanupTextArtifacts(String(item?.name || '').trim())
+      const answer = cleanupTextArtifacts(String(item?.acceptedAnswer?.text || '').trim())
+      if (!name || !answer) return null
+      return {
+        '@type': 'Question',
+        name,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: answer
+        }
+      }
+    })
+    .filter(Boolean)
+    .slice(0, 5)
+
+  if (normalized.length === 0) return null
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: normalized
+  }
+}
+
 function parseRawArticleOutput(raw: string, topic: string): any {
   const text = cleanupTextArtifacts(stripCodeFences(raw))
   const seoIdx = text.search(/\nSEO Metadata:/i)
@@ -612,6 +745,68 @@ function parseRawArticleOutput(raw: string, topic: string): any {
     }
     return out.join('\n\n')
   }
+  const dedupeNearDuplicateBlocks = (input: string) => {
+    const blocks = input
+      .split(/\n\n+/)
+      .map((b) => b.trim())
+      .filter(Boolean)
+
+    const normalize = (v: string) =>
+      v
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+
+    const tokenSet = (v: string) => new Set(normalize(v).split(' ').filter((t) => t.length > 2))
+    const overlap = (a: Set<string>, b: Set<string>) => {
+      if (a.size === 0 || b.size === 0) return 0
+      let inter = 0
+      Array.from(a).forEach((t) => {
+        if (b.has(t)) inter += 1
+      })
+      return inter / Math.max(a.size, b.size)
+    }
+    const firstSentence = (v: string) => {
+      const m = v.match(/^[\s\S]{0,450}?[.!?](?:\s|$)/)
+      return normalize((m?.[0] || v).slice(0, 260))
+    }
+
+    const out: string[] = []
+    const outSets: Array<Set<string>> = []
+    const outFirstSentences: string[] = []
+    for (const block of blocks) {
+      const n = normalize(block)
+      const set = tokenSet(block)
+      const fs = firstSentence(block)
+      let dup = false
+      for (let i = 0; i < out.length; i += 1) {
+        const m = normalize(out[i])
+        const longer = n.length >= m.length ? n : m
+        const shorter = n.length >= m.length ? m : n
+        const prefixLen = Math.min(Math.max(80, Math.floor(shorter.length * 0.6)), 180)
+        const prefixContains =
+          shorter.length >= 70 &&
+          longer.includes(shorter.slice(0, prefixLen))
+        const highOverlap = overlap(set, outSets[i]) >= 0.82
+        const firstSentenceEcho =
+          fs.length >= 50 &&
+          outFirstSentences[i].length >= 50 &&
+          (fs === outFirstSentences[i] || fs.includes(outFirstSentences[i]) || outFirstSentences[i].includes(fs))
+
+        if (prefixContains || highOverlap || firstSentenceEcho) {
+          dup = true
+          break
+        }
+      }
+      if (!dup) {
+        out.push(block)
+        outSets.push(set)
+        outFirstSentences.push(fs)
+      }
+    }
+    return out.join('\n\n')
+  }
 
   const articleTextPrepared = text
     .slice(0, splitIdx)
@@ -621,12 +816,45 @@ function parseRawArticleOutput(raw: string, topic: string): any {
     .map((line) => normalizeLine(stripMarkdownDelimiters(line)))
     .join('\n')
 
-  const articleText = dedupeConsecutiveBlocks(
-    articleTextPrepared
-  ).trim()
+  const articleText = dedupeNearDuplicateBlocks(dedupeConsecutiveBlocks(articleTextPrepared)).trim()
   const tail = text.slice(splitIdx)
 
-  const firstLine = articleText.split('\n').map((l) => l.trim()).find(Boolean) || ''
+  const allLines = articleText.split('\n').map((l) => l.trim())
+  const labelled = {
+    headline: '',
+    subheadline: '',
+    summary: '',
+    intro: '',
+  }
+  const bodyLines: string[] = []
+  for (const line of allLines) {
+    if (!line) continue
+    const h = line.match(/^headline:\s*(.+)$/i)
+    if (h?.[1]) {
+      labelled.headline = labelled.headline || h[1].trim()
+      continue
+    }
+    const sh = line.match(/^subheadline:\s*(.+)$/i)
+    if (sh?.[1]) {
+      labelled.subheadline = labelled.subheadline || sh[1].trim()
+      continue
+    }
+    const sm = line.match(/^summary:\s*(.+)$/i)
+    if (sm?.[1]) {
+      labelled.summary = labelled.summary || sm[1].trim()
+      continue
+    }
+    const intro = line.match(/^intro:\s*(.+)$/i)
+    if (intro?.[1]) {
+      labelled.intro = labelled.intro || intro[1].trim()
+      bodyLines.push(intro[1].trim())
+      continue
+    }
+    bodyLines.push(line)
+  }
+  const cleanedArticleText = bodyLines.join('\n').trim()
+
+  const firstLine = cleanedArticleText.split('\n').map((l) => l.trim()).find(Boolean) || ''
   const firstLineCanonical = normalizeLine(stripMarkdownDelimiters(firstLine))
   const firstLineLooksLikeKey =
     /^(headline|subheadline|summary|articletext|articlehtml)\b[:"]?/i.test(firstLineCanonical) ||
@@ -638,7 +866,8 @@ function parseRawArticleOutput(raw: string, topic: string): any {
     !/[.!?]$/.test(firstLineCanonical)
   const headlineMatch = text.match(/^Headline:\s*(.+)$/im)
   const headline = cleanupTextArtifacts(stripMarkdownDelimiters(
-    headlineMatch?.[1] ||
+    labelled.headline ||
+      headlineMatch?.[1] ||
       (!firstLineLooksLikeKey &&
       firstLineLooksLikeHeadline &&
       !/^(?:\d+\.\s*)?(summary|issue details|use of proceeds|about the company|financial performance)\b/i.test(firstLineCanonical)
@@ -646,11 +875,14 @@ function parseRawArticleOutput(raw: string, topic: string): any {
         : '') ||
       buildFallbackHeadline(topic)
   ))
-  const summary = cleanupTextArtifacts(stripMarkdownDelimiters(deriveSummaryFromArticleText(articleText)))
-  const subheadline = cleanupTextArtifacts(stripMarkdownDelimiters(deriveSubheadline(summary, headline)))
+  const articleBodyText = dropRepeatedLeadingHeadlineLines(cleanedArticleText, headline)
+  const summary = cleanupTextArtifacts(stripMarkdownDelimiters(labelled.summary || deriveSummaryFromArticleText(articleBodyText)))
+  const subheadline = ''
+  const articleBodyNoMetaEcho = dropLeadingMetaEchoes(articleBodyText, subheadline, summary)
 
   const seoTitle = cleanupTextArtifacts(stripMarkdownDelimiters(tail.match(/SEO Title:\s*(.+)/i)?.[1] || headline))
-  const metaDescription = cleanupTextArtifacts(stripMarkdownDelimiters(tail.match(/Meta Description:\s*(.+)/i)?.[1] || summary))
+  const metaDescriptionRaw = cleanupTextArtifacts(stripMarkdownDelimiters(tail.match(/Meta Description:\s*(.+)/i)?.[1] || summary))
+  const metaDescription = isSchemaLikeBody(metaDescriptionRaw) ? summary : metaDescriptionRaw
   const focusKeywordsRaw = cleanupTextArtifacts(stripMarkdownDelimiters(tail.match(/Focus Keywords:\s*(.+)/i)?.[1] || ''))
   const focusKeywords = focusKeywordsRaw
     ? focusKeywordsRaw.split(',').map((k) => k.trim()).filter(Boolean).slice(0, 8)
@@ -666,6 +898,7 @@ function parseRawArticleOutput(raw: string, topic: string): any {
       faqSchema = null
     }
   }
+  faqSchema = sanitizeFaqSchemaObject(faqSchema)
   const faqs: ArticleFaq[] = Array.isArray(faqSchema?.mainEntity)
     ? faqSchema.mainEntity
         .map((item: any) => ({
@@ -680,14 +913,31 @@ function parseRawArticleOutput(raw: string, topic: string): any {
     headline,
     subheadline,
     summary,
-    articleText,
-    articleHtml: articleTextToHtml(articleText),
+    articleText: articleBodyNoMetaEcho || articleBodyText,
+    articleHtml: articleTextToHtml(articleBodyNoMetaEcho || articleBodyText),
     seoTitle,
     metaDescription,
     focusKeywords,
     faqs,
     faqSchema,
   }
+}
+
+function isSchemaLikeBody(text: string): boolean {
+  const t = String(text || '').trim()
+  if (!t) return true
+
+  const head = t.slice(0, 700)
+  if (
+    (/^\s*[\[{]/.test(head) && /"@type"\s*:\s*"FAQPage"/i.test(head)) ||
+    /"@context"\s*:\s*"https:\/\/schema\.org"/i.test(head)
+  ) {
+    return true
+  }
+
+  const jsonSignals = (t.match(/"@context"|"@type"|"mainEntity"|"acceptedAnswer"|"Question"|"Answer"|[{}[\]]/g) || []).length
+  const sentenceSignals = (t.match(/[.!?](\s|$)/g) || []).length
+  return jsonSignals >= 20 && sentenceSignals <= 4
 }
 
 async function getGeminiText(response: any): Promise<string> {
@@ -907,6 +1157,13 @@ export async function POST(request: NextRequest) {
     const language = body.language || 'english'
     const purpose = body.purpose || 'brand-awareness'
     const targetAudience = body.targetAudience || 'all_clients'
+    const userPrompt = String(body.userPrompt || '').trim()
+    const seedArticleText = String(body.seedArticleText || '').trim()
+    const incomingSeed = Number(body.generationSeed)
+    const resolvedSeed =
+      Number.isInteger(incomingSeed) && incomingSeed > 0
+        ? incomingSeed
+        : Math.floor(Math.random() * 1_000_000_000) + 1
     const pdfPartsFromRefs = await buildPdfPartsFromRefs(body.researchPdfRefs)
     const pdfPartsInline = buildPdfParts(body.researchPDFs)
     const pdfParts = pdfPartsFromRefs.length > 0 ? pdfPartsFromRefs : pdfPartsInline
@@ -944,8 +1201,17 @@ export async function POST(request: NextRequest) {
       hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
       hasReferenceDocs ? 'Use attached PDFs as authoritative context (for example DRHP details, issue size, dates, risks, objects, valuation, peers).' : '',
       hasReferenceDocs ? 'When PDF facts are used, mention them in article context and in FAQ/source attribution.' : '',
+      userPrompt ? `User refinement instruction (must follow): ${userPrompt}` : '',
+      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText.slice(0, 4000)}` : '',
       'Write in a neutral newsroom tone similar to professional business news portals.',
       'Do NOT include recommendations, advisory calls, buy/sell/hold language, or investor tips.',
+      'Mandatory top structure (keep each on its own line):',
+      'Headline: <one line>',
+      'Summary: <2-3 lines>',
+      'Intro: <one opening paragraph, distinct from summary and not repeated later>',
+      'Do NOT output these label words (Headline:, Summary:, Intro:) in the final article body.',
+      'Do not repeat the headline in the body.',
+      'Do not repeat the same paragraph or near-duplicate lead lines.',
       'Focus on what happened, why it matters, and relevant market context.',
       ipoStructuredMode
         ? 'Because this is IPO/DRHP context, write articleText and articleHtml in this exact section order: Summary, Issue Details and Key Dates, Use of Proceeds / Key Objectives, About the Company, Financial Performance, What the Numbers Show, Strengths, Risks, Peer Positioning, Bottom Line.'
@@ -968,7 +1234,14 @@ export async function POST(request: NextRequest) {
       `Topic: ${topic}`,
       hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
       hasReferenceDocs ? 'Use document facts as primary context where relevant.' : '',
+      userPrompt ? `User refinement instruction (must follow): ${userPrompt}` : '',
+      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText.slice(0, 2500)}` : '',
       'Return plain text only (no JSON).',
+      'Include separate top lines: Headline, Summary, Intro.',
+      'Keep intro paragraph distinct from summary.',
+      'Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.',
+      'Do not repeat the headline in the body.',
+      'Do not repeat paragraphs.',
       ipoStructuredMode
         ? 'articleText and articleHtml must include all requested IPO sections with bullets and financial table-like data.'
         : 'Write articleText as 4 substantial paragraphs with strong factual detail.',
@@ -980,7 +1253,14 @@ export async function POST(request: NextRequest) {
       'Use Google Search grounding and rewrite as strict business-news copy.',
       `Topic: ${topic}`,
       hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
+      userPrompt ? `User refinement instruction (must follow): ${userPrompt}` : '',
+      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText.slice(0, 2500)}` : '',
       'Return plain text only.',
+      'Include separate top lines: Headline, Summary, Intro.',
+      'Keep intro paragraph distinct from summary.',
+      'Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.',
+      'Do not repeat the headline in the body.',
+      'Do not repeat paragraphs.',
       'Hard constraint: do not include ANY advisory words or actions.',
       'Forbidden words/phrases: buy, sell, hold, invest, should investors, strategy, tips, recommendation.',
       ipoStructuredMode
@@ -1027,99 +1307,83 @@ export async function POST(request: NextRequest) {
             temperature: 0.3,
             maxOutputTokens: attempt.maxOutputTokens,
             tools: [{ googleSearch: {} }],
+            seed: resolvedSeed,
           },
         })
 
         const raw = await getGeminiText(response)
-        const jsonText = extractJsonObject(raw)
         lastRaw = raw
 
-        try {
-          const candidateRaw = parseJsonFlexible(jsonText) ?? parseJsonFlexible(raw)
-          const candidate = candidateRaw
-            ? coerceArticlePayload(normalizeArticlePayload(candidateRaw))
-            : parseRawArticleOutput(raw, topic)
-          const cHeadline = String(candidate?.headline || '').trim()
-          const cSubheadline = String(candidate?.subheadline || '').trim()
-          const cSummary = String(candidate?.summary || '').trim()
-          const cArticleText = String(candidate?.articleText || '').trim()
-          const cArticleHtml = String(candidate?.articleHtml || '').trim()
-          const cBodyForChecks = cArticleText || htmlToText(cArticleHtml)
-          const cWordCount = countBodyWords(cBodyForChecks)
-          const candidateText = [cHeadline, cSubheadline, cSummary, cArticleText].join(' ')
-          const hasBaseFields = Boolean(cHeadline)
-          const hasContentFields = Boolean(cArticleText || cArticleHtml || cSummary)
-          if (!hasBaseFields || !hasContentFields) {
-            retryTrace.push({
-              attempt: index + 1,
-              promptVariant: attempt.name,
-              maxOutputTokens: attempt.maxOutputTokens,
-              status: 'missing-fields',
-              detail: 'Required fields missing after fallback mapping (headline/summary/articleText).',
-              elapsedMs: Date.now() - attemptStartedAt,
-            })
-            continue
-          }
-          if (ipoStructuredMode) {
-            const hasIpoShape =
-              hasAllIpoSections(cArticleText) ||
-              hasAllIpoSections(cArticleHtml) ||
-              hasAllIpoSections(cBodyForChecks)
-            if (!hasIpoShape || cWordCount < 180) {
-              retryTrace.push({
-                attempt: index + 1,
-                promptVariant: attempt.name,
-                maxOutputTokens: attempt.maxOutputTokens,
-                status: 'missing-fields',
-                detail: `IPO structure/length incomplete (sections=${hasIpoShape}, words=${cWordCount}).`,
-                elapsedMs: Date.now() - attemptStartedAt,
-              })
-              continue
-            }
-          } else if (cWordCount < 120) {
-            retryTrace.push({
-              attempt: index + 1,
-              promptVariant: attempt.name,
-              maxOutputTokens: attempt.maxOutputTokens,
-              status: 'missing-fields',
-              detail: `Article body too short (${cWordCount} words).`,
-              elapsedMs: Date.now() - attemptStartedAt,
-            })
-            continue
-          }
-          if (hasAdvisoryLanguage(candidateText)) {
-            retryTrace.push({
-              attempt: index + 1,
-              promptVariant: attempt.name,
-              maxOutputTokens: attempt.maxOutputTokens,
-              status: 'advisory-rejected',
-              detail: 'Advisory or recommendation language detected.',
-              elapsedMs: Date.now() - attemptStartedAt,
-            })
-            continue
-          }
-
+        const candidate = parseRawArticleOutput(raw, topic)
+        const cHeadline = String(candidate?.headline || '').trim()
+        const cSummary = String(candidate?.summary || '').trim()
+        const cArticleText = String(candidate?.articleText || '').trim()
+        const cArticleHtml = String(candidate?.articleHtml || '').trim()
+        const cBodyForChecks = cArticleText || htmlToText(cArticleHtml)
+        const cWordCount = countBodyWords(cBodyForChecks)
+        const cSchemaLike = isSchemaLikeBody(cBodyForChecks)
+        const hasBaseFields = Boolean(cHeadline)
+        const hasContentFields = Boolean(cArticleText || cArticleHtml || cSummary)
+        if (!hasBaseFields || !hasContentFields) {
           retryTrace.push({
             attempt: index + 1,
             promptVariant: attempt.name,
             maxOutputTokens: attempt.maxOutputTokens,
-            status: 'success',
+            status: 'missing-fields',
+            detail: 'Required fields missing after raw-text mapping (headline/summary/articleText).',
             elapsedMs: Date.now() - attemptStartedAt,
           })
-          parsed = candidate
-          responseForSources = response
-          break
-        } catch {
-          retryTrace.push({
-            attempt: index + 1,
-            promptVariant: attempt.name,
-            maxOutputTokens: attempt.maxOutputTokens,
-            status: 'invalid-json',
-            detail: 'Model response was not valid JSON for the expected schema.',
-            elapsedMs: Date.now() - attemptStartedAt,
-          })
-          // try next attempt
+          continue
         }
+        if (cSchemaLike) {
+          retryTrace.push({
+            attempt: index + 1,
+            promptVariant: attempt.name,
+            maxOutputTokens: attempt.maxOutputTokens,
+            status: 'missing-fields',
+            detail: 'Article body was schema-like JSON instead of prose.',
+            elapsedMs: Date.now() - attemptStartedAt,
+          })
+          continue
+        }
+        if (ipoStructuredMode) {
+          const hasIpoShape =
+            hasAllIpoSections(cArticleText) ||
+            hasAllIpoSections(cArticleHtml) ||
+            hasAllIpoSections(cBodyForChecks)
+          if (!hasIpoShape || cWordCount < 180) {
+            retryTrace.push({
+              attempt: index + 1,
+              promptVariant: attempt.name,
+              maxOutputTokens: attempt.maxOutputTokens,
+              status: 'missing-fields',
+              detail: `IPO structure/length incomplete (sections=${hasIpoShape}, words=${cWordCount}).`,
+              elapsedMs: Date.now() - attemptStartedAt,
+            })
+            continue
+          }
+        } else if (cWordCount < 120) {
+          retryTrace.push({
+            attempt: index + 1,
+            promptVariant: attempt.name,
+            maxOutputTokens: attempt.maxOutputTokens,
+            status: 'missing-fields',
+            detail: `Article body too short (${cWordCount} words).`,
+            elapsedMs: Date.now() - attemptStartedAt,
+          })
+          continue
+        }
+
+        retryTrace.push({
+          attempt: index + 1,
+          promptVariant: attempt.name,
+          maxOutputTokens: attempt.maxOutputTokens,
+          status: 'success',
+          elapsedMs: Date.now() - attemptStartedAt,
+        })
+        parsed = candidate
+        responseForSources = response
+        break
       } catch (err) {
         retryTrace.push({
           attempt: index + 1,
@@ -1140,7 +1404,14 @@ export async function POST(request: NextRequest) {
           `Topic: ${topic}`,
           hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
           hasReferenceDocs ? 'Use attached document facts first, then web grounding for context.' : '',
+          userPrompt ? `User refinement instruction (must follow): ${userPrompt}` : '',
+          seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText.slice(0, 2500)}` : '',
           'Return plain text only (no JSON).',
+          'Include separate top lines: Headline, Summary, Intro.',
+          'Keep intro paragraph distinct from summary.',
+          'Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.',
+          'Do not repeat the headline in the body.',
+          'Do not repeat paragraphs.',
           'After article end append SEO Metadata and FAQ Schema (JSON-LD).',
           'Hard constraints:',
           '- No recommendations/advisory language.',
@@ -1157,21 +1428,20 @@ export async function POST(request: NextRequest) {
             temperature: 0.2,
             maxOutputTokens: 2600,
             tools: [{ googleSearch: {} }],
+            seed: resolvedSeed,
           },
         })
 
         const salvageRaw = await getGeminiText(salvageResponse)
-        const salvageJson = parseJsonFlexible(salvageRaw)
-        const salvageCandidate = salvageJson
-          ? coerceArticlePayload(normalizeArticlePayload(salvageJson))
-          : parseRawArticleOutput(salvageRaw, topic)
+        const salvageCandidate = parseRawArticleOutput(salvageRaw, topic)
         const sHeadline = String(salvageCandidate?.headline || '').trim()
         const sSummary = String(salvageCandidate?.summary || '').trim()
         const sArticleText = String(salvageCandidate?.articleText || '').trim()
         const sWordCount = countBodyWords(sArticleText)
         const sHasIpoShape = !ipoStructuredMode || hasAllIpoSections(sArticleText)
+        const sSchemaLike = isSchemaLikeBody(sArticleText)
 
-        if (sHeadline && sSummary && sArticleText && sWordCount >= 140 && sHasIpoShape) {
+        if (sHeadline && sSummary && sArticleText && sWordCount >= 140 && sHasIpoShape && !sSchemaLike) {
           retryTrace.push({
             attempt: retryTrace.length + 1,
             promptVariant: 'salvage',
@@ -1190,7 +1460,7 @@ export async function POST(request: NextRequest) {
             promptVariant: 'salvage',
             maxOutputTokens: 2600,
             status: 'missing-fields',
-            detail: `Salvage output incomplete (words=${sWordCount}, ipoShape=${sHasIpoShape}).`,
+            detail: `Salvage output incomplete (words=${sWordCount}, ipoShape=${sHasIpoShape}, schemaLike=${sSchemaLike}).`,
             elapsedMs: Date.now() - salvageStartedAt,
           })
         }
@@ -1213,7 +1483,7 @@ export async function POST(request: NextRequest) {
           raw: lastRaw?.slice(0, 600) || '',
           retryTrace,
           generationMeta: {
-            attempts: attempts.length,
+            attempts: retryTrace.length,
             totalElapsedMs: Date.now() - startedAt,
           },
         },
@@ -1222,7 +1492,7 @@ export async function POST(request: NextRequest) {
     }
 
     let headline = cleanupTextArtifacts(String(parsed?.headline || '').trim())
-    let subheadline = cleanupTextArtifacts(String(parsed?.subheadline || '').trim())
+    let subheadline = ''
     let summary = cleanupTextArtifacts(String(parsed?.summary || '').trim())
     let articleBodyText = cleanupTextArtifacts(String(parsed?.articleText || '').trim())
     let articleBodyHtml = cleanupHtmlArtifacts(String(parsed?.articleHtml || '').trim())
@@ -1246,8 +1516,15 @@ export async function POST(request: NextRequest) {
     if (!summary) {
       summary = cleanupTextArtifacts(deriveSummaryFromArticleText(articleBodyText))
     }
-    if (!subheadline || isSectionStyleTitle(subheadline)) {
-      subheadline = cleanupTextArtifacts(deriveSubheadline(summary, headline))
+    // Subheadline intentionally disabled for live-news output to avoid duplicate lead text.
+    // Final safety pass: after any summary/subheadline normalization, strip echoes from body.
+    const prunedBody = dropLeadingMetaEchoes(articleBodyText, subheadline, summary)
+    if (prunedBody && prunedBody !== articleBodyText) {
+      articleBodyText = prunedBody
+      articleBodyHtml = cleanupHtmlArtifacts(articleTextToHtml(articleBodyText))
+      if (ipoStructuredMode) {
+        articleBodyHtml = normalizeIpoSectionHeadingsToH2(articleBodyHtml)
+      }
     }
 
     const tags = Array.isArray(parsed?.tags)
@@ -1294,10 +1571,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const fullText = [headline, subheadline, summary, articleBodyText].join(' ')
-    if (hasAdvisoryLanguage(fullText)) {
-      return NextResponse.json({ error: 'Generated article included advisory language after retries; please try again.' }, { status: 500 })
-    }
     const bodyWordCount = countBodyWords(articleBodyText)
     const bodyParagraphCount = countBodyParagraphs(articleBodyText)
 
@@ -1365,6 +1638,7 @@ export async function POST(request: NextRequest) {
       faqSchema,
       topic,
       generatedAt: new Date().toISOString(),
+      generationSeed: resolvedSeed,
       model: MODEL,
       factCheck: {
         grounded: true,

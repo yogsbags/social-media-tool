@@ -40,6 +40,12 @@ export default function StageDataModal({
     if (isOpen && data) {
       // Initialize form data from the data object
       const flattenedData = flattenObject(data)
+      if (stageId === 2 && flattenedData['contentType'] === 'live-news-article') {
+        // Refinement instruction for Stage 2 re-runs.
+        if (flattenedData['userPrompt'] === undefined || flattenedData['userPrompt'] === null) {
+          flattenedData['userPrompt'] = ''
+        }
+      }
       setFormData(flattenedData)
       setSaveError(null)
       setSaveSuccess(false)
@@ -728,6 +734,14 @@ export default function StageDataModal({
                   return !['headline', 'subheadline', 'summary', 'articleText', 'articleHtml', 'contentType'].includes(key)
                 }
                 return true
+              })
+              .sort(([a], [b]) => {
+                // Keep user prompt visible at top of Additional Details and just above id.
+                if (a === 'userPrompt' && b !== 'userPrompt') return -1
+                if (b === 'userPrompt' && a !== 'userPrompt') return 1
+                if (a === 'id' && b !== 'id') return 1
+                if (b === 'id' && a !== 'id') return -1
+                return a.localeCompare(b)
               })
               .map(([key, value]) => renderField(key, value))}
           </div>

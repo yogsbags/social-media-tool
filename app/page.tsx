@@ -292,6 +292,20 @@ export default function Home() {
     let terminalStatus: WorkflowStage['status'] | null = null
 
     try {
+      const latestStage2Entry = stageId === 2 && stageData[2]?.data
+        ? Object.values(stageData[2].data as Record<string, any>).sort((a: any, b: any) => {
+            const timeA = new Date(a?.completedAt || a?.createdAt || 0).getTime()
+            const timeB = new Date(b?.completedAt || b?.createdAt || 0).getTime()
+            return timeB - timeA
+          })[0]
+        : null
+      const stage2UserPrompt = stageId === 2 ? String(latestStage2Entry?.userPrompt || '').trim() : ''
+      const isStage2Refinement = stageId === 2 && stage2UserPrompt.length > 0
+      const stage2SeedArticle = isStage2Refinement ? String(latestStage2Entry?.articleText || '').trim() : ''
+      const stage2GenerationSeed = isStage2Refinement && Number.isInteger(Number(latestStage2Entry?.generationSeed))
+        ? Number(latestStage2Entry?.generationSeed)
+        : null
+
       // Prepare file data
       addLog('Preparing reference materials...')
       const fileData = await prepareFilesForAPI(stageId)
@@ -314,6 +328,9 @@ export default function Home() {
           targetAudience,
           language,
           campaignData,
+          userPrompt: isStage2Refinement ? stage2UserPrompt : null,
+          seedArticleText: isStage2Refinement ? (stage2SeedArticle || null) : null,
+          generationSeed: isStage2Refinement ? stage2GenerationSeed : null,
           files: fileData,
           avatarId,
           avatarScriptText,

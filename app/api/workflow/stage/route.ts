@@ -85,6 +85,9 @@ export async function POST(request: NextRequest) {
     aspectRatio = '16:9',
     brandSettings,
     files = {},
+    userPrompt,
+    seedArticleText,
+    generationSeed,
     avatarId,
     avatarScriptText,
     avatarVoiceId
@@ -402,6 +405,9 @@ export async function POST(request: NextRequest) {
               targetAudience,
               campaignType,
               language,
+              userPrompt,
+              seedArticleText,
+              generationSeed,
               researchPdfRefs,
               researchPDFs
             }
@@ -479,6 +485,8 @@ export async function POST(request: NextRequest) {
               topic,
               campaignType,
               platforms,
+              userPrompt: typeof userPrompt === 'string' ? userPrompt : '',
+              generationSeed: Number.isInteger(Number(article.generationSeed)) ? Number(article.generationSeed) : undefined,
               status: 'completed',
               type: 'content-generation',
               contentType: 'live-news-article',
