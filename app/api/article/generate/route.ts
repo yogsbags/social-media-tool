@@ -17,6 +17,14 @@ type GenerateArticleBody = {
   userPrompt?: string
   seedArticleText?: string
   generationSeed?: number
+  seedHeadline?: string
+  seedSummary?: string
+  seedSeo?: {
+    seoTitle?: string
+    metaDescription?: string
+    focusKeywords?: string[]
+  }
+  seedFaqSchema?: any
   researchPdfRefs?: Array<{ fileId?: string; bucket?: string; name?: string; size?: number; url?: string }>
   researchPDFs?: Array<{ name?: string; data?: string; size?: number }>
 }
@@ -1138,6 +1146,69 @@ function hasAllIpoSections(text: string): boolean {
   return checks.every((pattern) => pattern.test(t))
 }
 
+function stripGeneratedTailBlocks(text: string): string {
+  const raw = String(text || '')
+  if (!raw) return ''
+  const markers = ['\n\nSources:', '\n\nSEO Metadata:', '\n\nFAQ Schema (JSON-LD):']
+  let cut = raw.length
+  for (const marker of markers) {
+    const idx = raw.indexOf(marker)
+    if (idx >= 0 && idx < cut) cut = idx
+  }
+  return raw.slice(0, cut).trim()
+}
+
+function parseRefinementBlocks(raw: string): { headline: string; summary: string; body: string } {
+  const text = cleanupTextArtifacts(stripCodeFences(raw))
+  const extract = (label: string, next: string[]): string => {
+    const startRegex = new RegExp(`(?:^|\\n)${label}\\s*:\\s*`, 'i')
+    const startMatch = text.match(startRegex)
+    if (!startMatch || typeof startMatch.index !== 'number') return ''
+    const start = startMatch.index + startMatch[0].length
+    let end = text.length
+    for (const n of next) {
+      const nextRegex = new RegExp(`(?:^|\\n)${n}\\s*:`, 'ig')
+      nextRegex.lastIndex = start
+      const nm = nextRegex.exec(text)
+      if (nm && typeof nm.index === 'number' && nm.index < end) end = nm.index
+    }
+    return cleanupTextArtifacts(text.slice(start, end).trim())
+  }
+
+  const headline = extract('HEADLINE', ['SUMMARY', 'BODY'])
+  const summary = extract('SUMMARY', ['BODY'])
+  const body = extract('BODY', [])
+  return { headline, summary, body }
+}
+
+function wantsHeadlineChange(userPrompt: string): boolean {
+  const t = String(userPrompt || '').toLowerCase()
+  return /\b(change|update|rewrite|modify|replace|new)\b[\s\S]{0,30}\b(headline|title)\b|\b(headline|title)\b[\s\S]{0,30}\b(change|update|rewrite|modify|replace|new)\b/.test(t)
+}
+
+function wantsSummaryChange(userPrompt: string): boolean {
+  const t = String(userPrompt || '').toLowerCase()
+  return /\b(change|update|rewrite|modify|replace|new|improve|add|append|insert|expand|extend)\b[\s\S]{0,40}\b(summary)\b|\bsummary\b[\s\S]{0,40}\b(change|update|rewrite|modify|replace|new|improve|add|append|insert|expand|extend|line)\b/.test(t)
+}
+
+function wantsSeoChange(userPrompt: string): boolean {
+  const t = String(userPrompt || '').toLowerCase()
+  return /\bseo\b|\bmeta description\b|\bseo title\b|\bfocus keywords?\b/.test(t)
+}
+
+function wantsFaqChange(userPrompt: string): boolean {
+  const t = String(userPrompt || '').toLowerCase()
+  return /\bfaq\b|\bschema\b|\bjson-ld\b/.test(t)
+}
+
+function normalizeForMatch(text: string): string {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export async function POST(request: NextRequest) {
   let refsToCleanup: Array<{ fileId?: string; bucket?: string; name?: string; size?: number; url?: string }> = []
   try {
@@ -1159,6 +1230,15 @@ export async function POST(request: NextRequest) {
     const targetAudience = body.targetAudience || 'all_clients'
     const userPrompt = String(body.userPrompt || '').trim()
     const seedArticleText = String(body.seedArticleText || '').trim()
+    const seedHeadline = cleanupTextArtifacts(String(body.seedHeadline || '').trim())
+    const seedSummary = cleanupTextArtifacts(String(body.seedSummary || '').trim())
+    const seedSeo = body.seedSeo && typeof body.seedSeo === 'object' ? body.seedSeo : null
+    const seedFaqSchema = body.seedFaqSchema && typeof body.seedFaqSchema === 'object' ? body.seedFaqSchema : null
+    const isRefinementRun = userPrompt.length > 0
+    const allowHeadlineChange = !isRefinementRun || wantsHeadlineChange(userPrompt)
+    const allowSummaryChange = !isRefinementRun || wantsSummaryChange(userPrompt)
+    const allowSeoChange = !isRefinementRun || wantsSeoChange(userPrompt)
+    const allowFaqChange = !isRefinementRun || wantsFaqChange(userPrompt)
     const incomingSeed = Number(body.generationSeed)
     const resolvedSeed =
       Number.isInteger(incomingSeed) && incomingSeed > 0
@@ -1202,7 +1282,7 @@ export async function POST(request: NextRequest) {
       hasReferenceDocs ? 'Use attached PDFs as authoritative context (for example DRHP details, issue size, dates, risks, objects, valuation, peers).' : '',
       hasReferenceDocs ? 'When PDF facts are used, mention them in article context and in FAQ/source attribution.' : '',
       userPrompt ? `User refinement instruction (must follow): ${userPrompt}` : '',
-      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText.slice(0, 4000)}` : '',
+      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText}` : '',
       'Write in a neutral newsroom tone similar to professional business news portals.',
       'Do NOT include recommendations, advisory calls, buy/sell/hold language, or investor tips.',
       'Mandatory top structure (keep each on its own line):',
@@ -1235,7 +1315,7 @@ export async function POST(request: NextRequest) {
       hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
       hasReferenceDocs ? 'Use document facts as primary context where relevant.' : '',
       userPrompt ? `User refinement instruction (must follow): ${userPrompt}` : '',
-      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText.slice(0, 2500)}` : '',
+      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText}` : '',
       'Return plain text only (no JSON).',
       'Include separate top lines: Headline, Summary, Intro.',
       'Keep intro paragraph distinct from summary.',
@@ -1254,7 +1334,7 @@ export async function POST(request: NextRequest) {
       `Topic: ${topic}`,
       hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
       userPrompt ? `User refinement instruction (must follow): ${userPrompt}` : '',
-      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText.slice(0, 2500)}` : '',
+      seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText}` : '',
       'Return plain text only.',
       'Include separate top lines: Headline, Summary, Intro.',
       'Keep intro paragraph distinct from summary.',
@@ -1273,17 +1353,93 @@ export async function POST(request: NextRequest) {
         : 'Length constraint: 4-6 paragraphs and at least 280 words in articleText.',
     ].join('\n')
 
+    const refinementPromptDetailed = [
+      'You are editing an existing Indian markets article.',
+      `Topic: ${topic}`,
+      `Language: ${language}`,
+      `User instruction: ${userPrompt}`,
+      hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
+      hasReferenceDocs ? 'Use attached PDFs for factual correction where relevant.' : '',
+      'Apply the user instruction exactly and keep all unrelated content unchanged.',
+      'Do not add recommendations/advisory language.',
+      'Return plain text in this exact format and nothing else:',
+      'HEADLINE: <single line>',
+      'SUMMARY: <2-3 lines>',
+      'BODY:',
+      '<full article body only>',
+    ].join('\n')
+
     let parsed: any = null
     let responseForSources: any = null
     let lastRaw = ''
     const retryTrace: RetryTrace[] = []
     const startedAt = Date.now()
 
-    const attempts = [
-      { name: 'detailed', prompt: promptDetailed, maxOutputTokens: 3072 },
-      { name: 'compact', prompt: promptCompact, maxOutputTokens: 2300 },
-      { name: 'advisory-safe', prompt: promptAdvisorySafe, maxOutputTokens: 2300 },
-    ]
+    if (isRefinementRun) {
+      const refinementStartedAt = Date.now()
+      try {
+        const seedBody = stripGeneratedTailBlocks(seedArticleText)
+        const contents = [
+          { role: 'user' as const, parts: [{ text: 'Current article draft (preserve unless explicitly changed):' }] },
+          { role: 'model' as const, parts: [{ text: `HEADLINE: ${seedHeadline || ''}\nSUMMARY: ${seedSummary || ''}\nBODY:\n${seedBody}`.trim() }] },
+          { role: 'user' as const, parts: [{ text: refinementPromptDetailed }, ...pdfParts] },
+        ]
+        const response = await ai.models.generateContent({
+          model: MODEL,
+          contents,
+          config: {
+            temperature: 0.05,
+            maxOutputTokens: 3072,
+            tools: [{ googleSearch: {} }],
+            seed: resolvedSeed,
+          },
+        })
+        const raw = await getGeminiText(response)
+        lastRaw = raw
+        const blocks = parseRefinementBlocks(raw)
+        const refinedHeadline = cleanupTextArtifacts(blocks.headline || seedHeadline || buildFallbackHeadline(topic))
+        const refinedSummary = cleanupTextArtifacts(blocks.summary || seedSummary || deriveSummaryFromArticleText(seedBody))
+        const refinedBody = cleanupTextArtifacts(blocks.body || seedBody)
+        if (!refinedHeadline || !refinedSummary || countBodyWords(refinedBody) < 40) {
+          throw new Error('Refinement output incomplete')
+        }
+        parsed = {
+          headline: refinedHeadline,
+          summary: refinedSummary,
+          articleText: refinedBody,
+          articleHtml: articleTextToHtml(refinedBody),
+          seoTitle: seedSeo?.seoTitle || refinedHeadline,
+          metaDescription: seedSeo?.metaDescription || refinedSummary,
+          focusKeywords: Array.isArray(seedSeo?.focusKeywords) ? seedSeo?.focusKeywords : [],
+          faqSchema: seedFaqSchema || undefined,
+        }
+        responseForSources = response
+        retryTrace.push({
+          attempt: 1,
+          promptVariant: 'refine-single-pass',
+          maxOutputTokens: 3072,
+          status: 'success',
+          elapsedMs: Date.now() - refinementStartedAt,
+        })
+      } catch (err) {
+        retryTrace.push({
+          attempt: 1,
+          promptVariant: 'refine-single-pass',
+          maxOutputTokens: 3072,
+          status: 'model-error',
+          detail: err instanceof Error ? err.message : 'Unknown model error',
+          elapsedMs: Date.now() - refinementStartedAt,
+        })
+      }
+    }
+
+    const attempts = isRefinementRun
+      ? []
+      : [
+          { name: 'detailed', prompt: promptDetailed, maxOutputTokens: 3072 },
+          { name: 'compact', prompt: promptCompact, maxOutputTokens: 2300 },
+          { name: 'advisory-safe', prompt: promptAdvisorySafe, maxOutputTokens: 2300 },
+        ]
 
     for (let index = 0; index < attempts.length; index += 1) {
       if (Date.now() - startedAt > MAX_GENERATION_MS) {
@@ -1300,11 +1456,18 @@ export async function POST(request: NextRequest) {
       const attempt = attempts[index]
       const attemptStartedAt = Date.now()
       try {
+        const requestContents = isRefinementRun
+          ? [
+              { role: 'user' as const, parts: [{ text: 'This is the current article draft. Preserve it and apply only the requested edits.' }] },
+              { role: 'model' as const, parts: [{ text: seedArticleText }] },
+              { role: 'user' as const, parts: [{ text: attempt.prompt }, ...pdfParts] },
+            ]
+          : [{ role: 'user' as const, parts: [{ text: attempt.prompt }, ...pdfParts] }]
         const response = await ai.models.generateContent({
           model: MODEL,
-          contents: [{ role: 'user', parts: [{ text: attempt.prompt }, ...pdfParts] }],
+          contents: requestContents,
           config: {
-            temperature: 0.3,
+            temperature: isRefinementRun ? 0.05 : 0.3,
             maxOutputTokens: attempt.maxOutputTokens,
             tools: [{ googleSearch: {} }],
             seed: resolvedSeed,
@@ -1317,8 +1480,14 @@ export async function POST(request: NextRequest) {
         const candidate = parseRawArticleOutput(raw, topic)
         const cHeadline = String(candidate?.headline || '').trim()
         const cSummary = String(candidate?.summary || '').trim()
-        const cArticleText = String(candidate?.articleText || '').trim()
+        let cArticleText = String(candidate?.articleText || '').trim()
         const cArticleHtml = String(candidate?.articleHtml || '').trim()
+        if (isRefinementRun && cArticleText && countBodyWords(cArticleText) < 120) {
+          const seedBody = stripGeneratedTailBlocks(seedArticleText)
+          if (countBodyWords(seedBody) >= 120) {
+            cArticleText = seedBody
+          }
+        }
         const cBodyForChecks = cArticleText || htmlToText(cArticleHtml)
         const cWordCount = countBodyWords(cBodyForChecks)
         const cSchemaLike = isSchemaLikeBody(cBodyForChecks)
@@ -1382,6 +1551,9 @@ export async function POST(request: NextRequest) {
           elapsedMs: Date.now() - attemptStartedAt,
         })
         parsed = candidate
+        if (isRefinementRun && cArticleText && cArticleText !== String(candidate?.articleText || '').trim()) {
+          parsed.articleText = cArticleText
+        }
         responseForSources = response
         break
       } catch (err) {
@@ -1396,36 +1568,44 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (!parsed && Date.now() - startedAt <= MAX_GENERATION_MS - 30000) {
+    if (!parsed && !isRefinementRun && Date.now() - startedAt <= MAX_GENERATION_MS - 30000) {
       const salvageStartedAt = Date.now()
       try {
-        const salvagePrompt = [
-          'You are writing a complete, factual Indian markets IPO news report.',
-          `Topic: ${topic}`,
-          hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
-          hasReferenceDocs ? 'Use attached document facts first, then web grounding for context.' : '',
-          userPrompt ? `User refinement instruction (must follow): ${userPrompt}` : '',
-          seedArticleText ? `Previous draft context (refine, not copy):\n${seedArticleText.slice(0, 2500)}` : '',
-          'Return plain text only (no JSON).',
-          'Include separate top lines: Headline, Summary, Intro.',
-          'Keep intro paragraph distinct from summary.',
-          'Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.',
-          'Do not repeat the headline in the body.',
-          'Do not repeat paragraphs.',
-          'After article end append SEO Metadata and FAQ Schema (JSON-LD).',
-          'Hard constraints:',
-          '- No recommendations/advisory language.',
-          '- articleText must be complete and not truncated.',
-          ipoStructuredMode
-            ? '- Include all IPO sections: Summary, Issue Details and Key Dates, Use of Proceeds / Key Objectives, About the Company, Financial Performance, What the Numbers Show, Strengths, Risks, Peer Positioning, Bottom Line.'
-            : '- Write 4-6 solid paragraphs with clear market context.'
-        ].join('\n')
+        const salvagePrompt = isRefinementRun
+          ? [
+              'Refine the existing article with strict minimal edits.',
+              `Topic: ${topic}`,
+              `User edit instruction: ${userPrompt}`,
+              `Current draft:\n${seedArticleText}`,
+              'Do not rewrite from scratch; preserve structure and most wording.',
+              'Do not change headline/title unless explicitly requested by user.',
+              'Return plain text only and append SEO Metadata + FAQ Schema (JSON-LD).',
+            ].join('\n')
+          : [
+              'You are writing a complete, factual Indian markets IPO news report.',
+              `Topic: ${topic}`,
+              hasReferenceDocs ? `Reference documents attached: ${referenceDocNames.join(', ')}` : '',
+              hasReferenceDocs ? 'Use attached document facts first, then web grounding for context.' : '',
+              'Return plain text only (no JSON).',
+              'Include separate top lines: Headline, Summary, Intro.',
+              'Keep intro paragraph distinct from summary.',
+              'Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.',
+              'Do not repeat the headline in the body.',
+              'Do not repeat paragraphs.',
+              'After article end append SEO Metadata and FAQ Schema (JSON-LD).',
+              'Hard constraints:',
+              '- No recommendations/advisory language.',
+              '- articleText must be complete and not truncated.',
+              ipoStructuredMode
+                ? '- Include all IPO sections: Summary, Issue Details and Key Dates, Use of Proceeds / Key Objectives, About the Company, Financial Performance, What the Numbers Show, Strengths, Risks, Peer Positioning, Bottom Line.'
+                : '- Write 4-6 solid paragraphs with clear market context.'
+            ].join('\n')
 
         const salvageResponse = await ai.models.generateContent({
           model: MODEL,
           contents: [{ role: 'user', parts: [{ text: salvagePrompt }, ...pdfParts] }],
           config: {
-            temperature: 0.2,
+            temperature: isRefinementRun ? 0.1 : 0.2,
             maxOutputTokens: 2600,
             tools: [{ googleSearch: {} }],
             seed: resolvedSeed,
@@ -1516,6 +1696,43 @@ export async function POST(request: NextRequest) {
     if (!summary) {
       summary = cleanupTextArtifacts(deriveSummaryFromArticleText(articleBodyText))
     }
+    if (isRefinementRun && !allowHeadlineChange && seedHeadline) {
+      headline = seedHeadline
+    }
+    if (isRefinementRun && !allowSummaryChange && seedSummary) {
+      summary = seedSummary
+    }
+    if (
+      isRefinementRun &&
+      allowSummaryChange &&
+      seedSummary &&
+      normalizeForMatch(summary) === normalizeForMatch(seedSummary)
+    ) {
+      try {
+        const summaryRewritePrompt = [
+          'Rewrite the summary only.',
+          `Topic: ${topic}`,
+          `User instruction: ${userPrompt}`,
+          `Current summary:\n${seedSummary}`,
+          'Return only the revised summary text in 2-3 sentences. No labels.',
+        ].join('\n')
+        const summaryResp = await ai.models.generateContent({
+          model: MODEL,
+          contents: [{ role: 'user', parts: [{ text: summaryRewritePrompt }] }],
+          config: {
+            temperature: 0.05,
+            maxOutputTokens: 220,
+            seed: resolvedSeed,
+          },
+        })
+        const summaryRaw = cleanupTextArtifacts(await getGeminiText(summaryResp))
+        if (summaryRaw && normalizeForMatch(summaryRaw) !== normalizeForMatch(seedSummary)) {
+          summary = clipAtSentenceOrWords(summaryRaw, 90)
+        }
+      } catch {
+        // Keep original summary if summary-only refinement fails.
+      }
+    }
     // Subheadline intentionally disabled for live-news output to avoid duplicate lead text.
     // Final safety pass: after any summary/subheadline normalization, strip echoes from body.
     const prunedBody = dropLeadingMetaEchoes(articleBodyText, subheadline, summary)
@@ -1530,11 +1747,20 @@ export async function POST(request: NextRequest) {
     const tags = Array.isArray(parsed?.tags)
       ? parsed.tags.map((t: any) => String(t).trim()).filter(Boolean).slice(0, 8)
       : []
-    const seoTitle = cleanupTextArtifacts(String(parsed?.seoTitle || headline).trim()).slice(0, 120)
-    const metaDescription = cleanupTextArtifacts(String(parsed?.metaDescription || summary).trim())
-    const focusKeywords = Array.isArray(parsed?.focusKeywords)
+    const parsedSeoTitle = cleanupTextArtifacts(String(parsed?.seoTitle || headline).trim()).slice(0, 120)
+    const parsedMetaDescription = cleanupTextArtifacts(String(parsed?.metaDescription || summary).trim())
+    const parsedFocusKeywords = Array.isArray(parsed?.focusKeywords)
       ? parsed.focusKeywords.map((k: any) => String(k).trim()).filter(Boolean).slice(0, 8)
       : tags.slice(0, 6)
+    const seoTitle = isRefinementRun && !allowSeoChange && seedSeo?.seoTitle
+      ? cleanupTextArtifacts(String(seedSeo.seoTitle).trim()).slice(0, 120)
+      : parsedSeoTitle
+    const metaDescription = isRefinementRun && !allowSeoChange && seedSeo?.metaDescription
+      ? cleanupTextArtifacts(String(seedSeo.metaDescription).trim())
+      : parsedMetaDescription
+    const focusKeywords = isRefinementRun && !allowSeoChange && Array.isArray(seedSeo?.focusKeywords)
+      ? seedSeo.focusKeywords.map((k: any) => cleanupTextArtifacts(String(k).trim())).filter(Boolean).slice(0, 8)
+      : parsedFocusKeywords
     const faqs: ArticleFaq[] = Array.isArray(parsed?.faqs)
       ? parsed.faqs
           .map((f: any) => ({
@@ -1592,19 +1818,25 @@ export async function POST(request: NextRequest) {
           }
         ]
 
-    const faqSchema = (parsed?.faqSchema && typeof parsed.faqSchema === 'object')
+    const fallbackFaqSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqForSchema.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer
+        }
+      }))
+    }
+
+    const faqSchema = isRefinementRun && !allowFaqChange && seedFaqSchema
+      ? seedFaqSchema
+      : (parsed?.faqSchema && typeof parsed.faqSchema === 'object')
       ? parsed.faqSchema
       : {
-          '@context': 'https://schema.org',
-          '@type': 'FAQPage',
-          mainEntity: faqForSchema.map((faq) => ({
-            '@type': 'Question',
-            name: faq.question,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: faq.answer
-            }
-          }))
+          ...fallbackFaqSchema
         }
 
     const sourcesTextBlock = groundedSources.length

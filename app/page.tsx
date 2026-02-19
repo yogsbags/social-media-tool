@@ -305,6 +305,14 @@ export default function Home() {
       const stage2GenerationSeed = isStage2Refinement && Number.isInteger(Number(latestStage2Entry?.generationSeed))
         ? Number(latestStage2Entry?.generationSeed)
         : null
+      const stage2SeedHeadline = isStage2Refinement ? String(latestStage2Entry?.headline || '').trim() : ''
+      const stage2SeedSummary = isStage2Refinement ? String(latestStage2Entry?.summary || '').trim() : ''
+      const stage2SeedSeo = isStage2Refinement && latestStage2Entry?.seo && typeof latestStage2Entry.seo === 'object'
+        ? latestStage2Entry.seo
+        : null
+      const stage2SeedFaqSchema = isStage2Refinement && latestStage2Entry?.faqSchema && typeof latestStage2Entry.faqSchema === 'object'
+        ? latestStage2Entry.faqSchema
+        : null
 
       // Prepare file data
       addLog('Preparing reference materials...')
@@ -331,6 +339,10 @@ export default function Home() {
           userPrompt: isStage2Refinement ? stage2UserPrompt : null,
           seedArticleText: isStage2Refinement ? (stage2SeedArticle || null) : null,
           generationSeed: isStage2Refinement ? stage2GenerationSeed : null,
+          seedHeadline: isStage2Refinement ? (stage2SeedHeadline || null) : null,
+          seedSummary: isStage2Refinement ? (stage2SeedSummary || null) : null,
+          seedSeo: isStage2Refinement ? stage2SeedSeo : null,
+          seedFaqSchema: isStage2Refinement ? stage2SeedFaqSchema : null,
           files: fileData,
           avatarId,
           avatarScriptText,

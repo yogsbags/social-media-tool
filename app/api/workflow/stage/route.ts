@@ -88,6 +88,10 @@ export async function POST(request: NextRequest) {
     userPrompt,
     seedArticleText,
     generationSeed,
+    seedHeadline,
+    seedSummary,
+    seedSeo,
+    seedFaqSchema,
     avatarId,
     avatarScriptText,
     avatarVoiceId
@@ -408,6 +412,10 @@ export async function POST(request: NextRequest) {
               userPrompt,
               seedArticleText,
               generationSeed,
+              seedHeadline,
+              seedSummary,
+              seedSeo,
+              seedFaqSchema,
               researchPdfRefs,
               researchPDFs
             }
