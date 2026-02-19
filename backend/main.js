@@ -321,11 +321,19 @@ async function run() {
       orchestrator.displayBanner();
       console.log(`\n🎬 EXECUTING STAGE: ${stageName.toUpperCase()}\n`);
       const stageResult = await orchestrator.runStage(stageName, options);
-      // Emit video result so frontend stage route can persist hostedUrl/videoUrl
-      if (stageName === 'video' && stageResult && (stageResult.hostedUrl || stageResult.videoUrl)) {
+      // Emit video result so frontend stage route can persist URL/videoId/status for preview links.
+      if (stageName === 'video' && stageResult) {
+        const videoId = stageResult?.metadata?.videoId || null;
+        const status = stageResult?.metadata?.status || null;
+        const directVideoUrl = stageResult.videoUrl || stageResult.hostedUrl || null;
+        const dashboardUrl = videoId ? `https://app.heygen.com/video/${videoId}` : null;
         console.log('__VIDEO_RESULT__' + JSON.stringify({
           hostedUrl: stageResult.hostedUrl || null,
-          videoUrl: stageResult.videoUrl || null
+          videoUrl: directVideoUrl || dashboardUrl,
+          directVideoUrl: directVideoUrl,
+          dashboardUrl,
+          videoId,
+          status
         }));
       }
       if (stageName === 'visuals' && stageResult?.images?.length > 0) {

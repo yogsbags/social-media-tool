@@ -81,10 +81,8 @@ class SocialMediaOrchestrator {
     const planningText = (planning?.creativePrompt || planning?.output || '').trim();
 
     if (!groqKey) {
-      const needsDisclaimer = /(english|hinglish)/i.test(language);
-      const disclaimer = needsDisclaimer ? 'Market risks apply.' : '';
       const hook = platform === 'instagram' ? 'Stop scrolling—quick money tip.' : 'Quick update.';
-      return `${hook} ${topic}. Want a simple plan? Talk to PL Capital today. ${disclaimer}`.trim();
+      return `${hook} ${topic}. Want a simple plan? Talk to PL Capital today.`.trim();
     }
 
     const systemPrompt = `You write short, natural spoken scripts for a financial services video avatar.
@@ -93,7 +91,6 @@ Return ONLY the spoken script as plain text. No bullet points. No headings. No s
     const languageName = this._getLanguageName(language);
     const isInstagramReel = platform === 'instagram' || /reel/i.test(format || '');
     const isYouTubeShort = platform === 'youtube' || /short/i.test(format || '') || /youtube-short/i.test(options.type || '');
-    const needsDisclaimer = /(english|hinglish)/i.test(language);
     const viralReelStyle = `Style (viral reel/short, Indian audience):
 - Hook in the first sentence (pattern interrupt — stop the scroll).
 - Short punchy sentences, spoken like a credible Indian finfluencer (not cheesy).
@@ -111,7 +108,7 @@ Constraints:
 - Tone: confident, warm, professional, Indian business style.
 - Length: about ${wordsTarget} words (max ${wordsTarget + 6}).
 - Compliance: no guaranteed returns, no exaggerated claims, no personalized investment advice.
-- If language is English or Hinglish, end with the exact disclaimer: "Market risks apply." (exactly once).
+- Do not include compliance disclaimers in the spoken script (caption handles compliance separately).
 
 ${styleGuidance ? styleGuidance : ''}
 
@@ -158,9 +155,7 @@ Output rules:
       script = words.slice(0, wordsTarget + 12).join(' ').trim();
     }
 
-    if (needsDisclaimer && !/market risks apply\.?$/i.test(script)) {
-      script = `${script.replace(/\.*\s*$/, '')}. Market risks apply.`;
-    }
+    script = script.replace(/\bmarket risks apply\.?/gi, '').replace(/\s+/g, ' ').trim();
 
     return script;
   }
@@ -1588,7 +1583,7 @@ ${brandGuidance}`;
           } catch (error) {
             console.log(`   ⚠️  Script generation failed; using fallback: ${error.message}`);
             const topic = options.topic || 'PL Capital investing insights';
-            scriptText = `Hi, quick update from PL Capital. ${topic}. If you want a portfolio review or a plan, talk to us today. Market risks apply.`;
+            scriptText = `Hi, quick update from PL Capital. ${topic}. If you want a portfolio review or a plan, talk to us today.`;
           }
           console.log(`   📝 Script: ${scriptText.substring(0, 60)}...`);
         }
@@ -1648,6 +1643,7 @@ ${brandGuidance}`;
             avatar_id: heygenAvatarId,
             voice_id: heygenVoiceId,
             input_text: scriptText,
+            aspect_ratio: options.aspectRatio || '16:9',
             title: options.title || `Avatar Video - ${options.topic || 'Content'}`
           });
 
@@ -1676,7 +1672,7 @@ ${brandGuidance}`;
             let attempts = 0;
             const maxAttempts = 60; // 5 minutes max wait (5s intervals)
 
-            while (status === 'pending' && attempts < maxAttempts) {
+            while ((status === 'pending' || status === 'processing') && attempts < maxAttempts) {
               await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5s
 
               const statusResult = await this._callMcpTool('mcp__heygen__get_avatar_video_status', {
@@ -2523,7 +2519,15 @@ ${brandGuidance}`;
    * @private
    */
   async _heygenGenerateVideo(apiKey, params) {
-    const { avatar_id, voice_id, input_text, title } = params;
+    const { avatar_id, voice_id, input_text, title, aspect_ratio } = params;
+
+    const normalizedAspect = String(aspect_ratio || '16:9').trim();
+    const dimensionsByAspect = {
+      '16:9': { width: 1280, height: 720 },
+      '9:16': { width: 720, height: 1280 },
+      '1:1': { width: 1080, height: 1080 }
+    };
+    const resolvedDimension = dimensionsByAspect[normalizedAspect] || dimensionsByAspect['16:9'];
 
     const requestBody = {
       video_inputs: [{
@@ -2538,10 +2542,7 @@ ${brandGuidance}`;
           voice_id: voice_id
         }
       }],
-      dimension: {
-        width: 1280,
-        height: 720
-      },
+      dimension: resolvedDimension,
       title: title || 'Avatar Video'
     };
 

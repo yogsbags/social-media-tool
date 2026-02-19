@@ -318,6 +318,94 @@ export default function Home() {
       addLog('Preparing reference materials...')
       const fileData = await prepareFilesForAPI(stageId)
 
+      // Stage 4 runs via async job queue to avoid long-lived HTTP request timeouts.
+      if (stageId === 4) {
+        const enqueueResponse = await fetch('/api/video-jobs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            stageId,
+            campaignType,
+            purpose,
+            platforms: selectedPlatforms,
+            topic,
+            duration,
+            aspectRatio,
+            contentType,
+            useVeo,
+            useAvatar,
+            targetAudience,
+            language,
+            campaignData,
+            files: fileData,
+            avatarId,
+            avatarScriptText,
+            avatarVoiceId,
+            brandSettings: {
+              useBrandGuidelines,
+              customColors: useBrandGuidelines ? null : customColors,
+              customTone: useBrandGuidelines ? null : customTone,
+              customInstructions: useBrandGuidelines ? null : customInstructions
+            }
+          }),
+        })
+
+        if (!enqueueResponse.ok) {
+          throw new Error(`Failed to enqueue video job (${enqueueResponse.status})`)
+        }
+
+        const enqueueData = await enqueueResponse.json()
+        const jobId = String(enqueueData?.jobId || '').trim()
+        if (!jobId) throw new Error('Video job ID was not returned')
+
+        await updateStage(stageId, 'running', 'Video job queued')
+        addLog(`Stage 4 job queued: ${jobId}`)
+
+        const pollStartedAt = Date.now()
+        const maxPollMs = 35 * 60 * 1000 // 35 minutes safety timeout
+        let lastLogCount = 0
+
+        while (Date.now() - pollStartedAt < maxPollMs) {
+          await new Promise((resolve) => setTimeout(resolve, 5000))
+          const statusResponse = await fetch(`/api/video-jobs/${jobId}`, { cache: 'no-store' })
+          if (!statusResponse.ok) {
+            addLog(`Stage 4 job status check failed: ${statusResponse.status}`)
+            continue
+          }
+
+          const statusData = await statusResponse.json()
+          const job = statusData?.job
+          const jobStatus = String(job?.status || '').toLowerCase()
+          const jobLogs = Array.isArray(job?.logs) ? job.logs : []
+          if (jobLogs.length > lastLogCount) {
+            jobLogs.slice(lastLogCount).forEach((line: string) => addLog(line))
+            lastLogCount = jobLogs.length
+          }
+
+          if (jobStatus === 'completed') {
+            await updateStage(stageId, 'completed', 'video completed')
+            terminalStatus = 'completed'
+            addLog(`Stage 4 completed! (job: ${jobId})`)
+            break
+          }
+
+          if (jobStatus === 'error') {
+            await updateStage(stageId, 'error', job?.error || 'video job failed')
+            terminalStatus = 'error'
+            addLog(`Stage 4 failed: ${job?.error || 'video job failed'}`)
+            break
+          }
+        }
+
+        if (!terminalStatus) {
+          await updateStage(stageId, 'error', 'video job timed out')
+          terminalStatus = 'error'
+          addLog(`Stage 4 failed: video job timed out (${jobId})`)
+        }
+
+        return
+      }
+
       const response = await fetch('/api/workflow/stage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

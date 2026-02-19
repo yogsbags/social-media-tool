@@ -576,6 +576,8 @@ export async function POST(request: NextRequest) {
           args.push('--duration', duration.toString())
           args.push('--aspect-ratio', aspectRatio)
           if (useVeo) args.push('--use-veo')
+          // Require polling completion for video stage so URL is available before marking complete.
+          args.push('--wait-for-completion')
           // Explicitly set avatar mode: pass --use-avatar if true, --no-avatar if false
           if (finalUseAvatar) {
             args.push('--use-avatar')
@@ -734,6 +736,44 @@ export async function POST(request: NextRequest) {
         // Handle process completion
         backendProcess.on('close', (code) => {
           if (code === 0) {
+            let parsedVideoResult: {
+              hostedUrl?: string | null
+              videoUrl?: string | null
+              directVideoUrl?: string | null
+              dashboardUrl?: string | null
+              videoId?: string | null
+              status?: string | null
+            } | null = null
+            if (stageId === 4) {
+              const videoResultMatch = outputBuffer.match(/__VIDEO_RESULT__(.+)/)
+              if (videoResultMatch) {
+                try {
+                  parsedVideoResult = JSON.parse(videoResultMatch[1].trim())
+                } catch (_) {
+                  parsedVideoResult = null
+                }
+              }
+
+              // For avatar mode, require direct playable URL from HeyGen before success.
+              // Dashboard URL / pending status should not be treated as stage completion.
+              if (finalUseAvatar) {
+                const direct = String(parsedVideoResult?.directVideoUrl || parsedVideoResult?.videoUrl || '').trim()
+                const hasPlayableUrl = /^https?:\/\//i.test(direct) && /(\.mp4|\.mov|\.webm)(\?|$)/i.test(direct)
+                if (!hasPlayableUrl) {
+                  sendEvent({ log: '❌ Stage 4 blocked: HeyGen video URL not ready after polling.' })
+                  if (parsedVideoResult?.videoId) {
+                    sendEvent({ log: `ℹ️ HeyGen video ID: ${parsedVideoResult.videoId}` })
+                  }
+                  if (parsedVideoResult?.dashboardUrl) {
+                    sendEvent({ log: `ℹ️ Track status: ${parsedVideoResult.dashboardUrl}` })
+                  }
+                  sendEvent({ stage: stageId, status: 'error', message: 'HeyGen video still processing; URL not ready yet' })
+                  controller.close()
+                  return
+                }
+              }
+            }
+
             // Save stage data based on stage type
             const stageData: any = {
               topic,
@@ -767,14 +807,14 @@ export async function POST(request: NextRequest) {
               if (avatarId) stageData.avatarId = avatarId
               if (avatarScriptText) stageData.avatarScriptText = avatarScriptText
               if (avatarVoiceId) stageData.avatarVoiceId = avatarVoiceId
-              // Parse video URL from backend stdout so preview/view work in StageDataModal
-              const videoResultMatch = outputBuffer.match(/__VIDEO_RESULT__(.+)/)
-              if (videoResultMatch) {
-                try {
-                  const parsed = JSON.parse(videoResultMatch[1].trim())
-                  if (parsed.hostedUrl) stageData.hostedUrl = parsed.hostedUrl
-                  if (parsed.videoUrl) stageData.videoUrl = parsed.videoUrl
-                } catch (_) { /* ignore parse errors */ }
+              // Parse video output payload from backend stdout so preview/view work in StageDataModal
+              if (parsedVideoResult) {
+                if (parsedVideoResult.hostedUrl) stageData.hostedUrl = parsedVideoResult.hostedUrl
+                if (parsedVideoResult.videoUrl) stageData.videoUrl = parsedVideoResult.videoUrl
+                if (parsedVideoResult.directVideoUrl) stageData.directVideoUrl = parsedVideoResult.directVideoUrl
+                if (parsedVideoResult.dashboardUrl) stageData.dashboardUrl = parsedVideoResult.dashboardUrl
+                if (parsedVideoResult.videoId) stageData.videoId = parsedVideoResult.videoId
+                if (parsedVideoResult.status) stageData.videoStatus = parsedVideoResult.status
               }
             } else if (stageId === 5) {
               stageData.type = 'publishing'

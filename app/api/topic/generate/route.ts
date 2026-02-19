@@ -89,7 +89,17 @@ function isTooSimilarToRecent(topic: string, recentTopics: string[]): boolean {
     if (!r) return false
     if (t === r) return true
     if (t.includes(r) || r.includes(t)) return true
-    return topicSimilarityScore(topic, recent) >= 0.55
+    const ta = new Set(normalizeTopicForSimilarity(topic))
+    const tb = new Set(normalizeTopicForSimilarity(recent))
+    let shared = 0
+    Array.from(ta).forEach((tok) => {
+      if (tb.has(tok)) shared += 1
+    })
+    // Stronger de-dup for short campaign lines:
+    // - 3+ shared core tokens is usually just a paraphrase
+    // - lower Jaccard threshold prevents same-angle rewrites
+    if (shared >= 3) return true
+    return topicSimilarityScore(topic, recent) >= 0.38
   })
 }
 
@@ -144,6 +154,14 @@ function isGenericTagline(text: string | undefined): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    const now = new Date()
+    const currentYear = String(now.getFullYear())
+    const currentDateIso = now.toISOString().slice(0, 10)
+    const currentDateHuman = now.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
     const body: GenerateBody = await request.json()
     const groqKey = process.env.GROQ_API_KEY
     const geminiKey = process.env.GEMINI_API_KEY
@@ -172,6 +190,11 @@ export async function POST(request: NextRequest) {
         topic = topic.replace(pattern, '').trim()
       }
       return topic.replace(/^["']|["']$/g, '').trim()
+    }
+    const hasStaleYear = (text: string | undefined) => {
+      if (!text) return false
+      const years = text.match(/\b20\d{2}\b/g) || []
+      return years.some((y) => y !== currentYear)
     }
 
     const extractBestTopic = (text: string | undefined) => {
@@ -249,7 +272,8 @@ export async function POST(request: NextRequest) {
 
       const prompts = angleHints.map((angle) => [
         'Use Google Search to find current, trending finance or markets news relevant to PL Capital audiences in India.',
-        'Prioritize very recent developments and high-interest stories.',
+        `Today is ${currentDateIso}. Prioritize very recent developments and high-interest stories.`,
+        `If you include a year, it must be ${currentYear} (never older years).`,
         body.purpose ? `Purpose: ${body.purpose}` : '',
         body.targetAudience ? `Audience: ${body.targetAudience}` : '',
         body.platforms?.length ? `Platforms: ${body.platforms.join(', ')}` : '',
@@ -286,6 +310,7 @@ export async function POST(request: NextRequest) {
           const wordCount = cleaned ? cleaned.split(/\s+/).filter(Boolean).length : 0
           const looksTruncated = /[-:;,]$/.test(cleaned)
           const hitMaxTokens = String(finishReason).toUpperCase() === 'MAX_TOKENS'
+          const hasStaleYear = /\b20\d{2}\b/.test(cleaned) && !new RegExp(`\\b${currentYear}\\b`).test(cleaned)
 
           lastRawTopic = rawTopic
           lastFinishReason = finishReason
@@ -297,6 +322,7 @@ export async function POST(request: NextRequest) {
             wordCount <= 15 &&
             !looksTruncated &&
             !hitMaxTokens &&
+            !hasStaleYear &&
             !isTooSimilarToRecent(cleaned, recentTopics) &&
             !isAdvisoryOrGenericNewsLine(cleaned) &&
             !isGenericTagline(cleaned)
@@ -330,6 +356,7 @@ export async function POST(request: NextRequest) {
     const hasReference = fs.existsSync(referencePath)
     const reference = hasReference ? fs.readFileSync(referencePath, 'utf8') : ''
 
+    const recentTopics = loadRecentTopics(6)
     const contextLines = [
       body.campaignType ? `Campaign type: ${body.campaignType}` : null,
       body.purpose ? `Purpose: ${body.purpose}` : null,
@@ -337,104 +364,140 @@ export async function POST(request: NextRequest) {
       body.platforms?.length ? `Platforms: ${body.platforms.join(', ')}` : null,
       hasReference ? `Product context (for ideas only; do not copy taglines):\n${reference.substring(400, 1800)}` : null,
     ].filter(Boolean) as string[]
+    const avoidRecentLine = recentTopics.length
+      ? `Avoid near-duplicates/paraphrases of these recent generated topics: ${recentTopics.join(' | ')}`
+      : ''
+    const nonLiveAngles = [
+      'tax planning and compliance',
+      'asset allocation and portfolio balance',
+      'market structure and sector rotation',
+      'retirement and long-term compounding',
+      'risk management and downside protection',
+      'IPO/FPO and primary market focus',
+    ]
 
     const userPrompt = [
       'Generate exactly one short campaign topic for PL Capital (finance). Max 15 words.',
+      `Today is ${currentDateHuman}. Keep the topic current.`,
+      `If you include a year, use ${currentYear} only.`,
       'Do NOT use generic taglines like "80 years of wealth creation", "PL Capital solutions", or "expertise with PL Capital". Give a specific, campaign-style topic (e.g. tax-saving strategies, mutual fund basics, IPO investing).',
       ...contextLines,
-      'Reply with only the topic line, no labels or quotes. Example: 5 tax-saving strategies for HNIs in 2025',
-    ].join('\n')
+      avoidRecentLine,
+      `Reply with only the topic line, no labels or quotes. Example: 5 tax-saving strategies for HNIs in ${currentYear}`,
+    ].filter(Boolean).join('\n')
 
-    console.log('Making request to Groq API with model:', MODEL_PRIMARY)
+    let result: any = null
+    let topic = ''
+    let modelUsed = MODEL_PRIMARY
+    let bestCandidate = ''
+    let bestCandidateScore = Number.POSITIVE_INFINITY
+    const maxSimilarityToRecent = (candidate: string) => {
+      if (!recentTopics.length) return 0
+      return recentTopics.reduce((max, recent) => Math.max(max, topicSimilarityScore(candidate, recent)), 0)
+    }
+    for (let attempt = 0; attempt < 4 && !topic; attempt += 1) {
+      const model = attempt < 2 ? MODEL_PRIMARY : MODEL_FALLBACK
+      modelUsed = model
+      const angle = nonLiveAngles[attempt % nonLiveAngles.length]
+      const attemptPrompt = [
+        userPrompt,
+        `Focus angle for this attempt: ${angle}.`,
+        attempt > 0 ? 'Must be materially different from recent topics and prior attempts.' : '',
+      ].filter(Boolean).join('\n')
 
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 15000) // 15 second timeout
-
-    const response = await fetch(
-      GROQ_API_URL,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${groqKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: MODEL_PRIMARY,
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a creative marketing expert for PL Capital (financial services). Your reply must be ONLY one short, specific campaign topic (max 15 words). Do NOT use generic taglines like "80 years of wealth creation" or "PL Capital solutions". Prefer concrete topics: tax saving, mutual funds, IPO, options, portfolio tips, market outlook, etc. No labels, no "Topic:", no quotes. Example: 5 tax-saving strategies for HNIs in 2025'
+      console.log('Making request to Groq API with model:', model, 'attempt:', attempt + 1)
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 15000) // 15 second timeout
+      let response: Response
+      try {
+        response = await fetch(
+          GROQ_API_URL,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${groqKey}`,
+              'Content-Type': 'application/json'
             },
-            {
-              role: 'user',
-              content: userPrompt
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 80
-        }),
-        signal: controller.signal
+            body: JSON.stringify({
+              model,
+              messages: [
+                {
+                  role: 'system',
+                  content: `You are a creative marketing expert for PL Capital (financial services). Today is ${currentDateIso}. Your reply must be ONLY one short, specific campaign topic (max 15 words). Do NOT use generic taglines like "80 years of wealth creation" or "PL Capital solutions". Prefer concrete topics: tax saving, mutual funds, IPO, options, portfolio tips, market outlook, etc. If you include a year, use ${currentYear} only. No labels, no "Topic:", no quotes.`
+                },
+                {
+                  role: 'user',
+                  content: attemptPrompt
+                }
+              ],
+              temperature: 0.9,
+              max_tokens: 80
+            }),
+            signal: controller.signal
+          }
+        )
+      } finally {
+        clearTimeout(timeout)
       }
-    ).finally(() => clearTimeout(timeout))
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Groq API error:', response.status, errorText)
+      if (!response!.ok) {
+        const errorText = await response!.text()
+        console.error('Groq API error:', response!.status, errorText)
+        continue
+      }
+
+      result = await response!.json()
+      console.log('Groq API response (topic):', result?.choices?.[0]?.message?.content?.slice(0, 200))
+      const message = result?.choices?.[0]?.message
+      let candidate = message?.content?.trim()
+
+      if (!candidate && message?.reasoning) {
+        const reasoning = message.reasoning.trim()
+        const quoteMatch = reasoning.match(/"([^"]+)"/)
+        if (quoteMatch) candidate = quoteMatch[1]
+        else {
+          const sentences = reasoning.split(/[.!?]/).filter((s: string) => s.trim().length > 10)
+          candidate = sentences[sentences.length - 1]?.trim() || reasoning
+        }
+      }
+
+      if (candidate && candidate.includes('\n')) candidate = candidate.split('\n')[0].trim()
+      candidate = candidate?.replace(/^["']|["']$/g, '').trim()
+      candidate = normalizeTopic(candidate)
+
+      if (
+        candidate &&
+        !isEchoOrInvalid(candidate, attemptPrompt) &&
+        !isGenericTagline(candidate) &&
+        !hasStaleYear(candidate) &&
+        !isTooSimilarToRecent(candidate, recentTopics) &&
+        candidate.length >= 5
+      ) {
+        topic = candidate
+      } else if (
+        candidate &&
+        !isEchoOrInvalid(candidate, attemptPrompt) &&
+        !isGenericTagline(candidate) &&
+        !hasStaleYear(candidate) &&
+        candidate.length >= 5
+      ) {
+        const score = maxSimilarityToRecent(candidate)
+        if (score < bestCandidateScore) {
+          bestCandidate = candidate
+          bestCandidateScore = score
+        }
+      }
+    }
+
+    if (!topic && bestCandidate && bestCandidateScore < 0.72) {
+      topic = bestCandidate
+    }
+
+    if (hasStaleYear(topic)) {
       return NextResponse.json(
-        { error: `Groq API request failed: ${response.status} ${errorText}` },
+        { error: `Generated topic used an older year. Please retry for ${currentYear} context.` },
         { status: 500 }
       )
-    }
-
-    const result = await response.json()
-    console.log('Groq API response (topic):', result?.choices?.[0]?.message?.content?.slice(0, 200))
-
-    const message = result?.choices?.[0]?.message
-    let topic = message?.content?.trim()
-
-    if (!topic && message?.reasoning) {
-      const reasoning = message.reasoning.trim()
-      const quoteMatch = reasoning.match(/"([^"]+)"/)
-      if (quoteMatch) topic = quoteMatch[1]
-      else {
-        const sentences = reasoning.split(/[.!?]/).filter((s: string) => s.trim().length > 10)
-        topic = sentences[sentences.length - 1]?.trim() || reasoning
-      }
-    }
-
-    if (topic && topic.includes('\n')) topic = topic.split('\n')[0].trim()
-
-    topic = topic?.replace(/^["']|["']$/g, '').trim()
-
-    topic = normalizeTopic(topic)
-
-    if (isEchoOrInvalid(topic, userPrompt) || isGenericTagline(topic) || !topic || topic.length < 5) {
-      if (isGenericTagline(topic)) console.error('Topic is generic tagline, retrying')
-      else console.error('Topic invalid or echo, retrying with fallback model')
-      const fallbackResponse = await fetch(GROQ_API_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${groqKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: MODEL_FALLBACK,
-          messages: [
-            { role: 'system', content: 'Reply with one short, specific campaign topic for PL Capital (max 15 words). Do NOT use "80 years", "wealth creation expertise", or "PL Capital solutions". Use a concrete topic like tax saving, mutual funds, IPO, or market tips. No labels, no quotes. Example: 5 tax-saving strategies for HNIs in 2025' },
-            { role: 'user', content: `Campaign: ${body.campaignType || 'general'}. Purpose: ${body.purpose || 'brand-awareness'}. Audience: ${body.targetAudience || 'all'}. Give one specific topic line only (e.g. tax saving, mutual funds, IPO), not a generic tagline.` }
-          ],
-          temperature: 0.7,
-          max_tokens: 80
-        })
-      })
-      if (!fallbackResponse.ok) {
-        return NextResponse.json(
-          { error: 'No valid topic generated from Groq response', debug: result },
-          { status: 500 }
-        )
-      }
-      const fallbackResult = await fallbackResponse.json()
-      topic = normalizeTopic(fallbackResult?.choices?.[0]?.message?.content?.trim())
     }
 
     if (!topic || topic.length < 5) {
@@ -453,7 +516,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ topic, model: MODEL_PRIMARY })
+    saveTopicToHistory(topic)
+    return NextResponse.json({ topic, model: modelUsed })
   } catch (error) {
     console.error('Topic generation error:', error)
 
