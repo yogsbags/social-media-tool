@@ -12,6 +12,7 @@ type GenerateBody = {
   targetAudience?: string
   platforms?: string[]
   language?: string
+  seedTheme?: string
 }
 
 const MODEL_PRIMARY = process.env.GROQ_TOPIC_MODEL || 'llama-3.3-70b-versatile'
@@ -103,6 +104,31 @@ function isTooSimilarToRecent(topic: string, recentTopics: string[]): boolean {
   })
 }
 
+function normalizeThemeTokens(text: string): string[] {
+  return normalizeTopicForSimilarity(text)
+    .filter((t) => t.length >= 4)
+    .slice(0, 8)
+}
+
+function hasThemeCoverage(candidate: string | undefined, seedTheme: string | undefined): boolean {
+  const theme = String(seedTheme || '').trim()
+  if (!theme) return true
+  const themeTokens = normalizeThemeTokens(theme)
+  if (!themeTokens.length) return true
+  const candidateTokens = new Set(normalizeTopicForSimilarity(String(candidate || '')))
+  return themeTokens.some((t) => candidateTokens.has(t))
+}
+
+/** When seedTheme is set, candidate must contain every word of the seed (case-insensitive). */
+function candidateIncludesSeed(candidate: string | undefined, seedTheme: string | undefined): boolean {
+  const seed = String(seedTheme || '').trim()
+  if (!seed) return true
+  const words = seed.split(/\s+/).filter((w) => w.length > 0)
+  if (!words.length) return true
+  const lower = String(candidate || '').toLowerCase()
+  return words.every((word) => lower.includes(word.toLowerCase()))
+}
+
 async function getGeminiText(response: any): Promise<string> {
   if (!response) return ''
 
@@ -163,6 +189,8 @@ export async function POST(request: NextRequest) {
       year: 'numeric',
     })
     const body: GenerateBody = await request.json()
+    const seedTheme = String(body.seedTheme ?? '').trim().slice(0, 140)
+    console.log('[API /topic/generate] campaignType:', body.campaignType, '| seedTheme received:', seedTheme ? JSON.stringify(seedTheme) : '(empty)')
     const groqKey = process.env.GROQ_API_KEY
     const geminiKey = process.env.GEMINI_API_KEY
 
@@ -277,9 +305,11 @@ export async function POST(request: NextRequest) {
         body.purpose ? `Purpose: ${body.purpose}` : '',
         body.targetAudience ? `Audience: ${body.targetAudience}` : '',
         body.platforms?.length ? `Platforms: ${body.platforms.join(', ')}` : '',
+        seedTheme ? `Keyword/theme to blend into the topic: ${seedTheme}` : '',
         `Focus angle for this attempt: ${angle}.`,
         'Output exactly one short campaign topic in headline style (5 to 15 words).',
         'Ensure the line is complete and readable, not truncated.',
+        seedTheme ? `The output must naturally include this keyword/theme: ${seedTheme}.` : '',
         'Use neutral news wording, not advice/recommendations.',
         'Preferred angle styles: market-impact or explainer headline.',
         'Example styles (do not copy verbatim): "US-India trade deal impact on export sectors", "What is causing the silver rally in India?"',
@@ -289,54 +319,126 @@ export async function POST(request: NextRequest) {
       let topic = ''
       let lastRawTopic = ''
       let lastFinishReason = ''
+      let hadUpstreamFetchError = false
 
       for (let attempt = 0; attempt < 2 && !topic; attempt += 1) {
         for (const prompt of prompts) {
-          const response = await ai.models.generateContent({
-            model: LIVE_NEWS_MODEL,
-            contents: [{ text: prompt }],
-            config: {
-              temperature: 0.4,
-              maxOutputTokens: 512,
-              responseMimeType: 'text/plain',
-              tools: [{ googleSearch: {} }],
-            },
-          })
+          let response: any
+          try {
+            response = await ai.models.generateContent({
+              model: LIVE_NEWS_MODEL,
+              contents: [{ text: prompt }],
+              config: {
+                temperature: 0.4,
+                maxOutputTokens: 512,
+                responseMimeType: 'text/plain',
+                tools: [{ googleSearch: {} }],
+              },
+            })
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error || '')
+            if (/fetch failed/i.test(message)) {
+              hadUpstreamFetchError = true
+            }
+            continue
+          }
 
-          const rawTopic = await getGeminiText(response)
-          const extracted = extractBestTopic(rawTopic)
-          const finishReason = response?.candidates?.[0]?.finishReason || ''
-          const cleaned = sanitizeNewsHeadline(extracted)
-          const wordCount = cleaned ? cleaned.split(/\s+/).filter(Boolean).length : 0
-          const looksTruncated = /[-:;,]$/.test(cleaned)
-          const hitMaxTokens = String(finishReason).toUpperCase() === 'MAX_TOKENS'
-          const hasStaleYear = /\b20\d{2}\b/.test(cleaned) && !new RegExp(`\\b${currentYear}\\b`).test(cleaned)
+          try {
+            const rawTopic = await getGeminiText(response)
+            const extracted = extractBestTopic(rawTopic)
+            const finishReason = response?.candidates?.[0]?.finishReason || ''
+            const cleaned = sanitizeNewsHeadline(extracted)
+            const wordCount = cleaned ? cleaned.split(/\s+/).filter(Boolean).length : 0
+            const looksTruncated = /[-:;,]$/.test(cleaned)
+            const hitMaxTokens = String(finishReason).toUpperCase() === 'MAX_TOKENS'
+            const hasStaleYear = /\b20\d{2}\b/.test(cleaned) && !new RegExp(`\\b${currentYear}\\b`).test(cleaned)
 
-          lastRawTopic = rawTopic
-          lastFinishReason = finishReason
+            lastRawTopic = rawTopic
+            lastFinishReason = finishReason
 
-          if (
-            cleaned &&
-            cleaned.length >= 5 &&
-            wordCount >= 5 &&
-            wordCount <= 15 &&
-            !looksTruncated &&
-            !hitMaxTokens &&
-            !hasStaleYear &&
-            !isTooSimilarToRecent(cleaned, recentTopics) &&
-            !isAdvisoryOrGenericNewsLine(cleaned) &&
-            !isGenericTagline(cleaned)
-          ) {
-            topic = cleaned
-            break
+            if (
+              cleaned &&
+              cleaned.length >= 5 &&
+              wordCount >= 5 &&
+              wordCount <= 15 &&
+              !looksTruncated &&
+              !hitMaxTokens &&
+              !hasStaleYear &&
+              hasThemeCoverage(cleaned, seedTheme) &&
+              !isTooSimilarToRecent(cleaned, recentTopics) &&
+              !isAdvisoryOrGenericNewsLine(cleaned) &&
+              !isGenericTagline(cleaned)
+            ) {
+              topic = cleaned
+              break
+            }
+          } catch (parseError) {
+            const msg = parseError instanceof Error ? parseError.message : String(parseError || '')
+            if (/fetch failed/i.test(msg)) hadUpstreamFetchError = true
+            continue
           }
         }
+      }
+
+      if (!topic) {
+        // Fallback 1: Try Gemini without web-search tool (faster and less brittle).
+        try {
+          const fallbackPrompt = [
+            `Today is ${currentDateIso}. Generate one live-news style finance headline for India.`,
+            body.purpose ? `Purpose: ${body.purpose}` : '',
+            body.targetAudience ? `Audience: ${body.targetAudience}` : '',
+            seedTheme ? `Must include or directly reflect this keyword/theme: ${seedTheme}` : '',
+            `If you include a year, it must be ${currentYear}.`,
+            'Return only one complete headline, 5 to 15 words, no advice.',
+          ].filter(Boolean).join('\n')
+          const fallbackResponse = await ai.models.generateContent({
+            model: LIVE_NEWS_MODEL,
+            contents: [{ text: fallbackPrompt }],
+            config: {
+              temperature: 0.35,
+              maxOutputTokens: 128,
+              responseMimeType: 'text/plain',
+            },
+          })
+          const fallbackRaw = await getGeminiText(fallbackResponse)
+          const fallbackClean = sanitizeNewsHeadline(extractBestTopic(fallbackRaw))
+          if (
+            fallbackClean &&
+            fallbackClean.split(/\s+/).filter(Boolean).length >= 5 &&
+            fallbackClean.split(/\s+/).filter(Boolean).length <= 15 &&
+            !isAdvisoryOrGenericNewsLine(fallbackClean) &&
+            !isGenericTagline(fallbackClean) &&
+            !hasStaleYear(fallbackClean) &&
+            hasThemeCoverage(fallbackClean, seedTheme)
+          ) {
+            topic = fallbackClean
+          }
+        } catch {
+          // continue to deterministic fallback
+        }
+      }
+
+      if (!topic) {
+        // Fallback 2: Deterministic topic to avoid hard failure in UI.
+        const fallbackTheme = seedTheme || body.purpose || 'market updates'
+        const normalizedTheme = fallbackTheme
+          .replace(/[_-]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+        topic = `Live market update: ${normalizedTheme} outlook in ${currentYear}`
+        topic = topic
+          .replace(/\s+/g, ' ')
+          .trim()
+          .split(' ')
+          .slice(0, 15)
+          .join(' ')
       }
 
       if (!topic) {
         console.error('Live-news topic invalid', {
           rawTopic: lastRawTopic?.slice(0, 300),
           finishReason: lastFinishReason,
+          hadUpstreamFetchError,
         })
         return NextResponse.json(
           { error: 'No valid live-news topic generated. Please try again.' },
@@ -345,7 +447,11 @@ export async function POST(request: NextRequest) {
       }
 
       saveTopicToHistory(topic)
-      return NextResponse.json({ topic, model: LIVE_NEWS_MODEL, source: 'google-search' })
+      return NextResponse.json({
+        topic,
+        model: LIVE_NEWS_MODEL,
+        source: hadUpstreamFetchError ? 'fallback' : 'google-search'
+      })
     }
 
     if (!groqKey) {
@@ -362,6 +468,7 @@ export async function POST(request: NextRequest) {
       body.purpose ? `Purpose: ${body.purpose}` : null,
       body.targetAudience ? `Audience: ${body.targetAudience}` : null,
       body.platforms?.length ? `Platforms: ${body.platforms.join(', ')}` : null,
+      seedTheme ? `Keyword/theme to blend into topic: ${seedTheme}` : null,
       hasReference ? `Product context (for ideas only; do not copy taglines):\n${reference.substring(400, 1800)}` : null,
     ].filter(Boolean) as string[]
     const avoidRecentLine = recentTopics.length
@@ -381,9 +488,10 @@ export async function POST(request: NextRequest) {
       `Today is ${currentDateHuman}. Keep the topic current.`,
       `If you include a year, use ${currentYear} only.`,
       'Do NOT use generic taglines like "80 years of wealth creation", "PL Capital solutions", or "expertise with PL Capital". Give a specific, campaign-style topic (e.g. tax-saving strategies, mutual fund basics, IPO investing).',
+      seedTheme ? `REQUIRED: The topic MUST naturally include or clearly reflect this keyword/theme: "${seedTheme}". Do not suggest a topic that omits this theme.` : '',
       ...contextLines,
       avoidRecentLine,
-      `Reply with only the topic line, no labels or quotes. Example: 5 tax-saving strategies for HNIs in ${currentYear}`,
+      seedTheme ? `Reply with only the topic line that includes "${seedTheme}", no labels or quotes.` : `Reply with only the topic line, no labels or quotes. Example: 5 tax-saving strategies for HNIs in ${currentYear}`,
     ].filter(Boolean).join('\n')
 
     let result: any = null
@@ -423,7 +531,7 @@ export async function POST(request: NextRequest) {
               messages: [
                 {
                   role: 'system',
-                  content: `You are a creative marketing expert for PL Capital (financial services). Today is ${currentDateIso}. Your reply must be ONLY one short, specific campaign topic (max 15 words). Do NOT use generic taglines like "80 years of wealth creation" or "PL Capital solutions". Prefer concrete topics: tax saving, mutual funds, IPO, options, portfolio tips, market outlook, etc. If you include a year, use ${currentYear} only. No labels, no "Topic:", no quotes.`
+                  content: `You are a creative marketing expert for PL Capital (financial services). Today is ${currentDateIso}. Your reply must be ONLY one short, specific campaign topic (max 15 words). Do NOT use generic taglines like "80 years of wealth creation" or "PL Capital solutions". Prefer concrete topics: tax saving, mutual funds, IPO, options, portfolio tips, market outlook, etc. If you include a year, use ${currentYear} only. ${seedTheme ? `CRITICAL: The topic MUST include or clearly reflect the user's keyword/theme "${seedTheme}"—do not return a topic that ignores it.` : ''} No labels, no "Topic:", no quotes.`
                 },
                 {
                   role: 'user',
@@ -447,7 +555,8 @@ export async function POST(request: NextRequest) {
       }
 
       result = await response!.json()
-      console.log('Groq API response (topic):', result?.choices?.[0]?.message?.content?.slice(0, 200))
+      const rawContent = result?.choices?.[0]?.message?.content?.slice(0, 200)
+      console.log('[API /topic/generate] Groq raw candidate:', rawContent)
       const message = result?.choices?.[0]?.message
       let candidate = message?.content?.trim()
 
@@ -465,20 +574,30 @@ export async function POST(request: NextRequest) {
       candidate = candidate?.replace(/^["']|["']$/g, '').trim()
       candidate = normalizeTopic(candidate)
 
+      const hasCoverage = hasThemeCoverage(candidate, seedTheme)
+      const includesSeed = candidateIncludesSeed(candidate, seedTheme)
+      if (seedTheme && candidate && (!hasCoverage || !includesSeed)) {
+        console.log('[API /topic/generate] Rejected (seed required):', { candidate: candidate?.slice(0, 80), hasCoverage, includesSeed, seedTheme })
+      }
       if (
         candidate &&
         !isEchoOrInvalid(candidate, attemptPrompt) &&
         !isGenericTagline(candidate) &&
         !hasStaleYear(candidate) &&
+        hasThemeCoverage(candidate, seedTheme) &&
+        candidateIncludesSeed(candidate, seedTheme) &&
         !isTooSimilarToRecent(candidate, recentTopics) &&
         candidate.length >= 5
       ) {
         topic = candidate
+        console.log('[API /topic/generate] Accepted topic:', topic?.slice(0, 80))
       } else if (
         candidate &&
         !isEchoOrInvalid(candidate, attemptPrompt) &&
         !isGenericTagline(candidate) &&
         !hasStaleYear(candidate) &&
+        hasThemeCoverage(candidate, seedTheme) &&
+        candidateIncludesSeed(candidate, seedTheme) &&
         candidate.length >= 5
       ) {
         const score = maxSimilarityToRecent(candidate)
@@ -489,8 +608,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (!topic && bestCandidate && bestCandidateScore < 0.72) {
+    if (!topic && bestCandidate && bestCandidateScore < 0.72 && hasThemeCoverage(bestCandidate, seedTheme) && candidateIncludesSeed(bestCandidate, seedTheme)) {
       topic = bestCandidate
+    }
+
+    if (!topic && seedTheme) {
+      const fallbackTopic = `${seedTheme.replace(/[_-]+/g, ' ').trim()} in wealth and portfolio planning for ${currentYear}`
+      topic = fallbackTopic.replace(/\s+/g, ' ').trim().split(' ').slice(0, 15).join(' ')
+      console.log('[API /topic/generate] No valid topic with seed; using fallback:', topic)
+    }
+
+    if (seedTheme && topic && !candidateIncludesSeed(topic, seedTheme)) {
+      const fallbackTopic = `${seedTheme.replace(/[_-]+/g, ' ').trim()} in wealth and portfolio planning for ${currentYear}`
+      topic = fallbackTopic.replace(/\s+/g, ' ').trim().split(' ').slice(0, 15).join(' ')
+      console.log('[API /topic/generate] Topic missing seed; replaced with fallback:', topic)
     }
 
     if (hasStaleYear(topic)) {
@@ -528,8 +659,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    const friendlyMessage = /fetch failed/i.test(message)
+      ? 'Google API is temporarily unreachable. Check network and GEMINI_API_KEY, or try again shortly.'
+      : message
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error' },
+      { error: friendlyMessage },
       { status: 500 }
     )
   }

@@ -324,12 +324,23 @@ export async function POST(request: NextRequest) {
             // Fallback prompt so the UI still has editable content
             const brand = brandSettings?.useBrandGuidelines
               ? 'Use PL Capital colors (Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766) and Figtree typography.'
-              : [
-                  brandSettings?.customColors ? `Brand colors: ${brandSettings.customColors}` : null,
-                  brandSettings?.customTone ? `Tone: ${brandSettings.customTone}` : null,
-                  brandSettings?.customInstructions ? `Guidelines: ${brandSettings.customInstructions}` : null
-                ].filter(Boolean).join(' ')
-              || 'Use brand-safe colors and professional tone.'
+              : (() => {
+                  const parts: string[] = []
+                  if (brandSettings?.customColors) parts.push(`Primary colors: ${brandSettings.customColors}`)
+                  if (brandSettings?.accentColors) parts.push(`Accent colors: ${brandSettings.accentColors}`)
+                  if (brandSettings?.bodyTextColor) parts.push(`Body text color: ${brandSettings.bodyTextColor}`)
+                  if (brandSettings?.customTone) parts.push(`Tone: ${brandSettings.customTone}`)
+                  if (brandSettings?.font || brandSettings?.fontSize || brandSettings?.fontWeight) {
+                    const ty = [brandSettings.font, brandSettings.fontSize, brandSettings.fontWeight].filter(Boolean).join(', ')
+                    if (ty) parts.push(`Typography: ${ty}`)
+                  }
+                  if (brandSettings?.gradientStartColor && brandSettings?.gradientEndColor) {
+                    const dir = brandSettings.gradientDirection ? ` ${brandSettings.gradientDirection}` : ''
+                    parts.push(`Gradient: ${brandSettings.gradientStartColor} → ${brandSettings.gradientEndColor}${dir}`)
+                  }
+                  if (brandSettings?.customInstructions) parts.push(`Guidelines: ${brandSettings.customInstructions}`)
+                  return parts.length ? parts.join('. ') : 'Use brand-safe colors and professional tone.'
+                })()
 
             const fallbackPrompt = `Create a WhatsApp static creative for "${topic || 'the campaign'}". Focus on a bold headline, single CTA, high contrast, and mobile-friendly 1080x1920 layout. ${brand}`;
 

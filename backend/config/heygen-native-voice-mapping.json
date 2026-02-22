@@ -8,7 +8,8 @@
     "gender": "male",
     "language": "Hindi",
     "previewAudio": "https://static.heygen.ai/voice_preview/f76b718088c54b22bb8da12dbcb78a0f.wav",
-    "description": "Professional male voice - perfect for financial advisor persona"
+    "description": "Professional male voice - perfect for financial advisor persona",
+    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
   },
   "0ada07010c8e4049aca376e132b04a1d": {
     "avatarName": "Priya",
@@ -19,11 +20,20 @@
     "gender": "female",
     "language": "Hindi",
     "previewAudio": "https://static.heygen.ai/voice_preview/e4bc76818ccf4591b1ca4321de23130e.wav",
-    "description": "Friendly female voice - ideal for corporate trainer persona"
+    "description": "Friendly female voice - ideal for corporate trainer persona",
+    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
   },
   "350da0c0495f43c69e1f97b10df2c441": {
     "avatarName": "Arjun",
     "groupId": "350da0c0495f43c69e1f97b10df2c441",
+    "lookIds": [
+      "4134ff5950f74373b1b437e3523ea68d",
+      "353ebf99622d42b6afbc2eea7e54317f",
+      "350da0c0495f43c69e1f97b10df2c441",
+      "c168ca11127645ae89270c109a83f979",
+      "e9737ee075f64c6ca41929caf4b43945"
+    ],
+    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static.",
     "imageKey": "image/665da71a7f02474f98cc8378f75603ab/original",
     "voiceId": "957336970bc64d479d551fea07e56784",
     "voiceName": "Madhur - Natural",
@@ -35,23 +45,63 @@
   "ef20bde4645c458ab72c9cadfc4fbdc7": {
     "avatarName": "Meera",
     "groupId": "ef20bde4645c458ab72c9cadfc4fbdc7",
+    "lookIds": [
+      "27bc076e48f742d5b2947ea79b9dca7c",
+      "877db200d28343fe8bb53d7ca54412b0",
+      "3cbecae095a34fd1ba5f9e4595b37807",
+      "19607789c4194c83be3833b5ca9c6e20",
+      "93326230032d4b54a72125f1f40c2be1",
+      "846cad9e02a4445681a4a152d2eee591",
+      "60b5074c4b71490c926e9aac76169d8c",
+      "a1a86f96d93d4ac68fa39d6b1e4d8ec4"
+    ],
     "imageKey": "image/6b3d6a26cb084c24b470797842b6f417/original",
     "voiceId": "86e484394d8b44649d686a77a14d2ce6",
     "voiceName": "Nirmala",
     "gender": "female",
     "language": "Hindi",
     "previewAudio": "https://resource.heygen.ai/text_to_speech/xUmob87su5HccMTFcYaCP5.mp3",
-    "description": "Professional female voice - suitable for senior executive persona"
+    "description": "Professional female voice - suitable for senior executive persona",
+    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
   },
   "39baeece5af54c38b25562ad4f4a375a": {
     "avatarName": "Vikram",
     "groupId": "39baeece5af54c38b25562ad4f4a375a",
+    "lookIds": [
+      "5723f94b0c764772abc33a5d4432e612",
+      "85fabd0e667342b2a2d798b49ed3dca7",
+      "958b93c157b249079d3c9a94799bf72e",
+      "6bee71a5838743929e9e7d19dff1fffa",
+      "00e216dd2aa2417b870c45abbaa1ad49",
+      "39baeece5af54c38b25562ad4f4a375a"
+    ],
     "imageKey": "image/996930d352c44c77b6e788b9d608dd52/original",
     "voiceId": "ae3563ff1460469e89f661ffb3f1260b",
     "voiceName": "Bhavin - Newscaster",
     "gender": "male",
     "language": "Hindi",
     "previewAudio": "https://static.heygen.ai/voice_preview/7224e9c56b234898a758421c138475b2.wav",
-    "description": "Professional newscaster voice - excellent for financial expert persona"
+    "description": "Professional newscaster voice - excellent for financial expert persona",
+    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
+  },
+  "277d9624a6c1413aa02cefa1366741aa": {
+    "avatarName": "Custom Avatar 277d",
+    "groupId": "277d9624a6c1413aa02cefa1366741aa",
+    "lookIds": [
+      "e56783e9c74346b59b5265d876348697",
+      "46dc2be3c652440d955977f4e5de3c74",
+      "2524279535d848e6a38e4111fb044232",
+      "64374e54cdb64f12a3e68cbd344fd23d",
+      "cf79a632ff4d431f9350998fc3b139e5",
+      "cc05458241214102bf29d0680f2cc147",
+      "8c379e5e48c64c8f93491460c6882ca0",
+      "600216621b2e46f2a240a924e9609bdd"
+    ],
+    "voiceId": "c8d184ef4d81484a97d70c94bb76fec3",
+    "voiceName": "Siddharth Vora Voice",
+    "gender": "male",
+    "language": "Hindi",
+    "description": "Custom avatar group with automatic random look selection",
+    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
   }
 }

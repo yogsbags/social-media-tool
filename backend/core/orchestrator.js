@@ -1302,22 +1302,39 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
   _buildBrandConstraintBlock(brandSettings) {
     const usingCustom = brandSettings?.useBrandGuidelines === false;
     const customColors = String(brandSettings?.customColors || '').trim();
+    const accentColors = String(brandSettings?.accentColors || '').trim();
+    const bodyTextColor = String(brandSettings?.bodyTextColor || '').trim();
     const customTone = String(brandSettings?.customTone || '').trim();
     const customInstructions = String(brandSettings?.customInstructions || '').trim();
+    const font = String(brandSettings?.font || '').trim();
+    const fontSize = String(brandSettings?.fontSize || '').trim();
+    const fontWeight = String(brandSettings?.fontWeight || '').trim();
+    const gradientStart = String(brandSettings?.gradientStartColor || '').trim();
+    const gradientEnd = String(brandSettings?.gradientEndColor || '').trim();
+    const gradientDir = String(brandSettings?.gradientDirection || '').trim();
+
     const defaultColors = 'Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766';
     const palette = usingCustom && customColors ? customColors : defaultColors;
     const tone = usingCustom && customTone ? customTone : 'professional, trustworthy, data-driven';
     const extra = usingCustom && customInstructions ? customInstructions : 'Maintain PL Capital look-and-feel across color, typography, and hierarchy.';
 
-    return [
+    const lines = [
       'Brand requirements (must follow exactly):',
-      `- Palette: ${palette}.`,
-      '- Typography: Figtree or close geometric sans-serif.',
-      `- Tone: ${tone}.`,
-      '- Keep high contrast and clean financial visual hierarchy.',
-      '- No random brand style deviations.',
-      `- Additional guidance: ${extra}`
-    ].join('\n');
+      `- Primary palette: ${palette}.`,
+    ];
+    if (usingCustom && accentColors) lines.push(`- Accent colors: ${accentColors}.`);
+    if (usingCustom && bodyTextColor) lines.push(`- Body text color: ${bodyTextColor}.`);
+    const typography = usingCustom && (font || fontSize || fontWeight)
+      ? [font || 'Figtree', fontSize, fontWeight].filter(Boolean).join(', ')
+      : 'Figtree or close geometric sans-serif';
+    lines.push(`- Typography: ${typography}.`);
+    lines.push(`- Tone: ${tone}.`);
+    if (usingCustom && gradientStart && gradientEnd) {
+      const dir = gradientDir ? ` ${gradientDir}` : '';
+      lines.push(`- Gradient: ${gradientStart} to ${gradientEnd}${dir}.`);
+    }
+    lines.push('- Keep high contrast and clean financial visual hierarchy.', '- No random brand style deviations.', `- Additional guidance: ${extra}`);
+    return lines.join('\n');
   }
 
   _appendBrandConstraintsToPrompt(prompt, brandSettings) {
@@ -1337,17 +1354,21 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     const languageName = this._getLanguageName(language);
 
     const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';
-    const customBrandColors = brandSettings?.customColors
-      ? `Brand colors: ${brandSettings.customColors}.`
-      : '';
-    const brandTone = brandSettings?.customTone
-      ? `Tone: ${brandSettings.customTone}.`
-      : '';
-    const brandInstructions = brandSettings?.customInstructions
-      ? `Additional guidance: ${brandSettings.customInstructions}.`
-      : '';
-    const brandGuidance = brandSettings
-      ? `${customBrandColors} ${brandTone} ${brandInstructions}`.trim() || defaultBrand
+    const parts = [];
+    if (brandSettings?.customColors) parts.push(`Primary colors: ${brandSettings.customColors}`);
+    if (brandSettings?.accentColors) parts.push(`Accent colors: ${brandSettings.accentColors}`);
+    if (brandSettings?.bodyTextColor) parts.push(`Body text color: ${brandSettings.bodyTextColor}`);
+    if (brandSettings?.customTone) parts.push(`Tone: ${brandSettings.customTone}`);
+    if (brandSettings?.font || brandSettings?.fontSize || brandSettings?.fontWeight) {
+      parts.push(`Typography: ${[brandSettings.font, brandSettings.fontSize, brandSettings.fontWeight].filter(Boolean).join(', ')}`);
+    }
+    if (brandSettings?.gradientStartColor && brandSettings?.gradientEndColor) {
+      const d = brandSettings.gradientDirection ? ` ${brandSettings.gradientDirection}` : '';
+      parts.push(`Gradient: ${brandSettings.gradientStartColor} to ${brandSettings.gradientEndColor}${d}`);
+    }
+    if (brandSettings?.customInstructions) parts.push(`Additional guidance: ${brandSettings.customInstructions}`);
+    const brandGuidance = brandSettings && parts.length
+      ? parts.join('. ')
       : defaultBrand;
 
     const safeFormat = format || 'image';
@@ -1357,14 +1378,17 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       : '';
 
     const exampleStyle = 'Style reference: PL Capital example creatives with high-contrast navy/blue gradient background, modern geometric shapes (blue/green accents), big bold white headline, 2–4 supporting bullets with checkmark icons OR a simple numbered step row, and a single green rounded CTA button. Clean whitespace, crisp typography (Figtree-like), modern corporate aesthetic.';
-    const noLogo = 'Do NOT add any logo/watermark/brand mark. If branding is needed later, reserve clean empty space in the top-right.';
+    const usePlCapitalLogo = brandSettings?.useBrandGuidelines !== false;
+    const logoInstruction = usePlCapitalLogo
+      ? 'Place the PL Capital logo in the top-right corner of the creative (use the official PL Capital wordmark: navy #0e0e6a background, white "PL Capital" text, clean sans-serif).'
+      : 'Do NOT add any logo/watermark/brand mark. If branding is needed later, reserve clean empty space in the top-right.';
 
     const basePrompts = {
-      linkedin: `Professional ${safeFormat} graphic for LinkedIn about ${topic || 'financial investment'}. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
-      instagram: `Eye-catching ${safeFormat} visual for Instagram about ${topic || 'investment growth'}. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
-      youtube: `High-quality ${safeFormat} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
-      facebook: `Engaging ${safeFormat} post graphic for Facebook about ${topic || 'financial planning'}. Clear, friendly messaging with strong hierarchy. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
-      twitter: `Concise ${safeFormat} visual for Twitter about ${topic || 'market insights'}. Minimal but high-contrast layout optimized for quick scan. ${exampleStyle} ${noLogo} ${brandGuidance}${languageInstruction}`,
+      linkedin: `Professional ${safeFormat} graphic for LinkedIn about ${topic || 'financial investment'}. ${exampleStyle} ${logoInstruction} ${brandGuidance}${languageInstruction}`,
+      instagram: `Eye-catching ${safeFormat} visual for Instagram about ${topic || 'investment growth'}. ${exampleStyle} ${logoInstruction} ${brandGuidance}${languageInstruction}`,
+      youtube: `High-quality ${safeFormat} thumbnail/graphic for YouTube about ${topic || 'wealth building'}. Bold text, high contrast, attention-grabbing design. ${exampleStyle} ${logoInstruction} ${brandGuidance}${languageInstruction}`,
+      facebook: `Engaging ${safeFormat} post graphic for Facebook about ${topic || 'financial planning'}. Clear, friendly messaging with strong hierarchy. ${exampleStyle} ${logoInstruction} ${brandGuidance}${languageInstruction}`,
+      twitter: `Concise ${safeFormat} visual for Twitter about ${topic || 'market insights'}. Minimal but high-contrast layout optimized for quick scan. ${exampleStyle} ${logoInstruction} ${brandGuidance}${languageInstruction}`,
       whatsapp: (() => {
         const headline = whatsapp?.headline ? String(whatsapp.headline).trim() : '';
         const body = whatsapp?.body ? String(whatsapp.body).trim() : '';
@@ -1392,6 +1416,7 @@ Layout system (STRICT):
 
 Brand & style:
 - Use PL palette (navy/blue base with green accents). Use Figtree-like sans font.
+- ${logoInstruction}
 - Add subtle gradients/texture, but keep background clean (no noisy patterns).
 - Use ONE highlight element (badge/chip) to emphasize a key term/number if present.
 - No stock-photo faces; avoid busy scenes. Prefer abstract finance motifs (₹, chart line, calendar, shield/trust icon).

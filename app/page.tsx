@@ -124,6 +124,14 @@ export default function Home() {
   const [showBrandGuidelines, setShowBrandGuidelines] = useState<boolean>(false)
   const [useBrandGuidelines, setUseBrandGuidelines] = useState<boolean>(true)
   const [customColors, setCustomColors] = useState<string>('')
+  const [accentColors, setAccentColors] = useState<string>('')
+  const [bodyTextColor, setBodyTextColor] = useState<string>('')
+  const [customFont, setCustomFont] = useState<string>('Figtree')
+  const [customFontSize, setCustomFontSize] = useState<string>('')
+  const [customFontWeight, setCustomFontWeight] = useState<string>('')
+  const [gradientStartColor, setGradientStartColor] = useState<string>('')
+  const [gradientEndColor, setGradientEndColor] = useState<string>('')
+  const [gradientDirection, setGradientDirection] = useState<string>('')
   const [customTone, setCustomTone] = useState<string>('')
   const [customInstructions, setCustomInstructions] = useState<string>('')
 
@@ -343,7 +351,17 @@ export default function Home() {
             avatarVoiceId,
             brandSettings: {
               useBrandGuidelines,
+              logoPlacement: useBrandGuidelines ? 'top-right' : null,
+              logoUrl: useBrandGuidelines ? '/pl-capital-logo.svg' : null,
               customColors: useBrandGuidelines ? null : customColors,
+              accentColors: useBrandGuidelines ? null : accentColors,
+              bodyTextColor: useBrandGuidelines ? null : bodyTextColor,
+              font: useBrandGuidelines ? null : customFont,
+              fontSize: useBrandGuidelines ? null : customFontSize,
+              fontWeight: useBrandGuidelines ? null : customFontWeight,
+              gradientStartColor: useBrandGuidelines ? null : gradientStartColor,
+              gradientEndColor: useBrandGuidelines ? null : gradientEndColor,
+              gradientDirection: useBrandGuidelines ? null : gradientDirection,
               customTone: useBrandGuidelines ? null : customTone,
               customInstructions: useBrandGuidelines ? null : customInstructions
             }
@@ -437,7 +455,17 @@ export default function Home() {
           avatarVoiceId,
           brandSettings: {
             useBrandGuidelines,
+            logoPlacement: useBrandGuidelines ? 'top-right' : null,
+            logoUrl: useBrandGuidelines ? '/pl-capital-logo.svg' : null,
             customColors: useBrandGuidelines ? null : customColors,
+            accentColors: useBrandGuidelines ? null : accentColors,
+            bodyTextColor: useBrandGuidelines ? null : bodyTextColor,
+            font: useBrandGuidelines ? null : customFont,
+            fontSize: useBrandGuidelines ? null : customFontSize,
+            fontWeight: useBrandGuidelines ? null : customFontWeight,
+            gradientStartColor: useBrandGuidelines ? null : gradientStartColor,
+            gradientEndColor: useBrandGuidelines ? null : gradientEndColor,
+            gradientDirection: useBrandGuidelines ? null : gradientDirection,
             customTone: useBrandGuidelines ? null : customTone,
             customInstructions: useBrandGuidelines ? null : customInstructions
           },
@@ -579,7 +607,17 @@ export default function Home() {
           avatarVoiceId,
           brandSettings: {
             useBrandGuidelines,
+            logoPlacement: useBrandGuidelines ? 'top-right' : null,
+            logoUrl: useBrandGuidelines ? '/pl-capital-logo.svg' : null,
             customColors: useBrandGuidelines ? null : customColors,
+            accentColors: useBrandGuidelines ? null : accentColors,
+            bodyTextColor: useBrandGuidelines ? null : bodyTextColor,
+            font: useBrandGuidelines ? null : customFont,
+            fontSize: useBrandGuidelines ? null : customFontSize,
+            fontWeight: useBrandGuidelines ? null : customFontWeight,
+            gradientStartColor: useBrandGuidelines ? null : gradientStartColor,
+            gradientEndColor: useBrandGuidelines ? null : gradientEndColor,
+            gradientDirection: useBrandGuidelines ? null : gradientDirection,
             customTone: useBrandGuidelines ? null : customTone,
             customInstructions: useBrandGuidelines ? null : customInstructions
           },
@@ -708,6 +746,9 @@ export default function Home() {
         ? 'Generating live-news campaign topic with web search...'
         : 'Generating campaign topic...')
 
+      const seedKeyword = topic.trim() || undefined
+      console.log('[Topic Generate] campaignType:', campaignType, '| seedTheme sent:', seedKeyword ?? '(none)')
+
       const response = await fetch('/api/topic/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -716,7 +757,8 @@ export default function Home() {
           purpose,
           targetAudience,
           platforms: selectedPlatforms,
-          language
+          language,
+          seedTheme: seedKeyword || undefined
         })
       })
 
@@ -1285,7 +1327,7 @@ export default function Home() {
                   setContentType('faceless-video')
                   setUseAvatar(false)
                   // Reset to video aspect ratio if current is image-only
-                  if (aspectRatio === '1:1') {
+                  if (aspectRatio === '1:1' || aspectRatio === '3:4') {
                     setAspectRatio('16:9')
                   }
                 }}
@@ -1305,7 +1347,7 @@ export default function Home() {
                   setContentType('avatar-video')
                   setUseAvatar(true)
                   // Reset to video aspect ratio if current is image-only
-                  if (aspectRatio === '1:1') {
+                  if (aspectRatio === '1:1' || aspectRatio === '3:4') {
                     setAspectRatio('16:9')
                   }
                 }}
@@ -1328,7 +1370,7 @@ export default function Home() {
               Aspect Ratio
             </label>
             {contentType === 'image' ? (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 <button
                   onClick={() => setAspectRatio('16:9')}
                   disabled={isRunning || executingStage !== null}
@@ -1364,6 +1406,18 @@ export default function Home() {
                 >
                   <div className="text-sm font-semibold mb-1">1:1</div>
                   <p className="text-xs opacity-80">Square</p>
+                </button>
+                <button
+                  onClick={() => setAspectRatio('3:4')}
+                  disabled={isRunning || executingStage !== null}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    aspectRatio === '3:4'
+                      ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-blue-300'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <div className="text-sm font-semibold mb-1">3:4</div>
+                  <p className="text-xs opacity-80">Portrait</p>
                 </button>
               </div>
             ) : (
@@ -2077,6 +2131,10 @@ export default function Home() {
                         <span className="font-semibold text-gray-600">Tone:</span>
                         <span className="ml-2 text-gray-800">Professional, Trustworthy</span>
                       </div>
+                      <div className="col-span-2 flex items-center gap-2">
+                        <span className="font-semibold text-gray-600">Logo:</span>
+                        <img src="/pl-capital-logo.svg" alt="PL Capital" className="h-6 w-auto" />
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -2085,19 +2143,146 @@ export default function Home() {
                       Define custom brand settings for this campaign:
                     </p>
 
-                    {/* Custom Colors */}
+                    {/* Primary Colors */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Brand Colors:
+                        Primary Colors:
                       </label>
                       <input
                         type="text"
                         value={customColors}
                         onChange={(e) => setCustomColors(e.target.value)}
                         disabled={isRunning || executingStage !== null}
-                        placeholder="e.g., #0e0e6a (navy), #3c3cf8 (blue), #00d084 (teal)"
+                        placeholder="e.g., #0e0e6a (navy), #3c3cf8 (blue)"
                         className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                       />
+                    </div>
+
+                    {/* Accent Colors */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Accent Colors:
+                      </label>
+                      <input
+                        type="text"
+                        value={accentColors}
+                        onChange={(e) => setAccentColors(e.target.value)}
+                        disabled={isRunning || executingStage !== null}
+                        placeholder="e.g., #00d084 (teal), #66e766 (green)"
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      />
+                    </div>
+
+                    {/* Body Text Color */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Body Text Color:
+                      </label>
+                      <input
+                        type="text"
+                        value={bodyTextColor}
+                        onChange={(e) => setBodyTextColor(e.target.value)}
+                        disabled={isRunning || executingStage !== null}
+                        placeholder="e.g., #1a1a1a or #333333"
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      />
+                    </div>
+
+                    {/* Typography */}
+                    <div className="space-y-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Typography:
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <span className="block text-xs text-gray-500 mb-1">Font</span>
+                          <input
+                            type="text"
+                            value={customFont}
+                            onChange={(e) => setCustomFont(e.target.value)}
+                            disabled={isRunning || executingStage !== null}
+                            placeholder="e.g., Figtree, Inter"
+                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          />
+                        </div>
+                        <div>
+                          <span className="block text-xs text-gray-500 mb-1">Size</span>
+                          <input
+                            type="text"
+                            value={customFontSize}
+                            onChange={(e) => setCustomFontSize(e.target.value)}
+                            disabled={isRunning || executingStage !== null}
+                            placeholder="e.g., 16px, 1rem"
+                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          />
+                        </div>
+                        <div>
+                          <span className="block text-xs text-gray-500 mb-1">Weight</span>
+                          <select
+                            value={customFontWeight}
+                            onChange={(e) => setCustomFontWeight(e.target.value)}
+                            disabled={isRunning || executingStage !== null}
+                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          >
+                            <option value="">Select weight...</option>
+                            <option value="300">Light (300)</option>
+                            <option value="400">Regular (400)</option>
+                            <option value="500">Medium (500)</option>
+                            <option value="600">Semi-bold (600)</option>
+                            <option value="700">Bold (700)</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Gradient */}
+                    <div className="space-y-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Gradient:
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <span className="block text-xs text-gray-500 mb-1">Start colour</span>
+                          <input
+                            type="text"
+                            value={gradientStartColor}
+                            onChange={(e) => setGradientStartColor(e.target.value)}
+                            disabled={isRunning || executingStage !== null}
+                            placeholder="e.g., #0e0e6a"
+                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          />
+                        </div>
+                        <div>
+                          <span className="block text-xs text-gray-500 mb-1">End colour</span>
+                          <input
+                            type="text"
+                            value={gradientEndColor}
+                            onChange={(e) => setGradientEndColor(e.target.value)}
+                            disabled={isRunning || executingStage !== null}
+                            placeholder="e.g., #3c3cf8"
+                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          />
+                        </div>
+                        <div>
+                          <span className="block text-xs text-gray-500 mb-1">Direction</span>
+                          <select
+                            value={gradientDirection}
+                            onChange={(e) => setGradientDirection(e.target.value)}
+                            disabled={isRunning || executingStage !== null}
+                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          >
+                            <option value="">Select direction...</option>
+                            <option value="to right">To right</option>
+                            <option value="to left">To left</option>
+                            <option value="to bottom">To bottom</option>
+                            <option value="to top">To top</option>
+                            <option value="to bottom right">To bottom right</option>
+                            <option value="to bottom left">To bottom left</option>
+                            <option value="to top right">To top right</option>
+                            <option value="to top left">To top left</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Custom Tone */}
