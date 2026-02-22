@@ -5,6 +5,67 @@ import { NextRequest } from 'next/server'
 import os from 'os'
 import path from 'path'
 
+/**
+ * Download PDFs from R2, extract key facts via Gemini, clean up R2 refs, and return
+ * a concise text summary. Used to inject reference context into non-live-news Stage 2
+ * content generation (carousel, thread, avatar script, etc.).
+ */
+async function buildPdfContextForBackend(
+  refs: Array<{ fileId?: string; bucket?: string; name?: string; size?: number; url?: string }>
+): Promise<string> {
+  const r2AccessKey = (process.env.R2_ACCESS_KEY_ID || '').trim()
+  const r2SecretKey = (process.env.R2_SECRET_ACCESS_KEY || '').trim()
+  const r2Endpoint = (process.env.R2_ENDPOINT || '').trim()
+  const geminiKey = (process.env.GEMINI_API_KEY || '').trim()
+  if (!r2AccessKey || !r2SecretKey || !r2Endpoint || !geminiKey) return ''
+  if (!Array.isArray(refs) || refs.length === 0) return ''
+
+  const { S3Client, GetObjectCommand, DeleteObjectCommand } = await import('@aws-sdk/client-s3')
+  const { GoogleGenAI } = await import('@google/genai')
+
+  const s3 = new S3Client({
+    region: 'auto',
+    endpoint: r2Endpoint,
+    credentials: { accessKeyId: r2AccessKey, secretAccessKey: r2SecretKey }
+  })
+
+  const pdfParts: Array<{ inlineData: { mimeType: string; data: string } }> = []
+
+  for (const ref of refs.slice(0, 2)) {
+    const bucket = String(ref?.bucket || '').trim()
+    const key = String(ref?.fileId || '').trim()
+    if (!bucket || !key || !key.startsWith('research-pdfs/')) continue
+    try {
+      const resp = await s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }))
+      const chunks: Uint8Array[] = []
+      for await (const chunk of (resp.Body as any)) chunks.push(chunk)
+      pdfParts.push({ inlineData: { mimeType: 'application/pdf', data: Buffer.concat(chunks).toString('base64') } })
+    } catch { /* skip failed downloads */ }
+    // Clean up from R2 regardless of download success
+    try { await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key })) } catch { /* ignore */ }
+  }
+
+  if (pdfParts.length === 0) return ''
+
+  try {
+    const ai = new GoogleGenAI({ apiKey: geminiKey })
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: [{
+        role: 'user' as const,
+        parts: [
+          { text: 'Extract key facts, financial metrics, data points, company details, and important insights from this document. Return a concise bullet-point summary (max 400 words) to use as reference context when generating social media content.' },
+          ...pdfParts
+        ]
+      }],
+      config: { temperature: 0.1, maxOutputTokens: 600 }
+    })
+    return (response.text || '').trim()
+  } catch {
+    return ''
+  }
+}
+
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 900
@@ -97,15 +158,15 @@ export async function POST(request: NextRequest) {
     avatarVoiceId
   } = body
 
-  // Keep uploaded PDF refs for live-news Stage 2 generation.
+  // Keep uploaded PDF refs for Stage 2 generation (any campaign type).
   const researchPdfRefs =
-    stageId === 2 && campaignType === 'live-news' && Array.isArray(files?.researchPdfRefs)
+    stageId === 2 && Array.isArray(files?.researchPdfRefs)
       ? files.researchPdfRefs
       : []
 
   // Legacy inline PDF payloads fallback.
   const researchPDFs =
-    stageId === 2 && campaignType === 'live-news' && Array.isArray(files?.researchPDFs)
+    stageId === 2 && Array.isArray(files?.researchPDFs)
       ? files.researchPDFs
       : []
 
@@ -391,6 +452,12 @@ export async function POST(request: NextRequest) {
         if (stageId === 2 && campaignType === 'live-news') {
           sendEvent({ log: '📰 Generating grounded live-news article with Gemini...' })
 
+          // Send SSE keepalive comments every 20s so Railway/Cloudflare proxy does not
+          // close the idle SSE connection while article generation runs (can take 1-4 min).
+          const keepaliveTimer = setInterval(() => {
+            try { controller.enqueue(encoder.encode(':keepalive\n\n')) } catch { /* stream closed */ }
+          }, 20000)
+
           try {
             const requestOrigin = new URL(request.url).origin
             const envBase = process.env.NEXT_API_PUBLIC_URL
@@ -518,11 +585,13 @@ export async function POST(request: NextRequest) {
             saveStageData(stageId, stageData)
             sendEvent({ stage: stageId, status: 'completed', message: 'Live-news article generated', data: stageData })
             sendEvent({ log: '✅ Stage 2 completed successfully!' })
+            clearInterval(keepaliveTimer)
             controller.close()
             return
           } catch (error) {
             sendEvent({ log: `❌ Live-news article generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
             sendEvent({ stage: stageId, status: 'error', message: 'Live-news article generation failed' })
+            clearInterval(keepaliveTimer)
             controller.close()
             return
           }
@@ -710,6 +779,21 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // For Stage 2 with uploaded PDFs: extract reference context from PDFs via Gemini
+        // and pass as RESEARCH_PDF_CONTEXT env var so the backend can inject it into prompts.
+        if (stageId === 2 && researchPdfRefs.length > 0) {
+          sendEvent({ log: `📄 Extracting reference context from ${researchPdfRefs.length} PDF(s)...` })
+          try {
+            const pdfContext = await buildPdfContextForBackend(researchPdfRefs)
+            if (pdfContext) {
+              nodeEnv.RESEARCH_PDF_CONTEXT = pdfContext
+              sendEvent({ log: '✅ PDF context ready for content generation' })
+            }
+          } catch (err) {
+            sendEvent({ log: `⚠️ PDF context extraction skipped: ${err instanceof Error ? err.message : 'unknown'}` })
+          }
+        }
+
         sendEvent({ log: `🚀 Command: node ${args.slice(1).join(' ')}` })
 
         // Spawn backend process
@@ -860,6 +944,7 @@ export async function POST(request: NextRequest) {
 
       } catch (error) {
         sendEvent({ log: `❌ Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}` })
+        sendEvent({ stage: stageId, status: 'error', message: 'Stage execution failed' })
         controller.close()
       }
     }

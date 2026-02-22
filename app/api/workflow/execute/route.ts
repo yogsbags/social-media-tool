@@ -5,6 +5,7 @@ import path from 'path'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+export const maxDuration = 900
 
 // Helper function to save stage data
 function saveStageData(stageId: number, data: any) {
@@ -90,6 +91,12 @@ export async function POST(request: NextRequest) {
       const sendEvent = (data: any) => {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
       }
+
+      // Send SSE keepalive comments every 20s so Railway/proxy does not close the
+      // idle SSE connection during long-running stages (video can take 15+ min).
+      const keepaliveTimer = setInterval(() => {
+        try { controller.enqueue(encoder.encode(':keepalive\n\n')) } catch { /* stream closed */ }
+      }, 20000)
 
       try {
         sendEvent({ log: '🚀 Starting full campaign workflow...' })
@@ -258,6 +265,7 @@ export async function POST(request: NextRequest) {
 
         // Handle process completion
         backendProcess.on('close', (code) => {
+          clearInterval(keepaliveTimer)
           if (code === 0) {
             // Save stage 6 data if we reached the analytics stage
             if (currentStage === 6) {
@@ -281,12 +289,14 @@ export async function POST(request: NextRequest) {
 
         // Handle errors
         backendProcess.on('error', (error) => {
+          clearInterval(keepaliveTimer)
           sendEvent({ log: `❌ Error: ${error.message}` })
           sendEvent({ stage: currentStage, status: 'error', message: error.message })
           controller.close()
         })
 
       } catch (error) {
+        clearInterval(keepaliveTimer)
         sendEvent({ log: `❌ Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}` })
         controller.close()
       }

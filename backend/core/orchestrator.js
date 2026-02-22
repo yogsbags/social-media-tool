@@ -79,6 +79,7 @@ class SocialMediaOrchestrator {
 
     const planning = this._getLatestCampaignPlanningEntry(topic);
     const planningText = (planning?.creativePrompt || planning?.output || '').trim();
+    const pdfContext = (process.env.RESEARCH_PDF_CONTEXT || '').trim().slice(0, 2000);
 
     if (!groqKey) {
       const hook = platform === 'instagram' ? 'Stop scrolling—quick money tip.' : 'Quick update.';
@@ -114,7 +115,7 @@ ${styleGuidance ? styleGuidance : ''}
 
 Optional context from Stage 1 planning (may include purpose/audience/tone):
 ${planningText ? planningText.slice(0, 2000) : '(none)'}
-
+${pdfContext ? `\nReference document context (use specific facts/data where relevant):\n${pdfContext}\n` : ''}
 Output rules:
 - Output ONLY the script text the avatar should speak.
 - Do NOT include quotation marks or labels like "Script:".`;
@@ -170,6 +171,7 @@ Output rules:
     const language = options.language || 'english';
     const planning = this._getLatestCampaignPlanningEntry(topic);
     const planningText = (planning?.creativePrompt || planning?.output || '').trim().slice(0, 2000);
+    const pdfContext = (process.env.RESEARCH_PDF_CONTEXT || '').trim().slice(0, 2000);
 
     const defaults = {
       tweets: [
@@ -193,7 +195,7 @@ Rules: No guaranteed returns, no "sure-shot", no exaggerated claims. Professiona
 
     const userPrompt = `Create a Twitter/X thread for topic: ${topic}
 Language: ${language}
-${planningText ? `Optional creative direction from planning:\n${planningText}\n` : ''}
+${planningText ? `Optional creative direction from planning:\n${planningText}\n` : ''}${pdfContext ? `Reference document context (use specific facts/data where relevant):\n${pdfContext}\n` : ''}
 Output ONLY the JSON object, no other text.`;
 
     const parseAndNormalize = (raw) => {
@@ -280,6 +282,7 @@ Output ONLY the JSON object, no other text.`;
     const language = options.language || 'english';
     const planning = this._getLatestCampaignPlanningEntry(topic);
     const planningText = (planning?.creativePrompt || planning?.output || '').trim().slice(0, 2000);
+    const pdfContext = (process.env.RESEARCH_PDF_CONTEXT || '').trim().slice(0, 2000);
 
     const defaults = {
       slideCount: 7,
@@ -318,7 +321,7 @@ IMPORTANT – Continuation and theme: The carousel must read as one coherent sto
 Language: ${language}
 Platform: ${platform}
 Slides must form a logical sequence: cover → key points in order → final CTA. Same theme and brand tone throughout so visuals stay consistent.
-${planningText ? `Optional creative direction from planning:\n${planningText}\n` : ''}
+${planningText ? `Optional creative direction from planning:\n${planningText}\n` : ''}${pdfContext ? `Reference document context (use specific facts/data where relevant):\n${pdfContext}\n` : ''}
 Output ONLY the JSON object, no other text.`;
 
     try {
@@ -1612,7 +1615,7 @@ ${brandGuidance}`;
             process.env.HEYGEN_VOICE_ID ||
             SIDDHARTH_VOICE_ID;
         } else if (isGroupIdAvatar) {
-          heygenAvatarId = options.heygenAvatarId || options.avatarId;
+          heygenAvatarId = options.heygenAvatarId || this._pickHeygenAvatarLookId(options.avatarId) || options.avatarId;
           heygenVoiceId =
             options.heygenVoiceId ||
             options.avatarVoiceId ||
@@ -1643,6 +1646,7 @@ ${brandGuidance}`;
             avatar_id: heygenAvatarId,
             voice_id: heygenVoiceId,
             input_text: scriptText,
+            motion_prompt: this._getMotionPromptFromAvatarMapping(options.avatarId),
             aspect_ratio: options.aspectRatio || '16:9',
             title: options.title || `Avatar Video - ${options.topic || 'Content'}`
           });
@@ -2490,6 +2494,69 @@ ${brandGuidance}`;
   }
 
   /**
+   * Resolve motion prompt for an avatar group from the same mapping.
+   * @private
+   * @param {string} groupId - HeyGen avatar group ID (32 hex chars)
+   * @returns {string|null} motionPrompt or null if not found
+   */
+  _getMotionPromptFromAvatarMapping(groupId) {
+    if (!groupId || typeof groupId !== 'string') return null;
+    const configPaths = [
+      path.join(this.projectRoot, 'backend', 'config', 'heygen-native-voice-mapping.json'),
+      path.join(this.projectRoot, 'config', 'heygen-native-voice-mapping.json'),
+      path.join(this.projectRoot, 'backend', 'config', 'avatar-voice-mapping.json')
+    ];
+    for (const configPath of configPaths) {
+      try {
+        if (fs.existsSync(configPath)) {
+          const raw = fs.readFileSync(configPath, 'utf8');
+          const mapping = JSON.parse(raw);
+          const entry = mapping[groupId] || (typeof mapping === 'object' && mapping.avatars ? mapping.avatars[groupId] : null);
+          const motionPrompt = typeof entry?.motionPrompt === 'string' ? entry.motionPrompt.trim() : '';
+          if (motionPrompt) return motionPrompt;
+        }
+      } catch (_) { /* ignore */ }
+    }
+    return null;
+  }
+
+  /**
+   * Pick a HeyGen look ID for a groupId, if lookIds are configured.
+   * Falls back to null when mapping is missing so caller can use the groupId as avatar_id.
+   * @private
+   * @param {string} groupId - HeyGen avatar group ID (32 hex chars)
+   * @returns {string|null} selected lookId
+   */
+  _pickHeygenAvatarLookId(groupId) {
+    if (!groupId || typeof groupId !== 'string') return null;
+    const configPaths = [
+      path.join(this.projectRoot, 'backend', 'config', 'heygen-native-voice-mapping.json'),
+      path.join(this.projectRoot, 'config', 'heygen-native-voice-mapping.json')
+    ];
+
+    for (const configPath of configPaths) {
+      try {
+        if (!fs.existsSync(configPath)) continue;
+        const raw = fs.readFileSync(configPath, 'utf8');
+        const mapping = JSON.parse(raw);
+        const entry = mapping[groupId] || (typeof mapping === 'object' && mapping.avatars ? mapping.avatars[groupId] : null);
+        const lookIds = Array.isArray(entry?.lookIds) ? entry.lookIds.filter((v) => typeof v === 'string' && v.trim()) : [];
+        if (!lookIds.length) return null;
+        const idx = Math.floor(Math.random() * lookIds.length);
+        const chosen = lookIds[idx];
+        if (chosen) {
+          console.log(`   🎭 HeyGen look selected for ${groupId}: ${chosen}`);
+          return chosen;
+        }
+      } catch (_) {
+        // ignore and try next config path
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Call HeyGen API for avatar video generation and status checking
    * Routes to HeyGen's REST API based on tool name
    * @private
@@ -2519,7 +2586,7 @@ ${brandGuidance}`;
    * @private
    */
   async _heygenGenerateVideo(apiKey, params) {
-    const { avatar_id, voice_id, input_text, title, aspect_ratio } = params;
+    const { avatar_id, voice_id, input_text, title, aspect_ratio, motion_prompt } = params;
 
     const normalizedAspect = String(aspect_ratio || '16:9').trim();
     const dimensionsByAspect = {
@@ -2546,11 +2613,19 @@ ${brandGuidance}`;
       title: title || 'Avatar Video'
     };
 
+    const motionPrompt = typeof motion_prompt === 'string' ? motion_prompt.trim() : '';
+    if (motionPrompt) {
+      // Avatar IV motion controls for supported custom avatars.
+      requestBody.custom_motion_prompt = motionPrompt;
+      requestBody.enhance_custom_motion_prompt = true;
+      requestBody.use_avatar_iv_model = true;
+    }
+
     console.log(`   🔍 HeyGen API Request:`);
     console.log(`      Endpoint: POST https://api.heygen.com/v2/video/generate`);
     console.log(`      Body: ${JSON.stringify(requestBody, null, 2).substring(0, 200)}...`);
 
-    const response = await fetch('https://api.heygen.com/v2/video/generate', {
+    let response = await fetch('https://api.heygen.com/v2/video/generate', {
       method: 'POST',
       headers: {
         'X-Api-Key': apiKey,
@@ -2559,8 +2634,29 @@ ${brandGuidance}`;
       body: JSON.stringify(requestBody)
     });
 
-    const responseText = await response.text();
+    let responseText = await response.text();
     console.log(`   📡 HeyGen API Response (${response.status}): ${responseText.substring(0, 200)}...`);
+
+    if (!response.ok && motionPrompt) {
+      // Some avatars/accounts may reject Avatar IV motion fields.
+      // Retry once with baseline request to avoid hard failures.
+      console.log('   ⚠️  HeyGen rejected motion prompt fields; retrying without motion controls...');
+      const fallbackBody = {
+        video_inputs: requestBody.video_inputs,
+        dimension: requestBody.dimension,
+        title: requestBody.title
+      };
+      response = await fetch('https://api.heygen.com/v2/video/generate', {
+        method: 'POST',
+        headers: {
+          'X-Api-Key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(fallbackBody)
+      });
+      responseText = await response.text();
+      console.log(`   📡 HeyGen Fallback Response (${response.status}): ${responseText.substring(0, 200)}...`);
+    }
 
     if (!response.ok) {
       throw new Error(`HeyGen API error: ${response.status} ${responseText}`);

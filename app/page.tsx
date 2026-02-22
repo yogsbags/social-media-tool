@@ -821,7 +821,7 @@ export default function Home() {
       longCatReferenceImage?: { name: string; data: string; size: number }
     } = {}
 
-    const includeResearchPDFs = campaignType === 'live-news' && (stageId === undefined || stageId === 2)
+    const includeResearchPDFs = stageId === undefined || stageId === 2
 
     // Upload PDFs first and pass only references to Stage 2 payload
     if (includeResearchPDFs && researchPDFs.length > 0) {
