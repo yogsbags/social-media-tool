@@ -107,9 +107,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
 
-    // Build brand guidelines
+    // Build brand guidelines — handle both default PL Capital and custom overrides
+    const bs = brandSettings || {};
     let brandGuidance = "";
-    if (brandSettings?.useBrandGuidelines) {
+    if (bs.useBrandGuidelines) {
       brandGuidance = `
 **PL Capital Brand Guidelines:**
 - **Primary Colors**: Navy (#0e0e6a), Blue (#3c3cf8)
@@ -120,17 +121,25 @@ export async function POST(request: NextRequest) {
 - **Key Values**: Trust, Innovation, Performance, Client-First
 - **Messaging**: Focus on adaptive strategies, quantitative excellence, consistent alpha
 `;
-    } else if (
-      brandSettings?.customColors ||
-      brandSettings?.customTone ||
-      brandSettings?.customInstructions
-    ) {
-      brandGuidance = `
-**Custom Brand Guidelines:**
-${brandSettings.customColors ? `- **Brand Colors**: ${brandSettings.customColors}` : ""}
-${brandSettings.customTone ? `- **Brand Tone**: ${brandSettings.customTone}` : ""}
-${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettings.customInstructions}` : ""}
-`;
+    } else {
+      // Compose guidance from all custom fields the UI sends
+      const lines: string[] = [];
+      if (bs.customColors)        lines.push(`- **Primary Colors**: ${bs.customColors}`);
+      if (bs.accentColors)        lines.push(`- **Accent Colors**: ${bs.accentColors}`);
+      if (bs.bodyTextColor)       lines.push(`- **Body Text Color**: ${bs.bodyTextColor}`);
+      if (bs.font)                lines.push(`- **Font Family**: ${bs.font}`);
+      if (bs.fontSize)            lines.push(`- **Base Font Size**: ${bs.fontSize}`);
+      if (bs.fontWeight)          lines.push(`- **Font Weight**: ${bs.fontWeight}`);
+      if (bs.gradientStartColor && bs.gradientEndColor) {
+        const dir = bs.gradientDirection || "135deg";
+        lines.push(`- **Hero Gradient**: linear-gradient(${dir}, ${bs.gradientStartColor}, ${bs.gradientEndColor})`);
+      }
+      if (bs.customTone)          lines.push(`- **Tone & Voice**: ${bs.customTone}`);
+      if (bs.customInstructions)  lines.push(`- **Additional Instructions**: ${bs.customInstructions}`);
+
+      if (lines.length > 0) {
+        brandGuidance = `\n**Custom Brand Guidelines:**\n${lines.join("\n")}\n`;
+      }
     }
 
     const systemPrompt = `You are an expert email marketing specialist and HTML email designer.
@@ -143,15 +152,41 @@ Layout reference (use this structure and styling cues):
 - Header section (DO NOT change): keep exactly this header image linked to plindia.com — it must be inside the width="600" container so it aligns perfectly with the hero below it
   * Header image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/xtp/w8t/1aj/Asset%201.png
   * Image tag must have: width="600" style="width:100%; max-width:600px; display:block;"
-- Hero section: Two-column table layout inside a solid/gradient brand-color background (linear-gradient 135deg, #0e0e6a → #3c3cf8), padding 40px 30px:
+- Hero section: Two-column table layout inside a solid/gradient brand-color background (use gradient from brand guidelines if provided, otherwise default linear-gradient 135deg, #0e0e6a → #3c3cf8), padding 40px 30px:
   * Left cell (width="60%" valign="middle"): white h1 headline (28–32px, bold, line-height 1.2, margin-bottom 12px) + white subtitle p (16–18px, normal, margin-bottom 0, opacity 0.9). If grounded facts contain specific key details (NFO dates, minimum investment, NAV price), add 1–2 short bold fact lines in white below the subtitle.
-  * Right cell (width="40%" valign="middle" align="center"): A decorative inline <svg> (width="120" height="120" viewBox="0 0 120 120") with a multi-path illustration relevant to the campaign topic. Use white strokes (stroke="white" stroke-width="2.5" fill="none") with semi-transparent white fills where appropriate. Choose illustration based on topic:
-    - NFO / mutual fund / SIP / small cap / invest: glass jar with stacked coins inside + a plant stem with 2 leaves and a rupee-coin at top growing out of the jar
-    - Stocks / technical picks / trading / market: candlestick chart (3 candles of varying heights) with an upward trending arrow overlay
-    - Demat / account opening / KYC / onboarding: smartphone outline with a bar chart on its screen + a checkmark badge
-    - Insurance / term plan / protection / cover: large shield outline with a checkmark or heart inside
-    - General wealth / portfolio / returns: coins stack (3 discs) with a rising arrow and small star accents
-    Use 4–7 distinct path/rect/circle/ellipse elements so the illustration looks rich and professional. Wrap in <g stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">.
+  * Right cell (width="40%" valign="middle" align="center"): A decorative inline <svg> (width="120" height="120" viewBox="0 0 120 120") with a multi-path illustration relevant to the campaign topic. Use white strokes (stroke="white" stroke-width="2.5" fill="none") with semi-transparent white fills where appropriate. Pick EXACTLY one illustration from the list below based on the closest matching keyword in the topic:
+
+    1. SIP / systematic investment / monthly investment / recurring:
+       → Calendar with recurring arrows: rect(30,25,60,55,rx=4) for calendar body; 3 vertical lines inside for date columns; a circular arrow (arc path) below the calendar; an upward trending polyline (30,95 → 50,80 → 70,85 → 90,65) representing growth.
+
+    2. NFO / new fund offer / IPO / fund launch / subscription:
+       → Rocket launch + fund document: a rocket shape (body=ellipse cx=60 cy=50 rx=12 ry=22, fins=two small triangles at base); flame at bottom (small filled path); a document rect(38,70,44,30,rx=2) with 3 short horizontal lines inside for text; a star at top-right.
+
+    3. Mutual fund / diversified fund / balanced fund / hybrid fund:
+       → Pie chart + plant: circle(cx=55,cy=50,r=28) split into 4 unequal arc segments (use path commands for 4 sectors, each a different semi-transparent fill); a plant stem rising from bottom-right (path M75,95 Q80,70 90,55) with 2 leaf shapes; a rupee symbol (₹) at the top of the stem.
+
+    4. Small cap / mid cap / sector fund / thematic / equity fund:
+       → Ascending bar chart + magnifying glass: 4 bars of heights 20,35,50,70 starting at y=95 (rect elements, fill semi-transparent white); upward arrow at top-right; a circle(cx=85,cy=35,r=15) with a line extending from it (magnifying glass), representing discovery of hidden gems.
+
+    5. Stocks / equity / trading / technical picks / market / Nifty / Sensex:
+       → Candlestick chart + trend arrow: 3 candle bodies (rects of varying height at x=35,55,75, y positions varied); thin vertical wicks extending above and below each body; a bold upward-right diagonal arrow overlay from bottom-left to top-right of the chart area.
+
+    6. Demat / account opening / KYC / onboarding / paperless:
+       → Smartphone + KYC checkmark: rounded-rect phone (rx=8, approx 35,15,50,90); 3 ascending bars on the screen (fill semi-transparent); a circular badge at bottom-right of phone (circle r=14) with a bold checkmark path inside it.
+
+    7. Insurance / term plan / health / protection / cover / life cover:
+       → Shield + heartbeat: large shield path (M60,20 L85,35 L85,65 Q85,90 60,100 Q35,90 35,65 L35,35 Z); inside the shield, a heartbeat/ECG line (M40,60 L50,60 L55,45 L60,75 L65,45 L70,60 L80,60) — NOT a static heart.
+
+    8. Tax / ELSS / tax saving / 80C / tax-free / tax planning:
+       → Calculator + savings: rect(35,25,50,65,rx=4) for calculator body; small rect(42,32,36,12) for display screen; a 3×3 grid of tiny dots (keypad); a piggy bank silhouette (circle cx=82 cy=72 r=18, ear triangle, snout circle, leg lines) to the right.
+
+    9. Bonds / fixed income / NPS / debt fund / FD / fixed deposit:
+       → Bond certificate + steady graph: a certificate rect(28,30,64,55,rx=3) with a ribbon/seal (circle cx=60 cy=85 r=10) and % symbol inside the seal; a flat-to-slightly-rising polyline (28,80 → 55,75 → 92,70) below the cert, representing steady returns.
+
+    10. General wealth / portfolio / retirement / financial planning / returns (fallback for anything not matching above):
+        → Coins stack + rising arrow + stars: 3 stacked coin ellipses (cx=60, rx=22, ry=6, at y=85,78,71); a bold upward arrow (M60,60 L60,25 M48,37 L60,25 L72,37); 2 small 4-point star shapes at top corners.
+
+    Use 5–8 distinct path/rect/circle/ellipse elements so the illustration looks rich and professional. Wrap all elements in <g stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">. Use fill="rgba(255,255,255,0.15)" or fill="rgba(255,255,255,0.3)" for accent fills on selected shapes.
 - Intro paragraph and section dividers
 - One main content section (TEXT-ONLY) with a heading and body that is directly relevant to the campaign purpose and target audience. Choose a section title and content focus that fits the purpose (e.g. "Key Insights", "What You Need to Know", "Strategies for [audience]", "Why This Matters for You") and write for the specified target audience. No images in this section.
 - 3-column content grid: Each card must have:
@@ -237,17 +272,9 @@ You MUST create content that is:
 6. Avoid generic statements - be specific and provide real value
 7. Use the creative direction above to guide tone, messaging, and content structure
 8. Make every paragraph count - no filler content
+9. LANGUAGE: ALL content MUST be written entirely in "${language}". This includes the subject line, preheader, all headings, body copy, card titles, card descriptions, CTA button text, and footer text. Do NOT mix languages.
 
-CONTENT REQUIREMENTS:
-You MUST create content that is:
-1. SPECIFICALLY about the topic "${topic}" - not generic financial advice
-2. Tailored to the "${purpose}" purpose - ensure the content serves this exact goal
-3. Written for "${targetAudience}" - use appropriate language, examples, and context for this audience
-4. Include specific insights, data points, or strategies relevant to the topic
-5. Each section should provide unique, actionable information
-6. Avoid generic statements - be specific and provide real value
-7. Use the creative direction above to guide tone, messaging, and content structure
-8. Make every paragraph count - no filler content
+LANGUAGE ENFORCEMENT: The output language is "${language}". Every word of every field in the JSON response — subject, preheader, subjectVariations, html body text, and plainText — MUST be in "${language}". If the language is not English, translate all UI strings (e.g. "Read more", "Unsubscribe", "View in Browser") to "${language}" as well.
 
 Generate a complete JSON response with:
 
