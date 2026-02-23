@@ -39,6 +39,10 @@ class SocialMediaOrchestrator {
         .filter((e) => (e?.topic || '').trim().replace(/\s+/g, ' ') === normalizedTopic)
         .sort(byCompletedAtDesc)[0];
       if (match) return match;
+      // No exact match — do NOT fall back to a different topic's prompt.
+      // Returning null forces a fresh topic-specific prompt instead of
+      // silently reusing unrelated Stage 1 content.
+      return null;
     }
 
     return planningEntries.sort(byCompletedAtDesc)[0];
@@ -801,12 +805,17 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         }
       }
       if (!prompt) {
+        // Generate topic-specific copy before building the visual prompt
+        console.log('   ✍️  Generating topic-specific copy from topic...');
+        const waCopy = await this._generateWhatsAppCopy(options.topic, options.language);
+        console.log(`   📝 Headline: "${waCopy.headline}" | Body: "${waCopy.body}" | CTA: "${waCopy.cta}"`);
         prompt = this._buildVisualPrompt({
           platform: 'whatsapp',
           format: 'image',
           topic: options.topic,
           type: options.type,
-          brandSettings: effectiveBrandSettings
+          brandSettings: effectiveBrandSettings,
+          whatsapp: waCopy
         });
       }
       prompt = this._appendBrandConstraintsToPrompt(prompt, effectiveBrandSettings);
@@ -817,6 +826,13 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       const referenceImageUrl = process.env.VISUAL_REFERENCE_URL;
       if (referenceImagePath || referenceImageUrl) {
         console.log(`   🖼️  Applying reference image: ${referenceImagePath || referenceImageUrl}`);
+      }
+
+      // Hard constraint: always append no-faces rule to every WhatsApp image prompt,
+      // even if the prompt came from Stage 1 planning (which may describe a person scene).
+      const NO_FACES_SUFFIX = '\n\nHARD CONSTRAINT: ABSOLUTELY NO human faces, people, persons, or body parts anywhere in the image. Use only abstract finance visuals: charts, ₹ symbols, geometric shapes, icons, gradients.';
+      if (prompt && !prompt.includes('ABSOLUTELY NO human faces')) {
+        prompt = prompt + NO_FACES_SUFFIX;
       }
 
       const visualsOptions = {
@@ -893,6 +909,19 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           }
         } else {
           console.log('   ℹ️  ImgBB upload skipped (no API key or image path missing)');
+        }
+
+        // Composite the real PL Capital SVG logo onto the image
+        if (result.images && result.images.length > 0) {
+          try {
+            const composited = await this._compositeLogoOntoImage(result.images[0]);
+            if (composited) {
+              result.images[0] = { ...result.images[0], ...composited };
+              console.log('   🏷️  PL Capital logo composited onto creative');
+            }
+          } catch (logoErr) {
+            console.warn('   ⚠️ Logo compositing failed (non-fatal):', logoErr.message);
+          }
         }
 
         console.log('   ✅ WhatsApp creative generated');
@@ -1337,6 +1366,131 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     return lines.join('\n');
   }
 
+  /**
+   * Generate topic-specific WhatsApp copy (headline, body, CTA) via Groq.
+   * Falls back to simple string derivation if Groq is unavailable.
+   */
+  async _generateWhatsAppCopy(topic, language = 'english') {
+    const languageName = this._getLanguageName(language);
+    const groqKey = process.env.GROQ_API_KEY;
+    if (groqKey) {
+      try {
+        const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${groqKey}` },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              {
+                role: 'system',
+                content: `You write high-impact WhatsApp ad copy for PL Capital (Indian fintech/wealth management).
+Output ONLY valid JSON: {"headline": "...", "body": "...", "cta": "..."}.
+Rules:
+- headline: 4-7 words MAX. Punchy, emotional benefit or bold hook. Include specific ₹ amounts/numbers from the topic if present. Plain text only — NO markdown, NO asterisks, NO bold markers, NO quotes.
+- body: 8-12 words. One crisp supporting insight. Something that makes you nod. Plain text, no markdown.
+- cta: 2-3 words. Strong action verb. (e.g. "Start Now", "Begin SIP", "Explore Plans", "Get Started")
+- language: ${languageName}
+- NO hashtags. NO exclamation marks. NO guaranteed returns. NO markdown formatting.
+Examples of great headlines: "Start SIP at Just ₹500", "Your ₹500 Can Grow Big", "Wealth Starts at ₹500"`
+              },
+              { role: 'user', content: `Topic: ${topic}` }
+            ],
+            temperature: 0.5,
+            max_tokens: 120,
+            response_format: { type: 'json_object' }
+          })
+        });
+        if (resp.ok) {
+          const json = await resp.json();
+          const raw = JSON.parse(json.choices?.[0]?.message?.content || '{}');
+          // Strip any markdown bold/italic markers that Groq might add
+          const strip = (s) => (s || '').replace(/\*+/g, '').replace(/^["']|["']$/g, '').trim();
+          const parsed = { headline: strip(raw.headline), body: strip(raw.body), cta: strip(raw.cta) };
+          if (parsed.headline && parsed.body && parsed.cta) return parsed;
+        }
+      } catch {}
+    }
+    // Simple fallback
+    const clean = (topic || 'Invest Smarter').replace(/\s+/g, ' ').trim();
+    return {
+      headline: clean.length <= 35 ? clean : clean.slice(0, 33) + '…',
+      body: 'Smart investing made simple with PL Capital.',
+      cta: 'Start Now'
+    };
+  }
+
+  /**
+   * Composite the real PL Capital SVG logo onto a generated image using sharp.
+   * Places the logo in the top-right corner with a semi-transparent white pill background.
+   * Returns { path } with the updated file path, or null if compositing is not possible.
+   */
+  async _compositeLogoOntoImage(imageEntry) {
+    const imagePath = imageEntry?.path;
+    if (!imagePath || !fs.existsSync(imagePath)) return null;
+
+    // Locate the SVG logo — look relative to this file's location and common public dirs
+    const candidatePaths = [
+      path.join(__dirname, '../../public/pl-capital-logo.svg'),
+      path.join(__dirname, '../../../public/pl-capital-logo.svg'),
+      path.join(this.projectRoot, 'public/pl-capital-logo.svg'),
+      path.join(this.projectRoot, 'frontend/public/pl-capital-logo.svg'),
+    ];
+    const logoSvgPath = candidatePaths.find(p => fs.existsSync(p));
+    if (!logoSvgPath) {
+      console.warn('   ⚠️ pl-capital-logo.svg not found, skipping logo compositing');
+      return null;
+    }
+
+    let sharp;
+    try { sharp = require('sharp'); } catch { return null; }
+
+    // Get base image dimensions
+    const baseMeta = await sharp(imagePath).metadata();
+    const imgW = baseMeta.width || 1080;
+    const imgH = baseMeta.height || 1920;
+
+    // Target logo width: ~26% of image width, max 300px
+    const logoW = Math.min(Math.round(imgW * 0.26), 300);
+    const logoH = Math.round(logoW * (85 / 247.2)); // maintain SVG aspect ratio 247.2:85
+
+    // Render SVG to PNG buffer at target size
+    const logoPng = await sharp(logoSvgPath)
+      .resize(logoW, logoH, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .png()
+      .toBuffer();
+
+    // Padding inside pill, and margin from edge
+    const padX = 14, padY = 10;
+    const marginRight = Math.round(imgW * 0.04);
+    const marginTop = Math.round(imgH * 0.02);
+    const pillW = logoW + padX * 2;
+    const pillH = logoH + padY * 2;
+
+    // Build pill background (white, semi-transparent, rounded)
+    const pillRadius = Math.round(pillH / 2);
+    const pillSvg = Buffer.from(
+      `<svg width="${pillW}" height="${pillH}" xmlns="http://www.w3.org/2000/svg">` +
+      `<rect x="0" y="0" width="${pillW}" height="${pillH}" rx="${pillRadius}" ry="${pillRadius}" ` +
+      `fill="rgba(255,255,255,0.88)"/>` +
+      `</svg>`
+    );
+    const pillPng = await sharp(pillSvg).png().toBuffer();
+
+    // Composite: pill first, then logo centred inside pill
+    const left = imgW - marginRight - pillW;
+    const top = marginTop;
+
+    const outputPath = imagePath.replace(/(\.\w+)$/, '_logoed$1');
+    await sharp(imagePath)
+      .composite([
+        { input: pillPng,  left, top },
+        { input: logoPng,  left: left + padX, top: top + padY },
+      ])
+      .toFile(outputPath);
+
+    return { path: outputPath };
+  }
+
   _appendBrandConstraintsToPrompt(prompt, brandSettings) {
     if (!prompt || typeof prompt !== 'string') return prompt;
     const marker = 'Brand requirements (must follow exactly):';
@@ -1379,9 +1533,12 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
 
     const exampleStyle = 'Style reference: PL Capital example creatives with high-contrast navy/blue gradient background, modern geometric shapes (blue/green accents), big bold white headline, 2–4 supporting bullets with checkmark icons OR a simple numbered step row, and a single green rounded CTA button. Clean whitespace, crisp typography (Figtree-like), modern corporate aesthetic.';
     const usePlCapitalLogo = brandSettings?.useBrandGuidelines !== false;
+    // For non-whatsapp platforms: ask Gemini to draw logo. For WhatsApp: real SVG is composited afterwards, so leave space clean.
     const logoInstruction = usePlCapitalLogo
       ? 'Place the PL Capital logo in the top-right corner of the creative (use the official PL Capital wordmark: navy #0e0e6a background, white "PL Capital" text, clean sans-serif).'
       : 'Do NOT add any logo/watermark/brand mark. If branding is needed later, reserve clean empty space in the top-right.';
+    // WhatsApp-specific: real SVG logo is composited post-generation — keep corner clear
+    const whatsappLogoInstruction = 'Leave the top-right corner completely clean and empty (no logo, no text, no icon). A brand logo will be added in post-production.';
 
     const basePrompts = {
       linkedin: `Professional ${safeFormat} graphic for LinkedIn about ${topic || 'financial investment'}. ${exampleStyle} ${logoInstruction} ${brandGuidance}${languageInstruction}`,
@@ -1401,31 +1558,35 @@ Body: ${body || 'One clear benefit.\nOne clear next step.'}
 CTA: ${cta || 'Learn more'}`
           : `Text-forward layout with a bold headline and a single CTA.`;
 
-        return `Design a visually stunning, premium WhatsApp creative poster for PL Capital (India, finance).
-Format: 1080x1920 (9:16). Mobile-first readability. High-contrast. Modern and clean.
-Goal: instantly communicate the message + drive action (tap/click/forward).
+        return `Create a BOLD, HIGH-ENERGY premium WhatsApp ad creative for PL Capital — India's modern wealth platform. Make it look like a top-tier fintech ad (Groww / Zerodha / ET Money level quality).
 
-Layout system (STRICT):
-- Safe margins: 80px on all sides. Keep all text inside safe area.
-- Hierarchy: (1) Headline (2) Body (3) CTA button (4) Small disclaimer footer.
-- Headline: big, bold, max 2 lines, 28–44 chars/line.
-- Body: max 2 lines, 28–40 chars/line, supportive and clear.
-- CTA: button pill with solid fill (#00b34e / #66e766), white text, 2–4 words.
-- Footer: tiny disclaimer line (e.g., "Market risks apply.") in 10–12px.
-- Optional: small icon/illustration on the side (simple, not cluttered).
+Canvas: 1080×1080 square. Full-bleed design — no white borders, no plain card-on-background. The design must fill every pixel edge-to-edge with intention.
 
-Brand & style:
-- Use PL palette (navy/blue base with green accents). Use Figtree-like sans font.
-- ${logoInstruction}
-- Add subtle gradients/texture, but keep background clean (no noisy patterns).
-- Use ONE highlight element (badge/chip) to emphasize a key term/number if present.
-- No stock-photo faces; avoid busy scenes. Prefer abstract finance motifs (₹, chart line, calendar, shield/trust icon).
+VISUAL STYLE — pick ONE dramatic treatment:
+Option A (Gradient Drama): Deep navy-to-electric-blue diagonal gradient (#0e0e6a → #1a1aff) full bleed. Add 2–3 large semi-transparent geometric shapes (circles, polygons, slanted lines) in teal/green (#00d084) as layered accents. Bold white typography dominates 50% of the canvas.
+Option B (Split Layout): Top 60% = bold navy/blue gradient zone with oversized headline text. Bottom 40% = slightly lighter navy with body text and a vivid green CTA pill. A strong diagonal or curved divider separates the zones.
+Option C (Neon Accent): Dark navy background with glowing neon-green (#66e766) accent elements — a bold highlighted number/amount badge, rising chart line, or floating ₹ symbol. High contrast. Electric feel.
 
-Copy accuracy (VERY IMPORTANT):
+TYPOGRAPHY (most important element):
+- Headline: MASSIVE. 72–96px. Bold/Black weight. White. Takes up 40–50% of canvas. If there's a ₹ amount, make it the BIGGEST element on screen.
+- Body: 28–34px. Regular weight. White or light grey (#e0e0ff).
+- CTA button: Bold pill shape. Solid #00b34e fill. White text 26–30px. Centered, lower third.
+
+COPY (render EXACTLY as written, no changes):
 ${contentSpec}
 
-Compliance constraints:
-- No guaranteed returns, no "sure-shot", no exaggerated claims.
+ACCENT ELEMENTS (add 1–2, keep it minimal not cluttered):
+- One bold abstract finance icon relevant to the topic (₹ symbol, upward arrow, SIP calendar grid, coin stack, shield, growth chart) — flat 2D line-art style, NOT 3D render
+- One number highlight chip/badge if the headline contains a ₹ amount — large, outlined or accent-filled
+
+HARD RULES:
+- ${whatsappLogoInstruction}
+- Full-bleed background — NO plain white card or box floating over a background
+- ABSOLUTELY NO human faces, people, or body parts
+- NO disclaimer, NO fine print, NO compliance text, NO hashtags
+- NO cluttered 3D renders — flat bold design only
+- NO stock-photo textures
+
 ${languageInstruction}
 ${brandGuidance}`;
       })()
