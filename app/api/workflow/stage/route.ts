@@ -367,6 +367,29 @@ export async function POST(request: NextRequest) {
           sendEvent({ log: '📧 Generating HTML email newsletter...' })
 
           try {
+            // Pick a visual layout reference image from the examples folder based on topic/purpose
+            const pickReferenceImage = (t: string, p: string): string | null => {
+              const s = `${t} ${p}`.toLowerCase()
+              if (/nfo|fund|sip|mutual|scheme|amc|nav/.test(s))          return 'Groww Small Cap Fund NFO-01.png'
+              if (/demat|account.*open|open.*account|kyc|onboard/.test(s)) return 'Demat account-01.png'
+              if (/dormant|inactive|reactivat/.test(s))                   return 'dormant account-01.png'
+              if (/term.*plan|insurance|cover|protect|life/.test(s))      return 'term plan-01.png'
+              if (/technical.*pick|stock.*pick|research.*call|pick/.test(s)) return 'technical picks.png'
+              return null
+            }
+
+            let referenceImageBase64: string | undefined
+            let referenceImageMime: string | undefined
+            const refImageFile = pickReferenceImage(topic || '', purpose || '')
+            if (refImageFile) {
+              const refImagePath = path.join(process.cwd(), '..', 'examples', refImageFile)
+              if (fs.existsSync(refImagePath)) {
+                referenceImageBase64 = fs.readFileSync(refImagePath).toString('base64')
+                referenceImageMime = 'image/png'
+                sendEvent({ log: `🖼️ Using layout reference: ${refImageFile}` })
+              }
+            }
+
             // Get creative prompt from Stage 1 if available
             const backendRoot = path.join(process.cwd(), 'backend')
             const stateFilePath = path.join(backendRoot, 'data', 'workflow-state.json')
@@ -415,7 +438,9 @@ export async function POST(request: NextRequest) {
                 creativePrompt,
                 brandSettings,
                 language,
-                referenceExamples: referenceExamples || undefined
+                referenceExamples: referenceExamples || undefined,
+                referenceImageBase64: referenceImageBase64 || undefined,
+                referenceImageMime: referenceImageMime || undefined
               })
             })
 

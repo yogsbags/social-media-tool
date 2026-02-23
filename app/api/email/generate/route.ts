@@ -38,6 +38,7 @@ async function getGeminiText(response: any) {
   return "";
 }
 
+// Strips disallowed <img> tags while preserving inline <svg> elements (used for card icons).
 function sanitizeNewsletterHtml(html: string) {
   const allowlistedBases = [HEADER_IMAGE_URL, FOOTER_IMAGE_URL, BEE_SOCIAL_ICON_BASE];
   const isAllowed = (src: string) => allowlistedBases.some((base) => src.startsWith(base));
@@ -98,6 +99,8 @@ export async function POST(request: NextRequest) {
       brandSettings,
       language = "en",
       referenceExamples, // From examples/newsletter-reference.md
+      referenceImageBase64, // Base64-encoded PNG from examples folder
+      referenceImageMime = "image/png",
     } = body;
 
     if (!topic) {
@@ -135,13 +138,24 @@ ${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettin
 Your task is to generate a complete, production-ready HTML email newsletter following industry best practices.
 
 Layout reference (use this structure and styling cues):
-- 600px wide, single-column responsive layout
-- Header section (DO NOT change): keep exactly this header image linked to plindia.com
+- CRITICAL: The main content table MUST have width="600" as an HTML attribute (not just CSS). This ensures the header image, hero, content, and footer all render at exactly the same width with no gaps or misalignment.
+- Structure: <table role="presentation" width="600" style="max-width:600px; width:100%;" ...> wrapping ALL sections including header, hero, content, and footer.
+- Header section (DO NOT change): keep exactly this header image linked to plindia.com — it must be inside the width="600" container so it aligns perfectly with the hero below it
   * Header image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/xtp/w8t/1aj/Asset%201.png
-- Hero section: TEXT-ONLY (no <img>) with compelling headline + 1 supporting line on a solid/gradient brand-color background
+  * Image tag must have: width="600" style="width:100%; max-width:600px; display:block;"
+- Hero section: Two-column table layout inside a solid/gradient brand-color background (linear-gradient 135deg, #0e0e6a → #3c3cf8), padding 40px 30px:
+  * Left cell (width="60%" valign="middle"): white h1 headline (28–32px, bold, line-height 1.2, margin-bottom 12px) + white subtitle p (16–18px, normal, margin-bottom 0, opacity 0.9). If grounded facts contain specific key details (NFO dates, minimum investment, NAV price), add 1–2 short bold fact lines in white below the subtitle.
+  * Right cell (width="40%" valign="middle" align="center"): A decorative inline <svg> (width="120" height="120" viewBox="0 0 120 120") with a multi-path illustration relevant to the campaign topic. Use white strokes (stroke="white" stroke-width="2.5" fill="none") with semi-transparent white fills where appropriate. Choose illustration based on topic:
+    - NFO / mutual fund / SIP / small cap / invest: glass jar with stacked coins inside + a plant stem with 2 leaves and a rupee-coin at top growing out of the jar
+    - Stocks / technical picks / trading / market: candlestick chart (3 candles of varying heights) with an upward trending arrow overlay
+    - Demat / account opening / KYC / onboarding: smartphone outline with a bar chart on its screen + a checkmark badge
+    - Insurance / term plan / protection / cover: large shield outline with a checkmark or heart inside
+    - General wealth / portfolio / returns: coins stack (3 discs) with a rising arrow and small star accents
+    Use 4–7 distinct path/rect/circle/ellipse elements so the illustration looks rich and professional. Wrap in <g stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">.
 - Intro paragraph and section dividers
 - One main content section (TEXT-ONLY) with a heading and body that is directly relevant to the campaign purpose and target audience. Choose a section title and content focus that fits the purpose (e.g. "Key Insights", "What You Need to Know", "Strategies for [audience]", "Why This Matters for You") and write for the specified target audience. No images in this section.
-- 3-column content grid: TEXT-ONLY cards (NO images). Each card must have:
+- 3-column content grid: Each card must have:
+  * A small inline <svg> icon (36×36px viewBox="0 0 24 24", aria-hidden="true", fill="none", stroke="#0000a0" or stroke="#00b34e", stroke-width="1.5") that is visually relevant to the card topic. Draw a simple, recognizable single-path icon (e.g. a chart, coin, shield, calendar, growth arrow). Do NOT use <img> for these icons.
   * headline
   * 1–2 sentence description
   * "Read more" button (rounded 24px, #00b34e background, white text, Figtree bold 12px, generous horizontal padding)
@@ -161,7 +175,8 @@ Layout reference (use this structure and styling cues):
 CRITICAL CONSTRAINTS:
 - Do NOT add any logos/brand marks beyond the provided header + footer images (do not introduce a new logo, watermark, or badge).
 - Do NOT use any placeholder images/URLs (no via.placeholder.com, no dummy banners).
-- The ONLY images allowed in the entire email are: the provided header image, the provided footer image, and the social icon set.
+- The ONLY <img> tags allowed in the entire email are: the provided header image, the provided footer image, and the social icon set.
+- Inline <svg> elements ARE allowed and encouraged — use them for the hero illustration and card icons. No external <img> for illustrations.
 - Do NOT repeat the header image anywhere else (especially not as a hero image).
 
 📧 SUBJECT LINE BEST PRACTICES (from subjectline.com):
@@ -275,16 +290,53 @@ Use the brand colors specified in the guidelines for:
 
 Make the HTML production-ready - it should render beautifully in all email clients.`;
 
-    console.log(`Generating email newsletter with ${MODEL}...`);
+    const hasRefImage = typeof referenceImageBase64 === "string" && referenceImageBase64.length > 0;
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+
+    // Step 1: Grounding search — fetch current, verified facts about the topic.
+    // NOTE: grounding and responseMimeType:"application/json" are mutually exclusive,
+    // so this runs as a separate call before the main JSON generation.
+    let groundedContext = "";
+    try {
+      const groundingRes = await ai.models.generateContent({
+        model: MODEL,
+        contents: [{
+          role: "user",
+          parts: [{
+            text: `Search the web for current, accurate information about: "${topic}". Focus on: key dates (NFO open/close dates, subscription period), fund details (minimum investment, benchmark index, fund category), fund manager name and experience, investment objective, risk level, any recent news or analyst opinions. Be factual and specific. Summarize in 200–300 words.`,
+          }],
+        }],
+        config: {
+          tools: [{ googleSearch: {} }],
+          temperature: 0.1,
+          maxOutputTokens: 600,
+        },
+      });
+      groundedContext = await getGeminiText(groundingRes);
+      console.log(`Grounding search done (${groundedContext.length} chars)`);
+    } catch (groundingErr) {
+      console.warn("Grounding search failed, proceeding without:", groundingErr instanceof Error ? groundingErr.message : groundingErr);
+    }
+
+    console.log(`Generating email newsletter with ${MODEL}${hasRefImage ? " (with visual reference)" : ""}...`);
+
+    const groundingSection = groundedContext
+      ? `\n\nCURRENT VERIFIED FACTS (from live web search — use these in preference to training knowledge for specific details):\n${groundedContext}\n`
+      : "";
+
+    const userText = `${systemPrompt}${groundingSection}\n\nUser request: Generate a professional email newsletter for: ${topic}`;
+    const contentParts: any[] = hasRefImage
+      ? [
+          { text: userText },
+          { inlineData: { mimeType: referenceImageMime, data: referenceImageBase64 } },
+          { text: "The image above is a visual layout reference. Study its section structure, color palette, spacing proportions, card grid arrangement, and typographic hierarchy. Reproduce those design decisions faithfully in the HTML you generate — adapt the content for the new topic but keep the visual language consistent." },
+        ]
+      : [{ text: userText }];
+
     const response = await ai.models.generateContent({
       model: MODEL,
-      contents: [
-        {
-          text: `${systemPrompt}\n\nUser request: Generate a professional email newsletter for: ${topic}`,
-        },
-      ],
+      contents: [{ role: "user", parts: contentParts }],
       config: {
         temperature: 0.7,
         maxOutputTokens: 8000,
@@ -354,6 +406,7 @@ Make the HTML production-ready - it should render beautifully in all email clien
           : emailData?.html,
       model: MODEL,
       usage: (response as any)?.usageMetadata || null,
+      groundedContext: groundedContext || null,
     });
   } catch (error) {
     console.error("Error generating email newsletter:", error);
