@@ -181,13 +181,23 @@ function isGenericTagline(text: string | undefined): boolean {
 export async function POST(request: NextRequest) {
   try {
     const now = new Date()
-    const currentYear = String(now.getFullYear())
-    const currentDateIso = now.toISOString().slice(0, 10)
-    const currentDateHuman = now.toLocaleDateString('en-IN', {
+    const indiaDateParts = Object.fromEntries(
+      new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).formatToParts(now).map((part) => [part.type, part.value])
+    )
+    const currentYear = String(indiaDateParts.year)
+    const currentDateIso = `${indiaDateParts.year}-${indiaDateParts.month}-${indiaDateParts.day}`
+    const currentDateHuman = new Intl.DateTimeFormat('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      weekday: 'long',
       day: '2-digit',
       month: 'short',
       year: 'numeric',
-    })
+    }).format(now)
     const body: GenerateBody = await request.json()
     const seedTheme = String(body.seedTheme ?? '').trim().slice(0, 140)
     console.log('[API /topic/generate] campaignType:', body.campaignType, '| seedTheme received:', seedTheme ? JSON.stringify(seedTheme) : '(empty)')
@@ -300,7 +310,7 @@ export async function POST(request: NextRequest) {
 
       const prompts = angleHints.map((angle) => [
         'Use Google Search to find current, trending finance or markets news relevant to PL Capital audiences in India.',
-        `Today is ${currentDateIso}. Prioritize very recent developments and high-interest stories.`,
+        `Today in India (Asia/Kolkata) is ${currentDateHuman} (${currentDateIso}). Prioritize very recent developments and high-interest stories.`,
         `If you include a year, it must be ${currentYear} (never older years).`,
         body.purpose ? `Purpose: ${body.purpose}` : '',
         body.targetAudience ? `Audience: ${body.targetAudience}` : '',
@@ -384,7 +394,7 @@ export async function POST(request: NextRequest) {
         // Fallback 1: Try Gemini without web-search tool (faster and less brittle).
         try {
           const fallbackPrompt = [
-            `Today is ${currentDateIso}. Generate one live-news style finance headline for India.`,
+            `Today in India (Asia/Kolkata) is ${currentDateHuman} (${currentDateIso}). Generate one live-news style finance headline for India.`,
             body.purpose ? `Purpose: ${body.purpose}` : '',
             body.targetAudience ? `Audience: ${body.targetAudience}` : '',
             seedTheme ? `Must include or directly reflect this keyword/theme: ${seedTheme}` : '',

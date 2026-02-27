@@ -303,6 +303,70 @@ function clipAtSentenceOrWords(input: string, maxWords: number): string {
   return firstWords(text, maxWords).trim();
 }
 
+function normalizeExtractedSummary(input: string): string {
+  let text = cleanupTextArtifacts(String(input || "").trim());
+  if (!text) return "";
+
+  text = text.replace(/^(?:[\d.,]+%|\₹[\d.,]+|\$[\d.,]+)\.?\s+/i, "").trim();
+
+  const sentences = text.match(/[^.!?]+[.!?](?=\s|$)|[^.!?]+$/g) || [];
+  if (sentences.length > 1) {
+    const firstSentence = String(sentences[0] || "").trim();
+    const firstSentenceWords = firstSentence.split(/\s+/).filter(Boolean);
+    const looksLikeDanglingFragment =
+      firstSentenceWords.length <= 3 &&
+      /[\d%₹$]/.test(firstSentence) &&
+      !/[a-z]{3,}/i.test(firstSentence);
+    if (looksLikeDanglingFragment) {
+      text = sentences.slice(1).join(" ").trim();
+    }
+  }
+
+  return text;
+}
+
+function finalizeSummaryText(input: string): string {
+  const text = normalizeExtractedSummary(input);
+  if (!text) return "";
+
+  const rawSentences = text.match(/[^.!?]+[.!?](?=\s|$)|[^.!?]+$/g) || [];
+  const picked: string[] = [];
+  const normalize = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  for (const sentenceRaw of rawSentences) {
+    const sentence = cleanupTextArtifacts(sentenceRaw.trim());
+    if (!sentence) continue;
+
+    const words = sentence.split(/\s+/).filter(Boolean);
+    const isShortNumericFragment =
+      words.length <= 5 &&
+      /[\d%₹$]/.test(sentence) &&
+      !/[a-z]{4,}/i.test(sentence);
+    if (isShortNumericFragment) continue;
+
+    const normalizedSentence = normalize(sentence);
+    const isDuplicate = picked.some((prev) => {
+      const normalizedPrev = normalize(prev);
+      return (
+        normalizedSentence === normalizedPrev ||
+        normalizedSentence.includes(normalizedPrev) ||
+        normalizedPrev.includes(normalizedSentence)
+      );
+    });
+    if (isDuplicate) continue;
+
+    picked.push(sentence);
+    if (picked.length >= 3) break;
+  }
+
+  return picked.join(" ").trim();
+}
+
 function deriveSummaryFromArticleText(articleText: string): string {
   const text = String(articleText || "").trim();
   if (!text) return "";
@@ -311,7 +375,7 @@ function deriveSummaryFromArticleText(articleText: string): string {
     /(?:^|\n)(?:\d+\.\s*)?Summary:\s*([\s\S]*?)(?:\n(?:\d+\.\s*)?[A-Z][^\n]+|\n\n|$)/i,
   );
   if (summaryMatch?.[1]) {
-    return clipAtSentenceOrWords(summaryMatch[1], 80);
+    return clipAtSentenceOrWords(finalizeSummaryText(summaryMatch[1]), 80);
   }
 
   const firstParagraph =
@@ -319,7 +383,7 @@ function deriveSummaryFromArticleText(articleText: string): string {
       .split(/\n\n+/)
       .map((p) => p.trim())
       .find(Boolean) || "";
-  return clipAtSentenceOrWords(firstParagraph, 80);
+  return clipAtSentenceOrWords(finalizeSummaryText(firstParagraph), 80);
 }
 
 function deriveSubheadline(summary: string, headline: string): string {
@@ -346,6 +410,10 @@ function articleTextToHtml(articleText: string): string {
 
   const headingMatchers: Array<{ pattern: RegExp; label: string }> = [
     { pattern: /^(?:\d+\.\s*)?summary\b\s*:?\s*/i, label: "Summary" },
+    { pattern: /^(?:\d+\.\s*)?market overview\b\s*:?\s*/i, label: "Market Overview" },
+    { pattern: /^(?:\d+\.\s*)?key movers\b\s*:?\s*/i, label: "Key Movers" },
+    { pattern: /^(?:\d+\.\s*)?drivers and context\b\s*:?\s*/i, label: "Drivers and Context" },
+    { pattern: /^(?:\d+\.\s*)?broader market and outlook\b\s*:?\s*/i, label: "Broader Market and Outlook" },
     {
       pattern:
         /^(?:\d+\.\s*)?issue details(?:\s+and\s+key\s+dates)?\b\s*:?\s*/i,
@@ -626,7 +694,7 @@ function isSectionStyleTitle(text: string): boolean {
   const t = String(text || "")
     .trim()
     .toLowerCase();
-  return /^(?:\d+\.\s*)?(summary|issue details and key dates|gmp and grey market premium|grey market premium|gray market premium|gmp|use of proceeds \/ key objectives|about the company|financial performance|what the numbers show|strengths|risks|peer positioning|bottom line)\s*:?$/.test(
+  return /^(?:\d+\.\s*)?(summary|market overview|key movers|drivers and context|broader market and outlook|issue details and key dates|gmp and grey market premium|grey market premium|gray market premium|gmp|use of proceeds \/ key objectives|about the company|financial performance|what the numbers show|strengths|risks|peer positioning|bottom line)\s*:?$/.test(
     t,
   );
 }
@@ -1020,7 +1088,8 @@ function parseRawArticleOutput(raw: string, topic: string): any {
   );
   const summary = cleanupTextArtifacts(
     stripMarkdownDelimiters(
-      labelled.summary || deriveSummaryFromArticleText(articleBodyText),
+      finalizeSummaryText(labelled.summary) ||
+        deriveSummaryFromArticleText(articleBodyText),
     ),
   );
   const subheadline = "";
@@ -1488,6 +1557,22 @@ export async function POST(request: NextRequest) {
       Number.isInteger(incomingSeed) && incomingSeed > 0
         ? incomingSeed
         : Math.floor(Math.random() * 1_000_000_000) + 1;
+    const indiaDateParts = Object.fromEntries(
+      new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).formatToParts(new Date()).map((part) => [part.type, part.value]),
+    );
+    const currentIndiaDateIso = `${indiaDateParts.year}-${indiaDateParts.month}-${indiaDateParts.day}`;
+    const currentIndiaDateHuman = new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata",
+      weekday: "long",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date());
     const pdfPartsFromRefs = await buildPdfPartsFromRefs(body.researchPdfRefs);
     const pdfPartsInline = buildPdfParts(body.researchPDFs);
     const pdfParts =
@@ -1544,6 +1629,9 @@ export async function POST(request: NextRequest) {
       seedArticleText
         ? `Previous draft context (refine, not copy):\n${seedArticleText}`
         : "",
+      `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+      'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
+      `Do not drift to older coverage from prior years when similarly dated articles exist.`,
       "Write in a neutral newsroom tone similar to professional business news portals.",
       "Do NOT include recommendations, advisory calls, buy/sell/hold language, or investor tips.",
       "Mandatory top structure (keep each on its own line):",
@@ -1553,7 +1641,14 @@ export async function POST(request: NextRequest) {
       "Do NOT output these label words (Headline:, Summary:, Intro:) in the final article body.",
       "Do not repeat the headline in the body.",
       "Do not repeat the same paragraph or near-duplicate lead lines.",
+      "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
       "Focus on what happened, why it matters, and relevant market context.",
+      ipoStructuredMode
+        ? ""
+        : "For non-IPO market news, structure the article body with these exact section headings on their own lines: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+      ipoStructuredMode
+        ? ""
+        : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       ipoStructuredMode
         ? "Because this is IPO/DRHP context, write articleText and articleHtml in this exact section order: Summary, Issue Details and Key Dates, GMP and Grey Market Premium, Use of Proceeds / Key Objectives, About the Company, Financial Performance, What the Numbers Show, Strengths, Risks, Peer Positioning, Bottom Line."
         : "",
@@ -1585,12 +1680,22 @@ export async function POST(request: NextRequest) {
       seedArticleText
         ? `Previous draft context (refine, not copy):\n${seedArticleText}`
         : "",
+      `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+      'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
+      `Do not drift to older coverage from prior years when similarly dated articles exist.`,
       "Return plain text only (no JSON).",
       "Include separate top lines: Headline, Summary, Intro.",
       "Keep intro paragraph distinct from summary.",
       "Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.",
       "Do not repeat the headline in the body.",
       "Do not repeat paragraphs.",
+      "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
+      ipoStructuredMode
+        ? ""
+        : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+      ipoStructuredMode
+        ? ""
+        : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       ipoStructuredMode
         ? "articleText and articleHtml must include all requested IPO sections with bullets and financial table-like data."
         : "Write articleText as 4 substantial paragraphs with strong factual detail.",
@@ -1610,12 +1715,22 @@ export async function POST(request: NextRequest) {
       seedArticleText
         ? `Previous draft context (refine, not copy):\n${seedArticleText}`
         : "",
+      `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+      'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
+      `Do not drift to older coverage from prior years when similarly dated articles exist.`,
       "Return plain text only.",
       "Include separate top lines: Headline, Summary, Intro.",
       "Keep intro paragraph distinct from summary.",
       "Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.",
       "Do not repeat the headline in the body.",
       "Do not repeat paragraphs.",
+      "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
+      ipoStructuredMode
+        ? ""
+        : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+      ipoStructuredMode
+        ? ""
+        : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       "Hard constraint: do not include ANY advisory words or actions.",
       "Forbidden words/phrases: buy, sell, hold, invest, should investors, strategy, tips, recommendation.",
       ipoStructuredMode
@@ -1639,8 +1754,14 @@ export async function POST(request: NextRequest) {
       hasReferenceDocs
         ? "Use attached PDFs for factual correction where relevant."
         : "",
+      `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+      'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
       "Apply the user instruction exactly and keep all unrelated content unchanged.",
       "Do not add recommendations/advisory language.",
+      "Do not leave the revised article body ending with an incomplete sentence, trailing clause, or cut-off word.",
+      ipoStructuredMode
+        ? ""
+        : "Keep the existing body in a headed structure using these exact section headings where applicable: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       "Return plain text in this exact format and nothing else:",
       "HEADLINE: <single line>",
       "SUMMARY: <2-3 lines>",
@@ -1911,12 +2032,21 @@ export async function POST(request: NextRequest) {
           hasReferenceDocs
             ? "Use attached document facts first, then web grounding for context."
             : "",
+          `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+          'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
           "Return plain text only (no JSON).",
           "Include separate top lines: Headline, Summary, Intro.",
           "Keep intro paragraph distinct from summary.",
           "Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.",
           "Do not repeat the headline in the body.",
           "Do not repeat paragraphs.",
+          "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
+          ipoStructuredMode
+            ? ""
+            : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+          ipoStructuredMode
+            ? ""
+            : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
           "After article end append SEO Metadata and FAQ Schema (JSON-LD).",
           "Hard constraints:",
           "- No recommendations/advisory language.",
