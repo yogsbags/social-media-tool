@@ -604,6 +604,7 @@ export async function POST(request: NextRequest) {
               headline: article.headline,
               subheadline: article.subheadline,
               summary: article.summary,
+              rawOutput: article.rawOutput,
               articleText: article.articleText,
               articleHtml: article.articleHtml,
               tags: article.tags,

@@ -543,6 +543,7 @@ export default function StageDataModal({
     const headline = formData['headline'] || ''
     const subheadline = formData['subheadline'] || ''
     const summary = formData['summary'] || ''
+    const rawOutput = formData['rawOutput'] || ''
     const articleHtml = formData['articleHtml'] || ''
     const articleText = formData['articleText'] || ''
 
@@ -671,6 +672,23 @@ export default function StageDataModal({
             className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white resize-vertical"
           />
         </div>
+
+        {rawOutput && (
+          <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-xl">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xl">🤖</span>
+              <label className="block text-sm font-bold text-amber-900">
+                Raw Gemini Output
+              </label>
+            </div>
+            <textarea
+              value={rawOutput}
+              onChange={(e) => handleFieldChange('rawOutput', e.target.value)}
+              rows={14}
+              className="w-full px-3 py-2 border-2 border-amber-300 rounded-lg focus:border-amber-500 focus:outline-none text-sm bg-white resize-vertical font-mono"
+            />
+          </div>
+        )}
       </div>
     )
   }
@@ -746,7 +764,7 @@ export default function StageDataModal({
                   return !['html', 'subject', 'preheader', 'plainText', 'subjectVariations', 'contentType'].includes(key)
                 }
                 if (stageId === 2 && formData['contentType'] === 'live-news-article') {
-                  return !['headline', 'subheadline', 'summary', 'articleText', 'articleHtml', 'contentType'].includes(key)
+                  return !['headline', 'subheadline', 'summary', 'rawOutput', 'articleText', 'articleHtml', 'contentType'].includes(key)
                 }
                 return true
               })

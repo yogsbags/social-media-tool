@@ -347,7 +347,11 @@ function finalizeSummaryText(input: string): string {
       words.length <= 5 &&
       /[\d%₹$]/.test(sentence) &&
       !/[a-z]{4,}/i.test(sentence);
-    if (isShortNumericFragment) continue;
+    const startsLikeCarryOverFragment =
+      /^(?:[\d.,]+%|\₹[\d.,]+|\$[\d.,]+)\s+(?:and|or|but|with|to|of|in|on|for|as|the|a|an)\b/i.test(
+        sentence,
+      ) || /^[a-z]/.test(sentence);
+    if (isShortNumericFragment || startsLikeCarryOverFragment) continue;
 
     const normalizedSentence = normalize(sentence);
     const isDuplicate = picked.some((prev) => {
@@ -1015,6 +1019,17 @@ function parseRawArticleOutput(raw: string, topic: string): any {
     dedupeConsecutiveBlocks(articleTextPrepared),
   ).trim();
   const tail = text.slice(splitIdx);
+  const articleBlocks = articleText
+    .split(/\n\n+/)
+    .map((block) =>
+      block
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .join(" ")
+        .trim(),
+    )
+    .filter(Boolean);
 
   const allLines = articleText.split("\n").map((l) => l.trim());
   const labelled = {
@@ -1050,6 +1065,8 @@ function parseRawArticleOutput(raw: string, topic: string): any {
     bodyLines.push(line);
   }
   const cleanedArticleText = bodyLines.join("\n").trim();
+  const sectionHeadingPattern =
+    /^(?:\d+\.\s*)?(summary|market overview|key movers|drivers and context|broader market and outlook|issue details and key dates|gmp and grey market premium|grey market premium|gray market premium|gmp|use of proceeds \/ key objectives|about the company|financial performance|what the numbers show|strengths|risks|peer positioning|bottom line)\s*:?$/i;
 
   const firstLine =
     cleanedArticleText
@@ -1086,9 +1103,18 @@ function parseRawArticleOutput(raw: string, topic: string): any {
     cleanedArticleText,
     headline,
   );
+  const fallbackSummaryBlock = articleBlocks.find((block, index) => {
+    if (index === 0) return false;
+    const normalizedBlock = normalizeLine(stripMarkdownDelimiters(block));
+    if (!normalizedBlock) return false;
+    if (sectionHeadingPattern.test(normalizedBlock)) return false;
+    if (/^(headline|summary|intro)\s*:/i.test(normalizedBlock)) return false;
+    return /[.!?]$/.test(normalizedBlock);
+  });
   const summary = cleanupTextArtifacts(
     stripMarkdownDelimiters(
       finalizeSummaryText(labelled.summary) ||
+        finalizeSummaryText(fallbackSummaryBlock || "") ||
         deriveSummaryFromArticleText(articleBodyText),
     ),
   );
@@ -2389,6 +2415,7 @@ export async function POST(request: NextRequest) {
       headline,
       subheadline,
       summary,
+      rawOutput: lastRaw,
       articleText: `${articleBodyText}${sourcesTextBlock}${seoTextBlock}${faqTextBlock}`,
       articleHtml: `${articleBodyHtml}${sourcesHtmlBlock}${seoHtmlBlock}${faqHtmlBlock}`,
       tags,
