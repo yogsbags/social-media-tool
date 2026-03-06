@@ -15,8 +15,7 @@ class SocialMediaOrchestrator {
     this.stateManager = new StateManager(path.join(this.projectRoot, 'data'));
   }
 
-  _getLatestCampaignPlanningEntry(topic, options = {}) {
-    const { allowLatestFallback = true } = options;
+  _getLatestCampaignPlanningEntry(topic) {
     const campaigns = this.stateManager?.state?.campaigns || {};
     const entries = Object.values(campaigns).filter(Boolean);
 
@@ -34,15 +33,10 @@ class SocialMediaOrchestrator {
       return bTs - aTs;
     };
 
-    const normalizeTopic = (value) => String(value || '')
-      .toLowerCase()
-      .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    const normalizedTopic = normalizeTopic(topic);
+    const normalizedTopic = (topic || '').trim().replace(/\s+/g, ' ');
     if (normalizedTopic) {
       const match = planningEntries
-        .filter((e) => normalizeTopic(e?.topic) === normalizedTopic)
+        .filter((e) => (e?.topic || '').trim().replace(/\s+/g, ' ') === normalizedTopic)
         .sort(byCompletedAtDesc)[0];
       if (match) return match;
       // No exact match — do NOT fall back to a different topic's prompt.
@@ -51,7 +45,6 @@ class SocialMediaOrchestrator {
       return null;
     }
 
-    if (!allowLatestFallback) return null;
     return planningEntries.sort(byCompletedAtDesc)[0];
   }
 
@@ -799,7 +792,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       let prompt = options.prompt || null;
       if (!prompt) {
         await this.stateManager.initialize();
-        const planning = this._getLatestCampaignPlanningEntry(options.topic, { allowLatestFallback: false });
+        const planning = this._getLatestCampaignPlanningEntry(options.topic);
         const creativePrompt = (planning?.creativePrompt || planning?.output || '').trim();
         const directPrompt = creativePrompt ? this._extractDirectImagePrompt(creativePrompt) : null;
         if (directPrompt) {
@@ -876,23 +869,9 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       }
 
       if (result?.success) {
-        // Composite the real PL Capital SVG logo onto the image first, then upload.
-        // This guarantees hostedUrl points to the final branded creative.
-        if (result.images && result.images.length > 0) {
-          try {
-            const composited = await this._compositeLogoOntoImage(result.images[0]);
-            if (composited) {
-              result.images[0] = { ...result.images[0], ...composited };
-              console.log('   🏷️  PL Capital logo composited onto creative');
-            }
-          } catch (logoErr) {
-            console.warn('   ⚠️ Logo compositing failed (non-fatal):', logoErr.message);
-          }
-        }
-
         let hostedUrl = null;
 
-        // Upload after compositing so share URL always includes the real PL logo.
+        // Attempt to upload the first generated image to ImgBB for a shareable URL
         if (process.env.IMGBB_API_KEY && result.images && result.images.length > 0) {
           const firstImage = result.images[0];
           const imagePath = firstImage.path || firstImage.url;
@@ -917,6 +896,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
                 hostedUrl = json?.data?.url || null;
                 if (hostedUrl) {
                   console.log(`   ✅ Uploaded to ImgBB: ${hostedUrl}`);
+                  // persist URL back into result
                   result.images[0].hostedUrl = hostedUrl;
                 }
               } else {
@@ -929,6 +909,19 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           }
         } else {
           console.log('   ℹ️  ImgBB upload skipped (no API key or image path missing)');
+        }
+
+        // Composite the real PL Capital SVG logo onto the image
+        if (result.images && result.images.length > 0) {
+          try {
+            const composited = await this._compositeLogoOntoImage(result.images[0]);
+            if (composited) {
+              result.images[0] = { ...result.images[0], ...composited };
+              console.log('   🏷️  PL Capital logo composited onto creative');
+            }
+          } catch (logoErr) {
+            console.warn('   ⚠️ Logo compositing failed (non-fatal):', logoErr.message);
+          }
         }
 
         console.log('   ✅ WhatsApp creative generated');
