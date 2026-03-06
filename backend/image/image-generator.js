@@ -41,7 +41,7 @@ class ImageGenerator {
 
     // Gemini Models (Primary: Gemini 3 Pro Image Preview for 4K native generation)
     this.geminiModels = {
-      primary: "gemini-3-pro-image-preview",     // 4K native, grounded generation, image gen
+      primary: "gemini-3.1-flash-image-preview", // Fast image generation
       fallback: "gemini-2.5-flash-image"         // Fast fallback for simpler tasks
     };
     this.defaultModel = options.model || this.geminiModels.primary;
@@ -68,7 +68,7 @@ class ImageGenerator {
     this.defaultConfig = {
       aspectRatio: "1:1",    // Default square images
       numberOfImages: 1,     // Generate 1 image by default
-      imageSize: "4K",       // Default to 4K for high-quality output
+      imageSize: "HD",       // Default to 1K-equivalent (HD) for faster generation
       useGrounding: true     // Enable Google Search grounding by default
     };
 
@@ -88,6 +88,7 @@ class ImageGenerator {
     };
 
     this.supportedAspectRatios = Object.keys(this.aspectRatioSpecs);
+    this.defaultResponseModalities = ["TEXT", "IMAGE"];
 
     // Fal AI image size mapping
     this.falImageSizes = {
@@ -252,7 +253,7 @@ class ImageGenerator {
     // Determine which model to use
     const model = config.model || this.defaultModel;
     const isGemini3Pro = model.includes('gemini-3-pro');
-    // gemini-3-flash-preview is text-only; treat any gemini-3 as potentially needing fallback for image gen
+    // Treat any gemini-3* model as Gemini 3 family for feature flags like grounding tools.
     const isGemini3Family = model.includes('gemini-3');
 
     console.log(`   Provider: ${isGemini3Pro ? 'Gemini 3 Pro Image Preview' : isGemini3Family ? 'Gemini 3 (image fallback if needed)' : 'Gemini 2.5 Flash Image'}`);
@@ -267,7 +268,7 @@ class ImageGenerator {
     };
 
     // Gemini 3 Pro Image Preview specific features
-    if (isGemini3Pro) {
+    if (isGemini3Pro || isGemini3Family) {
       // Add 4K image size support
       const imageSize = config.imageSize || this.defaultConfig.imageSize || "4K";
       generationConfig.imageConfig.imageSize = imageSize;
@@ -280,11 +281,20 @@ class ImageGenerator {
       }
     }
 
-    // Force image-only output if specified
+    // Response modalities:
+    // - default: TEXT + IMAGE
+    // - explicit imageOnly: IMAGE only
+    // - explicit responseModalities: caller override
     // Source: https://ai.google.dev/gemini-api/docs/image-generation
-    if (config.imageOnly || config.responseModalities) {
-      generationConfig.responseModalities = config.responseModalities || ["Image"];
-      console.log(`   Response Mode: Image-only`);
+    if (config.responseModalities) {
+      generationConfig.responseModalities = config.responseModalities;
+      console.log(`   Response Mode: ${generationConfig.responseModalities.join(' + ')}`);
+    } else if (config.imageOnly) {
+      generationConfig.responseModalities = ["IMAGE"];
+      console.log(`   Response Mode: IMAGE only`);
+    } else {
+      generationConfig.responseModalities = this.defaultResponseModalities;
+      console.log(`   Response Mode: TEXT + IMAGE`);
     }
 
     // Build request with optional tools for grounding
@@ -294,13 +304,21 @@ class ImageGenerator {
       config: generationConfig
     };
 
-    // Add Google Search tool for Gemini 3 Pro with grounding
-    if (isGemini3Pro && config.useGrounding !== false) {
-      requestOptions.config.tools = [{ googleSearch: {} }];
+    // Add Google Search tool for Gemini 3 family with grounding
+    if ((isGemini3Pro || isGemini3Family) && config.useGrounding !== false) {
+      requestOptions.config.tools = [{
+        googleSearch: {
+          searchTypes: {
+            webSearch: {},
+            imageSearch: {}
+          }
+        }
+      }];
     }
 
     try {
       const response = await ai.models.generateContent(requestOptions);
+      this._logGroundingSources(response);
       const images = await this._extractAndSaveImages(response, "gemini-text-to-image");
 
       console.log(`   ✅ Generated ${images.length} image(s) with ${model}`);
@@ -632,6 +650,7 @@ class ImageGenerator {
     // Determine which model to use
     const model = config.model || this.defaultModel;
     const isGemini3Pro = model.includes('gemini-3-pro');
+    const isGemini3Family = model.includes('gemini-3');
 
     console.log(`   Provider: ${isGemini3Pro ? 'Gemini 3 Pro Image Preview' : 'Gemini 2.5 Flash Image'}`);
     console.log(`   Model: ${model}`);
@@ -658,15 +677,25 @@ class ImageGenerator {
     };
 
     // Gemini 3 Pro Image Preview specific features
-    if (isGemini3Pro) {
+    if (isGemini3Pro || isGemini3Family) {
       const imageSize = config.imageSize || this.defaultConfig.imageSize || "4K";
       generationConfig.imageConfig.imageSize = imageSize;
       console.log(`   Image Size: ${imageSize}`);
     }
 
-    // Force image-only output if specified
-    if (config.imageOnly || config.responseModalities) {
-      generationConfig.responseModalities = config.responseModalities || ["Image"];
+    // Response modalities:
+    // - default: TEXT + IMAGE
+    // - explicit imageOnly: IMAGE only
+    // - explicit responseModalities: caller override
+    if (config.responseModalities) {
+      generationConfig.responseModalities = config.responseModalities;
+      console.log(`   Response Mode: ${generationConfig.responseModalities.join(' + ')}`);
+    } else if (config.imageOnly) {
+      generationConfig.responseModalities = ["IMAGE"];
+      console.log(`   Response Mode: IMAGE only`);
+    } else {
+      generationConfig.responseModalities = this.defaultResponseModalities;
+      console.log(`   Response Mode: TEXT + IMAGE`);
     }
 
     // Build request options
@@ -676,14 +705,22 @@ class ImageGenerator {
       config: generationConfig
     };
 
-    // Add Google Search tool for Gemini 3 Pro with grounding
-    if (isGemini3Pro && config.useGrounding !== false) {
-      requestOptions.config.tools = [{ googleSearch: {} }];
+    // Add Google Search tool for Gemini 3 family with grounding
+    if ((isGemini3Pro || isGemini3Family) && config.useGrounding !== false) {
+      requestOptions.config.tools = [{
+        googleSearch: {
+          searchTypes: {
+            webSearch: {},
+            imageSearch: {}
+          }
+        }
+      }];
       console.log(`   Grounding: Google Search enabled`);
     }
 
     try {
       const response = await ai.models.generateContent(requestOptions);
+      this._logGroundingSources(response);
       const images = await this._extractAndSaveImages(response, "gemini-edited");
 
       console.log(`   ✅ Image edited successfully with ${model}`);
@@ -1004,9 +1041,19 @@ class ImageGenerator {
       }
     };
 
-    // Force image-only output if specified
-    if (finalConfig.imageOnly || finalConfig.responseModalities) {
-      generationConfig.responseModalities = finalConfig.responseModalities || ["Image"];
+    // Response modalities:
+    // - default: TEXT + IMAGE
+    // - explicit imageOnly: IMAGE only
+    // - explicit responseModalities: caller override
+    if (finalConfig.responseModalities) {
+      generationConfig.responseModalities = finalConfig.responseModalities;
+      console.log(`   Response Mode: ${generationConfig.responseModalities.join(' + ')}`);
+    } else if (finalConfig.imageOnly) {
+      generationConfig.responseModalities = ["IMAGE"];
+      console.log(`   Response Mode: IMAGE only`);
+    } else {
+      generationConfig.responseModalities = this.defaultResponseModalities;
+      console.log(`   Response Mode: TEXT + IMAGE`);
     }
 
     const response = await ai.models.generateContent({
@@ -1649,6 +1696,27 @@ class ImageGenerator {
     }
 
     return images;
+  }
+
+  /**
+   * HELPER: Log grounding metadata/search entry point when available.
+   * @private
+   */
+  _logGroundingSources(response) {
+    try {
+      const candidate = response?.candidates?.[0];
+      const metadata = candidate?.groundingMetadata;
+      const rendered = metadata?.searchEntryPoint?.renderedContent;
+      if (rendered) {
+        // Keep logs compact while still exposing the grounded source widget HTML/text.
+        const compact = String(rendered).replace(/\s+/g, ' ').trim();
+        console.log(`   🔎 Grounding searchEntryPoint: ${compact.slice(0, 600)}${compact.length > 600 ? '...' : ''}`);
+      } else if (metadata) {
+        console.log('   🔎 Grounding metadata present');
+      }
+    } catch {
+      // Non-fatal logging helper
+    }
   }
 
   /**

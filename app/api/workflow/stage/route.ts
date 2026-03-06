@@ -147,6 +147,7 @@ export async function POST(request: NextRequest) {
     brandSettings,
     files = {},
     userPrompt,
+    rawPromptMode,
     seedArticleText,
     generationSeed,
     seedHeadline,
@@ -242,7 +243,7 @@ export async function POST(request: NextRequest) {
 
         // Special handling for Stage 1: Generate creative prompt
         if (stageId === 1) {
-          sendEvent({ log: '🎨 Generating creative prompt with GPT-OSS-120B...' })
+          sendEvent({ log: '🎨 Generating creative prompt with Groq Compound...' })
 
           try {
             const requestOrigin = new URL(request.url).origin
@@ -604,7 +605,6 @@ export async function POST(request: NextRequest) {
               headline: article.headline,
               subheadline: article.subheadline,
               summary: article.summary,
-              rawOutput: article.rawOutput,
               articleText: article.articleText,
               articleHtml: article.articleHtml,
               tags: article.tags,
@@ -722,6 +722,15 @@ export async function POST(request: NextRequest) {
           ...process.env,
           NODE_PATH: parentNodeModules + (process.env.NODE_PATH ? ':' + process.env.NODE_PATH : '')
         } as NodeJS.ProcessEnv
+
+        if (stageId === 2 && typeof userPrompt === 'string' && userPrompt.trim()) {
+          nodeEnv.STAGE2_DIRECT_PROMPT = userPrompt.trim()
+          sendEvent({ log: '📋 Using provided direct prompt for Stage 2 image generation' })
+        }
+        if (stageId === 2 && rawPromptMode === true) {
+          nodeEnv.STAGE2_RAW_PROMPT_MODE = 'true'
+          sendEvent({ log: '🧪 Raw prompt mode enabled (no prompt augmentation)' })
+        }
 
         if (brandSettings && typeof brandSettings === 'object') {
           try {

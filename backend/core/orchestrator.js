@@ -74,7 +74,21 @@ class SocialMediaOrchestrator {
     let afterMarker = text.slice(startIdx).trim();
     afterMarker = afterMarker.replace(/^\s*\*+\s*/, '');
     const endOfParagraph = afterMarker.search(/\n\s*\n/);
-    const paragraph = (endOfParagraph === -1 ? afterMarker : afterMarker.slice(0, endOfParagraph)).trim();
+    let paragraph = (endOfParagraph === -1 ? afterMarker : afterMarker.slice(0, endOfParagraph)).trim();
+
+    // Safety: remove any logo/placeholder instructions from the direct image prompt
+    // so the generator does not render literal texts like "Post logo" on the creative.
+    const sentences = paragraph
+      .split(/(?<=[.!?])\s+/)
+      .map(s => s.trim())
+      .filter(Boolean);
+    const filtered = sentences.filter((s) => {
+      return !/(logo|watermark|brand\s*space|placeholder|post[-\s]?production|top[-\s]?right|corner)/i.test(s);
+    });
+    paragraph = (filtered.length > 0 ? filtered.join(' ') : paragraph)
+      .replace(/\s+/g, ' ')
+      .trim();
+
     return paragraph.length > 30 ? paragraph : null;
   }
 
@@ -796,7 +810,15 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     if (isWhatsAppImage) {
       console.log('   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...');
       const effectiveBrandSettings = this._getEffectiveBrandSettings(options);
-      let prompt = options.prompt || null;
+      const envDirectPrompt = (process.env.STAGE2_DIRECT_PROMPT || '').trim();
+      const rawPromptMode = String(process.env.STAGE2_RAW_PROMPT_MODE || '').toLowerCase() === 'true';
+      let prompt = options.prompt || envDirectPrompt || null;
+      if (envDirectPrompt) {
+        console.log('   📋 Using provided direct prompt (Stage 2 override)');
+      }
+      if (rawPromptMode) {
+        console.log('   🧪 Raw prompt mode active: skipping prompt augmentation');
+      }
       if (!prompt) {
         await this.stateManager.initialize();
         const planning = this._getLatestCampaignPlanningEntry(options.topic, { allowLatestFallback: false });
@@ -805,6 +827,10 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         if (directPrompt) {
           prompt = directPrompt;
           console.log('   📋 Using Direct image prompt from Stage 1 planning');
+        } else if (creativePrompt && !/(Core Message|Visual Direction|Tone & Voice|Key Elements|Call to Action|Platform Optimization|Technical Specs)/i.test(creativePrompt)) {
+          // Stage 1 may return a raw direct prompt paragraph for WhatsApp; pass it through as-is.
+          prompt = creativePrompt;
+          console.log('   📋 Using raw Stage 1 prompt as-is');
         } else if (creativePrompt) {
           console.log('   ⚠️ Stage 1 creative prompt found but no "Direct image prompt" paragraph; using fallback.');
         } else {
@@ -825,8 +851,10 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           whatsapp: waCopy
         });
       }
-      prompt = this._appendBrandConstraintsToPrompt(prompt, effectiveBrandSettings);
-      console.log('   🎨 Enforcing brand guidelines from input settings');
+      if (!rawPromptMode) {
+        prompt = this._appendBrandConstraintsToPrompt(prompt, effectiveBrandSettings);
+        console.log('   🎨 Enforcing brand guidelines from input settings');
+      }
 
       // If a reference image path is provided (via env), use edit mode
       const referenceImagePath = process.env.REFERENCE_IMAGE_PATH;
@@ -838,7 +866,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       // Hard constraint: always append no-faces rule to every WhatsApp image prompt,
       // even if the prompt came from Stage 1 planning (which may describe a person scene).
       const NO_FACES_SUFFIX = '\n\nHARD CONSTRAINT: ABSOLUTELY NO human faces, people, persons, or body parts anywhere in the image. Use only abstract finance visuals: charts, ₹ symbols, geometric shapes, icons, gradients.';
-      if (prompt && !prompt.includes('ABSOLUTELY NO human faces')) {
+      if (!rawPromptMode && prompt && !prompt.includes('ABSOLUTELY NO human faces')) {
         prompt = prompt + NO_FACES_SUFFIX;
       }
 
@@ -849,6 +877,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         type: options.type,
         prompt,
         brandSettings: effectiveBrandSettings,
+        useGrounding: rawPromptMode ? false : true,
         aspectRatio: options.aspectRatio,  // Pass aspectRatio from options
         language: options.language  // Pass language from options
       };
@@ -1055,7 +1084,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       };
     }
 
-    console.log(`   Model: Gemini 3 Pro Image Preview (4K, Grounded)\n`);
+    console.log(`   Model: Gemini 3 Pro Image Preview (HD/1K, Grounded)\n`);
 
     // Placeholder for visual generation
     if (this.simulate) {
@@ -1171,7 +1200,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
 
             console.log(`   ⏳ Generating carousel slide ${slideNumber}/${total} (first slide)...`);
             const slideResult = await generator.generateSocialGraphic(slidePrompt, carouselPlatform, {
-              imageSize: '4K',
+              imageSize: 'HD',
               useGrounding: false,
               aspectRatio: '1:1',
               language: options.language,
@@ -1191,7 +1220,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
                 ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`
                 : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`;
               const fallbackResult = await generator.generateSocialGraphic(fallbackPrompt, carouselPlatform, {
-                imageSize: '4K',
+                imageSize: 'HD',
                 useGrounding: false,
                 aspectRatio: '1:1',
                 language: options.language,
@@ -1209,7 +1238,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
             try {
               editResult = await generator.editImage(continuationPrompt, prevPath, {
                 aspectRatio: '1:1',
-                imageSize: '4K',
+                imageSize: 'HD',
                 useGrounding: false,
                 language: options.language
               });
@@ -1219,7 +1248,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
                 ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`
                 : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`;
               const fallbackResult = await generator.generateSocialGraphic(fallbackPrompt, carouselPlatform, {
-                imageSize: '4K',
+                imageSize: 'HD',
                 useGrounding: false,
                 aspectRatio: '1:1',
                 language: options.language,
@@ -1261,11 +1290,11 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       // Single image (non-carousel): generate one visual, then upload to ImgBB
       const prompt = options.prompt || this._buildVisualPrompt(options);
       console.log(`   Prompt: ${prompt.substring(0, 80)}...`);
-      console.log('   ⏳ Generating image (Gemini 3 Pro, 4K)...\n');
+      console.log('   ⏳ Generating image (Gemini 3 Pro, HD/1K)...\n');
 
       const result = await generator.generateSocialGraphic(prompt, options.platform, {
-        imageSize: '4K',
-        useGrounding: true,
+        imageSize: 'HD',
+        useGrounding: options.useGrounding !== false,
         aspectRatio: options.aspectRatio || this._getAspectRatioForFormat(options.format),
         language: options.language  // Pass language for text generation
       });
@@ -1456,8 +1485,8 @@ Examples of great headlines: "Start SIP at Just ₹500", "Your ₹500 Can Grow B
     const imgW = baseMeta.width || 1080;
     const imgH = baseMeta.height || 1920;
 
-    // Target logo width: ~26% of image width, max 300px
-    const logoW = Math.min(Math.round(imgW * 0.26), 300);
+    // Target logo width: ~10% of image width, max 120px (reduced to avoid overlap)
+    const logoW = Math.min(Math.round(imgW * 0.10), 120);
     const logoH = Math.round(logoW * (85 / 247.2)); // maintain SVG aspect ratio 247.2:85
 
     // Render SVG to PNG buffer at target size
