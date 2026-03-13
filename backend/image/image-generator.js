@@ -678,7 +678,8 @@ class ImageGenerator {
 
     // Gemini 3 Pro Image Preview specific features
     if (isGemini3Pro || isGemini3Family) {
-      const imageSize = config.imageSize || this.defaultConfig.imageSize || "4K";
+      const requestedImageSize = config.imageSize || this.defaultConfig.imageSize || "4K";
+      const imageSize = requestedImageSize === "HD" ? "2K" : requestedImageSize;
       generationConfig.imageConfig.imageSize = imageSize;
       console.log(`   Image Size: ${imageSize}`);
     }
@@ -691,8 +692,8 @@ class ImageGenerator {
       generationConfig.responseModalities = config.responseModalities;
       console.log(`   Response Mode: ${generationConfig.responseModalities.join(' + ')}`);
     } else if (config.imageOnly) {
-      generationConfig.responseModalities = ["IMAGE"];
-      console.log(`   Response Mode: IMAGE only`);
+      generationConfig.responseModalities = ["TEXT", "IMAGE"];
+      console.log(`   Response Mode: TEXT + IMAGE`);
     } else {
       generationConfig.responseModalities = this.defaultResponseModalities;
       console.log(`   Response Mode: TEXT + IMAGE`);
@@ -705,7 +706,11 @@ class ImageGenerator {
       config: generationConfig
     };
 
-    // Add Google Search tool for Gemini 3 family with grounding
+    if (config.systemInstruction) {
+      requestOptions.config.systemInstruction = config.systemInstruction;
+      console.log(`   System Instruction: enabled`);
+    }
+
     if ((isGemini3Pro || isGemini3Family) && config.useGrounding !== false) {
       requestOptions.config.tools = [{
         googleSearch: {
@@ -737,8 +742,8 @@ class ImageGenerator {
       };
     } catch (error) {
       // Fallback to Gemini 2.5 Flash if Gemini 3 Pro fails
-      if (isGemini3Pro && this.geminiModels.fallback) {
-        console.log(`   ⚠️  Gemini 3 Pro failed, falling back to ${this.geminiModels.fallback}`);
+      if ((isGemini3Pro || isGemini3Family) && this.geminiModels.fallback) {
+        console.log(`   ⚠️  ${model} failed, falling back to ${this.geminiModels.fallback}`);
         console.log(`   Error: ${error.message}`);
 
         const fallbackConfig = { ...config, model: this.geminiModels.fallback };
@@ -1559,6 +1564,7 @@ class ImageGenerator {
   async _loadImage(input, retries = 3) {
     let imageBuffer;
     let imagePath;
+    let detectedMimeType;
 
     if (typeof input === 'string') {
       // Load from URL or file path
@@ -1589,6 +1595,7 @@ class ImageGenerator {
 
               const arrayBuffer = await response.arrayBuffer();
               imageBuffer = Buffer.from(arrayBuffer);
+              detectedMimeType = response.headers.get('content-type')?.split(';')[0] || undefined;
               imagePath = null;
               console.log(`   ✅ Image fetched successfully (${(imageBuffer.length / 1024).toFixed(2)} KB)`);
               break; // Success, exit retry loop
@@ -1626,7 +1633,7 @@ class ImageGenerator {
     }
 
     // Detect MIME type from file extension or buffer
-    let mimeType = "image/png";
+    let mimeType = detectedMimeType || "image/png";
     if (imagePath) {
       const ext = path.extname(imagePath).toLowerCase();
       const mimeTypes = {

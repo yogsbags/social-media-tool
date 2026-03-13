@@ -810,6 +810,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     if (isWhatsAppImage) {
       console.log('   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...');
       const effectiveBrandSettings = this._getEffectiveBrandSettings(options);
+      const whatsappSystemInstruction = `You are generating a single premium WhatsApp ad creative for PL Capital. Follow the user prompt exactly for the campaign message and rendered text, but keep these rules stable: produce one polished static finance creative, optimize for mobile readability, preserve strong visual hierarchy, keep the design text-forward and high-contrast, avoid clutter, do not add disclaimers or extra copy beyond what the user prompt requests, and never show human faces, people, body parts, or photoreal subjects. If a reference image is attached, use it for layout, spacing, and visual hierarchy while still obeying the text and brand instructions from the user prompt.`;
       const envDirectPrompt = (process.env.STAGE2_DIRECT_PROMPT || '').trim();
       const rawPromptMode = String(process.env.STAGE2_RAW_PROMPT_MODE || '').toLowerCase() === 'true';
       let prompt = options.prompt || envDirectPrompt || null;
@@ -863,9 +864,14 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         console.log(`   🖼️  Applying reference image: ${referenceImagePath || referenceImageUrl}`);
       }
 
-      // Hard constraint: always append no-faces rule to every WhatsApp image prompt,
-      // even if the prompt came from Stage 1 planning (which may describe a person scene).
+      // Hard constraints for WhatsApp image generation:
+      // 1) keep rendered text to headline + CTA only, since smaller subtitle text tends to degrade
+      // 2) never render faces/people even if Stage 1 described them
+      const TEXT_LOCK_SUFFIX = '\n\nTEXT LOCK: Render ONLY these text elements in the final image: (1) the main headline and (2) the CTA button text. Do NOT render any subtitle, supporting line, body copy, caption, disclaimer, footer text, or any extra text anywhere else in the creative.';
       const NO_FACES_SUFFIX = '\n\nHARD CONSTRAINT: ABSOLUTELY NO human faces, people, persons, or body parts anywhere in the image. Use only abstract finance visuals: charts, ₹ symbols, geometric shapes, icons, gradients.';
+      if (!rawPromptMode && prompt && !prompt.includes('TEXT LOCK: Render ONLY these text elements')) {
+        prompt = prompt + TEXT_LOCK_SUFFIX;
+      }
       if (!rawPromptMode && prompt && !prompt.includes('ABSOLUTELY NO human faces')) {
         prompt = prompt + NO_FACES_SUFFIX;
       }
@@ -894,6 +900,9 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
 
         const editResult = await generator.editImage(prompt, refInput, {
           aspectRatio: options.aspectRatio || this._getAspectRatioForFormat('story'), // Use provided aspectRatio or default to 9:16 for WhatsApp
+          systemInstruction: whatsappSystemInstruction,
+          imageOnly: true,
+          useGrounding: rawPromptMode ? false : true,
           language: options.language  // Pass language for text generation
         });
         result = {
@@ -1395,11 +1404,27 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     lines.push(`- Typography: ${typography}.`);
     lines.push(`- Tone: ${tone}.`);
     if (usingCustom && gradientStart && gradientEnd) {
-      const dir = gradientDir ? ` ${gradientDir}` : '';
-      lines.push(`- Gradient: ${gradientStart} to ${gradientEnd}${dir}.`);
+      const gradientInstruction = this._describeGradientForImagePrompt(gradientStart, gradientEnd, gradientDir);
+      lines.push(`- Gradient: ${gradientInstruction}.`);
     }
     lines.push('- Keep high contrast and clean financial visual hierarchy.', '- No random brand style deviations.', `- Additional guidance: ${extra}`);
     return lines.join('\n');
+  }
+
+  _describeGradientForImagePrompt(startColor, endColor, direction = '') {
+    const normalized = String(direction || '').trim().toLowerCase();
+    const directionMap = {
+      'to top left': `start with ${startColor} in the bottom-right corner and transition diagonally to ${endColor} in the top-left corner`,
+      'to top right': `start with ${startColor} in the bottom-left corner and transition diagonally to ${endColor} in the top-right corner`,
+      'to bottom left': `start with ${startColor} in the top-right corner and transition diagonally to ${endColor} in the bottom-left corner`,
+      'to bottom right': `start with ${startColor} in the top-left corner and transition diagonally to ${endColor} in the bottom-right corner`,
+      'to top': `start with ${startColor} at the bottom edge and transition vertically to ${endColor} at the top edge`,
+      'to bottom': `start with ${startColor} at the top edge and transition vertically to ${endColor} at the bottom edge`,
+      'to left': `start with ${startColor} on the right edge and transition horizontally to ${endColor} on the left edge`,
+      'to right': `start with ${startColor} on the left edge and transition horizontally to ${endColor} on the right edge`
+    };
+
+    return directionMap[normalized] || `start with ${startColor} and transition smoothly to ${endColor} in a diagonal gradient`;
   }
 
   /**

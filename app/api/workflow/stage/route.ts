@@ -431,13 +431,29 @@ export async function POST(request: NextRequest) {
 
             let referenceImageBase64: string | undefined
             let referenceImageMime: string | undefined
-            const refImageFile = pickReferenceImage(topic || '', purpose || '')
-            if (refImageFile) {
-              const refImagePath = path.join(process.cwd(), '..', 'examples', refImageFile)
-              if (fs.existsSync(refImagePath)) {
-                referenceImageBase64 = fs.readFileSync(refImagePath).toString('base64')
-                referenceImageMime = 'image/png'
-                sendEvent({ log: `🖼️ Using layout reference: ${refImageFile}` })
+            const uploadedReferenceImage = files?.referenceImages?.[0]
+            if (uploadedReferenceImage?.data) {
+              const dataUrl = uploadedReferenceImage.data
+              const match = dataUrl.match(/^data:(.*?);base64,(.*)$/)
+              if (match) {
+                referenceImageMime = match[1] || 'image/png'
+                referenceImageBase64 = match[2]
+              } else {
+                referenceImageMime = uploadedReferenceImage.name?.toLowerCase().endsWith('.jpg') || uploadedReferenceImage.name?.toLowerCase().endsWith('.jpeg')
+                  ? 'image/jpeg'
+                  : 'image/png'
+                referenceImageBase64 = dataUrl
+              }
+              sendEvent({ log: `🖼️ Using uploaded newsletter reference: ${uploadedReferenceImage.name || 'reference image'}` })
+            } else {
+              const refImageFile = pickReferenceImage(topic || '', purpose || '')
+              if (refImageFile) {
+                const refImagePath = path.join(process.cwd(), '..', 'examples', refImageFile)
+                if (fs.existsSync(refImagePath)) {
+                  referenceImageBase64 = fs.readFileSync(refImagePath).toString('base64')
+                  referenceImageMime = 'image/png'
+                  sendEvent({ log: `🖼️ Using layout reference: ${refImageFile}` })
+                }
               }
             }
 
@@ -802,13 +818,11 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            // For video stage (4) or if ImgBB failed, save as temp file
-            if (!refUrl || stageId === 4) {
-              const tmpPath = persistBase64Image(ref.data, ref.name || `ref-${i}`)
-              if (tmpPath) {
-                referencePaths.push(tmpPath)
-                sendEvent({ log: `   ✅ Image ${i + 1}: Saved to ${tmpPath}` })
-              }
+            // Always persist a local copy so Gemini image editing can use raw bytes
+            const tmpPath = persistBase64Image(ref.data, ref.name || `ref-${i}`)
+            if (tmpPath) {
+              referencePaths.push(tmpPath)
+              sendEvent({ log: `   ✅ Image ${i + 1}: Saved to ${tmpPath}` })
             }
           }
 

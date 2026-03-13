@@ -10,6 +10,26 @@ const groq = new Groq({
 // Use Groq Compound model for Stage 1 direct prompt generation
 const MODEL = 'groq/compound'
 
+function describeGradientForImagePrompt(
+  startColor: string,
+  endColor: string,
+  direction?: string
+): string {
+  const normalized = String(direction || '').trim().toLowerCase()
+  const directionMap: Record<string, string> = {
+    'to top left': `start with ${startColor} in the bottom-right corner and transition diagonally to ${endColor} in the top-left corner`,
+    'to top right': `start with ${startColor} in the bottom-left corner and transition diagonally to ${endColor} in the top-right corner`,
+    'to bottom left': `start with ${startColor} in the top-right corner and transition diagonally to ${endColor} in the bottom-left corner`,
+    'to bottom right': `start with ${startColor} in the top-left corner and transition diagonally to ${endColor} in the bottom-right corner`,
+    'to top': `start with ${startColor} at the bottom edge and transition vertically to ${endColor} at the top edge`,
+    'to bottom': `start with ${startColor} at the top edge and transition vertically to ${endColor} at the bottom edge`,
+    'to left': `start with ${startColor} on the right edge and transition horizontally to ${endColor} on the left edge`,
+    'to right': `start with ${startColor} on the left edge and transition horizontally to ${endColor} on the right edge`
+  }
+
+  return directionMap[normalized] || `start with ${startColor} and transition smoothly to ${endColor} in a diagonal gradient`
+}
+
 function enforceDirectImagePromptBrandAnchors(
   rawPrompt: string,
   options: {
@@ -21,35 +41,56 @@ function enforceDirectImagePromptBrandAnchors(
 ): string {
   if (!rawPrompt || options.contentType !== 'image') return rawPrompt
 
-  const markerRegex = /(^|\n)\s*(?:#{1,6}\s*)?(?:\d+\.\s*)?\*?\*?Direct image prompt(?:\s*\([^)]*\))?\s*:?.*$/im
-  const markerMatch = rawPrompt.match(markerRegex)
-  if (!markerMatch) return rawPrompt
-
-  const markerIndex = markerMatch.index ?? -1
-  if (markerIndex < 0) return rawPrompt
-
   const aspect = options.aspectRatio || '1:1'
+  const isWhatsAppImage = options.platforms?.some((platform: string) => /whatsapp/i.test(platform))
 
   const useDefaultBrand = options.brandSettings?.useBrandGuidelines !== false
   const palette = useDefaultBrand
     ? 'Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766'
     : (options.brandSettings?.customColors || 'Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766')
+  const accents = useDefaultBrand
+    ? 'Teal #00d084, Green #66e766'
+    : (options.brandSettings?.accentColors || 'Teal #00d084, Green #66e766')
+  const bodyTextColor = useDefaultBrand
+    ? '#000000'
+    : (options.brandSettings?.bodyTextColor || '#000000')
   const typography = useDefaultBrand
     ? 'Figtree'
     : (options.brandSettings?.font || 'Figtree')
   const tone = useDefaultBrand
     ? 'professional, trustworthy, data-driven'
     : (options.brandSettings?.customTone || 'professional, trustworthy, data-driven')
+  const gradient = options.brandSettings?.gradientStartColor && options.brandSettings?.gradientEndColor
+    ? describeGradientForImagePrompt(
+        options.brandSettings.gradientStartColor,
+        options.brandSettings.gradientEndColor,
+        options.brandSettings.gradientDirection
+      )
+    : 'Navy #0e0e6a to Blue #3c3cf8 diagonal gradient'
 
-  const anchorSentence = ` Brand anchor requirements: enforce palette ${palette}; typography ${typography}; tone ${tone}; explicitly render in ${aspect} aspect ratio with mobile-safe text zones. Expecting clean, minimal, viral creative.`
+  const anchorSentence = isWhatsAppImage
+    ? ` Brand anchor requirements: use primary palette ${palette}; accent colors ${accents}; body text color ${bodyTextColor}; typography ${typography}; tone ${tone}; background gradient ${gradient}; explicitly render in ${aspect} aspect ratio with a text-first mobile WhatsApp hierarchy, strong readable headline, one short support line, and a single high-contrast CTA button. Keep the layout clean, premium, and finance-corporate rather than generic social media.`
+    : ` Brand anchor requirements: enforce palette ${palette}; typography ${typography}; tone ${tone}; explicitly render in ${aspect} aspect ratio with mobile-safe text zones. Expecting clean, minimal, viral creative.`
 
-  const markerText = markerMatch[0]
-  const startAfterMarker = markerIndex + markerText.length
-  const before = rawPrompt.slice(0, startAfterMarker)
-  const after = rawPrompt.slice(startAfterMarker).replace(/^\s+/, '')
-  const endOfParagraph = after.search(/\n\s*\n/)
-  const firstParagraph = (endOfParagraph === -1 ? after : after.slice(0, endOfParagraph))
-  const rest = endOfParagraph === -1 ? '' : after.slice(endOfParagraph)
+  const markerRegex = /(^|\n)\s*(?:#{1,6}\s*)?(?:\d+\.\s*)?\*?\*?Direct image prompt(?:\s*\([^)]*\))?\s*:?.*$/im
+  const markerMatch = rawPrompt.match(markerRegex)
+
+  let before = ''
+  let firstParagraph = rawPrompt
+  let rest = ''
+
+  if (markerMatch) {
+    const markerIndex = markerMatch.index ?? -1
+    if (markerIndex < 0) return rawPrompt
+
+    const markerText = markerMatch[0]
+    const startAfterMarker = markerIndex + markerText.length
+    before = rawPrompt.slice(0, startAfterMarker)
+    const after = rawPrompt.slice(startAfterMarker).replace(/^\s+/, '')
+    const endOfParagraph = after.search(/\n\s*\n/)
+    firstParagraph = (endOfParagraph === -1 ? after : after.slice(0, endOfParagraph))
+    rest = endOfParagraph === -1 ? '' : after.slice(endOfParagraph)
+  }
 
   const normalizedParagraph = firstParagraph.replace(/\*/g, '').trim()
   if (normalizedParagraph.length < 40) {
@@ -67,6 +108,7 @@ function enforceDirectImagePromptBrandAnchors(
     .join(' ')
     .trim()
   const updatedFirstParagraph = `${(cleanedFirstParagraph || firstParagraph).trim()}${anchorSentence}`
+  if (!markerMatch) return updatedFirstParagraph
   return `${before}\n${updatedFirstParagraph}${rest}`
 }
 
