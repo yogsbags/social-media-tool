@@ -349,15 +349,26 @@ Make the HTML production-ready - it should render beautifully in all email clien
     console.log(`Generating email newsletter with ${MODEL}${hasRefImage ? " (with visual reference)" : ""}...`);
 
     const groundingSection = groundedContext
-      ? `\n\nCURRENT VERIFIED FACTS (from live web search — use these in preference to training knowledge for specific details):\n${groundedContext}\n`
+      ? `CURRENT VERIFIED FACTS (from live web search — prefer these for specific details):\n${groundedContext}`
       : "";
 
-    const userText = `${systemPrompt}${groundingSection}\n\nUser request: Generate a professional email newsletter for: ${topic}`;
+    const userContextSections = [
+      `Campaign Details:\n- Topic: ${topic}\n- Purpose: ${purpose}\n- Target Audience: ${targetAudience}\n- Language: ${language}`,
+      creativePrompt ? `Creative Direction from Stage 1:\n${creativePrompt}` : "",
+      brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: Use these exact brand colors and tone in the final email HTML.` : "",
+      referenceExamples ? `Reference examples for tone and structure:\n${referenceExamples.slice(0, 3000)}` : "",
+      groundingSection,
+      hasRefImage
+        ? "Uploaded reference image is attached in this request. Use it as the primary visual/layout reference for hero composition, section order, feature-grid rhythm, spacing, and CTA placement. Keep email-client compatibility requirements intact, but let the uploaded reference dominate the visual direction."
+        : "No uploaded reference image is attached. Follow the required email structure and brand rules.",
+    ].filter(Boolean);
+
+    const userText = `${userContextSections.join("\n\n")}\n\nGenerate a professional email newsletter for this campaign. Return only the requested JSON object.`;
     const contentParts: any[] = hasRefImage
       ? [
           { text: userText },
           { inlineData: { mimeType: referenceImageMime, data: referenceImageBase64 } },
-          { text: "The image above is a visual layout reference. Study its section structure, color palette, spacing proportions, card grid arrangement, and typographic hierarchy. Reproduce those design decisions faithfully in the HTML you generate — adapt the content for the new topic but keep the visual language consistent." },
+          { text: "The attached image is the primary visual reference. Mirror its visual hierarchy, hero composition, section sequencing, feature-card density, and CTA emphasis as closely as possible while producing valid production-ready email HTML." },
         ]
       : [{ text: userText }];
 
@@ -365,6 +376,7 @@ Make the HTML production-ready - it should render beautifully in all email clien
       model: MODEL,
       contents: [{ role: "user", parts: contentParts }],
       config: {
+        systemInstruction: systemPrompt,
         temperature: 0.7,
         maxOutputTokens: 8000,
         responseMimeType: "application/json",
