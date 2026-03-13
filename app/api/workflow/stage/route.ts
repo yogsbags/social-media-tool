@@ -70,6 +70,68 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 900
 
+function getInternalApiBaseCandidates(request: NextRequest) {
+  const requestUrl = new URL(request.url)
+  const requestOrigin = requestUrl.origin
+  const envBase = process.env.NEXT_API_PUBLIC_URL
+    ? (process.env.NEXT_API_PUBLIC_URL.startsWith('http') ? process.env.NEXT_API_PUBLIC_URL : `https://${process.env.NEXT_API_PUBLIC_URL}`)
+    : process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')
+      ? process.env.NEXT_PUBLIC_API_URL
+      : null
+
+  const explicitPort = String(process.env.PORT || '').trim()
+  const requestPort = requestUrl.port || (requestUrl.protocol === 'https:' ? '443' : '80')
+  const localPort = explicitPort || requestPort
+  const localCandidates = localPort
+    ? [`http://127.0.0.1:${localPort}`, `http://localhost:${localPort}`]
+    : []
+
+  return Array.from(new Set([
+    ...localCandidates,
+    requestOrigin,
+    envBase
+  ].filter((value): value is string => Boolean(value))))
+}
+
+async function fetchInternalApiJson(
+  request: NextRequest,
+  pathname: string,
+  payload: Record<string, unknown>,
+  sendEvent: (data: any) => void,
+  label: string
+) {
+  const baseCandidates = getInternalApiBaseCandidates(request)
+  let response: Response | null = null
+  let lastFetchError: Error | null = null
+
+  for (const candidateBase of baseCandidates) {
+    const endpoint = `${candidateBase}${pathname}`
+    sendEvent({ log: `🌐 Calling ${label}: ${endpoint}` })
+    try {
+      response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      break
+    } catch (error) {
+      lastFetchError = error instanceof Error ? error : new Error('Unknown fetch error')
+      sendEvent({ log: `⚠️ ${label} failed at ${candidateBase}: ${lastFetchError.message}` })
+    }
+  }
+
+  if (!response) {
+    throw new Error(lastFetchError?.message || `Failed to call ${label}`)
+  }
+
+  if (!response.ok) {
+    const errText = await response.text()
+    throw new Error(errText || `Failed to call ${label}`)
+  }
+
+  return await response.json()
+}
+
 // Helper function to save stage data
 function saveStageData(stageId: number, data: any) {
   try {
@@ -246,14 +308,6 @@ export async function POST(request: NextRequest) {
           sendEvent({ log: '🎨 Generating creative prompt with Groq Compound...' })
 
           try {
-            const requestOrigin = new URL(request.url).origin
-            const envBase = process.env.NEXT_API_PUBLIC_URL
-              ? (process.env.NEXT_API_PUBLIC_URL.startsWith('http') ? process.env.NEXT_API_PUBLIC_URL : `https://${process.env.NEXT_API_PUBLIC_URL}`)
-              : process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')
-                ? process.env.NEXT_PUBLIC_API_URL
-                : null
-            const baseUrl = envBase || requestOrigin
-
             // Ingest reference images: upload to ImgBB so we have URLs to pass to prompt generator
             let referenceImageUrls: string[] = []
             if (files?.referenceImages?.length > 0) {
@@ -274,10 +328,10 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            const promptResponse = await fetch(`${baseUrl}/api/prompt/generate`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
+            const promptData = await fetchInternalApiJson(
+              request,
+              '/api/prompt/generate',
+              {
                 topic,
                 campaignType,
                 purpose,
@@ -290,14 +344,10 @@ export async function POST(request: NextRequest) {
                 brandSettings,
                 referenceImageUrls: referenceImageUrls.length > 0 ? referenceImageUrls : undefined,
                 referenceImagesProvided: files?.referenceImages?.length > 0
-              })
-            })
-
-            if (!promptResponse.ok) {
-              throw new Error('Failed to generate creative prompt')
-            }
-
-            const promptData = await promptResponse.json()
+              },
+              sendEvent,
+              'prompt generation API'
+            )
             const generatedPrompt = promptData.prompt
 
             sendEvent({ log: '✅ Creative prompt generated successfully!' })
@@ -421,18 +471,10 @@ export async function POST(request: NextRequest) {
               sendEvent({ log: '📁 Using newsletter reference from examples' })
             }
 
-            const requestOrigin = new URL(request.url).origin
-            const envBase = process.env.NEXT_API_PUBLIC_URL
-              ? (process.env.NEXT_API_PUBLIC_URL.startsWith('http') ? process.env.NEXT_API_PUBLIC_URL : `https://${process.env.NEXT_API_PUBLIC_URL}`)
-              : process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')
-                ? process.env.NEXT_PUBLIC_API_URL
-                : null
-            const baseUrl = envBase || requestOrigin
-
-            const emailResponse = await fetch(`${baseUrl}/api/email/generate`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
+            const emailData = await fetchInternalApiJson(
+              request,
+              '/api/email/generate',
+              {
                 topic,
                 purpose,
                 targetAudience,
@@ -442,14 +484,10 @@ export async function POST(request: NextRequest) {
                 referenceExamples: referenceExamples || undefined,
                 referenceImageBase64: referenceImageBase64 || undefined,
                 referenceImageMime: referenceImageMime || undefined
-              })
-            })
-
-            if (!emailResponse.ok) {
-              throw new Error('Failed to generate email newsletter')
-            }
-
-            const emailData = await emailResponse.json()
+              },
+              sendEvent,
+              'email generation API'
+            )
 
             sendEvent({ log: '✅ Email newsletter generated successfully!' })
             sendEvent({ log: `📧 Subject: ${emailData.subject}` })
