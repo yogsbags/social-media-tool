@@ -1024,7 +1024,7 @@ export async function POST(request: NextRequest) {
             // Save to workflow state file
             saveStageData(stageId, stageData)
 
-            sendEvent({ stage: stageId, status: 'completed', message: `${stageName} completed` })
+            sendEvent({ stage: stageId, status: 'completed', message: `${stageName} completed`, data: stageData })
             sendEvent({ log: `✅ Stage ${stageId} completed successfully!` })
           } else {
             sendEvent({ log: `❌ Stage ${stageId} failed with exit code ${code}` })
