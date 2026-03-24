@@ -57,19 +57,20 @@ class ImageGenerator {
     // Gemini client (lazy loaded)
     this.client = null;
 
-    // Image size options for Gemini 3 Pro Image Preview
+    // Image size options for Gemini 3 Pro Image Preview (API: 1K, 2K, 4K only — not "HD")
     this.imageSizeOptions = {
-      "4K": "4K",      // 3840x2160 equivalent quality
-      "2K": "2K",      // 2560x1440 equivalent quality
-      "HD": "HD"       // 1920x1080 equivalent quality
+      "4K": "4K",
+      "2K": "2K",
+      "1K": "1K",
+      HD: "1K" // alias → normalized to 1K for API
     };
 
     // Default configuration
     this.defaultConfig = {
       aspectRatio: "1:1",    // Default square images
       numberOfImages: 1,     // Generate 1 image by default
-      imageSize: "HD",       // Default to 1K-equivalent (HD) for faster generation
-      useGrounding: true     // Enable Google Search grounding by default
+      imageSize: "1K",       // Must be 1K/2K/4K for Gemini 3 image models (see Google GenAI docs)
+      useGrounding: true     // Applied only when model supports grounding (Pro image preview)
     };
 
     // Supported aspect ratios with official Gemini specifications
@@ -108,6 +109,27 @@ class ImageGenerator {
   getAspectRatioInfo(aspectRatio) {
     return this.aspectRatioSpecs[aspectRatio] || null;
   }
+  /**
+   * Gemini 3 image models accept imageSize "1K", "2K", "4K" only. "HD" triggers INVALID_ARGUMENT.
+   * @see https://github.com/googleapis/js-genai/blob/main/codegen_instructions.md
+   */
+  _normalizeGemini3ImageSize(size) {
+    if (!size) return "1K";
+    const s = String(size).toUpperCase();
+    if (s === "HD" || s === "1K") return "1K";
+    if (s === "2K") return "2K";
+    if (s === "4K") return "4K";
+    return "1K";
+  }
+
+  /**
+   * Google Search grounding with image gen is documented for gemini-3-pro-image-preview only.
+   * Flash image preview models reject nested tool configs or grounding + image together.
+   */
+  _supportsGeminiImageGrounding(model) {
+    return typeof model === "string" && model.includes("gemini-3-pro-image");
+  }
+
 
   /**
    * Recommend provider based on use case
@@ -267,17 +289,16 @@ class ImageGenerator {
       }
     };
 
-    // Gemini 3 Pro Image Preview specific features
+    // Gemini 3 image models: imageSize must be 1K / 2K / 4K
     if (isGemini3Pro || isGemini3Family) {
-      // Add 4K image size support
-      const imageSize = config.imageSize || this.defaultConfig.imageSize || "4K";
+      const imageSize = this._normalizeGemini3ImageSize(
+        config.imageSize || this.defaultConfig.imageSize || "1K"
+      );
       generationConfig.imageConfig.imageSize = imageSize;
       console.log(`   Image Size: ${imageSize}`);
 
-      // Add Google Search grounding for fact-accurate visuals
-      const useGrounding = config.useGrounding !== false;
-      if (useGrounding) {
-        console.log(`   Grounding: Google Search enabled`);
+      if (this._supportsGeminiImageGrounding(model) && config.useGrounding !== false) {
+        console.log(`   Grounding: Google Search enabled (Pro image preview)`);
       }
     }
 
@@ -304,16 +325,9 @@ class ImageGenerator {
       config: generationConfig
     };
 
-    // Add Google Search tool for Gemini 3 family with grounding
-    if ((isGemini3Pro || isGemini3Family) && config.useGrounding !== false) {
-      requestOptions.config.tools = [{
-        googleSearch: {
-          searchTypes: {
-            webSearch: {},
-            imageSearch: {}
-          }
-        }
-      }];
+    // Grounding: only Pro image preview; use flat { googleSearch: {} } per official SDK examples
+    if (this._supportsGeminiImageGrounding(model) && config.useGrounding !== false) {
+      requestOptions.config.tools = [{ googleSearch: {} }];
     }
 
     try {
@@ -676,10 +690,11 @@ class ImageGenerator {
       }
     };
 
-    // Gemini 3 Pro Image Preview specific features
+    // Gemini 3 image models: valid sizes 1K / 2K / 4K only
     if (isGemini3Pro || isGemini3Family) {
-      const requestedImageSize = config.imageSize || this.defaultConfig.imageSize || "4K";
-      const imageSize = requestedImageSize === "HD" ? "2K" : requestedImageSize;
+      const imageSize = this._normalizeGemini3ImageSize(
+        config.imageSize || this.defaultConfig.imageSize || "1K"
+      );
       generationConfig.imageConfig.imageSize = imageSize;
       console.log(`   Image Size: ${imageSize}`);
     }
@@ -711,16 +726,9 @@ class ImageGenerator {
       console.log(`   System Instruction: enabled`);
     }
 
-    if ((isGemini3Pro || isGemini3Family) && config.useGrounding !== false) {
-      requestOptions.config.tools = [{
-        googleSearch: {
-          searchTypes: {
-            webSearch: {},
-            imageSearch: {}
-          }
-        }
-      }];
-      console.log(`   Grounding: Google Search enabled`);
+    if (this._supportsGeminiImageGrounding(model) && config.useGrounding !== false) {
+      requestOptions.config.tools = [{ googleSearch: {} }];
+      console.log(`   Grounding: Google Search enabled (Pro image preview)`);
     }
 
     try {
