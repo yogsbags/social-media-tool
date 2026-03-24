@@ -1848,6 +1848,8 @@ ${brandGuidance}`;
 
         let heygenAvatarId;
         let heygenVoiceId;
+        /** True when using motionAvatarId from mapping (HeyGen Add Motion) — skip Avatar IV motion fields. */
+        let skipAvatarIvMotionPrompt = false;
 
         if (isSiddharthVora) {
           heygenAvatarId =
@@ -1862,7 +1864,15 @@ ${brandGuidance}`;
             process.env.HEYGEN_VOICE_ID ||
             SIDDHARTH_VOICE_ID;
         } else if (isGroupIdAvatar) {
-          heygenAvatarId = options.heygenAvatarId || this._pickHeygenAvatarLookId(options.avatarId) || options.avatarId;
+          const motionBakedId = this._getMotionAvatarIdFromMapping(options.avatarId);
+          if (options.heygenAvatarId) {
+            heygenAvatarId = options.heygenAvatarId;
+          } else if (motionBakedId) {
+            heygenAvatarId = motionBakedId;
+            skipAvatarIvMotionPrompt = true;
+          } else {
+            heygenAvatarId = this._pickHeygenAvatarLookId(options.avatarId) || options.avatarId;
+          }
           heygenVoiceId =
             options.heygenVoiceId ||
             options.avatarVoiceId ||
@@ -1893,7 +1903,9 @@ ${brandGuidance}`;
             avatar_id: heygenAvatarId,
             voice_id: heygenVoiceId,
             input_text: scriptText,
-            motion_prompt: this._getMotionPromptFromAvatarMapping(options.avatarId),
+            motion_prompt: skipAvatarIvMotionPrompt
+              ? undefined
+              : this._getMotionPromptFromAvatarMapping(options.avatarId),
             aspect_ratio: options.aspectRatio || '16:9',
             title: options.title || `Avatar Video - ${options.topic || 'Content'}`
           });
@@ -2762,6 +2774,33 @@ ${brandGuidance}`;
           const motionPrompt = typeof entry?.motionPrompt === 'string' ? entry.motionPrompt.trim() : '';
           if (motionPrompt) return motionPrompt;
         }
+      } catch (_) { /* ignore */ }
+    }
+    return null;
+  }
+
+  /**
+   * Optional motion-baked avatar id from HeyGen Add Motion API (per look/group in mapping).
+   * When set, video/generate should use this id instead of raw look/group; omit Avatar IV motion prompt.
+   * @private
+   * @param {string} groupId - HeyGen avatar group ID (32 hex chars) — key in heygen-native-voice-mapping.json
+   * @returns {string|null}
+   */
+  _getMotionAvatarIdFromMapping(groupId) {
+    if (!groupId || typeof groupId !== 'string') return null;
+    const configPaths = [
+      path.join(this.projectRoot, 'backend', 'config', 'heygen-native-voice-mapping.json'),
+      path.join(this.projectRoot, 'config', 'heygen-native-voice-mapping.json'),
+      path.join(this.projectRoot, 'backend', 'config', 'avatar-voice-mapping.json')
+    ];
+    for (const configPath of configPaths) {
+      try {
+        if (!fs.existsSync(configPath)) continue;
+        const raw = fs.readFileSync(configPath, 'utf8');
+        const mapping = JSON.parse(raw);
+        const entry = mapping[groupId] || (typeof mapping === 'object' && mapping.avatars ? mapping.avatars[groupId] : null);
+        const mid = typeof entry?.motionAvatarId === 'string' ? entry.motionAvatarId.trim() : '';
+        if (mid) return mid;
       } catch (_) { /* ignore */ }
     }
     return null;

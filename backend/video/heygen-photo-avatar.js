@@ -508,6 +508,60 @@ class HeyGenPhotoAvatar {
       throw error;
     }
   }
+
+  /**
+   * Add motion to a photo avatar or look (HeyGen Photo Avatar API).
+   * Returns a new avatar/look id with motion applied — use that id for video/generate.
+   * @see https://docs.heygen.com/reference/add-motion
+   * @param {{ id: string, prompt?: string, motionType?: string }} opts - id = avatar group id or look id
+   * @returns {{ id: string, raw?: object }}
+   */
+  async addPhotoAvatarMotion(opts = {}) {
+    const id = opts.id;
+    const prompt = typeof opts.prompt === 'string' ? opts.prompt.trim() : '';
+    const motionType = opts.motionType || opts.motion_type || 'consistent';
+
+    if (!id) {
+      throw new Error('addPhotoAvatarMotion: id is required');
+    }
+
+    console.log('\n🎞️  HeyGen Add Motion...');
+    console.log(`   Source id: ${id}`);
+    console.log(`   motion_type: ${motionType}`);
+
+    if (this.simulate) {
+      const fakeId = `sim-motion-${Date.now()}`;
+      console.log(`   ✅ (simulated) motion avatar id: ${fakeId}`);
+      return { id: fakeId, simulated: true };
+    }
+
+    const body = { id, motion_type: motionType };
+    if (prompt) body.prompt = prompt;
+
+    const response = await fetch(`${this.baseUrl}/v2/photo_avatar/add_motion`, {
+      method: 'POST',
+      headers: {
+        'X-Api-Key': this.apiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.error) {
+      const msg = data.error?.message || data.message || data.error || response.statusText;
+      throw new Error(`HeyGen add_motion failed: ${msg}`);
+    }
+
+    const newId = data.data?.id;
+    if (!newId) {
+      throw new Error('HeyGen add_motion: missing data.id in response');
+    }
+
+    console.log(`   ✅ Motion avatar id: ${newId}`);
+    return { id: newId, raw: data };
+  }
 }
 
 module.exports = HeyGenPhotoAvatar;

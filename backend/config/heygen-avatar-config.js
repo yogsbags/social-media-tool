@@ -18,6 +18,7 @@ const heygenAvatarConfig = {
     endpoints: {
       publicAvatars: '/v2/avatars/public',
       photoAvatar: '/v2/avatars/photo',
+      photoAvatarAddMotion: '/v2/photo_avatar/add_motion',
       videoAvatar: '/v2/avatars/video',
       talkingPhoto: '/v1/talking_photo.create',
       videoGenerate: '/v2/video/generate',
