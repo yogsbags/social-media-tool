@@ -13,6 +13,13 @@ export const maxDuration = 300;
 const LIVE_NEWS_MODEL = "gemini-3-flash-preview";
 const BLOG_MODEL = "gemini-3.1-pro-preview";
 const MAX_GENERATION_MS = 240000;
+/** Blog prompts + grounding need more headroom; 3k often truncates before body + SEO/FAQ tail. */
+const BLOG_OUT_TOKENS_DETAILED = 8192;
+const BLOG_OUT_TOKENS_COMPACT = 6144;
+const BLOG_OUT_TOKENS_SALVAGE = 8192;
+const LIVE_NEWS_OUT_DETAILED = 3072;
+const LIVE_NEWS_OUT_COMPACT = 2300;
+const LIVE_NEWS_OUT_SALVAGE = 2600;
 
 type GenerateArticleBody = {
   topic?: string;
@@ -612,8 +619,19 @@ function coerceArticlePayload(candidate: any): any {
   };
 }
 
-function hasAdvisoryLanguage(text: string): boolean {
+function hasAdvisoryLanguage(text: string, isBlog: boolean): boolean {
   const t = text.toLowerCase();
+  // News/social must stay strictly non-advisory. Blogs explain products (SIP, MF) and will
+  // naturally say "invest", "strategy", "tips" in an educational sense—only block hard CTAs.
+  if (isBlog) {
+    const blogStrict = [
+      /\bwe recommend\b|\bour recommendation\b|\b(?:strong\s+)?(?:buy|sell|hold)\s+(?:call|rating|stance)\b/i,
+      /\b(?:you should|investors should|one should)\s+(?:buy|sell|accumulate)\s+/i,
+      /\bbook (?:your )?profits?\b|\btrading call\b|\bhow to profit\b/i,
+      /\bbuy\s+now\b|\bsell\s+now\b|\baccumulate\b.*\btarget\s+price\b/i,
+    ];
+    return blogStrict.some((p) => p.test(t));
+  }
   const advisory = [
     /\b(buy|sell|hold|invest|accumulate|book profits?)\b/,
     /\b(should you|what should investors|our recommendation|recommend(ed|ation)?)\b/,
@@ -1190,7 +1208,8 @@ function parseRawArticleOutput(raw: string, topic: string): any {
 }
 
 function isSchemaLikeBody(text: string): boolean {
-  const t = String(text || "").trim();
+  const stripped = stripGeneratedTailBlocks(String(text || ""));
+  const t = stripped.trim();
   if (!t) return true;
 
   const head = t.slice(0, 700);
@@ -1422,9 +1441,12 @@ async function cleanupR2Refs(
 }
 
 function isIpoTopic(topic: string): boolean {
-  return /\b(ipo|drhp|rhp|red herring|sme issue|book built issue)\b/i.test(
-    topic || "",
-  );
+  const t = String(topic || "");
+  // Word-boundary IPO cues only (avoid substring noise: "SIP", "description", etc.).
+  return /\b(ipo|drhp|rhp)\b/i.test(t) ||
+    /\bred\s+herring\b/i.test(t) ||
+    /\bsme\s+issue\b/i.test(t) ||
+    /\bbook\s+built\s+issue\b/i.test(t);
 }
 
 function hasAllIpoSections(text: string): boolean {
@@ -1619,6 +1641,17 @@ export async function POST(request: NextRequest) {
       .filter(Boolean);
     const ipoStructuredMode = !isBlogCampaign && isIpoTopic(topic);
     const minimumBodyWords = isBlogCampaign ? 220 : 120;
+    const articleOutDetailed = isBlogCampaign
+      ? BLOG_OUT_TOKENS_DETAILED
+      : LIVE_NEWS_OUT_DETAILED;
+    const articleOutCompact = isBlogCampaign
+      ? BLOG_OUT_TOKENS_COMPACT
+      : LIVE_NEWS_OUT_COMPACT;
+    const articleOutSalvage = isBlogCampaign
+      ? BLOG_OUT_TOKENS_SALVAGE
+      : LIVE_NEWS_OUT_SALVAGE;
+    /** Salvage pass: same floor as primary checks for blog (was 260 vs 220, causing spurious failures). */
+    const salvageMinWords = isBlogCampaign ? minimumBodyWords : 140;
     const ipoFormatInstruction = [
       "MANDATORY FORMAT (follow exactly in articleText and mirror in articleHtml):",
       "1. Summary:",
@@ -1915,7 +1948,7 @@ export async function POST(request: NextRequest) {
           config: {
             systemInstruction: systemPrompt,
             temperature: 0.05,
-            maxOutputTokens: 3072,
+            maxOutputTokens: articleOutDetailed,
             tools: [{ googleSearch: {} }],
             seed: resolvedSeed,
           },
@@ -1955,7 +1988,7 @@ export async function POST(request: NextRequest) {
         retryTrace.push({
           attempt: 1,
           promptVariant: "refine-single-pass",
-          maxOutputTokens: 3072,
+          maxOutputTokens: articleOutDetailed,
           status: "success",
           elapsedMs: Date.now() - refinementStartedAt,
         });
@@ -1963,7 +1996,7 @@ export async function POST(request: NextRequest) {
         retryTrace.push({
           attempt: 1,
           promptVariant: "refine-single-pass",
-          maxOutputTokens: 3072,
+          maxOutputTokens: articleOutDetailed,
           status: "model-error",
           detail: err instanceof Error ? err.message : "Unknown model error",
           elapsedMs: Date.now() - refinementStartedAt,
@@ -1974,12 +2007,20 @@ export async function POST(request: NextRequest) {
     const attempts = isRefinementRun
       ? []
       : [
-          { name: "detailed", prompt: promptDetailed, maxOutputTokens: 3072 },
-          { name: "compact", prompt: promptCompact, maxOutputTokens: 2300 },
+          {
+            name: "detailed",
+            prompt: promptDetailed,
+            maxOutputTokens: articleOutDetailed,
+          },
+          {
+            name: "compact",
+            prompt: promptCompact,
+            maxOutputTokens: articleOutCompact,
+          },
           {
             name: "advisory-safe",
             prompt: promptAdvisorySafe,
-            maxOutputTokens: 2300,
+            maxOutputTokens: articleOutCompact,
           },
         ];
 
@@ -2064,7 +2105,7 @@ export async function POST(request: NextRequest) {
           });
           continue;
         }
-        if (hasAdvisoryLanguage(cBodyForChecks)) {
+        if (hasAdvisoryLanguage(cBodyForChecks, isBlogCampaign)) {
           retryTrace.push({
             attempt: index + 1,
             promptVariant: attempt.name,
@@ -2184,7 +2225,7 @@ export async function POST(request: NextRequest) {
           config: {
             systemInstruction: systemPrompt,
             temperature: 0.2,
-            maxOutputTokens: 2600,
+            maxOutputTokens: articleOutSalvage,
             tools: [{ googleSearch: {} }],
             seed: resolvedSeed,
           },
@@ -2204,14 +2245,14 @@ export async function POST(request: NextRequest) {
           sHeadline &&
           sSummary &&
           sArticleText &&
-          sWordCount >= (isBlogCampaign ? 260 : 140) &&
+          sWordCount >= salvageMinWords &&
           sHasIpoShape &&
           !sSchemaLike
         ) {
           retryTrace.push({
             attempt: retryTrace.length + 1,
             promptVariant: "salvage",
-            maxOutputTokens: 2600,
+            maxOutputTokens: articleOutSalvage,
             status: "success",
             elapsedMs: Date.now() - salvageStartedAt,
           });
@@ -2224,9 +2265,9 @@ export async function POST(request: NextRequest) {
           retryTrace.push({
             attempt: retryTrace.length + 1,
             promptVariant: "salvage",
-            maxOutputTokens: 2600,
+            maxOutputTokens: articleOutSalvage,
             status: "missing-fields",
-            detail: `Salvage output incomplete (words=${sWordCount}, ipoShape=${sHasIpoShape}, schemaLike=${sSchemaLike}).`,
+            detail: `Salvage output incomplete (words=${sWordCount}, minWords=${salvageMinWords}, ipoSectionsOk=${ipoStructuredMode ? sHasIpoShape : "n/a"}, schemaLike=${sSchemaLike}).`,
             elapsedMs: Date.now() - salvageStartedAt,
           });
         }
@@ -2234,7 +2275,7 @@ export async function POST(request: NextRequest) {
         retryTrace.push({
           attempt: retryTrace.length + 1,
           promptVariant: "salvage",
-          maxOutputTokens: 2600,
+          maxOutputTokens: articleOutSalvage,
           status: "model-error",
           detail:
             err instanceof Error ? err.message : "Unknown salvage model error",

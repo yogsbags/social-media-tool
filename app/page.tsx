@@ -2480,8 +2480,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Live Logs
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             Live Logs
           </h2>
@@ -2495,7 +2494,6 @@ export default function Home() {
             )}
           </div>
         </div>
-        */}
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600">
