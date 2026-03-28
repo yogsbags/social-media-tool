@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Torqq Content Engine',
+  title: 'Torqq Social Media Engine',
   description: 'AI-Powered Multi-Platform Campaign Automation',
 }
 
