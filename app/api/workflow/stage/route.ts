@@ -357,11 +357,9 @@ export async function POST(request: NextRequest) {
               topic,
               campaignType,
               platforms,
-              contentType,
               status: 'completed',
               type: 'campaign-planning',
               creativePrompt: generatedPrompt,
-              generatedUserPrompt: typeof promptData.userPrompt === 'string' ? promptData.userPrompt : '',
               promptModel: promptData.model,
               ...(referenceImageUrls.length > 0 && { referenceImageUrls })
             }
@@ -401,11 +399,9 @@ export async function POST(request: NextRequest) {
               topic,
               campaignType,
               platforms,
-              contentType,
               status: 'completed',
               type: 'campaign-planning',
               creativePrompt: fallbackPrompt,
-              generatedUserPrompt: '',
               promptModel: 'fallback'
             }
 
@@ -547,45 +543,9 @@ export async function POST(request: NextRequest) {
         if (stageId === 2 && ['live-news', 'blog'].includes(campaignType)) {
           const isBlogCampaign = campaignType === 'blog'
           const articleLabel = isBlogCampaign ? 'blog article' : 'live-news article'
-          /** Blog-only: on API/parse failure, save raw output and mark stage completed so the modal can show it. */
-          const buildBlogPartialStageData = (overrides: Record<string, any> = {}) => ({
-            topic,
-            campaignType,
-            platforms,
-            userPrompt: typeof userPrompt === 'string' ? userPrompt : '',
-            status: 'completed',
-            type: 'content-generation',
-            contentType: 'blog-article' as const,
-            generationFailed: true,
-            headline: '',
-            subheadline: '',
-            summary: '',
-            articleText: '',
-            articleHtml: '',
-            ...overrides
-          })
-          /** Blog failures: no verbose SSE logs — completion message is minimal (see page addLog). */
-          const emitBlogPartialSuccess = (stageData: Record<string, any>) => {
-            saveStageData(stageId, stageData)
-            sendEvent({
-              stage: stageId,
-              status: 'completed',
-              message: 'Blog — open View & Edit',
-              data: stageData
-            })
-            clearInterval(keepaliveTimer)
-            controller.close()
-          }
-          const emitLiveNewsFailure = (logLine: string) => {
-            sendEvent({ log: logLine })
-            sendEvent({ stage: stageId, status: 'error', message: `${articleLabel} generation failed` })
-            clearInterval(keepaliveTimer)
-            controller.close()
-          }
-
-          if (!isBlogCampaign) {
-            sendEvent({ log: '📰 Generating grounded live-news article with Gemini...' })
-          }
+          sendEvent({ log: isBlogCampaign
+            ? '📝 Generating grounded SEO blog article with Gemini...'
+            : '📰 Generating grounded live-news article with Gemini...' })
 
           // Send SSE keepalive comments every 20s so Railway/Cloudflare proxy does not
           // close the idle SSE connection while article generation runs (can take 1-4 min).
@@ -627,9 +587,7 @@ export async function POST(request: NextRequest) {
 
             for (const candidateBase of baseCandidates) {
               const endpoint = `${candidateBase}/api/article/generate`
-              if (!isBlogCampaign) {
-                sendEvent({ log: `🌐 Calling grounded article API: ${endpoint}` })
-              }
+              sendEvent({ log: `🌐 Calling grounded article API: ${endpoint}` })
               let timeout: NodeJS.Timeout | null = null
               try {
                 const controller = new AbortController()
@@ -645,94 +603,52 @@ export async function POST(request: NextRequest) {
                 break
               } catch (err) {
                 lastFetchError = err instanceof Error ? err : new Error('Unknown fetch error')
-                if (!isBlogCampaign) {
-                  sendEvent({ log: `⚠️ Grounded article API call failed at ${candidateBase}: ${lastFetchError.message}` })
-                }
+                sendEvent({ log: `⚠️ Grounded article API call failed at ${candidateBase}: ${lastFetchError.message}` })
               } finally {
                 if (timeout) clearTimeout(timeout)
               }
             }
 
             if (!articleResponse) {
-              const transportMsg = lastFetchError?.message || 'Failed to call grounded article API'
-              if (isBlogCampaign) {
-                const stageData = buildBlogPartialStageData({
-                  transportError: transportMsg,
-                  apiError: 'Grounded article API unreachable (network / DNS / TLS)',
-                  rawOutput: '',
-                  articleText: ''
-                })
-                emitBlogPartialSuccess(stageData)
-                return
-              }
-              emitLiveNewsFailure(`❌ Grounded article API unreachable: ${transportMsg}`)
-              return
+              throw new Error(lastFetchError?.message || 'Failed to call grounded article API')
             }
 
             if (!articleResponse.ok) {
               const errText = await articleResponse.text()
-              let errJson: Record<string, any> | null = null
               try {
-                errJson = JSON.parse(errText)
-              } catch {
-                // plain-text error body
-              }
-              if (!isBlogCampaign && Array.isArray(errJson?.retryTrace)) {
-                sendEvent({ log: '🔁 Gemini retry trace:' })
-                for (const trace of errJson!.retryTrace) {
-                  sendEvent({
-                    log: `   Attempt ${trace.attempt}/${errJson!.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
-                  })
+                const errJson = JSON.parse(errText)
+                if (Array.isArray(errJson?.retryTrace)) {
+                  sendEvent({ log: '🔁 Gemini retry trace:' })
+                  for (const trace of errJson.retryTrace) {
+                    sendEvent({
+                      log: `   Attempt ${trace.attempt}/${errJson.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
+                    })
+                  }
                 }
+              } catch {
+                // ignore non-JSON error payload
               }
-              if (isBlogCampaign) {
-                const raw =
-                  typeof errJson?.raw === 'string'
-                    ? errJson.raw
-                    : errText || `HTTP ${articleResponse.status}`
-                const stageData = buildBlogPartialStageData({
-                  articleText: raw,
-                  rawOutput: raw,
-                  apiError: errJson?.error || `HTTP ${articleResponse.status}`,
-                  retryTrace: errJson?.retryTrace ?? null,
-                  generationMeta: errJson?.generationMeta ?? null
-                })
-                emitBlogPartialSuccess(stageData)
-                return
-              }
-              emitLiveNewsFailure(
-                `❌ Live-news generation failed: ${errJson?.error || errText?.slice(0, 500) || articleResponse.status}`
-              )
-              return
+              throw new Error(errText || `Failed to generate grounded ${articleLabel}`)
             }
 
             const article = await articleResponse.json()
 
-            if (isBlogCampaign) {
-              sendEvent({ log: '✅ Blog article generated.' })
-            } else {
-              sendEvent({ log: '✅ Live-news article generated successfully!' })
-              if (Array.isArray(article.retryTrace) && article.retryTrace.length > 0) {
-                const hadActualRetry = article.retryTrace.length > 1 || article.retryTrace.some((trace: any) => trace?.status !== 'success')
-                if (hadActualRetry) {
-                  sendEvent({ log: '🔁 Gemini retry trace:' })
-                } else {
-                  sendEvent({ log: '🧾 Gemini generation trace:' })
-                }
-                for (const trace of article.retryTrace) {
-                  sendEvent({
-                    log: `   Attempt ${trace.attempt}/${article.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
-                  })
-                }
+            sendEvent({ log: `✅ ${isBlogCampaign ? 'Blog article' : 'Live-news article'} generated successfully!` })
+            if (Array.isArray(article.retryTrace) && article.retryTrace.length > 0) {
+              sendEvent({ log: '🔁 Gemini retry trace:' })
+              for (const trace of article.retryTrace) {
+                sendEvent({
+                  log: `   Attempt ${trace.attempt}/${article.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
+                })
               }
-              if (article.generationMeta?.totalElapsedMs) {
-                sendEvent({ log: `⏱️ Article generation time: ${article.generationMeta.totalElapsedMs}ms` })
-              }
-              sendEvent({ log: `🗞️ Headline: ${article.headline}` })
-              sendEvent({ log: `🔎 Grounded sources: ${article.factCheck?.sourceCount || article.sources?.length || 0}` })
-              if (article.referenceDocuments?.attached) {
-                sendEvent({ log: `📄 Reference PDFs used: ${article.referenceDocuments.count}` })
-              }
+            }
+            if (article.generationMeta?.totalElapsedMs) {
+              sendEvent({ log: `⏱️ Article generation time: ${article.generationMeta.totalElapsedMs}ms` })
+            }
+            sendEvent({ log: `🗞️ Headline: ${article.headline}` })
+            sendEvent({ log: `🔎 Grounded sources: ${article.factCheck?.sourceCount || article.sources?.length || 0}` })
+            if (article.referenceDocuments?.attached) {
+              sendEvent({ log: `📄 Reference PDFs used: ${article.referenceDocuments.count}` })
             }
 
             const stageData = {
@@ -763,40 +679,14 @@ export async function POST(request: NextRequest) {
 
             saveStageData(stageId, stageData)
             sendEvent({ stage: stageId, status: 'completed', message: `${isBlogCampaign ? 'Blog article' : 'Live-news article'} generated`, data: stageData })
-            if (!isBlogCampaign) {
-              sendEvent({ log: '✅ Stage 2 completed successfully!' })
-            }
+            sendEvent({ log: '✅ Stage 2 completed successfully!' })
             clearInterval(keepaliveTimer)
             controller.close()
             return
           } catch (error) {
-            const msg = error instanceof Error ? error.message : String(error)
-            if (isBlogCampaign) {
-              let errJson: Record<string, any> | null = null
-              try {
-                errJson = JSON.parse(msg)
-              } catch {
-                /* not JSON */
-              }
-              const rawFromJson = typeof errJson?.raw === 'string' ? errJson.raw : ''
-              const raw =
-                rawFromJson ||
-                (msg.length > 50000 ? `${msg.slice(0, 50000)}… [truncated]` : msg)
-              const stageData = buildBlogPartialStageData({
-                articleText: rawFromJson || raw,
-                rawOutput: raw,
-                apiError: errJson?.error || msg.slice(0, 2000),
-                retryTrace: errJson?.retryTrace ?? null,
-                generationMeta: errJson?.generationMeta ?? null
-              })
-              emitBlogPartialSuccess(stageData)
-              return
-            }
+            sendEvent({ log: `❌ ${isBlogCampaign ? 'Blog article' : 'Live-news article'} generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
+            sendEvent({ stage: stageId, status: 'error', message: `${isBlogCampaign ? 'Blog article' : 'Live-news article'} generation failed` })
             clearInterval(keepaliveTimer)
-            sendEvent({
-              log: `❌ Live-news article generation failed: ${msg}`
-            })
-            sendEvent({ stage: stageId, status: 'error', message: `${articleLabel} generation failed` })
             controller.close()
             return
           }

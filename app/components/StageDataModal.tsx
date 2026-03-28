@@ -313,7 +313,6 @@ export default function StageDataModal({
 
   const renderCreativePrompt = () => {
     const promptValue = formData['creativePrompt'] || ''
-    const isBlogStage1 = stageId === 1 && String(formData['campaignType'] || '') === 'blog'
 
     return (
       <div className="mb-6 p-4 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-300 rounded-xl">
@@ -322,10 +321,10 @@ export default function StageDataModal({
             <span className="text-2xl">🎨</span>
             <div>
               <label className="block text-base font-bold text-purple-900">
-                {isBlogStage1 ? 'Campaign Planning Brief' : 'Stage 1 Prompt'}
+                Creative Prompt
               </label>
               <p className="text-xs text-purple-700 mt-0.5">
-                {isBlogStage1 ? 'This planning brief will guide Stage 2 article generation. Edit it to refine search intent, coverage, and structure.' : 'This Stage 1 output will be used in the next stages. Edit it to refine the direction.'}
+                This prompt will be used to generate content in the next stages. Edit to refine the creative direction.
               </p>
             </div>
           </div>
@@ -342,7 +341,7 @@ export default function StageDataModal({
             value={promptValue}
             onChange={(e) => handleFieldChange('creativePrompt', e.target.value)}
             rows={12}
-            placeholder={isBlogStage1 ? 'Campaign planning brief will be generated here...' : 'Stage 1 prompt will be generated here...'}
+            placeholder="Creative prompt will be generated here..."
             className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none text-sm font-mono bg-white shadow-inner resize-vertical"
           />
         ) : (
@@ -358,36 +357,8 @@ export default function StageDataModal({
         )}
         <div className="mt-2 flex items-center gap-2 text-xs text-purple-600">
           <span>💡</span>
-          <span>{isBlogStage1 ? 'Tip: Be specific about search intent, article angle, target entities, keyword themes, and section structure' : 'Tip: Be specific about visual style, tone, messaging, and platform requirements'}</span>
+          <span>Tip: Be specific about visual style, tone, messaging, and platform requirements</span>
         </div>
-      </div>
-    )
-  }
-
-
-  const renderStage1GeneratedUserPrompt = () => {
-    const promptValue = String(formData['generatedUserPrompt'] || '').trim()
-    if (!promptValue) return null
-
-    return (
-      <div className="mb-6 p-4 bg-indigo-50 border-2 border-indigo-300 rounded-xl">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-2xl">🧠</span>
-          <div>
-            <label className="block text-base font-bold text-indigo-900">
-              Generated User Prompt
-            </label>
-            <p className="text-xs text-indigo-700 mt-0.5">
-              Internal Stage 1 generator prompt used to create the campaign planning brief.
-            </p>
-          </div>
-        </div>
-        <textarea
-          value={promptValue}
-          onChange={(e) => handleFieldChange('generatedUserPrompt', e.target.value)}
-          rows={6}
-          className="w-full px-4 py-3 border-2 border-indigo-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm bg-white resize-vertical"
-        />
       </div>
     )
   }
@@ -586,184 +557,6 @@ export default function StageDataModal({
     const rawOutput = formData['rawOutput'] || ''
     const articleHtml = formData['articleHtml'] || ''
     const articleText = formData['articleText'] || ''
-    const isBlogArticle = formData['contentType'] === 'blog-article'
-    const generationFailed = formData['generationFailed'] === true
-
-    if (isBlogArticle && generationFailed) {
-      const rawGemini = String(rawOutput || articleText || '')
-      return (
-        <div className="p-4 border-2 border-gray-200 rounded-xl bg-neutral-50">
-          <label className="block text-sm font-semibold text-gray-900 mb-3">Raw Gemini output</label>
-          <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed font-mono max-h-[70vh] overflow-auto p-4 bg-white border border-gray-200 rounded-lg text-gray-900">
-            {rawGemini || '(empty)'}
-          </pre>
-        </div>
-      )
-    }
-
-    const escapeHtml = (value: string) =>
-      String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-
-    const articleTextToPreviewHtml = (text: string) => {
-      const renderInlineMarkdown = (value: string) =>
-        escapeHtml(value)
-          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-          .replace(/__(.+?)__/g, '<strong>$1</strong>')
-          .replace(/(^|[\s(])\*(?!\s)(.+?)(?<!\s)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>')
-          .replace(/(^|[\s(])_(?!\s)(.+?)(?<!\s)_(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>')
-
-      const normalizeMarkdownLine = (line: string) =>
-        line
-          .replace(/^#{1,6}\s*/, '')
-          .replace(/^\s*\*\*(.*?)\*\*\s*$/g, '$1')
-          .replace(/^\s*__(.*?)__\s*$/g, '$1')
-          .trim()
-
-      const lines = String(text || '')
-        .split('\n')
-        .map((line) => normalizeMarkdownLine(line))
-        .filter(Boolean)
-
-      if (lines.length === 0) return ''
-
-      const headingMatchers: Array<{ pattern: RegExp; label: string }> = [
-        { pattern: /^(?:\d+\.\s*)?summary\b\s*:?\s*/i, label: 'Summary' },
-        { pattern: /^(?:\d+\.\s*)?introduction\b\s*:?\s*/i, label: 'Introduction' },
-        { pattern: /^(?:\d+\.\s*)?key insights\b\s*:?\s*/i, label: 'Key Insights' },
-        { pattern: /^(?:\d+\.\s*)?why it matters\b\s*:?\s*/i, label: 'Why It Matters' },
-        { pattern: /^(?:\d+\.\s*)?market overview\b\s*:?\s*/i, label: 'Market Overview' },
-        { pattern: /^(?:\d+\.\s*)?key movers\b\s*:?\s*/i, label: 'Key Movers' },
-        { pattern: /^(?:\d+\.\s*)?drivers and context\b\s*:?\s*/i, label: 'Drivers and Context' },
-        { pattern: /^(?:\d+\.\s*)?broader market and outlook\b\s*:?\s*/i, label: 'Broader Market and Outlook' },
-        { pattern: /^(?:\d+\.\s*)?issue details(?:\s+and\s+key\s+dates)?\b\s*:?\s*/i, label: 'Issue Details and Key Dates' },
-        { pattern: /^(?:\d+\.\s*)?use of proceeds(?:\s*\/\s*key objectives?|(?:\s+and\s+key objectives?))?\b\s*:?\s*/i, label: 'Use of Proceeds / Key Objectives' },
-        { pattern: /^(?:\d+\.\s*)?about the company\b\s*:?\s*/i, label: 'About the Company' },
-        { pattern: /^(?:\d+\.\s*)?financial performance\b\s*:?\s*/i, label: 'Financial Performance' },
-        { pattern: /^(?:\d+\.\s*)?what the numbers show\b\s*:?\s*/i, label: 'What the Numbers Show' },
-        { pattern: /^(?:\d+\.\s*)?strengths?\b\s*:?\s*/i, label: 'Strengths' },
-        { pattern: /^(?:\d+\.\s*)?risks?\b\s*:?\s*/i, label: 'Risks' },
-        { pattern: /^(?:\d+\.\s*)?peer positioning\b\s*:?\s*/i, label: 'Peer Positioning' },
-        { pattern: /^(?:\d+\.\s*)?bottom line\b\s*:?\s*/i, label: 'Bottom Line' },
-      ]
-
-      const splitTableCells = (line: string): string[] => {
-        const cleaned = line.trim().replace(/^\|/, '').replace(/\|$/, '')
-        return cleaned.split('|').map((c) => c.trim())
-      }
-
-      const isAlignmentRow = (line: string): boolean => {
-        const normalized = line
-          .trim()
-          .replace(/^\|/, '')
-          .replace(/\|$/, '')
-          .replace(/\s+/g, '')
-        return /^:?-{2,}:?(?:\|:?-{2,}:?)*$/.test(normalized)
-      }
-
-      const blocks: string[] = []
-      let inList = false
-      const closeList = () => {
-        if (!inList) return
-        blocks.push('</ul>')
-        inList = false
-      }
-
-      let i = 0
-      while (i < lines.length) {
-        const line = lines[i]
-        let matched = false
-
-        for (const matcher of headingMatchers) {
-          if (!matcher.pattern.test(line)) continue
-          closeList()
-          const trailing = line.replace(matcher.pattern, '').trim()
-          blocks.push(`<h2>${escapeHtml(matcher.label)}</h2>`)
-          if (trailing) blocks.push(`<p>${renderInlineMarkdown(trailing)}</p>`)
-          matched = true
-          break
-        }
-
-        if (matched) {
-          i += 1
-          continue
-        }
-
-        const next = lines[i + 1] || ''
-        if (line.includes('|') && next && isAlignmentRow(next)) {
-          closeList()
-          const header = splitTableCells(line)
-          const rows: string[][] = []
-          i += 2
-          while (i < lines.length && lines[i].includes('|')) {
-            rows.push(splitTableCells(lines[i]))
-            i += 1
-          }
-          const thead = `<thead><tr>${header.map((h) => `<th>${renderInlineMarkdown(h)}</th>`).join('')}</tr></thead>`
-          const tbody = `<tbody>${rows.map((row) => `<tr>${row.map((c) => `<td>${renderInlineMarkdown(c)}</td>`).join('')}</tr>`).join('')}</tbody>`
-          blocks.push(`<table>${thead}${tbody}</table>`)
-          continue
-        }
-
-        const bullet = line.match(/^[-*]\s+(.*)$/)
-        if (bullet) {
-          if (!inList) {
-            blocks.push('<ul>')
-            inList = true
-          }
-          blocks.push(`<li>${renderInlineMarkdown(bullet[1].trim())}</li>`)
-          i += 1
-          continue
-        }
-
-        closeList()
-        blocks.push(`<p>${renderInlineMarkdown(line)}</p>`)
-        i += 1
-      }
-
-      closeList()
-      return blocks.join('')
-    }
-
-    const renderMarkdownArticle = (markdown: string) => (
-      <article className="max-w-none text-gray-800">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            h1: ({node, ...props}) => <h1 className="text-3xl font-bold leading-tight mb-3 text-gray-900" {...props} />,
-            h2: ({node, ...props}) => <h2 className="text-2xl font-bold leading-snug mt-6 mb-2 text-blue-900" {...props} />,
-            h3: ({node, ...props}) => <h3 className="text-xl font-semibold leading-snug mt-5 mb-2 text-blue-900" {...props} />,
-            p: ({node, ...props}) => <p className="text-[16px] leading-7 mb-4 text-gray-800" {...props} />,
-            ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4 text-gray-800" {...props} />,
-            ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4 text-gray-800" {...props} />,
-            li: ({node, ...props}) => <li className="mb-1" {...props} />,
-            strong: ({node, ...props}) => <strong className="font-bold text-gray-900" {...props} />,
-            table: ({node, ...props}) => <table className="w-full border-collapse my-4" {...props} />,
-            th: ({node, ...props}) => <th className="border border-gray-300 bg-gray-100 px-3 py-2 text-left text-sm font-semibold" {...props} />,
-            td: ({node, ...props}) => <td className="border border-gray-300 px-3 py-2 text-sm" {...props} />,
-          }}
-        >
-          {markdown}
-        </ReactMarkdown>
-      </article>
-    )
-
-    const buildBlogMarkdownSource = () => {
-      const raw = String(articleText || '').trim()
-      if (!raw) return ''
-      if (/^\s*#\s+.+/m.test(raw)) return raw
-
-      const parts: string[] = []
-      if (headline) parts.push(`# ${String(headline).trim()}`)
-      if (summary) parts.push(`*${String(summary).trim()}*`)
-      if (subheadline) parts.push(`_${String(subheadline).trim()}_`)
-      parts.push(raw)
-      return parts.filter(Boolean).join('\n\n')
-    }
 
     const normalizePreviewHtml = (html: string) => {
       if (!html) return ''
@@ -777,40 +570,10 @@ export default function StageDataModal({
         .join('')
     }
 
-    const dedupePreviewLeadEchoes = (html: string) => {
-      if (!html) return ''
-      const normalize = (value: string) =>
-        String(value || '')
-          .toLowerCase()
-          .replace(/<[^>]+>/g, ' ')
-          .replace(/[^a-z0-9\s]/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim()
-
-      const headlineNorm = normalize(String(headline || ''))
-      const summaryNorm = normalize(String(summary || ''))
-      let cleaned = String(html || '')
-
-      const firstParagraphMatch = cleaned.match(/^\s*<p>([\s\S]*?)<\/p>/i)
-      if (firstParagraphMatch) {
-        const firstNorm = normalize(firstParagraphMatch[1] || '')
-        const duplicateHeadline = headlineNorm && (firstNorm === headlineNorm || firstNorm.includes(headlineNorm) || headlineNorm.includes(firstNorm))
-        const duplicateSummary = summaryNorm && (firstNorm === summaryNorm || firstNorm.includes(summaryNorm) || summaryNorm.includes(firstNorm))
-        if (duplicateHeadline || duplicateSummary) {
-          cleaned = cleaned.replace(/^\s*<p>[\s\S]*?<\/p>\s*/i, '')
-        }
-      }
-
-      return cleaned.trim()
-    }
-
-    const previewHtmlSource = isBlogArticle
-      ? articleTextToPreviewHtml(articleText || '')
-      : normalizePreviewHtml(articleHtml || articleTextToPreviewHtml(articleText || ''))
-
-    const articleBodyPreviewHtml = dedupePreviewLeadEchoes(previewHtmlSource)
+    const articleBodyPreviewHtml = normalizePreviewHtml(articleHtml)
       .replace(/<h1\b[^>]*>[\s\S]*?<\/h1>/i, '')
       .trim()
+
     const stripSourcesFromHtml = (html: string) => {
       if (!html) return ''
       return html
@@ -822,11 +585,7 @@ export default function StageDataModal({
     }
 
     const buildDownloadHtml = () => {
-      const cleanBody = stripSourcesFromHtml(
-        isBlogArticle
-          ? articleTextToPreviewHtml(articleText || '')
-          : (articleHtml || articleTextToPreviewHtml(articleText || ''))
-      )
+      const cleanBody = stripSourcesFromHtml(articleHtml)
       return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -873,36 +632,16 @@ export default function StageDataModal({
 
     return (
       <div className="space-y-6">
-        <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-xl">📝</span>
-            <div>
-              <label className="block text-sm font-bold text-gray-900">
-                Raw Article Text
-              </label>
-              <p className="text-xs text-gray-600 mt-0.5">
-                This raw article body is shown first so you can inspect or edit the exact generated output before reviewing the rendered preview.
-              </p>
-            </div>
-          </div>
-          <textarea
-            value={articleText}
-            onChange={(e) => handleFieldChange('articleText', e.target.value)}
-            rows={14}
-            className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white resize-vertical"
-          />
-        </div>
-
         <div className="p-4 bg-gradient-to-br from-blue-50 to-sky-50 border-2 border-blue-300 rounded-xl">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <span className="text-2xl">📰</span>
               <div>
                 <label className="block text-base font-bold text-blue-900">
-                  {formData['contentType'] === 'blog-article' ? 'Blog Article Preview' : 'Live News Article Preview'}
+                  {formData['contentType'] === 'blog-article' ? 'Blog Article' : 'Live News Article'}
                 </label>
                 <p className="text-xs text-blue-700 mt-0.5">
-                  Rendered rich-text preview for reader-friendly review and HTML export
+                  Preview and export clean reader-friendly HTML (sources hidden in download)
                 </p>
               </div>
             </div>
@@ -919,30 +658,39 @@ export default function StageDataModal({
               Article Preview
             </div>
             <div className="p-5 max-w-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h1]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:leading-snug [&_h2]:mt-6 [&_h2]:mb-2 [&_p]:text-[16px] [&_p]:leading-7 [&_p]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-1 [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_table]:w-full [&_table]:border-collapse [&_table]:my-4 [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-100 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:text-sm [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-3 [&_td]:py-2 [&_td]:text-sm">
-              {isBlogArticle ? (
-                renderMarkdownArticle(buildBlogMarkdownSource())
-              ) : (
-                <>
-                  {headline && <h1 className="!mb-2 !font-bold">{headline}</h1>}
-                  {subheadline && <p className="!mt-0 !text-gray-700"><em>{subheadline}</em></p>}
-                  {summary && (
-                    <div className="bg-gray-50 border-l-4 border-blue-600 px-3 py-2 my-3">
-                      <p className="!my-0 text-gray-700">{summary}</p>
-                    </div>
-                  )}
-                  <div dangerouslySetInnerHTML={{ __html: articleBodyPreviewHtml }} />
-                </>
+              {headline && <h1 className="!mb-2 !font-bold">{headline}</h1>}
+              {subheadline && <p className="!mt-0 !text-gray-700"><em>{subheadline}</em></p>}
+              {summary && (
+                <div className="bg-gray-50 border-l-4 border-blue-600 px-3 py-2 my-3">
+                  <p className="!my-0 text-gray-700">{summary}</p>
+                </div>
               )}
+              <div dangerouslySetInnerHTML={{ __html: articleBodyPreviewHtml }} />
             </div>
           </div>
         </div>
 
-        {rawOutput && String(rawOutput) !== String(articleText) && (
+        <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl">📝</span>
+            <label className="block text-sm font-bold text-gray-900">
+              Raw Article Text
+            </label>
+          </div>
+          <textarea
+            value={articleText}
+            onChange={(e) => handleFieldChange('articleText', e.target.value)}
+            rows={10}
+            className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white resize-vertical"
+          />
+        </div>
+
+        {rawOutput && (
           <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-xl">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xl">🤖</span>
               <label className="block text-sm font-bold text-amber-900">
-                Raw Gemini Output (alternate field)
+                Raw Gemini Output
               </label>
             </div>
             <textarea
@@ -958,11 +706,6 @@ export default function StageDataModal({
   }
 
   if (!isOpen) return null
-
-  const hideBlogRawOnlyDetails =
-    stageId === 2 &&
-    String(formData['contentType']) === 'blog-article' &&
-    formData['generationFailed'] === true
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -997,11 +740,12 @@ export default function StageDataModal({
             </div>
           )}
 
-          {/* For Stage 1: Display campaign planning prompt(s) only */}
+          {/* For Stage 1: Display creative prompt prominently */}
           {stageId === 1 && formData['creativePrompt'] && (
             <>
-              {String(formData['campaignType'] || '') === 'blog' && renderStage1GeneratedUserPrompt()}
               {renderCreativePrompt()}
+              <div className="my-6 border-t-2 border-gray-200"></div>
+              <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Additional Details</h3>
             </>
           )}
 
@@ -1015,48 +759,24 @@ export default function StageDataModal({
           )}
 
           {/* For Stage 2: Display grounded article with preview/download */}
-          {stageId === 2 &&
-            ((String(formData['contentType']) === 'blog-article' &&
-              (formData['articleHtml'] ||
-                formData['generationFailed'] === true ||
-                formData['rawOutput'] ||
-                formData['articleText'])) ||
-              (String(formData['contentType']) === 'live-news-article' && formData['articleHtml'])) && (
+          {stageId === 2 && ['live-news-article', 'blog-article'].includes(String(formData['contentType'] || '')) && formData['articleHtml'] && (
             <>
               {renderArticlePreview()}
-              {!hideBlogRawOnlyDetails && (
-                <>
-                  <div className="my-6 border-t-2 border-gray-200"></div>
-                  <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Additional Details</h3>
-                </>
-              )}
+              <div className="my-6 border-t-2 border-gray-200"></div>
+              <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Additional Details</h3>
             </>
           )}
 
           <div className="space-y-4">
             {Object.entries(formData)
               .filter(([key]) => {
-                if (hideBlogRawOnlyDetails) return false
                 // Don't render these fields twice in special sections
-                if (stageId === 1) return false
+                if (key === 'creativePrompt' && stageId === 1) return false
                 if (stageId === 2 && formData['contentType'] === 'email-newsletter') {
                   return !['html', 'subject', 'preheader', 'plainText', 'subjectVariations', 'contentType'].includes(key)
                 }
                 if (stageId === 2 && ['live-news-article', 'blog-article'].includes(String(formData['contentType'] || ''))) {
-                  return ![
-                    'headline',
-                    'subheadline',
-                    'summary',
-                    'rawOutput',
-                    'articleText',
-                    'articleHtml',
-                    'contentType',
-                    'generationFailed',
-                    'apiError',
-                    'transportError',
-                    'retryTrace',
-                    'generationMeta'
-                  ].includes(key)
+                  return !['headline', 'subheadline', 'summary', 'rawOutput', 'articleText', 'articleHtml', 'contentType'].includes(key)
                 }
                 return true
               })

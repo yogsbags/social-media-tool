@@ -1124,7 +1124,7 @@ function DashboardPage() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-gray-800 mb-2">
-                  Torqq Social Media Engine
+                  Torqq Content Engine
                 </h1>
                 <p className="text-gray-600 text-lg">
                   AI-Powered Multi-Platform Campaign Automation
@@ -2576,7 +2576,7 @@ function DashboardPage() {
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600">
           <p className="text-sm">
-            Torqq Social Media Engine • Port 3004 •
+            Torqq Content Engine • Port 3004 •
             <span className="ml-2">AI-Powered Video Production & Multi-Platform Publishing</span>
           </p>
         </div>
