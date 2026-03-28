@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import FileUpload from './components/FileUpload'
@@ -328,7 +329,7 @@ export default function Home() {
             brandSettings: {
               useBrandGuidelines,
               logoPlacement: useBrandGuidelines ? 'top-right' : null,
-              logoUrl: useBrandGuidelines ? '/pl-capital-logo.svg' : null,
+              logoUrl: useBrandGuidelines ? '/torqq-logo.svg' : null,
               customColors: useBrandGuidelines ? null : customColors,
               accentColors: useBrandGuidelines ? null : accentColors,
               bodyTextColor: useBrandGuidelines ? null : bodyTextColor,
@@ -432,7 +433,7 @@ export default function Home() {
           brandSettings: {
             useBrandGuidelines,
             logoPlacement: useBrandGuidelines ? 'top-right' : null,
-            logoUrl: useBrandGuidelines ? '/pl-capital-logo.svg' : null,
+            logoUrl: useBrandGuidelines ? '/torqq-logo.svg' : null,
             customColors: useBrandGuidelines ? null : customColors,
             accentColors: useBrandGuidelines ? null : accentColors,
             bodyTextColor: useBrandGuidelines ? null : bodyTextColor,
@@ -584,7 +585,7 @@ export default function Home() {
           brandSettings: {
             useBrandGuidelines,
             logoPlacement: useBrandGuidelines ? 'top-right' : null,
-            logoUrl: useBrandGuidelines ? '/pl-capital-logo.svg' : null,
+            logoUrl: useBrandGuidelines ? '/torqq-logo.svg' : null,
             customColors: useBrandGuidelines ? null : customColors,
             accentColors: useBrandGuidelines ? null : accentColors,
             bodyTextColor: useBrandGuidelines ? null : bodyTextColor,
@@ -1042,12 +1043,28 @@ export default function Home() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Social Media Engine
-          </h1>
-          <p className="text-gray-600 text-lg">
-            AI-Powered Multi-Platform Campaign Automation
-          </p>
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-20 w-28 items-center justify-center rounded-2xl bg-slate-50 ring-1 ring-slate-200">
+                <Image
+                  src="/torqq-logo.svg"
+                  alt="Torqq logo"
+                  width={112}
+                  height={74}
+                  className="h-auto w-24"
+                  priority
+                />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-gray-800 mb-2">
+                  Torqq Social Media Engine
+                </h1>
+                <p className="text-gray-600 text-lg">
+                  AI-Powered Multi-Platform Campaign Automation
+                </p>
+              </div>
+            </div>
+          </div>
           <div className="mt-4 flex items-center gap-4">
             <div className="px-4 py-2 bg-blue-50 rounded-lg">
               <span className="text-sm text-gray-600">Video Production:</span>
@@ -2478,7 +2495,7 @@ export default function Home() {
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600">
           <p className="text-sm">
-            Social Media Engine • Port 3004 •
+            Torqq Social Media Engine • Port 3004 •
             <span className="ml-2">AI-Powered Video Production & Multi-Platform Publishing</span>
           </p>
         </div>
