@@ -202,7 +202,7 @@ Also provide one **Direct image prompt** paragraph (narrative, 2–4 sentences) 
       } else {
         contentGuidance = `Generate a detailed image generation prompt with visual descriptions, composition, colors, mood, and style.
 ${geminiImageBestPractices}
-You MUST also provide one **Direct image prompt** paragraph: a single narrative scene description (2–5 sentences) that can be used directly with Gemini image models. It should describe the scene (shot type, subject, action, environment, lighting, camera/lens, aspect ratio), reflect brand colors and tone from the guidelines, and state context/intent (platform and audience). For WhatsApp creatives, this paragraph MUST be text-heavy and image-light: headline as the dominant visual element, one short support line, and one clear CTA button; keep background visuals subtle, minimal, and non-distracting (no complex scenic compositions). Do NOT describe a phone/smartphone held in hand or any device mockup unless explicitly requested; describe the final creative canvas itself. The CTA must be action-specific and brand-linked (must include "PL Capital"), and you must avoid generic CTA text like "Learn More". Do not use bullet lists in this paragraph—use flowing prose.`
+You MUST also provide one **Direct image prompt** paragraph: a single narrative scene description (2–5 sentences) that can be used directly with Gemini image models. It should describe the scene (shot type, subject, action, environment, lighting, camera/lens, aspect ratio), reflect brand colors and tone from the guidelines, and state context/intent (platform and audience). For WhatsApp creatives, this paragraph MUST be text-heavy and image-light: headline as the dominant visual element, one short support line, and one clear CTA button; keep background visuals subtle, minimal, and non-distracting (no complex scenic compositions). Do NOT describe a phone/smartphone held in hand or any device mockup unless explicitly requested; describe the final creative canvas itself. The CTA must be action-specific and brand-linked (must align with the active brand name or CTA language), and you must avoid generic CTA text like "Learn More". Do not use bullet lists in this paragraph—use flowing prose.`
       }
     } else if (contentType === 'faceless-video') {
       // Veo 3.1-optimized: output a single prompt (or timestamped segments) for direct use by Veo 3.1
@@ -214,16 +214,16 @@ You MUST also provide one **Direct image prompt** paragraph: a single narrative 
     // Build brand guidelines section
     let brandGuidance = ''
     if (brandSettings?.useBrandGuidelines !== false) {
-      // Use PL Capital default brand guidelines
+      // Use the default brand guidelines
       brandGuidance = `
-**PL Capital Brand Guidelines:**
+**Default Brand Guidelines:**
 - **Primary Colors**: Navy (#0e0e6a), Blue (#3c3cf8)
 - **Accent Colors**: Teal (#00d084), Green (#66e766)
 - **Typography**: Figtree font family
 - **Tone & Voice**: Professional, trustworthy, data-driven yet approachable
 - **Visual Style**: Clean, modern, corporate with subtle tech motifs
 - **Key Values**: Trust, Innovation, Performance, Client-First
-- **Messaging**: Focus on adaptive strategies, quantitative excellence, consistent alpha
+- **Messaging**: Focus on clarity, credibility, differentiation, and practical value
 `
     } else if (brandSettings?.customColors || brandSettings?.customTone || brandSettings?.customInstructions) {
       // Use custom brand guidelines
@@ -235,17 +235,17 @@ ${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettin
 `
     }
 
-    // Editorial guidance derived from PL India news page patterns (headline, dateline, factual style)
+    // Editorial guidance derived from editorial business-news patterns (headline, dateline, factual style)
     const liveNewsEditorialGuidance = isLiveNewsCampaign
       ? `
-**PL India News-Style Editorial Rules (derived from recent news posts):**
+**Business-news style editorial rules (derived from recent newsroom patterns):**
 - **Headline format:** Use a specific, market-focused headline in title case. Optional colon is allowed to separate trigger and impact.
 - **Dateline style:** Open with a city + date lead-in (e.g., "Mumbai, 5 May –") before the first paragraph in long-form article copy.
 - **Lead paragraph:** First paragraph should answer what happened and why it matters in one concise block.
 - **Evidence-first writing:** Use concrete numbers/indices (%, bps, NIFTY/Sensex levels, flows, sector moves) when available.
 - **Structured sections:** Use short subheads for clarity (e.g., "Sector Watch", "Market Breadth", "Bottomline").
 - **Tone:** Neutral, analytical, newsroom/business style; avoid hype and promotional adjectives.
-- **Compliance:** No investment recommendations or advisory language (no buy/sell/hold, no "what investors should do").
+- **Compliance:** No regulated advice, exaggerated claims, or unsupported recommendations.
 - **Attribution:** Attribute claims to data, institutions, or report context (RBI, Fed, exchange data, filings) instead of vague statements.
 `
       : ''
@@ -271,7 +271,7 @@ Viral reel optimization (when platform is Instagram Reels or YouTube Shorts): Bu
 
 Campaign context: Topic: ${topic}. Duration: ${duration} seconds. Platforms: ${platforms?.join(', ')}.${purpose ? ` Purpose: ${purpose}.` : ''}
 ${brandGuidance ? `\nBrand (reflect in Style & Ambiance): ${brandGuidance.replace(/\*\*/g, '').replace(/\n/g, ' ').trim()}` : ''}`
-      : `You are an expert creative director and prompt engineer for PL Capital's marketing campaigns.
+      : `You are an expert creative director and prompt engineer for brand-led marketing campaigns.
 
 🚨 CRITICAL INSTRUCTION: Your output MUST be a detailed CREATIVE BRIEF for generating actual ${contentType} content (images, videos, graphics).
 

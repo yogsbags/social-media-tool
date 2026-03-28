@@ -544,7 +544,7 @@ class VideoGenerator {
       },
       {
         timeRange: '8-16s',
-        prompt: `Continue scene, add B-roll visual: professional screen showing MADP portfolio dashboard with rising graph, clean UI design`
+        prompt: `Continue scene, add B-roll visual: professional screen showing flagship product portfolio dashboard with rising graph, clean UI design`
       },
       {
         timeRange: '16-24s',
@@ -552,7 +552,7 @@ class VideoGenerator {
       },
       {
         timeRange: '24-32s',
-        prompt: `Return to ${basePrompt}, explaining their investment strategy, confident body language`
+        prompt: `Return to ${basePrompt}, explaining their brand strategy, confident body language`
       },
       {
         timeRange: '32-40s',

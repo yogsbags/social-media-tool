@@ -19,7 +19,7 @@
     "shotstack",
     "campaign"
   ],
-  "author": "PL Capital",
+  "author": "Generic",
   "license": "MIT",
   "dependencies": {
     "@fal-ai/client": "^1.7.2",

@@ -231,25 +231,24 @@ class AvatarGenerator {
   buildTestimonialScript(data) {
     return `
 [0-10s] Hook:
-${data.hook || `Five years ago, I was earning ${data.startIncome || '₹40L'} but had zero wealth.`}
+${data.hook || `A few years ago, I was working hard but still lacked a clear plan.`}
 
 [10-30s] Problem:
-My money was scattered across:
-${data.problems?.join('\n') || '- 8 mutual funds with no strategy\n- 3 insurance policies with wrong coverage\n- One rental property with negative cash flow'}
+Everything felt fragmented:
+${data.problems?.join('\n') || '- Too many disconnected tools and priorities\n- No clear way to measure what was working\n- Lots of effort, not enough consistency'}
 
-I was losing ${data.taxLoss || '₹3L'} per year to taxes alone.
+I was wasting ${data.taxLoss || 'time and energy'} on the wrong things.
 
 [30-50s] Solution & Results:
-Then I met PL Capital:
-${data.solutions?.join('\n') || '✓ Built structured portfolio with 5 focused funds\n✓ Tax optimization saved ₹2L per year\n✓ Early IPO access gave 3X returns'}
+Then I found a better system:
+${data.solutions?.join('\n') || '✓ Simplified the strategy into a focused, easy-to-manage plan\n✓ Improved how I tracked progress and measured results\n✓ Built momentum with a repeatable process that actually fit my goals'}
 
-Today: ${data.currentWealth || '₹1.8 Cr portfolio'}, on track to retire by ${data.retirementAge || '45'}.
+Today: ${data.currentWealth || 'Stronger results, clearer priorities, and a plan I can sustain long term.'}
 
 [50-60s] Call to Action:
-Want similar results? Book a free portfolio review at plcapital.com/consult
+Want similar clarity? Book a discovery call at example.com/contact
 `.trim();
   }
-
   /**
    * Get available avatars
    *

@@ -2,76 +2,31 @@ import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 
-/**
- * API route to fetch available HeyGen avatars
- * Returns the list of configured Indian avatars with their group IDs and voices
- */
 export async function GET() {
   try {
-    // Read the avatar mapping file - try multiple possible paths
     const possiblePaths = [
       path.join(process.cwd(), '..', 'backend', 'config', 'heygen-native-voice-mapping.json'),
       path.join(process.cwd(), 'backend', 'config', 'heygen-native-voice-mapping.json'),
       path.join(process.cwd(), '..', '..', 'backend', 'config', 'heygen-native-voice-mapping.json'),
-      path.join(process.cwd(), '..', '..', 'config', 'heygen-avatar-config.js'),
     ]
 
-    let configPath = possiblePaths.find(p => fs.existsSync(p))
+    const configPath = possiblePaths.find((p) => fs.existsSync(p))
     if (!configPath) {
-      throw new Error('Avatar config file not found in any expected location')
+      throw new Error('Avatar mapping file not found')
     }
 
-    let avatarData
-    if (configPath.endsWith('.json')) {
-      avatarData = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-    } else if (configPath.endsWith('.js')) {
-      // Handle JS config file - use require for CommonJS
-      delete require.cache[require.resolve(configPath)]
-      const config = require(configPath)
-      // Convert config format to match JSON format
-      avatarData = {}
-      if (config.publicIndianAvatars) {
-        config.publicIndianAvatars.forEach((avatar: any) => {
-          avatarData[avatar.id] = {
-            avatarName: avatar.name,
-            groupId: avatar.id,
-            voiceId: avatar.voiceId,
-            voiceName: config.voices?.[avatar.voiceId]?.description || avatar.voiceId,
-            gender: avatar.gender,
-            description: avatar.description,
-            language: 'en-IN'
-          }
-        })
-      }
-    } else {
-      // Handle JS config file
-      delete require.cache[require.resolve(configPath)]
-      const config = require(configPath)
-      // Convert config format to match JSON format
-      avatarData = {}
-      config.publicIndianAvatars.forEach((avatar: any) => {
-        avatarData[avatar.id] = {
-          avatarName: avatar.name,
-          groupId: avatar.id,
-          voiceId: avatar.voiceId,
-          voiceName: config.voices[avatar.voiceId]?.description || avatar.voiceId,
-          gender: avatar.gender,
-          description: avatar.description,
-          language: 'en-IN'
-        }
-      })
-    }
-
-    // Convert to array format for frontend
+    const avatarData = JSON.parse(fs.readFileSync(configPath, 'utf8'))
     const avatars = Object.values(avatarData).map((avatar: any) => ({
       id: avatar.groupId,
-      name: avatar.avatarName,
+      name: avatar.avatarName || avatar.name || avatar.groupId,
       groupId: avatar.groupId,
-      voiceId: avatar.voiceId,
-      voiceName: avatar.voiceName,
-      gender: avatar.gender,
-      description: avatar.description,
-      language: avatar.language
+      lookIds: Array.isArray(avatar.lookIds) ? avatar.lookIds : [],
+      voiceId: avatar.voiceId || '',
+      voiceName: avatar.voiceName || avatar.voiceId || 'Default voice',
+      gender: avatar.gender || 'unknown',
+      description: avatar.description || '',
+      language: avatar.language || 'unknown',
+      motionEnabled: avatar.motionEnabled !== false
     }))
 
     return NextResponse.json({ avatars }, { status: 200 })
@@ -83,4 +38,3 @@ export async function GET() {
     )
   }
 }
-

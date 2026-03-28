@@ -1,5 +1,5 @@
 /**
- * ElevenLabs Voice Configuration for PL Capital
+ * ElevenLabs Voice Configuration for the brand
  *
  * Indian voices mapped to HeyGen avatars
  * API Key: Set ELEVENLABS_API_KEY in environment

@@ -126,7 +126,7 @@ async function run() {
     path.join(backendRoot, 'main.js'),
     'stage',
     'video',
-    '--topic', String(req.topic || 'PL Capital market update'),
+    '--topic', String(req.topic || 'brand update'),
     '--language', String(req.language || 'english'),
     '--type', String(req.campaignType || 'instagram-reel'),
     '--platform', platform,
@@ -174,8 +174,9 @@ async function run() {
   })
 
   child.on('close', (code) => {
+    const hosted = parsedVideoResult?.hostedUrl || ''
     const direct = parsedVideoResult?.directVideoUrl || parsedVideoResult?.videoUrl || ''
-    const ok = code === 0 && isPlayableVideoUrl(direct)
+    const ok = code === 0 && (isPlayableVideoUrl(hosted) || isPlayableVideoUrl(direct))
 
     if (ok) {
       saveStage4Data(req, parsedVideoResult, outputBuffer)

@@ -251,12 +251,12 @@ async function createCompleteWebinar() {
 
   // 1. Create webinar
   const webinar = await client.createWebinar({
-    webinar_title: 'AQUA Strategy Deep Dive',
+    webinar_title: 'adaptive strategy Strategy Deep Dive',
     avatar_id: process.env.HEYGEN_AVATAR_ID_SIDDHARTH,
     voice_id: process.env.HEYGEN_VOICE_ID_SIDDHARTH,
-    introduction_text: 'Welcome to this deep dive into our AQUA strategy...',
-    main_content_text: 'AQUA stands for Adaptive Quantitative Allocation...',
-    conclusion_text: 'Thank you for joining. Visit plindia.com for more...'
+    introduction_text: 'Welcome to this deep dive into our adaptive strategy strategy...',
+    main_content_text: 'adaptive strategy stands for Adaptive Quantitative Allocation...',
+    conclusion_text: 'Thank you for joining. Visit example.com for more...'
   });
 
   // 2. Wait and check status

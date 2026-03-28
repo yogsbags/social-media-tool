@@ -18,7 +18,7 @@ type GenerateBody = {
 const MODEL_PRIMARY = process.env.GROQ_TOPIC_MODEL || 'llama-3.3-70b-versatile'
 const MODEL_FALLBACK = 'llama-3.3-70b-versatile'
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
-const REFERENCE_FILENAME = 'pl-products-reference.md'
+const REFERENCE_FILENAME = 'brand-reference.md'
 const LIVE_NEWS_MODEL = 'gemini-3-flash-preview'
 const TOPIC_HISTORY_FILENAME = 'topic-history.json'
 
@@ -165,16 +165,16 @@ function isEchoOrInvalid(text: string | undefined, userPrompt: string): boolean 
   return false
 }
 
-/** Returns true if the topic is a generic "80 years / wealth creation / PL Capital solutions" tagline we want to avoid */
+/** Returns true if the topic is a vague legacy-brand slogan we want to avoid */
 function isGenericTagline(text: string | undefined): boolean {
   if (!text || text.length < 15) return false
   const t = text.toLowerCase()
   const hasEightyYears = /\b80\s*years\b|\b80\+?\s*years\b|\beighty\s*years\b/i.test(text)
   const hasWealthCreation = /wealth\s*creation|wealth\s*creation\s*expertise/i.test(t)
-  const hasPlSolutions = /pl\s*capital\s*solutions?|solutions?\s*with\s*pl\s*capital/i.test(t)
+  const hasPlSolutions = /brand\s*solutions?|our\s*solutions?|decades?\s+of\s+trust/i.test(t)
   const isMostlyTagline = (hasEightyYears && (hasWealthCreation || hasPlSolutions)) ||
     (hasWealthCreation && hasPlSolutions) ||
-    (t.includes('expertise') && t.includes('pl capital') && text.split(/\s+/).length <= 12)
+    ((t.includes('expertise') || t.includes('solutions')) && text.split(/\s+/).length <= 12)
   return isMostlyTagline
 }
 
@@ -300,16 +300,16 @@ export async function POST(request: NextRequest) {
         ? `Avoid near-duplicates/paraphrases of these recent generated topics: ${recentTopics.join(' | ')}`
         : ''
       const angleHints = [
-        'policy impact (RBI/Fed/rates/budget/regulatory trigger)',
-        'commodity movement (gold/silver/oil impact)',
-        'flows & positioning (FII/DII, volume, breadth)',
-        'sector rotation (IT/banks/auto/pharma leadership shift)',
-        'currency/bond linkage (INR, yields, debt-market effect)',
-        'corporate earnings or guidance impact',
+        'product launch or release momentum',
+        'customer pain point or workflow bottleneck',
+        'industry shift or regulatory development',
+        'market demand change or buyer behavior trend',
+        'operational efficiency or team productivity angle',
+        'brand differentiation or category insight',
       ]
 
       const prompts = angleHints.map((angle) => [
-        'Use Google Search to find current, trending finance or markets news relevant to PL Capital audiences in India.',
+        'Use Google Search to find current, trending news or developments relevant to the requested audience and theme.',
         `Today in India (Asia/Kolkata) is ${currentDateHuman} (${currentDateIso}). Prioritize very recent developments and high-interest stories.`,
         `If you include a year, it must be ${currentYear} (never older years).`,
         body.purpose ? `Purpose: ${body.purpose}` : '',
@@ -394,7 +394,7 @@ export async function POST(request: NextRequest) {
         // Fallback 1: Try Gemini without web-search tool (faster and less brittle).
         try {
           const fallbackPrompt = [
-            `Today in India (Asia/Kolkata) is ${currentDateHuman} (${currentDateIso}). Generate one live-news style finance headline for India.`,
+            `Today in India (Asia/Kolkata) is ${currentDateHuman} (${currentDateIso}). Generate one live-news style headline relevant to a modern business audience in India.`,
             body.purpose ? `Purpose: ${body.purpose}` : '',
             body.targetAudience ? `Audience: ${body.targetAudience}` : '',
             seedTheme ? `Must include or directly reflect this keyword/theme: ${seedTheme}` : '',
@@ -435,7 +435,7 @@ export async function POST(request: NextRequest) {
           .replace(/[_-]+/g, ' ')
           .replace(/\s+/g, ' ')
           .trim()
-        topic = `Live market update: ${normalizedTheme} outlook in ${currentYear}`
+        topic = `Live update: ${normalizedTheme} outlook in ${currentYear}`
         topic = topic
           .replace(/\s+/g, ' ')
           .trim()
@@ -485,23 +485,23 @@ export async function POST(request: NextRequest) {
       ? `Avoid near-duplicates/paraphrases of these recent generated topics: ${recentTopics.join(' | ')}`
       : ''
     const nonLiveAngles = [
-      'tax planning and compliance',
-      'asset allocation and portfolio balance',
-      'market structure and sector rotation',
-      'retirement and long-term compounding',
-      'risk management and downside protection',
-      'IPO/FPO and primary market focus',
+      'product education and adoption',
+      'customer pain points and solutions',
+      'industry trends and category shifts',
+      'workflow optimization and efficiency',
+      'buyer decision-making and trust building',
+      'launches, updates, and feature momentum',
     ]
 
     const userPrompt = [
-      'Generate exactly one short campaign topic for PL Capital (finance). Max 15 words.',
+      'Generate exactly one short campaign topic for a generic brand. Max 15 words.',
       `Today is ${currentDateHuman}. Keep the topic current.`,
       `If you include a year, use ${currentYear} only.`,
-      'Do NOT use generic taglines like "80 years of wealth creation", "PL Capital solutions", or "expertise with PL Capital". Give a specific, campaign-style topic (e.g. tax-saving strategies, mutual fund basics, IPO investing).',
+      'Do NOT use vague taglines, legacy-brand slogans, or generic corporate filler. Give a specific campaign-style topic tied to a clear use case, audience problem, trend, or product angle.',
       seedTheme ? `REQUIRED: The topic MUST naturally include or clearly reflect this keyword/theme: "${seedTheme}". Do not suggest a topic that omits this theme.` : '',
       ...contextLines,
       avoidRecentLine,
-      seedTheme ? `Reply with only the topic line that includes "${seedTheme}", no labels or quotes.` : `Reply with only the topic line, no labels or quotes. Example: 5 tax-saving strategies for HNIs in ${currentYear}`,
+      seedTheme ? `Reply with only the topic line that includes "${seedTheme}", no labels or quotes.` : `Reply with only the topic line, no labels or quotes. Example: 5 onboarding mistakes teams still make in ${currentYear}`,
     ].filter(Boolean).join('\n')
 
     let result: any = null
@@ -541,7 +541,7 @@ export async function POST(request: NextRequest) {
               messages: [
                 {
                   role: 'system',
-                  content: `You are a creative marketing expert for PL Capital (financial services). Today is ${currentDateIso}. Your reply must be ONLY one short, specific campaign topic (max 15 words). Do NOT use generic taglines like "80 years of wealth creation" or "PL Capital solutions". Prefer concrete topics: tax saving, mutual funds, IPO, options, portfolio tips, market outlook, etc. If you include a year, use ${currentYear} only. ${seedTheme ? `CRITICAL: The topic MUST include or clearly reflect the user's keyword/theme "${seedTheme}"—do not return a topic that ignores it.` : ''} No labels, no "Topic:", no quotes.`
+                  content: `You are a creative marketing expert for a modern brand. Today is ${currentDateIso}. Your reply must be ONLY one short, specific campaign topic (max 15 words). Do NOT use generic taglines like legacy-brand slogans or vague value statements. Prefer concrete topics: launches, use cases, customer pain points, product education, market trends, operational tips, or industry updates. If you include a year, use ${currentYear} only. ${seedTheme ? `CRITICAL: The topic MUST include or clearly reflect the user's keyword/theme "${seedTheme}"—do not return a topic that ignores it.` : ''} No labels, no "Topic:", no quotes.`
                 },
                 {
                   role: 'user',

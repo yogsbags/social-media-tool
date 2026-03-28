@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Test Script: MADP PMS Webinar by Siddharth Vora
+ * Test Script: flagship product PMS Webinar by the spokesperson
  *
- * Creates a proper AI webinar about MADP PMS (Multi-Asset Diversified Portfolio)
- * featuring Siddharth Vora, Fund Manager at PL Capital
+ * Creates a proper AI webinar about flagship product PMS (Multi-Asset Diversified Portfolio)
+ * featuring the spokesperson, Fund Manager at the brand
  *
  * Usage:
  *   node test-madp-webinar.js
@@ -24,15 +24,15 @@ try {
 const path = require('path');
 const { getHeyGenWebinarClient } = require('../integrations/heygen-webinar-client');
 
-// Load HeyGen configuration for Siddharth Vora
+// Load HeyGen configuration for the spokesperson
 const avatarId = process.env.HEYGEN_AVATAR_ID_SIDDHARTH || '9da4afb2c22441b5aab73369dda7f65d';
 const voiceId = process.env.HEYGEN_VOICE_ID_SIDDHARTH || 'c8d184ef4d81484a97d70c94bb76fec3';
 
-async function createMADPWebinar() {
-  console.log('🎓 Creating MADP PMS Webinar by Siddharth Vora\n');
+async function createflagship productWebinar() {
+  console.log('🎓 Creating flagship product PMS Webinar by the spokesperson\n');
   console.log('═══════════════════════════════════════════════════════════════');
-  console.log('   Topic: MADP PMS - Multi-Asset Diversified Portfolio');
-  console.log('   Speaker: Siddharth Vora, Fund Manager, PL Capital');
+  console.log('   Topic: flagship product PMS - Multi-Asset Diversified Portfolio');
+  console.log('   Speaker: the spokesperson, Fund Manager, the brand');
   console.log('   Format: AI Avatar Webinar');
   console.log('═══════════════════════════════════════════════════════════════\n');
 
@@ -49,45 +49,45 @@ async function createMADPWebinar() {
     const client = getHeyGenWebinarClient();
 
     // Introduction Script
-    const introductionText = `Hello, I'm Siddharth Vora, Fund Manager at PL Capital. Welcome to this webinar on MADP PMS - our Multi-Asset Diversified Portfolio strategy.
+    const introductionText = `Hello, I'm the spokesperson, Fund Manager at the brand. Welcome to this webinar on flagship product PMS - our Multi-Asset Diversified Portfolio strategy.
 
-Today, I'll explain how MADP helps investors build wealth through systematic diversification across multiple asset classes. This strategy is designed for investors who want exposure to equities, debt, and alternative assets in a single, professionally managed portfolio.
+Today, I'll explain how flagship product helps investors build wealth through systematic diversification across multiple asset classes. This strategy is designed for investors who want exposure to equities, debt, and alternative assets in a single, professionally managed portfolio.
 
-Over the next few minutes, I'll cover what makes MADP unique, how we construct portfolios, and why this approach can help you achieve your long-term financial goals. Let's begin.`;
+Over the next few minutes, I'll cover what makes flagship product unique, how we construct portfolios, and why this approach can help you achieve your long-term financial goals. Let's begin.`;
 
     // Main Content Script
-    const mainContentText = `MADP, or Multi-Asset Diversified Portfolio, is PL Capital's flagship PMS strategy that combines the best of equity, debt, and alternative investments in a single portfolio.
+    const mainContentText = `flagship product, or Multi-Asset Diversified Portfolio, is the brand's flagship PMS strategy that combines the best of equity, debt, and alternative investments in a single portfolio.
 
-The core philosophy behind MADP is diversification. We don't put all your eggs in one basket. Instead, we allocate your capital across three key asset classes: equities for growth, debt for stability, and alternatives for enhanced returns.
+The core philosophy behind flagship product is diversification. We don't put all your eggs in one basket. Instead, we allocate your capital across three key asset classes: equities for growth, debt for stability, and alternatives for enhanced returns.
 
 Our equity allocation focuses on high-quality companies with strong fundamentals. We use quantitative models to identify stocks with superior earnings growth, reasonable valuations, and strong balance sheets. This isn't about picking stocks based on tips or emotions - it's about systematic, data-driven selection.
 
-The debt portion of MADP provides stability and regular income. We invest in high-quality corporate bonds and government securities, carefully managing duration and credit risk. This allocation acts as a cushion during volatile equity markets, helping preserve capital while generating steady returns.
+The debt portion of flagship product provides stability and regular income. We invest in high-quality corporate bonds and government securities, carefully managing duration and credit risk. This allocation acts as a cushion during volatile equity markets, helping preserve capital while generating steady returns.
 
 The alternative allocation includes structured products, arbitrage opportunities, and other non-traditional investments. This component enhances overall returns while maintaining diversification benefits.
 
-What sets MADP apart is our dynamic asset allocation. We don't follow a static 60-40 equity-debt split. Instead, we adjust allocations based on market conditions, valuation levels, and risk-return opportunities. When equities are expensive, we reduce exposure. When debt offers attractive yields, we increase allocation. This active management approach helps optimize returns while managing risk.
+What sets flagship product apart is our dynamic asset allocation. We don't follow a static 60-40 equity-debt split. Instead, we adjust allocations based on market conditions, valuation levels, and risk-return opportunities. When equities are expensive, we reduce exposure. When debt offers attractive yields, we increase allocation. This active management approach helps optimize returns while managing risk.
 
 Our portfolio construction process is rigorous. Every investment decision goes through multiple layers of analysis - fundamental research, quantitative screening, risk assessment, and compliance checks. We maintain strict quality standards and only invest in instruments that meet our criteria.
 
-Risk management is embedded in every aspect of MADP. We use sophisticated risk models to measure portfolio risk, monitor exposures, and ensure we stay within predefined risk limits. Our goal isn't just to maximize returns - it's to deliver consistent, risk-adjusted returns over the long term.
+Risk management is embedded in every aspect of flagship product. We use sophisticated risk models to measure portfolio risk, monitor exposures, and ensure we stay within predefined risk limits. Our goal isn't just to maximize returns - it's to deliver consistent, risk-adjusted returns over the long term.
 
-Performance-wise, MADP has delivered strong results. While past performance doesn't guarantee future results, our track record demonstrates the effectiveness of our multi-asset approach. The strategy has consistently outperformed benchmarks while maintaining lower volatility than pure equity portfolios.
+Performance-wise, flagship product has delivered strong results. While past performance doesn't guarantee future results, our track record demonstrates the effectiveness of our multi-asset approach. The strategy has consistently outperformed benchmarks while maintaining lower volatility than pure equity portfolios.
 
-For investors, MADP offers several advantages. First, it provides diversification in a single product - you don't need to manage multiple investments yourself. Second, it's professionally managed by our experienced team. Third, it's tax-efficient, structured as a PMS product. And fourth, it's transparent - you get regular reports on portfolio composition and performance.
+For investors, flagship product offers several advantages. First, it provides diversification in a single product - you don't need to manage multiple investments yourself. Second, it's professionally managed by our experienced team. Third, it's tax-efficient, structured as a PMS product. And fourth, it's transparent - you get regular reports on portfolio composition and performance.
 
-The minimum investment for MADP is typically higher than mutual funds, making it suitable for high net worth individuals and family offices. However, the professional management, customization options, and potential for better risk-adjusted returns make it an attractive option for serious investors.
+The minimum investment for flagship product is typically higher than mutual funds, making it suitable for high net worth individuals and family offices. However, the professional management, customization options, and potential for better risk-adjusted returns make it an attractive option for serious investors.
 
 Our investment philosophy is simple: invest in quality, diversify intelligently, and manage risk actively. We believe that over the long term, this approach delivers superior results compared to chasing short-term trends or making emotional investment decisions.`;
 
     // Conclusion Script
-    const conclusionText = `In conclusion, MADP PMS represents a comprehensive approach to wealth creation. By combining equities, debt, and alternatives in a single, professionally managed portfolio, we offer investors a way to achieve their financial goals while managing risk effectively.
+    const conclusionText = `In conclusion, flagship product PMS represents a comprehensive approach to wealth creation. By combining equities, debt, and alternatives in a single, professionally managed portfolio, we offer investors a way to achieve their financial goals while managing risk effectively.
 
-The key benefits of MADP are diversification, professional management, dynamic asset allocation, and a focus on risk-adjusted returns. Whether you're planning for retirement, building wealth for your family, or seeking to preserve and grow capital, MADP can be a valuable part of your investment strategy.
+The key benefits of flagship product are diversification, professional management, dynamic asset allocation, and a focus on risk-adjusted returns. Whether you're planning for retirement, building wealth for your family, or seeking to preserve and grow capital, flagship product can be a valuable part of your investment strategy.
 
-I encourage you to learn more about MADP by visiting our website at plindia.com or speaking with our relationship managers. We're happy to discuss how MADP can fit into your overall financial plan.
+I encourage you to learn more about flagship product by visiting our website at example.com or speaking with our relationship managers. We're happy to discuss how flagship product can fit into your overall financial plan.
 
-Remember, investing involves risk, and past performance doesn't guarantee future results. Please read all scheme-related documents carefully before investing. PL Capital is SEBI registered Portfolio Manager, registration number INP000007021.
+Remember, investing involves risk, and past performance doesn't guarantee future results. Please read all scheme-related documents carefully before investing. the brand is SEBI registered Portfolio Manager, registration number INP000007021.
 
 Thank you for joining this webinar. I hope you found it informative. If you have questions, please reach out to our team. Let's build wealth together, systematically.`;
 
@@ -95,7 +95,7 @@ Thank you for joining this webinar. I hope you found it informative. If you have
     console.log('   Note: If content exceeds 5000 characters, will split intelligently\n');
 
     const webinarResult = await client.createWebinar({
-      webinar_title: 'MADP PMS - Multi-Asset Diversified Portfolio Explained',
+      webinar_title: 'flagship product PMS - Multi-Asset Diversified Portfolio Explained',
       avatar_id: avatarId,
       voice_id: voiceId,
       introduction_text: introductionText,
@@ -145,7 +145,7 @@ Thank you for joining this webinar. I hope you found it informative. If you have
     });
 
     console.log('\n📊 Webinar Structure:');
-    console.log(`   • Introduction: Sets context and introduces MADP`);
+    console.log(`   • Introduction: Sets context and introduces flagship product`);
     console.log(`   • Main Content: ${webinarResult.segments.filter(s => s.segment.startsWith('main_content')).length} segment(s) covering strategy details`);
     console.log(`   • Conclusion: Summarizes key points and call to action\n`);
 
@@ -171,8 +171,8 @@ Thank you for joining this webinar. I hope you found it informative. If you have
 // Run the test
 (async () => {
   try {
-    const webinar = await createMADPWebinar();
-    console.log('✨ MADP Webinar creation initiated successfully!\n');
+    const webinar = await createflagship productWebinar();
+    console.log('✨ flagship product Webinar creation initiated successfully!\n');
     console.log('⏳ Videos are generating in the background.');
     console.log('   Check HeyGen dashboard: https://app.heygen.com/home\n');
   } catch (error) {

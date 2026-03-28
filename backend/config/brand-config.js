@@ -1,42 +1,38 @@
 /**
- * PL Capital Brand Configuration
- * Prabhudas Lilladher Private Limited
+ * Generic Brand Configuration
  *
- * This file contains all brand assets, guidelines, and templates
- * for consistent image and video generation across all client segments.
+ * This file contains reusable brand assets, guidelines, and templates
+ * for consistent image and video generation across industries.
  */
 
 const brandConfig = {
   company: {
-    name: 'Prabhudas Lilladher Private Limited',
-    shortName: 'PL Capital',
-    website: 'https://www.plindia.com',
-    tagline: 'Power your financial growth with wisdom and precision'
+    name: 'Brand Studio',
+    shortName: 'Brand Studio',
+    website: 'https://example.com',
+    tagline: 'Create clear, consistent campaigns across every channel'
   },
 
-  // Brand Colors
   colors: {
     primary: {
-      navy: '#0e0e6a',      // Deep navy blue - primary brand color
-      blue: '#3c3cf8',      // Vibrant blue - accent
+      navy: '#17324d',
+      blue: '#2563eb',
     },
     secondary: {
-      green: '#66e766',     // Bright green - growth, prosperity
-      teal: '#00d084',      // Teal - trust, stability
+      green: '#10b981',
+      teal: '#14b8a6',
     },
     neutral: {
-      white: '#ffffff',     // White - clarity, transparency
-      black: '#000000',     // Black - text, sophistication
+      white: '#ffffff',
+      black: '#111827',
     },
-    // Derived colors for different contexts
     gradients: {
-      primary: 'linear-gradient(135deg, #0e0e6a 0%, #3c3cf8 100%)',
-      success: 'linear-gradient(135deg, #00d084 0%, #66e766 100%)',
-      premium: 'linear-gradient(135deg, #0e0e6a 0%, #00d084 50%, #66e766 100%)'
+      primary: 'linear-gradient(135deg, #17324d 0%, #2563eb 100%)',
+      success: 'linear-gradient(135deg, #14b8a6 0%, #10b981 100%)',
+      premium: 'linear-gradient(135deg, #17324d 0%, #2563eb 50%, #14b8a6 100%)'
     }
   },
 
-  // Typography
   typography: {
     primary: {
       family: 'Figtree',
@@ -61,138 +57,126 @@ const brandConfig = {
     }
   },
 
-  // Brand Values
   values: [
-    'Integrity',
+    'Clarity',
     'Trust',
-    'Transparency',
-    'Innovation',
-    'Expertise'
+    'Adaptability',
+    'Consistency',
+    'Creativity'
   ],
 
-  // Brand Aesthetic Guidelines
   aesthetic: {
-    style: 'trustworthy, modern corporate, high-contrast, sophisticated, established',
+    style: 'modern, versatile, polished, high-contrast, professional',
     keywords: [
-      'trustworthy',
       'modern',
-      'corporate',
-      'high-contrast',
-      'sophisticated',
-      'established',
+      'versatile',
+      'polished',
       'professional',
-      'premium'
+      'high-contrast',
+      'clean',
+      'confident',
+      'adaptable'
     ],
-    mood: 'authoritative yet approachable, expert yet client-centric'
+    mood: 'clear, confident, and approachable'
   },
 
-  // Tone of Voice
   tone: {
-    primary: 'Authoritative',
+    primary: 'Professional',
     attributes: [
-      'Expert',
-      'Professional',
-      'Client-centric',
-      'Legacy-driven',
-      'Forward-thinking',
-      'Trustworthy'
+      'Clear',
+      'Reliable',
+      'Helpful',
+      'Modern',
+      'Adaptable',
+      'Audience-aware'
     ],
     messaging: {
-      formal: 'For HNI/UHNI and official communications',
-      balanced: 'For mass affluent and general client communications',
-      approachable: 'For internal communications and onboarding'
+      formal: 'For executive or external communications',
+      balanced: 'For broad customer-facing communications',
+      approachable: 'For onboarding, education, and internal communication'
     }
   },
 
-  // Target Audience Segments
   targetAudiences: {
     internal: {
-      label: 'Internal communication',
+      label: 'Internal teams',
       value: 'internal',
       description: 'Employee communications, training, announcements',
       tone: 'Approachable, collaborative, informative',
-      colorPalette: ['#3c3cf8', '#66e766', '#ffffff'],
+      colorPalette: ['#2563eb', '#10b981', '#ffffff'],
       fontSize: 'medium',
       contentStyle: 'casual-professional'
     },
-    massAffluent: {
-      label: 'Mass affluent',
-      value: 'mass_affluent',
-      description: 'Emerging investors, young professionals',
-      tone: 'Educational, empowering, modern',
-      colorPalette: ['#00d084', '#3c3cf8', '#ffffff'],
+    lead_gen: {
+      label: 'Lead generation',
+      value: 'lead_gen',
+      description: 'Prospects evaluating the brand or product',
+      tone: 'Clear, persuasive, outcome-focused',
+      colorPalette: ['#17324d', '#14b8a6', '#ffffff'],
+      fontSize: 'medium',
+      contentStyle: 'conversion-focused'
+    },
+    professionals: {
+      label: 'Professionals',
+      value: 'professionals',
+      description: 'Working professionals and business users',
+      tone: 'Educational, useful, modern',
+      colorPalette: ['#14b8a6', '#2563eb', '#ffffff'],
       fontSize: 'medium',
       contentStyle: 'engaging-informative'
     },
-    hni: {
-      label: 'HNIs',
-      value: 'hni',
-      description: 'High Net Worth Individuals',
-      tone: 'Professional, expert, value-focused',
-      colorPalette: ['#0e0e6a', '#00d084', '#ffffff'],
+    executives: {
+      label: 'Executives',
+      value: 'executives',
+      description: 'Senior stakeholders and decision-makers',
+      tone: 'Strategic, concise, premium',
+      colorPalette: ['#17324d', '#111827', '#ffffff'],
       fontSize: 'medium-large',
       contentStyle: 'premium-professional'
     },
-    uhni: {
-      label: 'UHNIs',
-      value: 'uhni',
-      description: 'Ultra High Net Worth Individuals',
-      tone: 'Exclusive, sophisticated, bespoke',
-      colorPalette: ['#0e0e6a', '#000000', '#ffffff'],
-      fontSize: 'large',
-      contentStyle: 'luxury-exclusive'
-    },
-    allClients: {
-      label: 'All clients',
+    all_clients: {
+      label: 'General audience',
       value: 'all_clients',
-      description: 'General client communications',
+      description: 'Default audience for broad communications',
       tone: 'Balanced, professional, accessible',
-      colorPalette: ['#0e0e6a', '#3c3cf8', '#00d084', '#ffffff'],
+      colorPalette: ['#17324d', '#2563eb', '#14b8a6', '#ffffff'],
       fontSize: 'medium',
       contentStyle: 'professional-accessible'
     }
   },
 
-  // Brand Assets
   assets: {
-    // Reference to scraped website images
-    websiteImages: './plindia-images.json',
-
-    // Logo specifications
+    websiteImages: './brand-images.json',
     logos: {
       primary: {
-        url: 'https://www.plindia.com/wp-content/uploads/2024/10/PL-Capital-Logo.svg',
-        description: 'Primary PL Capital logo',
-        usage: 'Main brand identity for all communications',
+        url: '',
+        description: 'Primary brand logo placeholder',
+        usage: 'Replace with your brand logo for production use',
         minSize: '120px',
         clearSpace: '20px'
       },
       favicon: {
-        url: 'https://www.plindia.com/wp-content/uploads/2024/10/cropped-favicon-32x32.png',
-        description: 'Favicon/small icon',
-        usage: 'Small format applications'
+        url: '',
+        description: 'Favicon or small icon placeholder',
+        usage: 'Replace with your brand favicon for production use'
       }
     },
-
-    // Icon library
     icons: {
       check: '✓',
       arrow: '→',
-      growth: '📈',
-      security: '🔒',
-      expert: '👔',
-      innovation: '💡'
+      spotlight: '✨',
+      collaboration: '🤝',
+      insight: '💡',
+      launch: '🚀'
     }
   },
 
-  // Image Generation Templates
   imageTemplates: {
-    // Social Media Post Template
     socialPost: {
       dimensions: { width: 1080, height: 1080 },
       background: {
         type: 'gradient',
-        value: 'linear-gradient(135deg, #0e0e6a 0%, #3c3cf8 100%)'
+        value: 'linear-gradient(135deg, #17324d 0%, #2563eb 100%)'
       },
       logo: {
         position: 'top-left',
@@ -206,17 +190,16 @@ const brandConfig = {
       },
       footer: {
         tagline: true,
-        disclaimer: true,
+        disclaimer: false,
         height: 80
       }
     },
 
-    // Story/Reel Template (9:16)
     story: {
       dimensions: { width: 1080, height: 1920 },
       background: {
         type: 'gradient',
-        value: 'linear-gradient(180deg, #0e0e6a 0%, #00d084 100%)'
+        value: 'linear-gradient(180deg, #17324d 0%, #14b8a6 100%)'
       },
       logo: {
         position: 'top-center',
@@ -235,12 +218,11 @@ const brandConfig = {
       }
     },
 
-    // LinkedIn Banner Template
     linkedinBanner: {
       dimensions: { width: 1584, height: 396 },
       background: {
         type: 'solid',
-        value: '#0e0e6a'
+        value: '#17324d'
       },
       logo: {
         position: 'left',
@@ -253,11 +235,10 @@ const brandConfig = {
       },
       accent: {
         type: 'gradient-overlay',
-        value: 'linear-gradient(90deg, transparent 0%, #3c3cf8 100%)'
+        value: 'linear-gradient(90deg, transparent 0%, #2563eb 100%)'
       }
     },
 
-    // Presentation Slide Template
     presentation: {
       dimensions: { width: 1920, height: 1080 },
       background: {
@@ -265,7 +246,7 @@ const brandConfig = {
         value: '#ffffff'
       },
       header: {
-        background: '#0e0e6a',
+        background: '#17324d',
         height: 120,
         logo: true
       },
@@ -282,12 +263,11 @@ const brandConfig = {
       }
     },
 
-    // Investment Insight Card
     insightCard: {
       dimensions: { width: 1200, height: 628 },
       background: {
         type: 'gradient',
-        value: 'linear-gradient(135deg, #0e0e6a 0%, #00d084 100%)'
+        value: 'linear-gradient(135deg, #17324d 0%, #14b8a6 100%)'
       },
       logo: {
         position: 'top-right',
@@ -298,41 +278,38 @@ const brandConfig = {
         padding: 60,
         alignment: 'left',
         highlight: {
-          color: '#66e766',
+          color: '#10b981',
           fontSize: 'large'
         }
       },
       watermark: {
         enabled: true,
-        opacity: 0.1,
+        opacity: 0.08,
         position: 'center'
       }
     }
   },
 
-  // Compliance & Disclaimers
   compliance: {
-    standardDisclaimer: 'Investments in securities market are subject to market risks. Read all the related documents carefully before investing.',
-    regulatoryText: 'SEBI Registered Research Analyst | Investment Adviser | Portfolio Manager',
+    standardDisclaimer: 'Review messaging, claims, and approvals before publishing externally.',
+    regulatoryText: 'Optional legal or compliance footer',
     disclaimer: {
-      short: 'Subject to market risks. Read documents carefully.',
-      medium: 'Investments are subject to market risks. Please read all scheme related documents carefully before investing.',
-      long: 'Investments in securities market are subject to market risks. Read all the related documents carefully before investing. Past performance is not indicative of future returns. Please consider your specific investment requirements before choosing a fund, or designing a portfolio that suits your needs.'
+      short: 'Review claims and approvals before publishing.',
+      medium: 'Review claims, pricing, and approvals before publishing external-facing content.',
+      long: 'This is a generic campaign framework. Review all claims, pricing, legal statements, compliance requirements, and approvals before publishing content in a live environment.'
     },
     requiredForAudiences: {
       internal: false,
-      mass_affluent: true,
-      hni: true,
-      uhni: true,
-      all_clients: true
+      lead_gen: false,
+      professionals: false,
+      executives: false,
+      all_clients: false
     }
   },
 
-  // Avatar Configuration (HeyGen Indian Avatars)
   avatars: {
     enabled: true,
     provider: 'heygen',
-    // Public Indian avatars available in HeyGen
     publicAvatars: [
       {
         id: 'Raj_public',
@@ -341,7 +318,7 @@ const brandConfig = {
         ethnicity: 'Indian',
         style: 'professional',
         description: 'Professional Indian male avatar in business attire',
-        suitable: ['hni', 'uhni', 'all_clients']
+        suitable: ['executives', 'all_clients']
       },
       {
         id: 'Priya_public',
@@ -350,7 +327,7 @@ const brandConfig = {
         ethnicity: 'Indian',
         style: 'professional',
         description: 'Professional Indian female avatar in business attire',
-        suitable: ['mass_affluent', 'all_clients']
+        suitable: ['professionals', 'all_clients', 'lead_gen']
       },
       {
         id: 'Arjun_public',
@@ -359,10 +336,9 @@ const brandConfig = {
         ethnicity: 'Indian',
         style: 'approachable',
         description: 'Approachable Indian male avatar',
-        suitable: ['internal', 'mass_affluent']
+        suitable: ['internal', 'lead_gen']
       }
     ],
-    // Custom avatar creation via Photo Avatar or Video Avatar API
     customAvatarOptions: {
       photoAvatar: {
         enabled: true,
@@ -386,50 +362,44 @@ const brandConfig = {
         }
       }
     },
-    // Avatar NOT to use (as per user requirement)
-    excludeAvatars: ['Siddharth_Vora']
+    excludeAvatars: []
   },
 
-  // Gemini 3 Pro Image Generation Prompts
   geminiPrompts: {
-    // Audience-specific prompt modifiers
     audienceModifiers: {
       internal: 'friendly, collaborative, modern professional style',
-      mass_affluent: 'engaging, educational, vibrant and modern',
-      hni: 'sophisticated, premium, refined professional aesthetic',
-      uhni: 'exclusive, luxurious, ultra-premium with subtle elegance',
-      all_clients: 'professional, trustworthy, balanced corporate style'
+      lead_gen: 'persuasive, clear, action-oriented',
+      professionals: 'engaging, useful, polished and modern',
+      executives: 'sophisticated, concise, premium aesthetic',
+      all_clients: 'professional, trustworthy, balanced modern style'
     },
 
-    // Brand consistency requirements for all prompts
     brandRequirements: `
-      - Use navy blue (#0e0e6a) as primary color
-      - Include teal (#00d084) or vibrant blue (#3c3cf8) as accents
+      - Use the configured primary and accent colors consistently
       - Maintain high contrast for readability
-      - Professional, modern corporate aesthetic
-      - Include PL Capital logo placement
-      - Use Figtree font for text elements
-      - Ensure sophisticated and established look
+      - Keep a modern, polished, adaptable brand aesthetic
+      - Reserve space for a brand mark or logo if needed
+      - Use Figtree for text elements when typography is rendered
+      - Prioritize clarity, confidence, and clean composition
     `,
 
-    // Template-specific prompts
     templates: {
       marketUpdate: (audience) => `
-        Create a professional financial market update image.
+        Create a professional trend or performance update visual.
         Target audience: ${audience}
         Style: ${brandConfig.geminiPrompts.audienceModifiers[audience]}
         ${brandConfig.geminiPrompts.brandRequirements}
-        Include: Charts/graphs, data visualization, market indicators
-        Mood: Authoritative, expert, data-driven
+        Include: Charts, metrics, or supporting visual indicators where helpful
+        Mood: Clear, credible, insight-driven
       `,
 
       investmentTip: (audience) => `
-        Create an educational investment tip graphic.
+        Create an educational insight graphic.
         Target audience: ${audience}
         Style: ${brandConfig.geminiPrompts.audienceModifiers[audience]}
         ${brandConfig.geminiPrompts.brandRequirements}
-        Include: Key insight, visual metaphor for growth/prosperity
-        Mood: Empowering, informative, trustworthy
+        Include: One key takeaway and a strong supporting visual metaphor
+        Mood: Helpful, informative, trustworthy
       `,
 
       productPromo: (audience, product) => `
@@ -437,49 +407,33 @@ const brandConfig = {
         Target audience: ${audience}
         Style: ${brandConfig.geminiPrompts.audienceModifiers[audience]}
         ${brandConfig.geminiPrompts.brandRequirements}
-        Include: Product benefits, compelling visuals
+        Include: Benefits, use cases, and compelling visual focus
         Mood: Professional, value-focused, aspirational
       `
     }
   }
 };
 
-// Helper Functions
 brandConfig.helpers = {
-  /**
-   * Get color palette for specific audience
-   */
   getAudiencePalette: (audienceType) => {
     const audience = brandConfig.targetAudiences[audienceType];
-    return audience ? audience.colorPalette : brandConfig.targetAudiences.allClients.colorPalette;
+    return audience ? audience.colorPalette : brandConfig.targetAudiences.all_clients.colorPalette;
   },
 
-  /**
-   * Get template configuration for image generation
-   */
   getTemplate: (templateName) => {
     return brandConfig.imageTemplates[templateName] || brandConfig.imageTemplates.socialPost;
   },
 
-  /**
-   * Check if disclaimer is required for audience
-   */
   requiresDisclaimer: (audienceType) => {
     return brandConfig.compliance.requiredForAudiences[audienceType] || false;
   },
 
-  /**
-   * Get appropriate avatar for audience
-   */
   getAvatarForAudience: (audienceType) => {
-    return brandConfig.avatars.publicAvatars.filter(avatar =>
+    return brandConfig.avatars.publicAvatars.filter((avatar) =>
       avatar.suitable.includes(audienceType)
     );
   },
 
-  /**
-   * Generate Gemini prompt for specific use case
-   */
   generateGeminiPrompt: (templateType, audience, additionalContext = '') => {
     const promptTemplate = brandConfig.geminiPrompts.templates[templateType];
     if (!promptTemplate) {
@@ -488,21 +442,18 @@ brandConfig.helpers = {
     return promptTemplate(audience) + '\n' + additionalContext;
   },
 
-  /**
-   * Get all brand colors as CSS variables
-   */
   getCSSVariables: () => {
     return `
-      --pl-navy: ${brandConfig.colors.primary.navy};
-      --pl-blue: ${brandConfig.colors.primary.blue};
-      --pl-green: ${brandConfig.colors.secondary.green};
-      --pl-teal: ${brandConfig.colors.secondary.teal};
-      --pl-white: ${brandConfig.colors.neutral.white};
-      --pl-black: ${brandConfig.colors.neutral.black};
-      --pl-gradient-primary: ${brandConfig.colors.gradients.primary};
-      --pl-gradient-success: ${brandConfig.colors.gradients.success};
-      --pl-gradient-premium: ${brandConfig.colors.gradients.premium};
-      --pl-font-family: ${brandConfig.typography.primary.family}, ${brandConfig.typography.primary.fallback};
+      --brand-navy: ${brandConfig.colors.primary.navy};
+      --brand-blue: ${brandConfig.colors.primary.blue};
+      --brand-green: ${brandConfig.colors.secondary.green};
+      --brand-teal: ${brandConfig.colors.secondary.teal};
+      --brand-white: ${brandConfig.colors.neutral.white};
+      --brand-black: ${brandConfig.colors.neutral.black};
+      --brand-gradient-primary: ${brandConfig.colors.gradients.primary};
+      --brand-gradient-success: ${brandConfig.colors.gradients.success};
+      --brand-gradient-premium: ${brandConfig.colors.gradients.premium};
+      --brand-font-family: ${brandConfig.typography.primary.family}, ${brandConfig.typography.primary.fallback};
     `;
   }
 };

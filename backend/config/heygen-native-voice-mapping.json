@@ -1,107 +1,212 @@
 {
-  "6f268f0fa28a41ce8b1fe4e83ac3867b": {
-    "avatarName": "Raj",
-    "groupId": "6f268f0fa28a41ce8b1fe4e83ac3867b",
-    "imageKey": "image/195e91fcc6a34db99924bda34c6a22d0/original",
-    "voiceId": "ef5765a5c2ee49e58f7dd942e67fb6f2",
-    "voiceName": "Jaidev - Professional",
-    "gender": "male",
-    "language": "Hindi",
-    "previewAudio": "https://static.heygen.ai/voice_preview/f76b718088c54b22bb8da12dbcb78a0f.wav",
-    "description": "Professional male voice - perfect for financial advisor persona",
-    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
+  "e1533784f9354d4190f7556bd8800ef2": {
+    "avatarName": "Lavanya",
+    "groupId": "e1533784f9354d4190f7556bd8800ef2",
+    "lookIds": [
+      "048e573f77364f8d9e1832ff7fc322ea",
+      "5f64d120b38b4f7e93dc8259f41ceb83",
+      "638261e321f048298728faa0fdb37343",
+      "a6cb36b769ce46aa9942dec4a606fd68"
+    ],
+    "voiceId": "d4fd0ab9a928429683d1ee186e2b6ad2",
+    "voiceName": "Default voice (d4fd0ab9...)",
+    "gender": "female",
+    "language": "English",
+    "description": "HeyGen photo avatar group with multiple Lavanya look variants.",
+    "motionEnabled": true,
+    "motionPrompt": "news reader with hand gesture"
   },
-  "0ada07010c8e4049aca376e132b04a1d": {
-    "avatarName": "Priya",
-    "groupId": "0ada07010c8e4049aca376e132b04a1d",
-    "imageKey": "image/e4d675d39f5545fd9e3fe14e9a5f48f4/original",
-    "voiceId": "9799f1ba6acd4b2b993fe813a18f9a91",
-    "voiceName": "Swara - Friendly",
+  "d3c3667e867b424fbcdd692f00fb66b1": {
+    "avatarName": "TalkingPhoto",
+    "groupId": "d3c3667e867b424fbcdd692f00fb66b1",
+    "lookIds": [
+      "d3c3667e867b424fbcdd692f00fb66b1"
+    ],
+    "voiceId": "bc22af81440d4212acf315103d7faf82",
+    "voiceName": "Aditi - Calm",
     "gender": "female",
     "language": "Hindi",
-    "previewAudio": "https://static.heygen.ai/voice_preview/e4bc76818ccf4591b1ca4321de23130e.wav",
-    "description": "Friendly female voice - ideal for corporate trainer persona",
-    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
+    "description": "Single-look HeyGen talking photo avatar.",
+    "motionEnabled": true,
+    "motionAvatarId": "9c31afbb12864026894822cc46e61737",
+    "motionPrompt": "smiling and shake head little bit as per dialog speak"
   },
-  "350da0c0495f43c69e1f97b10df2c441": {
-    "avatarName": "Arjun",
-    "groupId": "350da0c0495f43c69e1f97b10df2c441",
+  "f97fd77cb2c74cabb7bf6878e0c02a5b": {
+    "avatarName": "Shivani",
+    "groupId": "f97fd77cb2c74cabb7bf6878e0c02a5b",
     "lookIds": [
-      "4134ff5950f74373b1b437e3523ea68d",
-      "353ebf99622d42b6afbc2eea7e54317f",
-      "350da0c0495f43c69e1f97b10df2c441",
-      "c168ca11127645ae89270c109a83f979",
-      "e9737ee075f64c6ca41929caf4b43945"
+      "7482ce42c7804646a678b1235dcc014b",
+      "82170d6b1b8f4a07b423154384d98812",
+      "df861952974f40d5817b4cfc0457d8d9"
     ],
-    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static.",
-    "imageKey": "image/665da71a7f02474f98cc8378f75603ab/original",
-    "voiceId": "957336970bc64d479d551fea07e56784",
-    "voiceName": "Madhur - Natural",
-    "gender": "male",
-    "language": "Hindi",
-    "previewAudio": "https://static.heygen.ai/voice_preview/20d3b6c692db483a92e3788a87e9e231.wav",
-    "description": "Natural male voice - fits business casual professional"
-  },
-  "ef20bde4645c458ab72c9cadfc4fbdc7": {
-    "avatarName": "Meera",
-    "groupId": "ef20bde4645c458ab72c9cadfc4fbdc7",
-    "lookIds": [
-      "27bc076e48f742d5b2947ea79b9dca7c",
-      "877db200d28343fe8bb53d7ca54412b0",
-      "3cbecae095a34fd1ba5f9e4595b37807",
-      "19607789c4194c83be3833b5ca9c6e20",
-      "93326230032d4b54a72125f1f40c2be1",
-      "846cad9e02a4445681a4a152d2eee591",
-      "60b5074c4b71490c926e9aac76169d8c",
-      "a1a86f96d93d4ac68fa39d6b1e4d8ec4"
-    ],
-    "imageKey": "image/6b3d6a26cb084c24b470797842b6f417/original",
-    "voiceId": "86e484394d8b44649d686a77a14d2ce6",
-    "voiceName": "Nirmala",
+    "voiceId": "f627512278984aa292add70458772470",
+    "voiceName": "Default voice (f6275122...)",
     "gender": "female",
     "language": "Hindi",
-    "previewAudio": "https://resource.heygen.ai/text_to_speech/xUmob87su5HccMTFcYaCP5.mp3",
-    "description": "Professional female voice - suitable for senior executive persona",
-    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
+    "description": "HeyGen avatar group for Shivani with four look variants.",
+    "motionEnabled": true,
+    "motionPrompt": "news reader with hand gesture"
   },
-  "39baeece5af54c38b25562ad4f4a375a": {
-    "avatarName": "Vikram",
-    "groupId": "39baeece5af54c38b25562ad4f4a375a",
+  "c8a8bc787e69482fa0da976aab5e18da": {
+    "avatarName": "Suman",
+    "groupId": "c8a8bc787e69482fa0da976aab5e18da",
     "lookIds": [
-      "5723f94b0c764772abc33a5d4432e612",
-      "85fabd0e667342b2a2d798b49ed3dca7",
-      "958b93c157b249079d3c9a94799bf72e",
-      "6bee71a5838743929e9e7d19dff1fffa",
-      "00e216dd2aa2417b870c45abbaa1ad49",
-      "39baeece5af54c38b25562ad4f4a375a"
+      "adca8d96acfd416a8170b44e4f1f43d6"
     ],
-    "imageKey": "image/996930d352c44c77b6e788b9d608dd52/original",
-    "voiceId": "ae3563ff1460469e89f661ffb3f1260b",
-    "voiceName": "Bhavin - Newscaster",
-    "gender": "male",
+    "voiceId": "a20fa525ff99498a8127de9f8cfbe911",
+    "voiceName": "Default voice (a20fa525...)",
+    "gender": "unknown",
     "language": "Hindi",
-    "previewAudio": "https://static.heygen.ai/voice_preview/7224e9c56b234898a758421c138475b2.wav",
-    "description": "Professional newscaster voice - excellent for financial expert persona",
-    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
+    "description": "HeyGen avatar group for Suman with one standard and one motion look.",
+    "motionEnabled": true,
+    "motionPrompt": "smiling and shake head little bit as per dialog speak"
   },
-  "277d9624a6c1413aa02cefa1366741aa": {
-    "avatarName": "Custom Avatar 277d",
-    "groupId": "277d9624a6c1413aa02cefa1366741aa",
+  "313c375f6b5946b786d2e57e2e6bc50d": {
+    "avatarName": "Ian",
+    "groupId": "313c375f6b5946b786d2e57e2e6bc50d",
     "lookIds": [
-      "e56783e9c74346b59b5265d876348697",
-      "46dc2be3c652440d955977f4e5de3c74",
-      "2524279535d848e6a38e4111fb044232",
-      "64374e54cdb64f12a3e68cbd344fd23d",
-      "cf79a632ff4d431f9350998fc3b139e5",
-      "cc05458241214102bf29d0680f2cc147",
-      "8c379e5e48c64c8f93491460c6882ca0",
-      "600216621b2e46f2a240a924e9609bdd"
+      "ab0b1ddf856e4c92b45986d219ec3e71"
     ],
-    "voiceId": "c8d184ef4d81484a97d70c94bb76fec3",
-    "voiceName": "Siddharth Vora Voice",
+    "voiceId": "4d8c9def88a54af683ec6cba436bb789",
+    "voiceName": "Default voice (4d8c9def...)",
     "gender": "male",
-    "language": "Hindi",
-    "description": "Custom avatar group with automatic random look selection",
-    "motionPrompt": "Talking Naturally: Subject talks animatedly while maintaining direct eye contact with the camera. Background elements subtly move to enhance realism. Camera remains absolutely static."
+    "language": "English",
+    "description": "HeyGen avatar group for Ian with motion-capable newsroom presentation look.",
+    "motionEnabled": true,
+    "motionPrompt": "news reader with hand gesture"
+  },
+  "9fe9c076c2ae4cb789021965833a22cb": {
+    "avatarName": "Declan",
+    "groupId": "9fe9c076c2ae4cb789021965833a22cb",
+    "lookIds": [
+      "23307369dbc246778155e5c4c44161b0",
+      "2fa463259a8943a295d9fbf3cae044e6",
+      "5aee061ab6b64e978a26887589cfb3d1",
+      "640cac42198c423c87570393fa46a1fe",
+      "6648a6d7341f4a2db7c2403cd4db2615",
+      "67bfdde2dc2849a0a7e9472c3882b4b6",
+      "858c2aa631974ea7a2311e09c6405f1c",
+      "94a1661e817a4f75bf9e35b5a8caa948",
+      "9f24c8db52be4e0ba966437b5d77d7b5",
+      "aba713c4bd504a179229074e444ff8d0",
+      "cff566d10de84a20afc5b1aac18899db",
+      "d8c8e19a837345f0b2a11932b4fd870e",
+      "e43d1c72e2bf46d49baef270e63cbbe6",
+      "e75802db6e114efdbe6092fd4f0339ee",
+      "f63fc06d8c954857a5c340affa6e742a"
+    ],
+    "voiceId": "2d8cb28dec2c46fa93f02cf49b730fb4",
+    "voiceName": "Declan",
+    "gender": "male",
+    "language": "English",
+    "description": "HeyGen avatar group for Declan with a full set of motion-capable looks.",
+    "motionEnabled": true,
+    "motionPrompt": "news reader with hand gesture"
+  },
+  "e2697b7ba80547cc8697de720e73450f": {
+    "avatarName": "Desk Presenter",
+    "groupId": "e2697b7ba80547cc8697de720e73450f",
+    "lookIds": [
+      "10f7e0bdf3d94bca9adc32b04fd90210",
+      "291ce02bb7544c1db4e935d21e295274",
+      "3f95c35869454257992cb879418f5fb4",
+      "41a7463f989c41f08e133b2894e70bf8",
+      "4a86b51fb9cf4f6282a236a356b535ea",
+      "5313eb2a2ce84020ab91cfaf75c8bee2",
+      "57f30b31975d44a5933fab85022753d1",
+      "812a70e57bc1449f88cf1229d11635e8",
+      "bde25a7a675c4f7f9a725f16955afae5"
+    ],
+    "voiceId": "b31fc76d7103425581cefe947c16811a",
+    "voiceName": "Default voice (b31fc76d...)",
+    "gender": "unknown",
+    "language": "English",
+    "description": "HeyGen desk presenter avatar group with seated presenter look variants.",
+    "motionEnabled": true,
+    "motionPrompt": "news reader with hand gesture"
+  },
+  "c2d73a2a1707469c852206165ede3fb2": {
+    "avatarName": "Sevik",
+    "groupId": "c2d73a2a1707469c852206165ede3fb2",
+    "lookIds": [
+      "5fd00bf44ce84cada2a5086f60af0ec9",
+      "6a92834ee3fa426282769f7dcc4beff7",
+      "752e3ed9999c441dbaee2f4b2e2fac47",
+      "8ffaa8ae1b3d49bb8cd3a76f1abe9427",
+      "94de028fed2a41ef9762d381ef786cf0",
+      "9f2124848f544a0f800fa02cb7e806e0",
+      "a2d49d86a6aa40c1995640518b72b73b",
+      "a5da1ccf32b24428b24308a4b1e2c885",
+      "fd586a48e76a4227821745e3dfbecbb5"
+    ],
+    "voiceId": "78238955eeb14ba1a8b0bc5ca7ea0252",
+    "voiceName": "Sevik",
+    "gender": "male",
+    "language": "English",
+    "description": "HeyGen avatar group for Sevik with multiple motion-capable looks.",
+    "motionEnabled": true,
+    "motionPrompt": "news reader with hand gesture"
+  },
+  "2c43461ac14846ef973be96e81c49ca3": {
+    "avatarName": "Kristen",
+    "groupId": "2c43461ac14846ef973be96e81c49ca3",
+    "lookIds": [
+      "2a1240717d244347811033fbbf3d59a4",
+      "2cf3ab071ec34a1794b09ca65f8b2080",
+      "44a60a01263144d08c5b9a71926c3340",
+      "47e1628dc867417597faa697d441200f",
+      "5a8767ec033246a88e3fe35aba3ae321",
+      "6044fddb11734bb9b297297dd7ea500c",
+      "6e5d916589c74f3b8aaffff2a4512d53",
+      "7971bb7af38b452c99c5ee4eef6e418c",
+      "a63e0d12687345e6ae3a999e99c19425",
+      "baa20076053c4150a4860dd447d19bc0",
+      "c6b6c0c1b87b479c94c9c571707da887",
+      "cf1f649bb72e4ee09a6bc1e3aaeb9e1c",
+      "e51aa98dc9df41f894b65bbd1a21a187",
+      "f7756bc8b9b04083a721053331955fc5"
+    ],
+    "voiceId": "35ecafdadd57499eabd644eea50f849d",
+    "voiceName": "Kristen",
+    "gender": "female",
+    "language": "English",
+    "description": "HeyGen avatar group for Kristen with motion-capable studio looks.",
+    "motionEnabled": true,
+    "motionPrompt": "smiling and shake head little bit as per dialog speak"
+  },
+  "3802eae40be249198de20e64662259b6": {
+    "avatarName": "Aaron",
+    "groupId": "3802eae40be249198de20e64662259b6",
+    "lookIds": [
+      "3ec4e2037b5443c8a21cae1fca2a9716",
+      "6437460248b5420b84e80912972d2024",
+      "6f88df61b2c446ab8bf0f0283545f219",
+      "939eec9106964d20b1801711bdef2543",
+      "ae3acff58beb48fdb170a91185cc5632",
+      "b8507488f3be436a8bdb570e58ac6a52",
+      "d231ba5a08e9414db898f21530648bc2",
+      "ef3f14eb9b0e4a1dac71411b89750e34"
+    ],
+    "voiceId": "66da5fabd6b944b3a42f35aed9631ad2",
+    "voiceName": "Aaron",
+    "gender": "male",
+    "language": "English",
+    "description": "HeyGen avatar group for Aaron with motion-ready presentation looks.",
+    "motionEnabled": true,
+    "motionPrompt": "news reader with hand gesture"
+  },
+  "5b4c5e807beb4dd583c619b1b0c59b02": {
+    "avatarName": "Amir Patel",
+    "groupId": "5b4c5e807beb4dd583c619b1b0c59b02",
+    "lookIds": [
+      "b7f265f7dac2493dbee4ad1a5c93dd61"
+    ],
+    "voiceId": "14347c204fcc4d84a6e88e66e13a3a9f",
+    "voiceName": "Default voice (14347c20...)",
+    "gender": "male",
+    "language": "English",
+    "description": "HeyGen avatar group for Amir Patel with motion-capable look variant.",
+    "motionEnabled": true,
+    "motionPrompt": "news reader with hand gesture"
   }
 }

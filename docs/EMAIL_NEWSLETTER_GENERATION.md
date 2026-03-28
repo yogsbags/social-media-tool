@@ -96,7 +96,7 @@ The email newsletter generation system creates production-ready HTML email newsl
 
 ## Brand Guidelines Integration
 
-### Default PL Capital Brand Guidelines:
+### Default the brand Brand Guidelines:
 
 ```yaml
 Primary Colors:
@@ -244,16 +244,16 @@ Users can override defaults with:
 ```json
 {
   "id": "2-1234567890",
-  "topic": "Unlock Alpha with PL Capital's MADP",
+  "topic": "Unlock Alpha with the brand's flagship product",
   "campaignType": "email-newsletter",
   "platforms": ["email"],
   "status": "completed",
   "type": "content-generation",
   "contentType": "email-newsletter",
-  "subject": "Your Portfolio Deserves Better: Discover MADP",
+  "subject": "Your Portfolio Deserves Better: Discover flagship product",
   "preheader": "Adaptive quantitative strategies that deliver consistent alpha in every market condition.",
   "subjectVariations": [
-    "Unlock Alpha with PL Capital's Adaptive Strategies",
+    "Unlock Alpha with the brand's Adaptive Strategies",
     "The Smart Investor's Guide to Consistent Returns"
   ],
   "html": "<!DOCTYPE html>...[full HTML]...",
@@ -300,20 +300,20 @@ When clicking "View Data" after Stage 2 completion for email newsletters:
 
 ## Example Generated Email
 
-**Topic**: "Adaptive Wealth Management with PL Capital"
+**Topic**: "Adaptive Wealth Management with the brand"
 **Audience**: High-net-worth investors (1Cr+)
 **Purpose**: Brand awareness
 
-**Subject**: "Your Wealth, Optimized: PL Capital's Adaptive Approach" (56 chars ✅)
+**Subject**: "Your Wealth, Optimized: the brand's Adaptive Approach" (56 chars ✅)
 
 **Preheader**: "80 years of quantitative excellence. Discover how our adaptive strategies deliver alpha." (89 chars ✅)
 
 **Subject Variations**:
-1. "Unlock Consistent Alpha with PL Capital's MADP"
+1. "Unlock Consistent Alpha with the brand's flagship product"
 2. "The Future of Wealth Management: Adaptive & Quantitative"
 
 **HTML Features**:
-- Navy (#0e0e6a) header with white PL Capital logo
+- Navy (#0e0e6a) header with white the brand logo
 - White content sections with clear typography
 - Teal (#00d084) CTA button: "Schedule a Consultation"
 - Data visualization graphics showing performance
@@ -330,7 +330,7 @@ YOUR WEALTH, OPTIMIZED: PL CAPITAL'S ADAPTIVE APPROACH
 
 SCHEDULE A CONSULTATION: [URL]
 
-PL Capital | Mumbai, India
+the brand | Mumbai, India
 Unsubscribe: [URL]
 ```
 

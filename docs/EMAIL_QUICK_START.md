@@ -5,7 +5,7 @@
 ### 1. Email Generation API (`/api/email/generate/route.ts`)
 - **Production-ready HTML email generator**
 - **Subject line optimization** following subjectline.com best practices
-- **Brand guidelines integration** (PL Capital defaults + custom)
+- **Brand guidelines integration** (the brand defaults + custom)
 - **GPT-OSS-120B powered** for high-quality content
 
 ### 2. Stage 2 Workflow Integration (`/api/workflow/stage/route.ts`)
@@ -32,7 +32,7 @@
 Campaign Type: email-newsletter
 Platform: email (or linkedin + email)
 Topic: Your campaign topic
-Brand Guidelines: ✅ Use PL Capital Guidelines
+Brand Guidelines: ✅ Use the brand Guidelines
 ```
 
 This generates the creative prompt that guides email generation.
@@ -103,7 +103,7 @@ Click **"View Data"** button after Stage 2 completes:
 
 ## 🎨 Brand Guidelines Applied
 
-### PL Capital Default Colors:
+### the brand Default Colors:
 - **Primary Navy**: `#0e0e6a` (header, footer background)
 - **Primary Blue**: `#3c3cf8` (links, accents)
 - **Accent Teal**: `#00d084` (CTA buttons, highlights)
@@ -124,7 +124,7 @@ Click **"View Data"** button after Stage 2 completes:
 
 ### Generated Subject Line:
 ```
-"Your Portfolio Deserves Better: Discover MADP"
+"Your Portfolio Deserves Better: Discover flagship product"
 ✅ 48 characters (optimal range)
 ```
 
@@ -136,14 +136,14 @@ Click **"View Data"** button after Stage 2 completes:
 
 ### A/B Test Variations:
 ```
-1. "Unlock Alpha with PL Capital's Adaptive Strategies"
+1. "Unlock Alpha with the brand's Adaptive Strategies"
 2. "The Smart Investor's Guide to Consistent Returns"
 ```
 
 ### HTML Email Structure:
 ```
 ├── Header (Navy #0e0e6a)
-│   └── PL Capital Logo
+│   └── the brand Logo
 ├── Hero Section
 │   └── Main Headline
 ├── Content Sections
@@ -168,7 +168,7 @@ POST /api/email/generate
 Content-Type: application/json
 
 {
-  "topic": "Unlock Alpha with PL Capital's MADP",
+  "topic": "Unlock Alpha with the brand's flagship product",
   "purpose": "brand-awareness",
   "targetAudience": "1cr_plus",
   "creativePrompt": "...",  // from Stage 1
@@ -182,7 +182,7 @@ Content-Type: application/json
 ### Response:
 ```json
 {
-  "subject": "Your Portfolio Deserves Better: Discover MADP",
+  "subject": "Your Portfolio Deserves Better: Discover flagship product",
   "preheader": "Adaptive quantitative strategies...",
   "subjectVariations": ["...", "..."],
   "html": "<!DOCTYPE html>...",
@@ -256,7 +256,7 @@ Topic: "Market Insights for November 2025"
 Campaign Type: email-newsletter
 Purpose: product-launch
 Audience: 1cr_plus
-Topic: "Introducing PL Capital's New MADP Portfolio"
+Topic: "Introducing the brand's New flagship product Portfolio"
 ```
 
 ### 3. Educational Series

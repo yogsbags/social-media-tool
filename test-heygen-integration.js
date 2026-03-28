@@ -3,7 +3,7 @@
 /**
  * Test HeyGen Avatar Integration
  *
- * This script tests the HeyGen avatar video generation for Siddharth Vora
+ * This script tests the HeyGen avatar video generation for the spokesperson
  * by calling the orchestrator's stageVideo method with avatar options.
  */
 
@@ -32,7 +32,7 @@ const SocialMediaOrchestrator = require('./backend/core/orchestrator');
 async function testHeyGenIntegration() {
   console.log('🧪 Testing HeyGen Avatar Integration\n');
   console.log('='.repeat(72));
-  console.log('TEST: Siddharth Vora Avatar Video Generation');
+  console.log('TEST: the spokesperson Avatar Video Generation');
   console.log('='.repeat(72) + '\n');
 
   // Initialize orchestrator
@@ -47,12 +47,12 @@ async function testHeyGenIntegration() {
   const testOptions = {
     platform: 'linkedin',
     format: 'testimonial',
-    topic: 'PL Capital investment strategy and portfolio performance',
+    topic: 'the brand investment strategy and portfolio performance',
     duration: 15, // 15 seconds for quick test
     aspectRatio: '16:9',
     useAvatar: true,
     avatarId: 'siddharth-vora', // This triggers HeyGen routing
-    scriptText: 'Hello, I am Siddharth Vora, Fund Manager at PL Capital. We specialize in long-term value investing with a focus on quality businesses. Our portfolio has consistently outperformed benchmarks through disciplined research and patient capital allocation.',
+    scriptText: 'Hello, I am the spokesperson, Fund Manager at the brand. We specialize in long-term value investing with a focus on quality businesses. Our portfolio has consistently outperformed benchmarks through disciplined research and patient capital allocation.',
     waitForCompletion: false // Don't wait for completion in test (async mode)
   };
 

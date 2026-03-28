@@ -93,7 +93,7 @@ class SocialMediaOrchestrator {
   }
 
   async _generateHeyGenScript(options) {
-    const topic = options.topic || 'PL Capital investing insights';
+    const topic = options.topic || 'brand or product insights';
     const platform = options.platform || 'instagram';
     const format = options.format || 'reel';
     const duration = Number(options.duration || 8);
@@ -108,10 +108,10 @@ class SocialMediaOrchestrator {
 
     if (!groqKey) {
       const hook = platform === 'instagram' ? 'Stop scrolling—quick money tip.' : 'Quick update.';
-      return `${hook} ${topic}. Want a simple plan? Talk to PL Capital today.`.trim();
+      return `${hook} ${topic}. Want more like this? Follow for more.`.trim();
     }
 
-    const systemPrompt = `You write short, natural spoken scripts for a financial services video avatar.
+    const systemPrompt = `You write short, natural spoken scripts for a branded video avatar.
 Return ONLY the spoken script as plain text. No bullet points. No headings. No stage directions. No meta-instructions.`;
 
     const languageName = this._getLanguageName(language);
@@ -120,7 +120,7 @@ Return ONLY the spoken script as plain text. No bullet points. No headings. No s
     const viralReelStyle = `Style (viral reel/short, Indian audience):
 - Hook in the first sentence (pattern interrupt — stop the scroll).
 - Short punchy sentences, spoken like a credible Indian finfluencer (not cheesy).
-- Use everyday India cues where relevant (₹, SIP, tax, salary day) without giving personalized advice.
+- Use concrete, everyday cues where relevant without becoming niche or overly technical.
 - Close with a strong CTA: "Save this", "Share", "Follow", or "Comment 'PLAN'".`;
     const styleGuidance = (isInstagramReel || isYouTubeShort) ? viralReelStyle : '';
     const userPrompt = `Write a single spoken script for an AI avatar video.
@@ -133,7 +133,7 @@ Constraints:
 - Language: ${languageName}
 - Tone: confident, warm, professional, Indian business style.
 - Length: about ${wordsTarget} words (max ${wordsTarget + 6}).
-- Compliance: no guaranteed returns, no exaggerated claims, no personalized investment advice.
+- Compliance: no guaranteed outcomes, no exaggerated claims, no regulated or personalized advice.
 - Do not include compliance disclaimers in the spoken script (caption handles compliance separately).
 
 ${styleGuidance ? styleGuidance : ''}
@@ -208,7 +208,7 @@ Output rules:
       ]
     };
 
-    const systemPrompt = `You are an expert at creating Twitter/X thread content for PL Capital (finance). Your output MUST be valid JSON only, no markdown or explanation.
+    const systemPrompt = `You are an expert at creating Twitter/X thread content for a modern brand. Your output MUST be valid JSON only, no markdown or explanation.
 
 Output a single JSON object with exactly one key:
 - "tweets": array of strings. Each string is ONE tweet (max 280 characters). Typically 5–12 tweets for a thread.
@@ -310,18 +310,17 @@ Output ONLY the JSON object, no other text.`;
     const pdfContext = (process.env.RESEARCH_PDF_CONTEXT || '').trim().slice(0, 2000);
 
     const defaults = {
-      slideCount: 7,
-      coverText: topic || 'Quick Investing Checklist',
+      slideCount: 5,
+      coverText: topic || 'Quick Visual Checklist',
       slides: [
-        { title: 'Myth 1', body: 'Swipe for the truth.', highlight: 'Busted', visualCue: 'Bold myth vs fact icon' },
-        { title: 'Myth 2', body: 'One clear takeaway.', highlight: 'Key idea', visualCue: 'Simple icon + mini chart' },
-        { title: 'Myth 3', body: 'One actionable step.', highlight: 'Tip', visualCue: 'Checklist icon' },
-        { title: 'Myth 4', body: 'One clear takeaway.', highlight: 'Key idea', visualCue: 'Simple icon' },
-        { title: 'Myth 5', body: 'One actionable step.', highlight: 'Tip', visualCue: 'Mini chart' },
-        { title: 'Quick recap', body: 'Save this checklist • Follow PL Capital', highlight: 'Save', visualCue: 'Checklist icons + CTA' }
+        { title: 'Quick Visual Checklist', body: 'Swipe →', highlight: 'Overview', visualCue: 'Bold cover headline, minimal icons' },
+        { title: 'Start with the bottleneck', body: 'Name the biggest drag on the workflow first.', highlight: 'Step 1', visualCue: 'Simple bottleneck icon + process arrows' },
+        { title: 'Cut duplicate steps', body: 'Remove rework, handoff churn, and repeated updates.', highlight: 'Step 2', visualCue: 'Checklist icon + crossed duplicate blocks' },
+        { title: 'Standardize the handoff', body: 'Use one clear owner, one template, one next action.', highlight: 'Step 3', visualCue: 'Team handoff diagram with one highlighted owner' },
+        { title: 'Save this checklist', body: 'Save this checklist • Follow for more', highlight: 'Save', visualCue: 'Checklist icons + CTA' }
       ],
-      finalSlideCta: 'Save this checklist • Follow PL Capital',
-      disclaimerLine: 'Market risks apply.'
+      finalSlideCta: 'Save this checklist • Follow for more',
+      disclaimerLine: 'Keep the message concise and actionable.'
     };
 
     const groqKey = process.env.GROQ_API_KEY;
@@ -329,13 +328,13 @@ Output ONLY the JSON object, no other text.`;
       return defaults;
     }
 
-    const systemPrompt = `You are an expert at creating carousel post content for financial services (PL Capital). Your output MUST be valid JSON only, no markdown or explanation.
+    const systemPrompt = `You are an expert at creating carousel post content for a modern brand. Your output MUST be valid JSON only, no markdown or explanation.
 
 Output a single JSON object with exactly these keys:
-- "slideCount": number between 5 and 12 (total slides including cover and final)
+- "slideCount": number and it must be exactly 5 (total slides including cover and final)
 - "coverText": string, punchy headline for the cover slide (max 6 words)
-- "slides": array of objects. Each object has: "title" (short headline, max 6 words), "body" (1-2 lines, very short), "highlight" (one word or short badge, e.g. "Tip", "Busted"), "visualCue" (short description for the image, e.g. "Simple icon + mini chart"). Length of slides array should equal slideCount (cover = index 0, final = last index). Cover slide: title = coverText, body = "Swipe →" or "Swipe →\\nSave later" for Instagram. Final slide: CTA and disclaimer.
-- "finalSlideCta": string, call-to-action for last slide (e.g. "Save this checklist • Follow PL Capital")
+- "slides": array of objects. Each object has: "title" (short headline, max 6 words), "body" (1-2 lines, very short), "highlight" (one word or short badge, e.g. "Tip", "Busted"), "visualCue" (short description for the image, e.g. "Simple icon + mini chart"). Length of slides array must equal 5 exactly (cover = index 0, final = last index). Cover slide: title = coverText, body = "Swipe →" or "Swipe →\\nSave later" for Instagram. Final slide: CTA and disclaimer.
+- "finalSlideCta": string, call-to-action for last slide (e.g. "Save this checklist • Follow for more")
 - "disclaimerLine": string, exact compliance line (e.g. "Market risks apply.")
 
 Rules: No guaranteed returns, no "sure-shot" claims. Professional, compliant, scroll-stopping. Platform: ${platform}.
@@ -378,9 +377,9 @@ Output ONLY the JSON object, no other text.`;
       raw = raw.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
       const parsed = JSON.parse(raw);
 
-      const slideCount = Math.min(12, Math.max(5, Number(parsed.slideCount) || 7));
+      const slideCount = 5;
       const coverText = typeof parsed.coverText === 'string' ? parsed.coverText.trim() : defaults.coverText;
-      const slides = Array.isArray(parsed.slides) ? parsed.slides.slice(0, slideCount) : defaults.slides;
+      const slides = Array.isArray(parsed.slides) ? parsed.slides.slice(0, slideCount) : defaults.slides.slice(0, slideCount);
       const finalSlideCta = typeof parsed.finalSlideCta === 'string' ? parsed.finalSlideCta.trim() : defaults.finalSlideCta;
       const disclaimerLine = typeof parsed.disclaimerLine === 'string' ? parsed.disclaimerLine.trim() : defaults.disclaimerLine;
 
@@ -693,14 +692,14 @@ Output ONLY the JSON object, no other text.`;
     try {
       console.log('   🤖 Generating AI creative brief...\n');
 
-      const systemPrompt = `You are a creative director for PL Capital, a financial services company. Generate a comprehensive creative brief for a social media campaign. Format your response in clean, readable markdown with proper headings and bullet points.`;
+      const systemPrompt = `You are a creative director for a modern brand. Generate a comprehensive creative brief for a social media campaign. Format your response in clean, readable markdown with proper headings and bullet points.`;
 
       const userPrompt = `Generate a creative brief for this campaign:
 
 **Campaign Type:** ${options.campaignType || 'general'}
 **Platform:** ${options.platform || 'multi-platform'}
-**Topic:** ${options.topic || 'financial services'}
-**Target Audience:** ${options.targetAudience || 'investors and wealth builders'}
+**Topic:** ${options.topic || 'your brand story'}
+**Target Audience:** ${options.targetAudience || 'customers, prospects, and decision-makers'}
 **Language:** ${this._getLanguageName(options.language || 'english')}
 
 Include:
@@ -810,7 +809,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     if (isWhatsAppImage) {
       console.log('   📷 Generating WhatsApp static creative with Gemini 3 Pro Image Preview...');
       const effectiveBrandSettings = this._getEffectiveBrandSettings(options);
-      const whatsappSystemInstruction = `You are generating a single premium WhatsApp ad creative for PL Capital. Follow the user prompt exactly for the campaign message and rendered text, but keep these rules stable: produce one polished static finance creative, optimize for mobile readability, preserve strong visual hierarchy, keep the design text-forward and high-contrast, avoid clutter, do not add disclaimers or extra copy beyond what the user prompt requests, and never show human faces, people, body parts, or photoreal subjects. If a reference image is attached, use it for layout, spacing, and visual hierarchy while still obeying the text and brand instructions from the user prompt.`;
+      const whatsappSystemInstruction = `You are generating a single premium WhatsApp ad creative for the active brand. Follow the user prompt exactly for the campaign message and rendered text, but keep these rules stable: produce one polished static creative, optimize for mobile readability, preserve strong visual hierarchy, keep the design text-forward and high-contrast, avoid clutter, do not add disclaimers or extra copy beyond what the user prompt requests, and never show human faces, people, body parts, or photoreal subjects. If a reference image is attached, use it for layout, spacing, and visual hierarchy while still obeying the text and brand instructions from the user prompt.`;
       const envDirectPrompt = (process.env.STAGE2_DIRECT_PROMPT || '').trim();
       const rawPromptMode = String(process.env.STAGE2_RAW_PROMPT_MODE || '').toLowerCase() === 'true';
       let prompt = options.prompt || envDirectPrompt || null;
@@ -868,7 +867,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       // 1) keep rendered text to headline + CTA only, since smaller subtitle text tends to degrade
       // 2) never render faces/people even if Stage 1 described them
       const TEXT_LOCK_SUFFIX = '\n\nTEXT LOCK: Render ONLY these text elements in the final image: (1) the main headline and (2) the CTA button text. Do NOT render any subtitle, supporting line, body copy, caption, disclaimer, footer text, or any extra text anywhere else in the creative.';
-      const NO_FACES_SUFFIX = '\n\nHARD CONSTRAINT: ABSOLUTELY NO human faces, people, persons, or body parts anywhere in the image. Use only abstract finance visuals: charts, ₹ symbols, geometric shapes, icons, gradients.';
+      const NO_FACES_SUFFIX = '\n\nHARD CONSTRAINT: ABSOLUTELY NO human faces, people, persons, or body parts anywhere in the image. Use only abstract brand visuals, geometric shapes, icons, gradients, charts, and interface-style elements.';
       if (!rawPromptMode && prompt && !prompt.includes('TEXT LOCK: Render ONLY these text elements')) {
         prompt = prompt + TEXT_LOCK_SUFFIX;
       }
@@ -914,14 +913,14 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       }
 
       if (result?.success) {
-        // Composite the real PL Capital SVG logo onto the image first, then upload.
+        // Composite the active brand logo onto the image first, then upload if configured.
         // This guarantees hostedUrl points to the final branded creative.
         if (result.images && result.images.length > 0) {
           try {
             const composited = await this._compositeLogoOntoImage(result.images[0]);
             if (composited) {
               result.images[0] = { ...result.images[0], ...composited };
-              console.log('   🏷️  PL Capital logo composited onto creative');
+              console.log('   🏷️  Brand logo composited onto creative');
             }
           } catch (logoErr) {
             console.warn('   ⚠️ Logo compositing failed (non-fatal):', logoErr.message);
@@ -1062,6 +1061,52 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       };
     }
 
+    const isInfographicContent = options.type === 'infographic' || options.format === 'infographic' || options.platform === 'infographic';
+    if (isInfographicContent) {
+      console.log('   📊 Generating infographic content structure...');
+
+      const infographic = {
+        title: (options.topic || 'Infographic Overview').trim(),
+        subtitle: 'A concise visual summary built for social distribution.',
+        stats: [
+          { label: 'Main takeaway', value: 'Clear, visual, scannable' },
+          { label: 'Format', value: 'Single-page infographic' },
+          { label: 'Audience', value: this._getLanguageName(options.language || 'english') }
+        ],
+        sections: [
+          { heading: 'Why this matters', body: `Show why ${options.topic || 'this topic'} matters right now with a sharp, practical opener.` },
+          { heading: 'Key signals', body: 'Highlight the most important patterns, shifts, or supporting facts in short, visual-first language.' },
+          { heading: 'What to do next', body: 'Translate the information into concrete actions, decisions, or next steps the audience can use.' }
+        ],
+        cta: 'Explore the full update'
+      };
+
+      const contentPack = {
+        platforms: {
+          infographic: {
+            infographic
+          }
+        }
+      };
+
+      const contentId = `CONT-infographic-${Date.now()}`;
+      await this.stateManager.addContent({
+        id: contentId,
+        topic: (options.topic || '').trim() || 'Infographic',
+        contentPack,
+        status: 'completed',
+        completedAt: new Date().toISOString()
+      });
+
+      console.log('   ✅ Infographic content saved — ready for Stage 3 visuals');
+      return {
+        success: true,
+        contentId,
+        infographic,
+        message: 'Infographic content generated'
+      };
+    }
+
     // TODO: Implement other AI content generation
     console.log('   ⚠️  Content generation not yet implemented for this platform');
   }
@@ -1093,7 +1138,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       };
     }
 
-    console.log(`   Model: Gemini 3 Pro Image Preview (HD/1K, Grounded)\n`);
+    console.log(`   Model: Gemini 3.1 Flash Image Preview (1K, fast)\n`);
 
     // Placeholder for visual generation
     if (this.simulate) {
@@ -1141,7 +1186,62 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         }
       };
 
-      // Carousel (LinkedIn/Instagram): generate one image per slide, then upload each to ImgBB
+      const isInfographic = options.type === 'infographic' || options.format === 'infographic' || options.platform === 'infographic';
+      if (isInfographic) {
+        console.log('   📊 Infographic detected — generating single infographic visual...');
+
+        const contentEntries = Object.values(this.stateManager?.state?.content || {}).filter(Boolean);
+        const byCompletedAtDesc = (a, b) => {
+          const aTs = new Date(a?.completedAt || a?.updatedAt || a?.createdAt || 0).getTime();
+          const bTs = new Date(b?.completedAt || b?.updatedAt || b?.createdAt || 0).getTime();
+          return bTs - aTs;
+        };
+        const topic = (options.topic || '').trim();
+        const latestContent = (topic
+          ? contentEntries.filter((e) => (e?.topic || '').trim() === topic).sort(byCompletedAtDesc)[0]
+          : null) || contentEntries.sort(byCompletedAtDesc)[0] || null;
+        const infographic = latestContent?.contentPack?.platforms?.infographic?.infographic || null;
+
+        const infographicPrompt = options.prompt || [
+          `Design a polished single-page social infographic for the topic: ${topic || 'the provided topic'}.`,
+          'Use a clean editorial layout with a strong visual hierarchy, bold section headings, compact supporting text, icon-led callouts, and clear data-card styling.',
+          infographic?.title ? `Main title: ${infographic.title}.` : '',
+          infographic?.subtitle ? `Subtitle: ${infographic.subtitle}.` : '',
+          Array.isArray(infographic?.stats) && infographic.stats.length ? `Stats to feature: ${infographic.stats.map((s) => `${s.label}: ${s.value}`).join(' | ')}.` : '',
+          Array.isArray(infographic?.sections) && infographic.sections.length ? `Sections to visualize: ${infographic.sections.map((s) => `${s.heading} — ${s.body}`).join(' | ')}.` : '',
+          infographic?.cta ? `CTA area: ${infographic.cta}.` : '',
+          'Use flat vector-style charts, icons, dividers, and geometric accents. No people or faces. Keep the output social-media ready and easy to scan on mobile.'
+        ].filter(Boolean).join(' ');
+
+        const result = await generator.textToImage(infographicPrompt, {
+          model: 'gemini-3.1-flash-image-preview',
+          imageSize: '1K',
+          useGrounding: false,
+          aspectRatio: options.aspectRatio || '4:5',
+          language: options.language,
+          numberOfImages: 1
+        });
+
+        if (process.env.IMGBB_API_KEY && result.images && result.images.length > 0) {
+          console.log('   ☁️  Uploading infographic to ImgBB...');
+          for (const img of result.images) {
+            const imagePath = img.path || img.url;
+            const hostedUrl = await uploadToImgBB(imagePath);
+            if (hostedUrl) {
+              img.hostedUrl = hostedUrl;
+              console.log(`   ✅ Uploaded to ImgBB: ${hostedUrl}`);
+            }
+          }
+        }
+
+        return {
+          success: true,
+          images: result.images,
+          features: ['infographic', 'gemini-3.1-flash-image-preview']
+        };
+      }
+
+      // Carousel (LinkedIn/Instagram): generate one standalone image per slide
       const isCarousel = options.format === 'carousel' && (options.platform === 'linkedin' || options.platform === 'instagram');
       if (isCarousel) {
         const carouselPlatform = options.platform;
@@ -1162,11 +1262,11 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
             : null) || (topic ? contentEntries.filter((e) => (e?.topic || '').trim() === topic).sort(byCompletedAtDesc)[0] : null) || contentEntries.sort(byCompletedAtDesc)[0] || null;
 
         const carousel = latestContent?.contentPack?.platforms?.[carouselPlatform]?.carousel || null;
-        const slideCount = Math.min(12, Math.max(5, Number(carousel?.slideCount || 7)));
-        const coverText = carousel?.coverText || options.topic || 'Quick Investing Checklist';
-        const slides = Array.isArray(carousel?.slides) ? carousel.slides : [];
-        const finalSlideCta = carousel?.finalSlideCta || 'Save this checklist • Follow PL Capital';
-        const disclaimerLine = carousel?.disclaimerLine || 'Market risks apply.';
+        const slideCount = 5;
+        const coverText = carousel?.coverText || options.topic || 'Quick Visual Guide';
+        const slides = Array.isArray(carousel?.slides) ? carousel.slides.slice(0, slideCount) : [];
+        const finalSlideCta = carousel?.finalSlideCta || 'Save this post • Follow for more';
+        const disclaimerLine = carousel?.disclaimerLine || 'Keep the message concise and actionable.';
 
         const clampWords = (text, maxWords) => {
           const words = String(text || '').trim().split(/\s+/).filter(Boolean);
@@ -1184,12 +1284,12 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           const s = slides[idx] || {};
           const isCover = idx === 0;
           const isFinal = idx === slideCount - 1;
-          if (isCover) return { title: coverText, body: s.body || 'Swipe →', highlight: s.highlight || 'Checklist', visualCue: s.visualCue || 'Bold cover headline, minimal icons' };
+          if (isCover) return { title: coverText, body: s.body || 'Swipe →', highlight: s.highlight || 'Overview', visualCue: s.visualCue || 'Bold cover headline, minimal icons' };
           if (isFinal) return { title: s.title || 'Quick recap', body: s.body || `${finalSlideCta}\n${disclaimerLine}`, highlight: s.highlight || 'Save', visualCue: s.visualCue || 'Checklist icons + CTA' };
           return { title: s.title || `Point ${idx}`, body: s.body || 'One clear takeaway.', highlight: s.highlight || 'Key idea', visualCue: s.visualCue || 'Simple icon + mini chart' };
         });
 
-        const brandStyle = 'PL Capital brand: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766), Figtree typography. Professional, clean, no exaggerated claims.';
+        const brandStyle = 'Brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766), Figtree typography. Professional, clean, modern, no exaggerated claims.';
         const generatedImages = [];
         for (let i = 0; i < resolvedSlides.length; i++) {
           const slide = resolvedSlides[i];
@@ -1200,78 +1300,23 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           const safeBody = clampLines(slide.body, 2, maxBodyChars);
           const safeHighlight = clampLines(slide.highlight, 1, 18);
           const safeVisualCue = clampLines(slide.visualCue, 2, 60);
-          const platformLabel = carouselPlatform === 'instagram' ? 'Instagram' : 'LinkedIn';
 
-          if (i === 0) {
-            const slidePrompt = carouselPlatform === 'instagram'
-              ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`
-              : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`;
+          const slidePrompt = `${platformLabel} carousel slide ${slideNumber}/${total}, square 1:1. Headline: ${safeTitle}. Body: ${safeBody}. Highlight chip: ${safeHighlight}. Visual cue: ${safeVisualCue}. Keep the exact same brand palette, typography, spacing discipline, and premium editorial style across the whole carousel. Use bold headings, clean dividers, simple charts or icons, and strong mobile readability. ${brandStyle}`;
 
-            console.log(`   ⏳ Generating carousel slide ${slideNumber}/${total} (first slide)...`);
-            const slideResult = await generator.generateSocialGraphic(slidePrompt, carouselPlatform, {
-              imageSize: 'HD',
-              useGrounding: false,
-              aspectRatio: '1:1',
-              language: options.language,
-              numberOfImages: 1
-            });
-            const first = slideResult?.images?.[0];
-            if (first) {
-              generatedImages.push(first);
-              console.log(`   ✅ Slide ${slideNumber} generated: ${first.path || first.url || 'success'}`);
-            }
-          } else {
-            const prevImage = generatedImages[i - 1];
-            const prevPath = prevImage?.path || prevImage?.url;
-            if (!prevPath) {
-              console.log(`   ⚠️ No previous slide image; generating slide ${slideNumber} standalone.`);
-              const fallbackPrompt = carouselPlatform === 'instagram'
-                ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`
-                : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`;
-              const fallbackResult = await generator.generateSocialGraphic(fallbackPrompt, carouselPlatform, {
-                imageSize: 'HD',
-                useGrounding: false,
-                aspectRatio: '1:1',
-                language: options.language,
-                numberOfImages: 1
-              });
-              const first = fallbackResult?.images?.[0];
-              if (first) generatedImages.push(first);
-              continue;
-            }
+          console.log(`   ⏳ Generating carousel slide ${slideNumber}/${total}...`);
+          const slideResult = await generator.textToImage(slidePrompt, {
+            model: 'gemini-3.1-flash-image-preview',
+            imageSize: '1K',
+            useGrounding: false,
+            aspectRatio: '1:1',
+            language: options.language,
+            numberOfImages: 1
+          });
 
-            const continuationPrompt = `Create the NEXT ${platformLabel} carousel slide (1:1). Match the exact visual style, color palette, typography, and brand look of the reference image (same PL Capital branding). This is slide ${slideNumber} of ${total}. New content for THIS slide only: Headline: "${safeTitle}". Body: "${safeBody}". Highlight: "${safeHighlight}". Visual: ${safeVisualCue}. Do not copy the reference image; create a new slide that continues the carousel with the same theme and brand guidelines.`;
-
-            console.log(`   ⏳ Generating carousel slide ${slideNumber}/${total} (continuation from previous)...`);
-            let editResult;
-            try {
-              editResult = await generator.editImage(continuationPrompt, prevPath, {
-                aspectRatio: '1:1',
-                imageSize: 'HD',
-                useGrounding: false,
-                language: options.language
-              });
-            } catch (err) {
-              console.log(`   ⚠️ Continuation edit failed for slide ${slideNumber}, generating standalone: ${err.message}`);
-              const fallbackPrompt = carouselPlatform === 'instagram'
-                ? `Design ONE Instagram carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`
-                : `Design ONE LinkedIn carousel slide (1:1) for PL Capital (India, finance). Slide ${slideNumber}/${total}. Headline: ${safeTitle}. Body: ${safeBody}. Highlight: ${safeHighlight}. Visual: ${safeVisualCue}. ${brandStyle}`;
-              const fallbackResult = await generator.generateSocialGraphic(fallbackPrompt, carouselPlatform, {
-                imageSize: 'HD',
-                useGrounding: false,
-                aspectRatio: '1:1',
-                language: options.language,
-                numberOfImages: 1
-              });
-              const first = fallbackResult?.images?.[0];
-              if (first) generatedImages.push(first);
-              continue;
-            }
-            const first = editResult?.images?.[0];
-            if (first) {
-              generatedImages.push(first);
-              console.log(`   ✅ Slide ${slideNumber} generated (continuation): ${first.path || first.url || 'success'}`);
-            }
+          const first = slideResult?.images?.[0];
+          if (first) {
+            generatedImages.push(first);
+            console.log(`   ✅ Slide ${slideNumber} generated: ${first.path || first.url || 'success'}`);
           }
         }
 
@@ -1292,7 +1337,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
         return {
           success: true,
           images: generatedImages,
-          features: ['carousel', 'multi-slide']
+          features: ['carousel', 'multi-slide', 'gemini-3.1-flash-image-preview']
         };
       }
 
@@ -1390,7 +1435,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
     const defaultColors = 'Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766';
     const palette = usingCustom && customColors ? customColors : defaultColors;
     const tone = usingCustom && customTone ? customTone : 'professional, trustworthy, data-driven';
-    const extra = usingCustom && customInstructions ? customInstructions : 'Maintain PL Capital look-and-feel across color, typography, and hierarchy.';
+    const extra = usingCustom && customInstructions ? customInstructions : 'Maintain the active brand look-and-feel across color, typography, and hierarchy.';
 
     const lines = [
       'Brand requirements (must follow exactly):',
@@ -1407,7 +1452,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
       const gradientInstruction = this._describeGradientForImagePrompt(gradientStart, gradientEnd, gradientDir);
       lines.push(`- Gradient: ${gradientInstruction}.`);
     }
-    lines.push('- Keep high contrast and clean financial visual hierarchy.', '- No random brand style deviations.', `- Additional guidance: ${extra}`);
+    lines.push('- Keep high contrast and a clean visual hierarchy.', '- No random brand style deviations.', `- Additional guidance: ${extra}`);
     return lines.join('\n');
   }
 
@@ -1444,7 +1489,7 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
             messages: [
               {
                 role: 'system',
-                content: `You write high-impact WhatsApp ad copy for PL Capital (Indian fintech/wealth management).
+                content: `You write high-impact WhatsApp ad copy for a modern brand.
 Output ONLY valid JSON: {"headline": "...", "body": "...", "cta": "..."}.
 Rules:
 - headline: 4-7 words MAX. Punchy, emotional benefit or bold hook. Include specific ₹ amounts/numbers from the topic if present. Plain text only — NO markdown, NO asterisks, NO bold markers, NO quotes.
@@ -1475,13 +1520,13 @@ Examples of great headlines: "Start SIP at Just ₹500", "Your ₹500 Can Grow B
     const clean = (topic || 'Invest Smarter').replace(/\s+/g, ' ').trim();
     return {
       headline: clean.length <= 35 ? clean : clean.slice(0, 33) + '…',
-      body: 'Smart investing made simple with PL Capital.',
+      body: 'Clear value, made simple.',
       cta: 'Start Now'
     };
   }
 
   /**
-   * Composite the real PL Capital SVG logo onto a generated image using sharp.
+   * Composite the active brand SVG logo onto a generated image using sharp.
    * Places the logo in the top-right corner with a semi-transparent white pill background.
    * Returns { path } with the updated file path, or null if compositing is not possible.
    */
@@ -1568,7 +1613,7 @@ Examples of great headlines: "Start SIP at Just ₹500", "Your ₹500 Can Grow B
     const brandSettings = this._getEffectiveBrandSettings(options) || options.brandSettings;
     const languageName = this._getLanguageName(language);
 
-    const defaultBrand = 'PL Capital brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, trustworthy, data-driven.';
+    const defaultBrand = 'Brand palette: Navy (#0e0e6a), Blue (#3c3cf8), Teal (#00d084), Green (#66e766); typography: Figtree; tone: professional, clear, modern, and trustworthy.';
     const parts = [];
     if (brandSettings?.customColors) parts.push(`Primary colors: ${brandSettings.customColors}`);
     if (brandSettings?.accentColors) parts.push(`Accent colors: ${brandSettings.accentColors}`);
@@ -1592,11 +1637,11 @@ Examples of great headlines: "Start SIP at Just ₹500", "Your ₹500 Can Grow B
       ? ` All text, labels, and content must be in ${languageName}.`
       : '';
 
-    const exampleStyle = 'Style reference: PL Capital example creatives with high-contrast navy/blue gradient background, modern geometric shapes (blue/green accents), big bold white headline, 2–4 supporting bullets with checkmark icons OR a simple numbered step row, and a single green rounded CTA button. Clean whitespace, crisp typography (Figtree-like), modern corporate aesthetic.';
+    const exampleStyle = 'Style reference: high-contrast navy/blue gradient background, modern geometric shapes (blue/green accents), big bold white headline, 2–4 supporting bullets with checkmark icons OR a simple numbered step row, and a single green rounded CTA button. Clean whitespace, crisp typography (Figtree-like), modern corporate aesthetic.';
     const usePlCapitalLogo = brandSettings?.useBrandGuidelines !== false;
     // For non-whatsapp platforms: ask Gemini to draw logo. For WhatsApp: real SVG is composited afterwards, so leave space clean.
     const logoInstruction = usePlCapitalLogo
-      ? 'Place the PL Capital logo in the top-right corner of the creative (use the official PL Capital wordmark: navy #0e0e6a background, white "PL Capital" text, clean sans-serif).'
+      ? 'Place the active brand logo in the top-right corner of the creative if one is configured.'
       : 'Do NOT add any logo/watermark/brand mark. If branding is needed later, reserve clean empty space in the top-right.';
     // WhatsApp-specific: real SVG logo is composited post-generation — keep corner clear
     const whatsappLogoInstruction = 'Leave the top-right corner completely clean and empty (no logo, no text, no icon). A brand logo will be added in post-production.';
@@ -1619,7 +1664,7 @@ Body: ${body || 'One clear benefit.\nOne clear next step.'}
 CTA: ${cta || 'Learn more'}`
           : `Text-forward layout with a bold headline and a single CTA.`;
 
-        return `Create a BOLD, HIGH-ENERGY premium WhatsApp ad creative for PL Capital — India's modern wealth platform. Make it look like a top-tier fintech ad (Groww / Zerodha / ET Money level quality).
+        return `Create a BOLD, HIGH-ENERGY premium WhatsApp ad creative for the active brand. Make it look like a polished, high-conviction premium digital ad.
 
 Canvas: 1080×1080 square. Full-bleed design — no white borders, no plain card-on-background. The design must fill every pixel edge-to-edge with intention.
 
@@ -1736,7 +1781,7 @@ ${brandGuidance}`;
         typeof value === 'string' && /^[a-f0-9]{32}$/i.test(value.trim());
 
       const isHeyGenAvatar =
-        options.avatarId === 'siddharth-vora' ||
+        options.avatarId === 'primary-brand-avatar' ||
         looksLikeHeyGenAvatarId(options.avatarId) ||
         Boolean(options.heygenAvatarGroupId) ||
         Boolean(options.heygenAvatarId);
@@ -1762,7 +1807,7 @@ ${brandGuidance}`;
           console.log(`   📝 Script: ${userScript.substring(0, 60)}...`);
         } else {
           // Generate script instruction based on platform and topic
-          const topic = options.topic || 'financial services and investment opportunities';
+          const topic = options.topic || 'brand and product updates';
           const platform = options.platform || 'linkedin';
           const format = options.format || 'testimonial';
 
@@ -1792,7 +1837,7 @@ ${brandGuidance}`;
         console.log('   ✅ Avatar prompt constructed\n');
       }
 
-      // HeyGen avatar routing (Siddharth Vora + other avatars from /api/avatars mapping)
+      // HeyGen avatar routing (Primary Brand Avatar + other avatars from /api/avatars mapping)
       if (isAvatarMode && isHeyGenAvatar) {
         const prettyAvatarId = (value) => {
           if (!value) return '';
@@ -1801,8 +1846,8 @@ ${brandGuidance}`;
         };
 
         const avatarDisplayName =
-          options.avatarId === 'siddharth-vora'
-            ? 'Siddharth Vora (Custom)'
+          options.avatarId === 'primary-brand-avatar'
+            ? 'Primary Brand Avatar (Custom)'
             : `HeyGen Avatar (${prettyAvatarId(options.avatarId || options.heygenAvatarId)})`;
 
         console.log('\n🎬 HeyGen Avatar Mode');
@@ -1832,18 +1877,18 @@ ${brandGuidance}`;
             });
           } catch (error) {
             console.log(`   ⚠️  Script generation failed; using fallback: ${error.message}`);
-            const topic = options.topic || 'PL Capital investing insights';
-            scriptText = `Hi, quick update from PL Capital. ${topic}. If you want a portfolio review or a plan, talk to us today.`;
+            const topic = options.topic || 'brand or product insights';
+            scriptText = `Hi, quick update from the brand. ${topic}. If you want more like this, reach out today.`;
           }
           console.log(`   📝 Script: ${scriptText.substring(0, 60)}...`);
         }
 
         // Avatar/voice resolution aligned with martech (multiple HeyGen avatars + mapped voices)
-        // - Siddharth Vora: env or hardcoded Siddharth defaults
+        // - Primary brand avatar: env or configured defaults
         // - Other HeyGen avatars (32-char groupId): options.avatarId + options.avatarVoiceId or voice from mapping
         const SIDDHARTH_AVATAR_ID = '9da4afb2c22441b5aab73369dda7f65d';
         const SIDDHARTH_VOICE_ID = 'c8d184ef4d81484a97d70c94bb76fec3';
-        const isSiddharthVora = options.avatarId === 'siddharth-vora';
+        const isPrimaryBrandAvatar = options.avatarId === 'primary-brand-avatar';
         const isGroupIdAvatar = looksLikeHeyGenAvatarId(options.avatarId);
 
         let heygenAvatarId;
@@ -1851,7 +1896,7 @@ ${brandGuidance}`;
         /** True when using motionAvatarId from mapping (HeyGen Add Motion) — skip Avatar IV motion fields. */
         let skipAvatarIvMotionPrompt = false;
 
-        if (isSiddharthVora) {
+        if (isPrimaryBrandAvatar) {
           heygenAvatarId =
             options.heygenAvatarId ||
             process.env.HEYGEN_AVATAR_ID_SIDDHARTH ||
@@ -1922,7 +1967,7 @@ ${brandGuidance}`;
               type: 'heygen-avatar',
               videoId: apiResult.video_id,
               status: 'pending',
-              avatar: 'siddharth-vora',
+              avatar: 'primary-brand-avatar',
               message: 'Video generation started. Check status with video ID or at https://app.heygen.com/home'
             }
           };
@@ -1960,7 +2005,7 @@ ${brandGuidance}`;
                 metadata: {
                   type: 'heygen-avatar',
                   videoId: heygenResult.metadata.videoId,
-                  avatar: 'siddharth-vora'
+                  avatar: 'primary-brand-avatar'
                 }
               };
 
@@ -2850,8 +2895,36 @@ ${brandGuidance}`;
    * @param {object} params - Parameters to pass to the tool
    * @returns {Promise<object>} Tool result
    */
+  _resolveHeyGenApiKey() {
+    const direct = typeof process.env.HEYGEN_API_KEY === 'string' ? process.env.HEYGEN_API_KEY.trim().replace(/^['"]|['"]$/g, '') : '';
+    if (direct && direct.startsWith('sk_')) return direct;
+
+    const envPaths = [
+      path.join(this.projectRoot, '..', '.env.local'),
+      path.join(this.projectRoot, '..', '.env'),
+      path.join(this.projectRoot, '.env.local'),
+      path.join(this.projectRoot, '.env')
+    ];
+
+    for (const envPath of envPaths) {
+      try {
+        if (!fs.existsSync(envPath)) continue;
+        const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
+        for (const line of lines) {
+          if (!line.startsWith('HEYGEN_API_KEY=')) continue;
+          const value = line.slice('HEYGEN_API_KEY='.length).trim().replace(/^['"]|['"]$/g, '');
+          if (value && value.startsWith('sk_')) return value;
+        }
+      } catch (_) {
+        // ignore and keep searching
+      }
+    }
+
+    return direct || null;
+  }
+
   async _callMcpTool(toolName, params) {
-    const apiKey = process.env.HEYGEN_API_KEY;
+    const apiKey = this._resolveHeyGenApiKey();
 
     if (!apiKey) {
       throw new Error('HEYGEN_API_KEY environment variable is required');

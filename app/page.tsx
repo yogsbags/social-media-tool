@@ -105,7 +105,7 @@ export default function Home() {
   const [language, setLanguage] = useState<string>('english')
 
   // Avatar Video Configuration
-  const [avatarId, setAvatarId] = useState<string>('siddharth-vora')
+  const [avatarId, setAvatarId] = useState<string>('auto')
   const [avatarScriptText, setAvatarScriptText] = useState<string>('')
   const [avatarVoiceId, setAvatarVoiceId] = useState<string>('')
   const [generatingScript, setGeneratingScript] = useState<boolean>(false)
@@ -189,47 +189,23 @@ export default function Home() {
   ]
 
   const purposeOptions = [
-    // Products
-    { value: 'falcon', label: 'Falcon', description: '5Lakh Min., Research Basket' },
-    { value: 'aqua', label: 'AQUA', description: 'Quant Portfolio Strategy (1Cr+ clients)' },
-    { value: 'madp', label: 'MADP', description: 'Multi-Asset Dynamic Portfolio (1Cr+ clients)' },
-    { value: 'loan-tieups', label: 'Loan Tie ups', description: 'Loan Against Securities' },
-    { value: 'scoutquest', label: 'Scoutquest', description: '45 days free, 24x7 alerts, track all stocks' },
-    { value: 'mobile-app', label: 'Mobile App', description: 'Easy Options, Scanners, Algos, Research Baskets' },
-    { value: 'open-account', label: 'Open Account in 5mins', description: 'Quick Account Opening (Lead Gen)' },
-    { value: 'commodity-activation', label: 'Commodity Account Activation', description: 'Gold, Silver & Commodity Trading, Call and Trade Support' },
-    { value: 'mtf-activation', label: 'MTF Account Activation', description: 'MTF Research Calls, Competitive ROI, 1000+ scrips, 4X multiplier' },
-    { value: 'dormant-activation', label: 'Dormant Account Activation', description: 'MTF, Research and New App' },
-    // Other
-    { value: 'partners-mobile-app', label: 'Partners Mobile App', description: 'IFA/Partner Platform' },
-    { value: 'website', label: 'Website', description: 'Corporate Website' },
-    { value: 'web-app', label: 'Web App', description: 'Web Application' },
-    { value: 'aif', label: 'AIF', description: 'Alternative Investment Fund' },
-    { value: 'brand-awareness', label: 'Brand Awareness', description: 'General Brand Building' },
+    { value: 'brand-awareness', label: 'Brand Awareness', description: 'General awareness and top-of-funnel campaigns' },
+    { value: 'product-launch', label: 'Product Launch', description: 'Launch a new product, service, or feature' },
+    { value: 'lead-generation', label: 'Lead Generation', description: 'Drive inbound interest and conversions' },
+    { value: 'customer-education', label: 'Customer Education', description: 'Explain workflows, benefits, and best practices' },
+    { value: 'feature-adoption', label: 'Feature Adoption', description: 'Promote product usage and activation' },
+    { value: 'event-promotion', label: 'Event Promotion', description: 'Webinars, events, or announcements' },
+    { value: 'case-study', label: 'Case Study', description: 'Customer proof, testimonials, and outcomes' },
+    { value: 'community-engagement', label: 'Community Engagement', description: 'Grow ongoing audience engagement' },
+    { value: 'newsletter', label: 'Newsletter', description: 'Recurring updates and editorial content' }
   ]
 
   const targetAudienceOptions = [
-    // General Segments
-    { value: 'all_clients', label: 'All', description: 'All clients' },
-    { value: 'lead_gen', label: 'Lead Gen', description: 'New customer acquisition' },
-    { value: 'internal', label: 'Internal communication', description: 'Employee communications, training' },
-    { value: 'mass_affluent', label: 'Mass affluent', description: 'Emerging investors, young professionals' },
-    { value: 'hni', label: 'HNIs', description: 'High Net Worth Individuals' },
-    { value: 'uhni', label: 'UHNIs', description: 'Ultra High Net Worth Individuals' },
-    // Client Segments by DP Value
-    { value: 'more_than_10l_dp', label: 'More than 10L DP', description: 'Clients with 10L+ demat portfolio' },
-    { value: '1cr_plus', label: '1cr+', description: 'Clients with 1 crore+ portfolio' },
-    // Activity-based Segments
-    { value: 'semi_active', label: 'Semi-active', description: 'Occasional trading activity' },
-    { value: 'dormant', label: 'Dormant', description: 'No recent activity, needs reactivation' },
-    { value: 'inactive', label: 'Inactive', description: 'Currently inactive accounts' },
-    // Performance-based Segments
-    { value: 'in_loss', label: 'In Loss', description: 'Clients currently in loss' },
-    // Product-based Segments
-    { value: 'fno_traders', label: 'F&O traders', description: 'Futures & Options active traders' },
-    { value: 'commodity', label: 'Commodity', description: 'Commodity trading clients' },
-    { value: 'non_mtf', label: 'Non-MTF', description: 'Clients not using Margin Trading' },
-    { value: 'cash', label: 'Cash', description: 'Cash segment traders' },
+    { value: 'all_clients', label: 'General audience', description: 'Default audience for broad campaigns' },
+    { value: 'lead_gen', label: 'Lead generation', description: 'Prospects evaluating the offer' },
+    { value: 'internal', label: 'Internal teams', description: 'Employee communications and training' },
+    { value: 'professionals', label: 'Professionals', description: 'Working professionals and business users' },
+    { value: 'executives', label: 'Executives', description: 'Senior stakeholders and decision-makers' }
   ]
 
   const platforms = [
@@ -1067,7 +1043,7 @@ export default function Home() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            PL Capital Social Media Engine
+            Social Media Engine
           </h1>
           <p className="text-gray-600 text-lg">
             AI-Powered Multi-Platform Campaign Automation
@@ -1083,7 +1059,7 @@ export default function Home() {
             </div>
             <div className="px-4 py-2 bg-purple-50 rounded-lg">
               <span className="text-sm text-gray-600">Goal:</span>
-              <span className="ml-2 font-semibold text-purple-600">10M+ Reach/Month</span>
+              <span className="ml-2 font-semibold text-purple-600">Scalable Content Ops</span>
             </div>
           </div>
         </div>
@@ -1871,10 +1847,10 @@ export default function Home() {
                     disabled={isRunning || executingStage !== null}
                     className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
-                    <option value="siddharth-vora">Siddharth Vora (HeyGen Custom Avatar)</option>
+                    <option value="auto">Auto-select recommended avatar</option>
                     {availableAvatars.map((avatar) => (
                       <option key={avatar.groupId} value={avatar.groupId}>
-                        {avatar.name} ({avatar.gender === 'male' ? 'Male' : 'Female'}) - {avatar.voiceName}
+                        {avatar.name}{avatar.gender && avatar.gender !== 'unknown' ? ` (${avatar.gender === 'male' ? 'Male' : 'Female'})` : ''} - {avatar.voiceName || avatar.voiceId}
                       </option>
                     ))}
                     {availableAvatars.length === 0 && (
@@ -1885,11 +1861,9 @@ export default function Home() {
                     )}
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
-                    {avatarId === 'siddharth-vora'
-                      ? 'Using HeyGen custom avatar for Siddharth Vora, Fund Manager at PL Capital'
-                      : availableAvatars.find(a => a.groupId === avatarId)
+                    {availableAvatars.find(a => a.groupId === avatarId)
                       ? `Using ${availableAvatars.find(a => a.groupId === avatarId)?.name} avatar with ${availableAvatars.find(a => a.groupId === avatarId)?.voiceName} voice`
-                      : 'Using VEO-generated avatar'}
+                      : 'Using the default auto-selected avatar workflow'}
                   </p>
                 </div>
 
@@ -1920,7 +1894,7 @@ export default function Home() {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                              topic: topic.trim() || 'PL Capital investing insights',
+                              topic: topic.trim() || 'brand or product insights',
                               duration,
                               platform: selectedPlatforms?.[0] || 'instagram',
                               format: 'reel',
@@ -2096,7 +2070,7 @@ export default function Home() {
                   className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 disabled:cursor-not-allowed"
                 />
                 <span className="ml-2 text-sm font-medium text-gray-700">
-                  Use PL Capital Brand Guidelines
+                  Use saved brand guidelines
                 </span>
               </label>
             </div>
@@ -2106,7 +2080,7 @@ export default function Home() {
                 {useBrandGuidelines ? (
                   <div className="bg-white rounded-lg p-4 border-2 border-green-300">
                     <p className="text-sm font-semibold text-green-700 mb-2">
-                      PL Capital Brand Guidelines Active
+                      Brand guidelines active
                     </p>
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div className="flex items-center gap-2">
@@ -2129,11 +2103,11 @@ export default function Home() {
                       </div>
                       <div>
                         <span className="font-semibold text-gray-600">Tone:</span>
-                        <span className="ml-2 text-gray-800">Professional, Trustworthy</span>
+                        <span className="ml-2 text-gray-800">Professional, adaptable</span>
                       </div>
-                      <div className="col-span-2 flex items-center gap-2">
-                        <span className="font-semibold text-gray-600">Logo:</span>
-                        <img src="/pl-capital-logo.svg" alt="PL Capital" className="h-6 w-auto" />
+                      <div className="col-span-2">
+                        <span className="font-semibold text-gray-600">Brand Asset:</span>
+                        <span className="ml-2 text-gray-800">Replace the placeholder brand kit with your own logo and assets.</span>
                       </div>
                     </div>
                   </div>
@@ -2484,7 +2458,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Live Logs */}
+        {/* Live Logs
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             Live Logs
@@ -2499,6 +2473,7 @@ export default function Home() {
             )}
           </div>
         </div>
+        */}
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600">

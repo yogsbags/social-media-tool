@@ -374,7 +374,7 @@ export async function POST(request: NextRequest) {
             sendEvent({ log: `⚠️ Prompt generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
             // Fallback prompt so the UI still has editable content
             const brand = brandSettings?.useBrandGuidelines
-              ? 'Use PL Capital colors (Navy #0e0e6a, Blue #3c3cf8, Teal #00d084, Green #66e766) and Figtree typography.'
+              ? 'Use the default brand colors and Figtree typography.'
               : (() => {
                   const parts: string[] = []
                   if (brandSettings?.customColors) parts.push(`Primary colors: ${brandSettings.customColors}`)
@@ -713,16 +713,33 @@ export async function POST(request: NextRequest) {
         if (campaignType) {
           args.push('--type', campaignType)
 
-          // Extract platform from campaignType (e.g., "linkedin-testimonial" -> "linkedin")
-          const platform = campaignType.split('-')[0]
-          if (platform) {
-            args.push('--platform', platform)
+          const primaryPlatform = Array.isArray(platforms) && platforms.length > 0 ? String(platforms[0]) : ''
+          let derivedPlatform = ''
+          let derivedFormat = ''
+
+          if (campaignType === 'email-newsletter') {
+            derivedPlatform = 'email'
+            derivedFormat = 'newsletter'
+          } else if (campaignType === 'live-news') {
+            derivedPlatform = primaryPlatform || 'linkedin'
+            derivedFormat = 'article'
+          } else if (campaignType === 'infographic') {
+            derivedPlatform = primaryPlatform || 'linkedin'
+            derivedFormat = 'infographic'
+          } else if (campaignType === 'whatsapp-creative') {
+            derivedPlatform = 'whatsapp'
+            derivedFormat = 'image'
+          } else {
+            derivedPlatform = campaignType.split('-')[0] || primaryPlatform
+            derivedFormat = campaignType.split('-').slice(1).join('-')
           }
 
-          // Extract format from campaignType (e.g., "linkedin-testimonial" -> "testimonial")
-          const format = campaignType.split('-').slice(1).join('-')
-          if (format) {
-            args.push('--format', format)
+          if (derivedPlatform) {
+            args.push('--platform', derivedPlatform)
+          }
+
+          if (derivedFormat) {
+            args.push('--format', derivedFormat)
           }
         }
 
@@ -748,7 +765,7 @@ export async function POST(request: NextRequest) {
           // Pass avatar options directly as CLI arguments - ONLY if avatar mode is enabled
           if (finalUseAvatar && avatarId) {
             args.push('--avatar-id', avatarId)
-            // Siddharth Vora: optional heygen group id; voice from env or backend default
+            // Optional avatar group id; voice from env or backend default
             if (avatarId === 'siddharth-vora') {
               const heygenGroupId = body.heygenAvatarGroupId
               if (heygenGroupId) args.push('--heygen-avatar-group-id', heygenGroupId)

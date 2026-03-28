@@ -1,17 +1,14 @@
 /**
- * HeyGen Avatar Configuration for PL Capital
+ * Generic HeyGen Avatar Configuration
  *
- * Configuration for Indian avatars to be used in video generation
+ * Configuration for professional avatars used in video generation.
  * Supports:
- * 1. Public Indian avatars (pre-made, ready to use)
+ * 1. Public avatars (pre-made, ready to use)
  * 2. Photo Avatar API (create from photos)
  * 3. Video Avatar API (create from videos)
- *
- * NOTE: Excludes Siddharth Vora's avatar as per requirements
  */
 
 const heygenAvatarConfig = {
-  // API Configuration
   api: {
     baseUrl: 'https://api.heygen.com',
     version: 'v2',
@@ -26,8 +23,6 @@ const heygenAvatarConfig = {
     }
   },
 
-  // Public Indian Avatars (Pre-made, ready to use)
-  // These are publicly available HeyGen avatars suitable for financial services
   publicIndianAvatars: [
     {
       id: 'Raj_public_v2',
@@ -37,14 +32,14 @@ const heygenAvatarConfig = {
       age: '35-45',
       style: 'professional',
       attire: 'business_suit',
-      description: 'Professional Indian male in navy business suit, ideal for formal financial communications',
-      suitableFor: ['hni', 'uhni', 'all_clients'],
+      description: 'Professional Indian male in a business suit for formal brand communication',
+      suitableFor: ['executives', 'all_clients'],
       voiceId: 'en-IN-male-professional',
       useCases: [
-        'Portfolio updates',
-        'Market insights',
+        'Executive updates',
+        'Brand announcements',
         'Product presentations',
-        'Client communications'
+        'Customer communications'
       ],
       recommended: true
     },
@@ -57,13 +52,13 @@ const heygenAvatarConfig = {
       style: 'professional',
       attire: 'business_formal',
       description: 'Professional Indian female in business attire, warm and approachable',
-      suitableFor: ['mass_affluent', 'all_clients', 'internal'],
+      suitableFor: ['professionals', 'all_clients', 'lead_gen'],
       voiceId: 'en-IN-female-professional',
       useCases: [
         'Educational content',
-        'Client onboarding',
+        'Customer onboarding',
         'Product explainers',
-        'Investment tips'
+        'Campaign messages'
       ],
       recommended: true
     },
@@ -76,7 +71,7 @@ const heygenAvatarConfig = {
       style: 'approachable',
       attire: 'business_casual',
       description: 'Approachable Indian male in business casual, modern and relatable',
-      suitableFor: ['internal', 'mass_affluent'],
+      suitableFor: ['internal', 'lead_gen'],
       voiceId: 'en-IN-male-friendly',
       useCases: [
         'Internal communications',
@@ -94,14 +89,14 @@ const heygenAvatarConfig = {
       age: '40-50',
       style: 'executive',
       attire: 'business_executive',
-      description: 'Senior executive Indian female, authoritative and experienced',
-      suitableFor: ['uhni', 'hni'],
+      description: 'Senior executive Indian female with an authoritative presence',
+      suitableFor: ['executives'],
       voiceId: 'en-IN-female-authoritative',
       useCases: [
-        'CEO messages',
+        'Leadership messages',
         'Strategic updates',
-        'Leadership communications',
-        'High-value client outreach'
+        'High-importance communications',
+        'Stakeholder outreach'
       ],
       recommended: true
     },
@@ -113,28 +108,21 @@ const heygenAvatarConfig = {
       age: '35-45',
       style: 'expert',
       attire: 'business_professional',
-      description: 'Expert financial advisor appearance, trustworthy and knowledgeable',
-      suitableFor: ['hni', 'all_clients'],
+      description: 'Subject-matter expert appearance, trustworthy and knowledgeable',
+      suitableFor: ['executives', 'all_clients'],
       voiceId: 'en-IN-male-expert',
       useCases: [
-        'Market analysis',
-        'Investment advice',
+        'Industry analysis',
+        'Expert commentary',
         'Research presentations',
-        'Expert commentary'
+        'Thought leadership'
       ],
       recommended: true
     }
   ],
 
-  // Avatars to exclude (as per user requirements)
-  excludedAvatars: [
-    'Siddharth_Vora',
-    'siddharth_vora',
-    'SiddharthVora'
-  ],
+  excludedAvatars: [],
 
-  // Photo Avatar Configuration
-  // Create custom avatars from photos using HeyGen Photo Avatar API
   photoAvatarConfig: {
     enabled: true,
     apiEndpoint: '/v2/avatars/photo',
@@ -142,7 +130,7 @@ const heygenAvatarConfig = {
       imageFormat: ['jpg', 'jpeg', 'png'],
       minResolution: { width: 512, height: 512 },
       maxResolution: { width: 4096, height: 4096 },
-      maxFileSize: 10485760, // 10 MB in bytes
+      maxFileSize: 10485760,
       aspectRatio: 'portrait or square preferred',
       background: 'plain, solid color, well-lit',
       lightingTips: [
@@ -161,22 +149,20 @@ const heygenAvatarConfig = {
       ]
     },
     samplePrompt: {
-      description: 'Upload a high-quality photo of an Indian professional in business attire',
+      description: 'Upload a high-quality photo of a spokesperson or team member',
       idealPhoto: 'Professional headshot with neutral background, good lighting, clear facial features'
     }
   },
 
-  // Video Avatar Configuration
-  // Create custom avatars from videos using HeyGen Video Avatar API
   videoAvatarConfig: {
     enabled: true,
     apiEndpoint: '/v2/avatars/video',
     requirements: {
       videoFormat: ['mp4', 'mov'],
       duration: {
-        min: 300, // 5 minutes in seconds
-        max: 600, // 10 minutes in seconds
-        recommended: 360 // 6 minutes
+        min: 300,
+        max: 600,
+        recommended: 360
       },
       resolution: {
         min: '1080p',
@@ -190,7 +176,7 @@ const heygenAvatarConfig = {
         recommended: 30
       },
       fileSize: {
-        max: 2147483648 // 2 GB in bytes
+        max: 2147483648
       },
       background: 'green screen or plain solid color',
       recording: {
@@ -211,7 +197,7 @@ const heygenAvatarConfig = {
       'Use a high-quality camera (smartphone 1080p+ or DSLR)',
       'Ensure stable camera mounting (tripod recommended)',
       'Use green screen or plain background (white/grey)',
-      'Professional attire in brand colors (navy, white)',
+      'Professional attire in your brand style',
       'Natural, engaging delivery',
       'Maintain eye contact with camera',
       'Speak clearly and at moderate pace',
@@ -220,7 +206,6 @@ const heygenAvatarConfig = {
     ]
   },
 
-  // Voice Configuration for Indian English
   voices: {
     'en-IN-male-professional': {
       id: 'en-IN-male-professional',
@@ -228,7 +213,7 @@ const heygenAvatarConfig = {
       gender: 'male',
       style: 'professional',
       description: 'Professional Indian male voice, clear and authoritative',
-      suitableFor: ['hni', 'uhni', 'all_clients']
+      suitableFor: ['executives', 'all_clients']
     },
     'en-IN-female-professional': {
       id: 'en-IN-female-professional',
@@ -236,7 +221,7 @@ const heygenAvatarConfig = {
       gender: 'female',
       style: 'professional',
       description: 'Professional Indian female voice, warm and trustworthy',
-      suitableFor: ['mass_affluent', 'all_clients', 'internal']
+      suitableFor: ['professionals', 'all_clients', 'lead_gen']
     },
     'en-IN-male-friendly': {
       id: 'en-IN-male-friendly',
@@ -244,7 +229,7 @@ const heygenAvatarConfig = {
       gender: 'male',
       style: 'friendly',
       description: 'Friendly Indian male voice, approachable and modern',
-      suitableFor: ['internal', 'mass_affluent']
+      suitableFor: ['internal', 'lead_gen']
     },
     'en-IN-female-authoritative': {
       id: 'en-IN-female-authoritative',
@@ -252,25 +237,21 @@ const heygenAvatarConfig = {
       gender: 'female',
       style: 'authoritative',
       description: 'Authoritative Indian female voice, executive presence',
-      suitableFor: ['uhni', 'hni']
+      suitableFor: ['executives']
     },
     'en-IN-male-expert': {
       id: 'en-IN-male-expert',
       language: 'en-IN',
       gender: 'male',
       style: 'expert',
-      description: 'Expert advisor voice, knowledgeable and trustworthy',
-      suitableFor: ['hni', 'all_clients']
+      description: 'Expert voice, knowledgeable and trustworthy',
+      suitableFor: ['executives', 'all_clients']
     }
   },
 
-  // Avatar Selection Helper
   helpers: {
-    /**
-     * Get recommended avatar for target audience
-     */
     getAvatarForAudience: (audienceType, gender = null) => {
-      const avatars = heygenAvatarConfig.publicIndianAvatars.filter(avatar => {
+      const avatars = heygenAvatarConfig.publicIndianAvatars.filter((avatar) => {
         const audienceMatch = avatar.suitableFor.includes(audienceType);
         const genderMatch = gender ? avatar.gender === gender : true;
         const recommended = avatar.recommended;
@@ -280,67 +261,50 @@ const heygenAvatarConfig = {
       return avatars.length > 0 ? avatars[0] : heygenAvatarConfig.publicIndianAvatars[0];
     },
 
-    /**
-     * Get all avatars suitable for use case
-     */
     getAvatarsForUseCase: (useCase) => {
-      return heygenAvatarConfig.publicIndianAvatars.filter(avatar =>
-        avatar.useCases.some(uc => uc.toLowerCase().includes(useCase.toLowerCase()))
+      return heygenAvatarConfig.publicIndianAvatars.filter((avatar) =>
+        avatar.useCases.some((uc) => uc.toLowerCase().includes(useCase.toLowerCase()))
       );
     },
 
-    /**
-     * Check if avatar is excluded
-     */
     isAvatarExcluded: (avatarId) => {
       return heygenAvatarConfig.excludedAvatars.some(
-        excluded => avatarId.toLowerCase().includes(excluded.toLowerCase())
+        (excluded) => avatarId.toLowerCase().includes(excluded.toLowerCase())
       );
     },
 
-    /**
-     * Validate photo for photo avatar creation
-     */
     validatePhoto: (file) => {
       const config = heygenAvatarConfig.photoAvatarConfig.requirements;
       const errors = [];
-
-      // Check format
       const ext = file.name.split('.').pop().toLowerCase();
+
       if (!config.imageFormat.includes(ext)) {
         errors.push(`Invalid format. Supported: ${config.imageFormat.join(', ')}`);
       }
 
-      // Check file size
       if (file.size > config.maxFileSize) {
         errors.push(`File too large. Max: ${config.maxFileSize / 1024 / 1024} MB`);
       }
 
       return {
         valid: errors.length === 0,
-        errors: errors
+        errors
       };
     },
 
-    /**
-     * Validate video for video avatar creation
-     */
     validateVideo: (file, duration) => {
       const config = heygenAvatarConfig.videoAvatarConfig.requirements;
       const errors = [];
-
-      // Check format
       const ext = file.name.split('.').pop().toLowerCase();
+
       if (!config.videoFormat.includes(ext)) {
         errors.push(`Invalid format. Supported: ${config.videoFormat.join(', ')}`);
       }
 
-      // Check file size
       if (file.size > config.fileSize.max) {
         errors.push(`File too large. Max: ${config.fileSize.max / 1024 / 1024 / 1024} GB`);
       }
 
-      // Check duration
       if (duration < config.duration.min) {
         errors.push(`Video too short. Min: ${config.duration.min / 60} minutes`);
       }
@@ -350,64 +314,56 @@ const heygenAvatarConfig = {
 
       return {
         valid: errors.length === 0,
-        errors: errors
+        errors
       };
     },
 
-    /**
-     * Get avatar by ID (with exclusion check)
-     */
     getAvatarById: (avatarId) => {
-      // Check if excluded
       if (heygenAvatarConfig.helpers.isAvatarExcluded(avatarId)) {
         console.warn(`Avatar ${avatarId} is excluded. Returning default avatar instead.`);
-        return heygenAvatarConfig.publicIndianAvatars[0]; // Return first recommended
+        return heygenAvatarConfig.publicIndianAvatars[0];
       }
 
-      const avatar = heygenAvatarConfig.publicIndianAvatars.find(a => a.id === avatarId);
+      const avatar = heygenAvatarConfig.publicIndianAvatars.find((a) => a.id === avatarId);
       return avatar || heygenAvatarConfig.publicIndianAvatars[0];
     },
 
-    /**
-     * Get recommended voice for avatar and audience
-     */
-    getVoiceForAvatar: (avatarId, audienceType = 'all_clients') => {
+    getVoiceForAvatar: (avatarId) => {
       const avatar = heygenAvatarConfig.helpers.getAvatarById(avatarId);
       return heygenAvatarConfig.voices[avatar.voiceId] || heygenAvatarConfig.voices['en-IN-male-professional'];
     }
   },
 
-  // Video Generation Templates
   videoTemplates: {
-    portfolioUpdate: {
-      name: 'Portfolio Update',
-      description: 'Regular portfolio performance updates for clients',
+    campaignUpdate: {
+      name: 'Campaign Update',
+      description: 'Regular campaign or performance updates',
       recommendedAvatar: 'Raj_public_v2',
       duration: '60-90 seconds',
       script: {
-        intro: 'Good [morning/afternoon], this is your portfolio update for [period].',
-        body: 'Key highlights and performance metrics',
-        outro: 'For any questions, please reach out to your relationship manager. Thank you.'
+        intro: 'Hello, here is your latest update for [campaign or period].',
+        body: 'Key highlights, metrics, and momentum points',
+        outro: 'For any questions, please reach out to your point of contact. Thank you.'
       }
     },
-    marketInsight: {
-      name: 'Market Insight',
-      description: 'Market analysis and investment insights',
+    trendInsight: {
+      name: 'Trend Insight',
+      description: 'Industry analysis and strategic insights',
       recommendedAvatar: 'Vikram_public_v2',
       duration: '90-120 seconds',
       script: {
-        intro: 'Welcome to PL Capital Market Insights.',
+        intro: 'Welcome to this quick insight update.',
         body: 'Analysis and expert commentary',
-        outro: 'Stay informed with PL Capital. Invest wisely.'
+        outro: 'Stay informed and keep building with confidence.'
       }
     },
     productPromo: {
       name: 'Product Promotion',
-      description: 'Introduction to financial products and services',
+      description: 'Introduction to products, services, or features',
       recommendedAvatar: 'Priya_public_v2',
       duration: '45-60 seconds',
       script: {
-        intro: 'Discover [product name] from PL Capital.',
+        intro: 'Discover [product name].',
         body: 'Product benefits and features',
         outro: 'To learn more, contact us today.'
       }
@@ -418,20 +374,20 @@ const heygenAvatarConfig = {
       recommendedAvatar: 'Arjun_public_v2',
       duration: '30-60 seconds',
       script: {
-        intro: 'Hello team, here's an important update.',
+        intro: 'Hello team, here is an important update.',
         body: 'Key information and action items',
         outro: 'Thank you for your attention.'
       }
     },
     executiveMessage: {
       name: 'Executive Message',
-      description: 'Leadership communications to clients or employees',
+      description: 'Leadership communications to customers or employees',
       recommendedAvatar: 'Meera_public_v2',
       duration: '90-150 seconds',
       script: {
-        intro: 'Dear valued clients/colleagues,',
+        intro: 'Hello everyone,',
         body: 'Strategic updates and vision',
-        outro: 'Thank you for your continued trust in PL Capital.'
+        outro: 'Thank you for your continued trust and partnership.'
       }
     }
   }

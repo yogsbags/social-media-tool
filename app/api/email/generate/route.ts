@@ -107,19 +107,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
 
-    // Build brand guidelines — handle both default PL Capital and custom overrides
+    // Build brand guidelines — handle both default and custom overrides
     const bs = brandSettings || {};
     let brandGuidance = "";
     if (bs.useBrandGuidelines) {
       brandGuidance = `
-**PL Capital Brand Guidelines:**
-- **Primary Colors**: Navy (#0e0e6a), Blue (#3c3cf8)
-- **Accent Colors**: Teal (#00d084), Green (#66e766)
+**Default Brand Guidelines:**
+- **Primary Colors**: Deep navy (#0e0e6a), vivid blue (#3c3cf8)
+- **Accent Colors**: Teal (#00d084), green (#66e766)
 - **Typography**: Figtree font family, professional sans-serif fallbacks
-- **Tone & Voice**: Professional, trustworthy, data-driven yet approachable
-- **Visual Style**: Clean, modern, corporate with subtle tech motifs
-- **Key Values**: Trust, Innovation, Performance, Client-First
-- **Messaging**: Focus on adaptive strategies, quantitative excellence, consistent alpha
+- **Tone & Voice**: Clear, credible, adaptable, and approachable
+- **Visual Style**: Clean, modern, polished, with subtle visual texture
+- **Key Values**: Clarity, trust, innovation, customer focus
+- **Messaging**: Focus on practical value, differentiation, and clear outcomes
 `;
     } else {
       // Compose guidance from all custom fields the UI sends
@@ -149,42 +149,42 @@ Your task is to generate a complete, production-ready HTML email newsletter foll
 Layout reference (use this structure and styling cues):
 - CRITICAL: The main content table MUST have width="600" as an HTML attribute (not just CSS). This ensures the header image, hero, content, and footer all render at exactly the same width with no gaps or misalignment.
 - Structure: <table role="presentation" width="600" style="max-width:600px; width:100%;" ...> wrapping ALL sections including header, hero, content, and footer.
-- Header section (DO NOT change): keep exactly this header image linked to plindia.com — it must be inside the width="600" container so it aligns perfectly with the hero below it
-  * Header image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/xtp/w8t/1aj/Asset%201.png
-  * Image tag must have: width="600" style="width:100%; max-width:600px; display:block;"
+- Header section: use a simple text-based brand header inside the width="600" container. If branded assets are supplied in context, use them consistently; otherwise do not invent branded images.
+  * Optional header asset: only use if one is explicitly provided in context
+  * Keep any header treatment aligned to the 600px container width
 - Hero section: Two-column table layout inside a solid/gradient brand-color background (use gradient from brand guidelines if provided, otherwise default linear-gradient 135deg, #0e0e6a → #3c3cf8), padding 40px 30px:
-  * Left cell (width="60%" valign="middle"): white h1 headline (28–32px, bold, line-height 1.2, margin-bottom 12px) + white subtitle p (16–18px, normal, margin-bottom 0, opacity 0.9). If grounded facts contain specific key details (NFO dates, minimum investment, NAV price), add 1–2 short bold fact lines in white below the subtitle.
+  * Left cell (width="60%" valign="middle"): white h1 headline (28–32px, bold, line-height 1.2, margin-bottom 12px) + white subtitle p (16–18px, normal, margin-bottom 0, opacity 0.9). If grounded facts contain specific key details (dates, pricing, availability, launch timing, or metrics), add 1–2 short bold fact lines in white below the subtitle.
   * Right cell (width="40%" valign="middle" align="center"): A decorative inline <svg> (width="120" height="120" viewBox="0 0 120 120") with a multi-path illustration relevant to the campaign topic. Use white strokes (stroke="white" stroke-width="2.5" fill="none") with semi-transparent white fills where appropriate. Pick EXACTLY one illustration from the list below based on the closest matching keyword in the topic:
 
-    1. SIP / systematic investment / monthly investment / recurring:
-       → Calendar with recurring arrows: rect(30,25,60,55,rx=4) for calendar body; 3 vertical lines inside for date columns; a circular arrow (arc path) below the calendar; an upward trending polyline (30,95 → 50,80 → 70,85 → 90,65) representing growth.
+    1. Launch / release / announcement / new feature:
+       → Rocket + spark elements + product card.
 
-    2. NFO / new fund offer / IPO / fund launch / subscription:
-       → Rocket launch + fund document: a rocket shape (body=ellipse cx=60 cy=50 rx=12 ry=22, fins=two small triangles at base); flame at bottom (small filled path); a document rect(38,70,44,30,rx=2) with 3 short horizontal lines inside for text; a star at top-right.
+    2. Growth / performance / results / momentum:
+       → Ascending chart + arrow + metric badge.
 
-    3. Mutual fund / diversified fund / balanced fund / hybrid fund:
-       → Pie chart + plant: circle(cx=55,cy=50,r=28) split into 4 unequal arc segments (use path commands for 4 sectors, each a different semi-transparent fill); a plant stem rising from bottom-right (path M75,95 Q80,70 90,55) with 2 leaf shapes; a rupee symbol (₹) at the top of the stem.
+    3. Education / guide / explainer / how-to:
+       → Open book or document + highlight lines + pointer icon.
 
-    4. Small cap / mid cap / sector fund / thematic / equity fund:
-       → Ascending bar chart + magnifying glass: 4 bars of heights 20,35,50,70 starting at y=95 (rect elements, fill semi-transparent white); upward arrow at top-right; a circle(cx=85,cy=35,r=15) with a line extending from it (magnifying glass), representing discovery of hidden gems.
+    4. Trust / security / reliability / compliance:
+       → Shield + checkmark + pulse line.
 
-    5. Stocks / equity / trading / technical picks / market / Nifty / Sensex:
-       → Candlestick chart + trend arrow: 3 candle bodies (rects of varying height at x=35,55,75, y positions varied); thin vertical wicks extending above and below each body; a bold upward-right diagonal arrow overlay from bottom-left to top-right of the chart area.
+    5. Productivity / operations / workflow / automation:
+       → Connected nodes + gear + motion arrows.
 
-    6. Demat / account opening / KYC / onboarding / paperless:
-       → Smartphone + KYC checkmark: rounded-rect phone (rx=8, approx 35,15,50,90); 3 ascending bars on the screen (fill semi-transparent); a circular badge at bottom-right of phone (circle r=14) with a bold checkmark path inside it.
+    6. Community / event / webinar / partnership:
+       → Calendar + people silhouettes + spotlight burst.
 
-    7. Insurance / term plan / health / protection / cover / life cover:
-       → Shield + heartbeat: large shield path (M60,20 L85,35 L85,65 Q85,90 60,100 Q35,90 35,65 L35,35 Z); inside the shield, a heartbeat/ECG line (M40,60 L50,60 L55,45 L60,75 L65,45 L70,60 L80,60) — NOT a static heart.
+    7. Customer success / case study / testimonial:
+       → Speech bubble + star accents + upward arrow.
 
-    8. Tax / ELSS / tax saving / 80C / tax-free / tax planning:
-       → Calculator + savings: rect(35,25,50,65,rx=4) for calculator body; small rect(42,32,36,12) for display screen; a 3×3 grid of tiny dots (keypad); a piggy bank silhouette (circle cx=82 cy=72 r=18, ear triangle, snout circle, leg lines) to the right.
+    8. Offer / pricing / plan / subscription:
+       → Ticket or pricing card + badge + CTA arrow.
 
-    9. Bonds / fixed income / NPS / debt fund / FD / fixed deposit:
-       → Bond certificate + steady graph: a certificate rect(28,30,64,55,rx=3) with a ribbon/seal (circle cx=60 cy=85 r=10) and % symbol inside the seal; a flat-to-slightly-rising polyline (28,80 → 55,75 → 92,70) below the cert, representing steady returns.
+    9. Mobile / app / onboarding / sign-up:
+       → Smartphone frame + checklist + confirmation badge.
 
-    10. General wealth / portfolio / retirement / financial planning / returns (fallback for anything not matching above):
-        → Coins stack + rising arrow + stars: 3 stacked coin ellipses (cx=60, rx=22, ry=6, at y=85,78,71); a bold upward arrow (M60,60 L60,25 M48,37 L60,25 L72,37); 2 small 4-point star shapes at top corners.
+    10. General brand / thought leadership / update (fallback):
+        → Abstract geometric shapes + stacked cards + accent stars.
 
     Use 5–8 distinct path/rect/circle/ellipse elements so the illustration looks rich and professional. Wrap all elements in <g stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">. Use fill="rgba(255,255,255,0.15)" or fill="rgba(255,255,255,0.3)" for accent fills on selected shapes.
 - Intro paragraph and section dividers
@@ -194,25 +194,25 @@ Layout reference (use this structure and styling cues):
   * headline
   * 1–2 sentence description
   * "Read more" button (rounded 24px, #00b34e background, white text, Figtree bold 12px, generous horizontal padding)
-- CTA section to visit PL Capital News
-- Closing tagline and footer image (DO NOT change): keep exactly this footer image
-  * Footer image: https://d314e77m1bz5zy.cloudfront.net/bee/Images/bmsx/p7orqos0/9wn/vw0/ds6/Asset%202.png
+- CTA section to visit the brand website, resource center, or campaign destination
+- Closing tagline and footer: use a clean text-based footer unless branded footer assets are explicitly provided
+  * Optional footer asset: only use if one is explicitly provided in context
 - Fonts: Figtree (load via Google Fonts); Colors: Navy/Blue (#0000a0 accents), CTA buttons #00b34e, body text #000
 - Dividers: 1px solid #0000a0 consistent throughout sections
-- Social icons bar (below footer image): centered row of circular color icons linking to:
-  * LinkedIn: https://www.linkedin.com/company/prabhudaslilladher/
-  * Instagram: https://www.instagram.com/prabhudaslilladher/
-  * X/Twitter: https://x.com/PLIndiaOnline
-  * YouTube: https://www.youtube.com/@PrabhudasLilladherIndia
-  * Telegram: https://t.me/PLIndiaOnline
+- Social icons bar: include only if social URLs are explicitly provided in context. Otherwise omit it.
+  * LinkedIn: use provided brand URL if available
+  * Instagram: use provided brand URL if available
+  * X/Twitter: use provided brand URL if available
+  * YouTube: use provided brand URL if available
+  * Any additional channel: use provided brand URL if available
   Use 32px circle-color icons (e.g., https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/circle-color/linkedin@2x.png etc.) in a single horizontal row (centered) — use a table with inline-block cells and equal padding so icons do NOT stack vertically on desktop or mobile.
 
 CRITICAL CONSTRAINTS:
-- Do NOT add any logos/brand marks beyond the provided header + footer images (do not introduce a new logo, watermark, or badge).
-- Do NOT use any placeholder images/URLs (no via.placeholder.com, no dummy banners).
-- The ONLY <img> tags allowed in the entire email are: the provided header image, the provided footer image, and the social icon set.
+- Do NOT invent logos, watermarks, or brand marks that were not provided in the request or active brand settings.
+- Do NOT use placeholder images or dummy brand assets.
+- Keep image usage minimal; prefer text and inline SVG unless brand-approved assets are explicitly provided.
 - Inline <svg> elements ARE allowed and encouraged — use them for the hero illustration and card icons. No external <img> for illustrations.
-- Do NOT repeat the header image anywhere else (especially not as a hero image).
+- Do NOT repeat any provided brand asset unnecessarily within the same email.
 
 📧 SUBJECT LINE BEST PRACTICES (from subjectline.com):
 1. **Length**: 40-60 characters (optimal for mobile preview)
@@ -264,7 +264,7 @@ ${brandGuidance ? `Brand Requirements:\n${brandGuidance}\nIMPORTANT: You MUST us
 
 CONTENT REQUIREMENTS:
 You MUST create content that is:
-1. SPECIFICALLY about the topic "${topic}" - not generic financial advice
+1. SPECIFICALLY about the topic "${topic}" - not generic filler or domain assumptions
 2. Tailored to the "${purpose}" purpose - ensure the content serves this exact goal
 3. Written for "${targetAudience}" - use appropriate language, examples, and context for this audience
 4. Include specific insights, data points, or strategies relevant to the topic
@@ -331,7 +331,7 @@ Make the HTML production-ready - it should render beautifully in all email clien
         contents: [{
           role: "user",
           parts: [{
-            text: `Search the web for current, accurate information about: "${topic}". Focus on: key dates (NFO open/close dates, subscription period), fund details (minimum investment, benchmark index, fund category), fund manager name and experience, investment objective, risk level, any recent news or analyst opinions. Be factual and specific. Summarize in 200–300 words.`,
+            text: `Search the web for current, accurate information about: "${topic}". Focus on the most relevant factual details for this topic, such as launch timing, feature details, product or service capabilities, pricing or packaging when available, audience relevance, notable metrics, availability, recent announcements, and trustworthy third-party coverage. Be factual, specific, and industry-agnostic. Summarize in 200–300 words.`,
           }],
         }],
         config: {
@@ -360,7 +360,7 @@ Make the HTML production-ready - it should render beautifully in all email clien
       groundingSection,
       hasRefImage
         ? "Uploaded reference image is attached in this request. Use it as the primary visual/layout reference for hero composition, section order, feature-grid rhythm, spacing, and CTA placement. Keep email-client compatibility requirements intact, but let the uploaded reference dominate the visual direction."
-        : "No uploaded reference image is attached. Follow the required email structure and brand rules.",
+        : "No uploaded reference image is attached. Follow the required email structure and brand rules, and keep the content generic to the provided topic rather than any assumed industry.",
     ].filter(Boolean);
 
     const userText = `${userContextSections.join("\n\n")}\n\nGenerate a professional email newsletter for this campaign. Return only the requested JSON object.`;

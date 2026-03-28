@@ -42,7 +42,7 @@ type GenerateScriptBody = {
 export async function POST(request: NextRequest) {
   try {
     const body: GenerateScriptBody = await request.json()
-    const topic = (body.topic || '').trim() || 'PL Capital investing insights'
+    const topic = (body.topic || '').trim() || 'brand or product insights'
     const platform = body.platform || 'instagram'
     const format = body.format || 'reel'
     const duration = Math.max(8, Number(body.duration) || 8)
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const groqKey = process.env.GROQ_API_KEY
     if (!groqKey) {
       const hook = platform === 'instagram' ? 'Stop scrolling—quick money tip.' : 'Quick update.'
-      const fallback = `${hook} ${topic}. Want a simple plan? Talk to PL Capital today.`.trim()
+      const fallback = `${hook} ${topic}. Want more like this? Follow for more.`.trim()
       return NextResponse.json({ script: fallback })
     }
 
@@ -62,14 +62,14 @@ export async function POST(request: NextRequest) {
     const languageName = getLanguageName(language)
     const isInstagramReel = platform === 'instagram' || /reel/i.test(format)
 
-    const systemPrompt = `You write short, natural spoken scripts for a financial services video avatar.
+    const systemPrompt = `You write short, natural spoken scripts for a branded video avatar.
 Return ONLY the spoken script as plain text. No bullet points. No headings. No stage directions. No meta-instructions.`
 
     const isYouTubeShort = platform === 'youtube' || /short/i.test(format)
     const viralReelStyle = `Style (viral reel/short, Indian audience):
 - Hook in the first sentence (pattern interrupt — stop the scroll).
 - Short punchy sentences, spoken like a credible Indian finfluencer (not cheesy).
-- Use everyday India cues where relevant (₹, SIP, tax, salary day) without giving personalized advice.
+- Use concrete, everyday cues where relevant without becoming niche or overly technical.
 - Close with a strong CTA: "Save this", "Share", "Follow", or "Comment 'PLAN'".`
     const styleGuidance = (isInstagramReel || isYouTubeShort) ? viralReelStyle : ''
 
@@ -84,7 +84,7 @@ Constraints:
 - Tone: confident, warm, professional, Indian business style.
 - Length target: ${wordsTarget} words.
 - Hard word-count range: ${minWords} to ${maxWords} words.
-- Compliance: no guaranteed returns, no exaggerated claims, no personalized investment advice.
+- Compliance: no guaranteed outcomes, no exaggerated claims, no regulated or personalized advice.
 - Do not include disclaimers in the spoken script (caption handles disclaimers separately).
 
 ${styleGuidance}

@@ -1,6 +1,6 @@
 # Social Media Engine - Frontend
 
-AI-powered multi-platform campaign automation frontend for the PL Capital Social Media Engine.
+AI-powered multi-platform campaign automation frontend for the Social Media Engine.
 
 ## Features
 

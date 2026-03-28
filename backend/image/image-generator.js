@@ -1100,7 +1100,7 @@ class ImageGenerator {
    *
    * @example
    * const result = await producer.refineImage(
-   *   "Create a modern logo for PL Capital",
+   *   "Create a modern logo for the brand",
    *   [
    *     "Make the colors more vibrant",
    *     "Add a subtle gradient effect",
@@ -1213,7 +1213,7 @@ class ImageGenerator {
    *
    * @example
    * const result = await producer.generateSocialGraphic(
-   *   "Financial portfolio growth chart with MADP branding",
+   *   "Financial portfolio growth chart with flagship product branding",
    *   "linkedin"
    * );
    */
@@ -1312,11 +1312,11 @@ class ImageGenerator {
   /**
    * 9. GENERATE BRAND-AWARE IMAGE
    *
-   * Generate images with PL Capital brand guidelines
+   * Generate images with saved brand guidelines
    * Automatically applies brand colors, fonts, and audience-specific styling
    *
    * @param {string} prompt - Image description
-   * @param {string} targetAudience - Target audience (internal, mass_affluent, hni, uhni, all_clients)
+   * @param {string} targetAudience - Target audience (internal, lead_gen, professionals, executives, all_clients)
    * @param {string} templateType - Template type (marketUpdate, investmentTip, productPromo)
    * @param {Object} config - Additional configuration
    * @returns {Object} Brand-aware image result
@@ -1333,7 +1333,7 @@ class ImageGenerator {
     // Load brand config
     const brandConfig = require('../config/brand-config.js');
 
-    console.log(`🎨 Brand-Aware Image Generation (PL Capital)`);
+    console.log(`🎨 Brand-Aware Image Generation`);
     console.log(`   Target Audience: ${targetAudience}`);
     console.log(`   Template: ${templateType}`);
 
@@ -1395,7 +1395,7 @@ class ImageGenerator {
   /**
    * 10. GENERATE SOCIAL POST WITH BRAND
    *
-   * Generate social media post with PL Capital branding
+   * Generate social media post with brand-safe styling
    * Includes logo placement, brand colors, and compliance disclaimers
    *
    * @param {string} content - Post content/message
@@ -1424,14 +1424,14 @@ class ImageGenerator {
 
     // Build enhanced prompt with template specifications
     const brandPrompt = `
-      Create a professional financial services social media post with the following specifications:
+      Create a professional branded social media post with the following specifications:
 
       Content: "${content}"
 
       Design Requirements:
-      - Use PL Capital brand colors: ${audienceConfig.colorPalette.join(', ')}
-      - Primary navy blue (#0e0e6a) background with modern corporate aesthetic
-      - Include space for PL Capital logo in ${templateConfig.logo.position} corner
+      - Use the configured brand colors: ${audienceConfig.colorPalette.join(', ')}
+      - Primary brand-led background with a polished modern aesthetic
+      - Include space for an optional brand mark in the ${templateConfig.logo.position} corner
       - Font: Figtree (modern, professional sans-serif)
       - Style: ${audienceConfig.contentStyle}
       - Tone: ${audienceConfig.tone}
@@ -1440,7 +1440,7 @@ class ImageGenerator {
       - Aspect ratio: ${templateConfig.dimensions.width}x${templateConfig.dimensions.height}
 
       Additional Elements:
-      - Modern financial graphics (charts, growth arrows, professional icons)
+      - Modern supporting graphics, product motifs, or abstract visual elements
       - Clean, uncluttered layout with strong visual hierarchy
       - Ensure text is highly readable with proper contrast
       ${brandConfig.helpers.requiresDisclaimer(targetAudience) ? '- Include space at bottom for compliance disclaimer' : ''}
@@ -1473,7 +1473,7 @@ class ImageGenerator {
   /**
    * 11. GENERATE INVESTMENT INSIGHT CARD
    *
-   * Generate branded investment insight cards for client communications
+   * Generate branded insight cards for client communications
    * Optimized for sharing market insights, tips, and updates
    *
    * @param {string} insight - Investment insight or tip
@@ -1492,17 +1492,17 @@ class ImageGenerator {
     const template = brandConfig.imageTemplates.insightCard;
     const audienceConfig = brandConfig.targetAudiences[targetAudience];
 
-    console.log(`🎨 Investment Insight Card`);
+    console.log(`🎨 Insight Card`);
     console.log(`   Audience: ${targetAudience}`);
 
     const brandPrompt = `
-      Create a professional investment insight card for a financial services firm:
+      Create a professional educational insight card for a modern brand:
 
       Main Insight: "${insight}"
 
       Design Requirements:
       - Background: Premium gradient from navy (#0e0e6a) to teal (#00d084)
-      - Brand: Prabhudas Lilladher (PL Capital)
+      - Brand: ${brandConfig.company.name}
       - Logo placement: Top-right corner, subtle
       - Font: Figtree (clean, modern, professional)
       - Style: ${audienceConfig.contentStyle}
@@ -1511,7 +1511,7 @@ class ImageGenerator {
       Layout:
       - Large, prominent insight text in white with excellent readability
       - Key numbers or statistics highlighted in bright green (#66e766)
-      - Small watermark in center (PL Capital logo, very subtle, 10% opacity)
+      - Small watermark in center (brand mark, very subtle, 10% opacity)
       - Modern financial iconography (subtle, not overwhelming)
       - High-contrast design for maximum impact
       - Professional, trustworthy, sophisticated aesthetic

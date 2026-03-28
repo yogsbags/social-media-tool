@@ -3,7 +3,7 @@
  * Call HeyGen Add Motion for each entry in heygen-native-voice-mapping.json.
  * @see https://docs.heygen.com/reference/add-motion
  *
- * Skips Siddharth Vora (custom group + name heuristics).
+ * Skips Primary Brand Avatar (custom group + name heuristics).
  *
  *   HEYGEN_API_KEY=... node scripts/ensure-heygen-motion-avatars.js
  *   HEYGEN_ADD_MOTION_TYPE=consistent_gen_3 node scripts/ensure-heygen-motion-avatars.js

@@ -9,7 +9,12 @@
  * Suitable for videos exceeding VEO 3.1's 148-second limitation
  */
 
-const fal = require('@fal-ai/client');
+let fal = null;
+try {
+  fal = require('@fal-ai/client');
+} catch (error) {
+  fal = null;
+}
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -62,6 +67,10 @@ class LongCatGenerator {
 
     if (!this.apiKey) {
       throw new Error('FAL_KEY environment variable not set. Please configure your fal.ai API key.');
+    }
+
+    if (!fal) {
+      throw new Error('Optional dependency @fal-ai/client is not installed. Run npm install to enable fal.ai long-form video generation.');
     }
 
     const finalConfig = { ...this.defaultConfig, ...config };
@@ -140,6 +149,10 @@ class LongCatGenerator {
 
     if (!this.apiKey) {
       throw new Error('FAL_KEY environment variable not set. Please configure your fal.ai API key.');
+    }
+
+    if (!fal) {
+      throw new Error('Optional dependency @fal-ai/client is not installed. Run npm install to enable fal.ai long-form video generation.');
     }
 
     const finalConfig = { ...this.defaultConfig, ...config };
