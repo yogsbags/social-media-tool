@@ -10,7 +10,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
-const MODEL = "gemini-3-flash-preview";
+const LIVE_NEWS_MODEL = "gemini-3-flash-preview";
+const BLOG_MODEL = "gemini-3.1-pro-preview";
 const MAX_GENERATION_MS = 240000;
 
 type GenerateArticleBody = {
@@ -1557,6 +1558,10 @@ export async function POST(request: NextRequest) {
     const language = body.language || "english";
     const purpose = body.purpose || "brand-awareness";
     const targetAudience = body.targetAudience || "all_clients";
+    const campaignType = String(body.campaignType || "").trim();
+    const isBlogCampaign = campaignType === "blog";
+    const articleModel = isBlogCampaign ? BLOG_MODEL : LIVE_NEWS_MODEL;
+    const articleTypeLabel = isBlogCampaign ? "blog article" : "live news article";
     const userPrompt = String(body.userPrompt || "").trim();
     const seedArticleText = String(body.seedArticleText || "").trim();
     const seedHeadline = cleanupTextArtifacts(
@@ -1612,7 +1617,8 @@ export async function POST(request: NextRequest) {
       .slice(0, pdfParts.length)
       .map((p) => String(p?.name || "Reference PDF").trim())
       .filter(Boolean);
-    const ipoStructuredMode = isIpoTopic(topic);
+    const ipoStructuredMode = !isBlogCampaign && isIpoTopic(topic);
+    const minimumBodyWords = isBlogCampaign ? 220 : 120;
     const ipoFormatInstruction = [
       "MANDATORY FORMAT (follow exactly in articleText and mirror in articleHtml):",
       "1. Summary:",
@@ -1634,8 +1640,28 @@ export async function POST(request: NextRequest) {
       "- Keep tone neutral and factual (no recommendations).",
     ].join("\n");
 
+    const systemPrompt = isBlogCampaign
+      ? [
+          "You are a senior SEO editor and fact-checked web researcher.",
+          "Use only facts grounded by Google Search and any attached documents.",
+          "If a claim, date, stat, quote, or comparison is not grounded, omit it.",
+          "Do not hallucinate entities, metrics, sources, or examples.",
+          "Write original, concise, search-intent aligned prose for a professional blog article.",
+          "Return plain text only unless explicitly asked for structured JSON.",
+        ].join(" ")
+      : [
+          "You are a business news editor writing current, factual market coverage.",
+          "Use only facts grounded by Google Search and any attached documents.",
+          "If a fact cannot be grounded, leave it out.",
+          "Do not fabricate statistics, quotes, dates, price levels, or company details.",
+          "Do not provide recommendations, advisory language, or buy/sell/hold guidance.",
+          "Return plain text only unless explicitly asked for structured JSON.",
+        ].join(" ");
+
     const promptDetailed = [
-      "Use Google Search grounding to fact-check and generate a current Indian markets live-news article.",
+      isBlogCampaign
+        ? "Create a grounded, SEO-rich blog article using Google Search and any attached reference documents."
+        : "Use Google Search grounding to fact-check and generate a current Indian markets live-news article.",
       `Primary topic: ${topic}`,
       `Campaign purpose: ${purpose}`,
       `Target audience: ${targetAudience}`,
@@ -1644,10 +1670,14 @@ export async function POST(request: NextRequest) {
         ? `Reference documents attached: ${referenceDocNames.join(", ")}`
         : "",
       hasReferenceDocs
-        ? "Use attached PDFs as authoritative context (for example DRHP details, issue size, dates, risks, objects, valuation, peers)."
+        ? isBlogCampaign
+          ? "Use attached PDFs as primary source context when relevant. Prefer them over generic web summaries when they contain topic-specific facts."
+          : "Use attached PDFs as authoritative context (for example DRHP details, issue size, dates, risks, objects, valuation, peers)."
         : "",
       hasReferenceDocs
-        ? "When PDF facts are used, mention them in article context and in FAQ/source attribution."
+        ? isBlogCampaign
+          ? "Use attached PDFs as primary source context when relevant, then validate with web grounding."
+          : "When PDF facts are used, mention them in article context and in FAQ/source attribution."
         : "",
       userPrompt
         ? `User refinement instruction (must follow): ${userPrompt}`
@@ -1655,11 +1685,17 @@ export async function POST(request: NextRequest) {
       seedArticleText
         ? `Previous draft context (refine, not copy):\n${seedArticleText}`
         : "",
-      `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+      isBlogCampaign
+        ? `Current date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}).`
+        : `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
       'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
       `Do not drift to older coverage from prior years when similarly dated articles exist.`,
-      "Write in a neutral newsroom tone similar to professional business news portals.",
-      "Do NOT include recommendations, advisory calls, buy/sell/hold language, or investor tips.",
+      isBlogCampaign
+        ? "Write in a crisp editorial tone with strong clarity, not marketing fluff."
+        : "Write in a neutral newsroom tone similar to professional business news portals.",
+      isBlogCampaign
+        ? "Use only grounded facts. If a detail cannot be verified, omit it instead of guessing."
+        : "Do NOT include recommendations, advisory calls, buy/sell/hold language, or investor tips.",
       "Mandatory top structure (keep each on its own line):",
       "Headline: <one line>",
       "Summary: <2-3 lines>",
@@ -1668,13 +1704,19 @@ export async function POST(request: NextRequest) {
       "Do not repeat the headline in the body.",
       "Do not repeat the same paragraph or near-duplicate lead lines.",
       "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
-      "Focus on what happened, why it matters, and relevant market context.",
+      isBlogCampaign
+        ? "Make the article SEO-rich by answering the likely primary query directly and covering related subtopics naturally."
+        : "Focus on what happened, why it matters, and relevant market context.",
       ipoStructuredMode
         ? ""
-        : "For non-IPO market news, structure the article body with these exact section headings on their own lines: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+        : isBlogCampaign
+          ? "Use these exact H2 section headings in the article body on their own lines: Introduction, Key Insights, Why It Matters, Bottom Line."
+          : "For non-IPO market news, structure the article body with these exact section headings on their own lines: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       ipoStructuredMode
         ? ""
-        : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
+        : isBlogCampaign
+          ? "Under Key Insights, use grounded specifics, examples, comparisons, or bullet points where that improves clarity. Ensure the article ends with a complete final sentence."
+          : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       ipoStructuredMode
         ? "Because this is IPO/DRHP context, write articleText and articleHtml in this exact section order: Summary, Issue Details and Key Dates, GMP and Grey Market Premium, Use of Proceeds / Key Objectives, About the Company, Financial Performance, What the Numbers Show, Strengths, Risks, Peer Positioning, Bottom Line."
         : "",
@@ -1692,13 +1734,17 @@ export async function POST(request: NextRequest) {
       "{valid FAQPage JSON-LD with 3-5 FAQs}",
     ].join("\n");
     const promptCompact = [
-      "Use Google Search grounding and write a concise, factual Indian market news article.",
+      isBlogCampaign
+        ? "Write a grounded SEO blog article using Google Search."
+        : "Use Google Search grounding and write a concise, factual Indian market news article.",
       `Topic: ${topic}`,
       hasReferenceDocs
         ? `Reference documents attached: ${referenceDocNames.join(", ")}`
         : "",
       hasReferenceDocs
-        ? "Use document facts as primary context where relevant."
+        ? isBlogCampaign
+          ? "Use attached PDFs as primary source context when relevant, then validate with web grounding."
+          : "Use document facts as primary context where relevant."
         : "",
       userPrompt
         ? `User refinement instruction (must follow): ${userPrompt}`
@@ -1706,7 +1752,9 @@ export async function POST(request: NextRequest) {
       seedArticleText
         ? `Previous draft context (refine, not copy):\n${seedArticleText}`
         : "",
-      `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+      isBlogCampaign
+        ? `Current date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}).`
+        : `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
       'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
       `Do not drift to older coverage from prior years when similarly dated articles exist.`,
       "Return plain text only (no JSON).",
@@ -1718,19 +1766,29 @@ export async function POST(request: NextRequest) {
       "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
       ipoStructuredMode
         ? ""
-        : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+        : isBlogCampaign
+          ? "Use these exact H2 headings in the body: Introduction, Key Insights, Why It Matters, Bottom Line."
+          : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       ipoStructuredMode
         ? ""
-        : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
+        : isBlogCampaign
+          ? "Keep intro distinct from summary and ensure the article ends with a complete final sentence."
+          : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       ipoStructuredMode
         ? "articleText and articleHtml must include all requested IPO sections with bullets and financial table-like data."
-        : "Write articleText as 4 substantial paragraphs with strong factual detail.",
+        : isBlogCampaign
+          ? "Write articleText as a substantial blog post with strong factual detail and clear search-intent coverage."
+          : "Write articleText as 4 substantial paragraphs with strong factual detail.",
       ipoStructuredMode ? ipoFormatInstruction : "",
       "Append SEO Metadata and FAQ Schema (JSON-LD) after article body.",
-      "No investment recommendations or buy/sell/hold language.",
+      isBlogCampaign
+        ? "Keep facts grounded; omit anything unverified."
+        : "No investment recommendations or buy/sell/hold language.",
     ].join("\n");
     const promptAdvisorySafe = [
-      "Use Google Search grounding and rewrite as strict business-news copy.",
+      isBlogCampaign
+        ? "Rewrite the grounded blog article in stricter editorial style."
+        : "Use Google Search grounding and rewrite as strict business-news copy.",
       `Topic: ${topic}`,
       hasReferenceDocs
         ? `Reference documents attached: ${referenceDocNames.join(", ")}`
@@ -1741,7 +1799,9 @@ export async function POST(request: NextRequest) {
       seedArticleText
         ? `Previous draft context (refine, not copy):\n${seedArticleText}`
         : "",
-      `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+      isBlogCampaign
+        ? `Current date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}).`
+        : `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
       'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
       `Do not drift to older coverage from prior years when similarly dated articles exist.`,
       "Return plain text only.",
@@ -1753,24 +1813,38 @@ export async function POST(request: NextRequest) {
       "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
       ipoStructuredMode
         ? ""
-        : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+        : isBlogCampaign
+          ? "Use the exact H2 headings: Introduction, Key Insights, Why It Matters, Bottom Line."
+          : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       ipoStructuredMode
         ? ""
-        : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
-      "Hard constraint: do not include ANY advisory words or actions.",
-      "Forbidden words/phrases: buy, sell, hold, invest, should investors, strategy, tips, recommendation.",
+        : isBlogCampaign
+          ? "Do not add hype, invented facts, fabricated statistics, or speculation presented as fact."
+          : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
+      isBlogCampaign
+        ? "Hard constraint: keep only grounded editorial claims and no hype."
+        : "Hard constraint: do not include ANY advisory words or actions.",
+      isBlogCampaign
+        ? "Avoid unsupported superlatives, invented metrics, and fabricated examples."
+        : "Forbidden words/phrases: buy, sell, hold, invest, should investors, strategy, tips, recommendation.",
       ipoStructuredMode
         ? "For IPO/DRHP context, output the full sectioned report format and keep each bullet factual and source-grounded."
-        : "Write only factual reporting on what happened, drivers, impact, and near-term implications.",
+        : isBlogCampaign
+          ? "Write only grounded explanatory coverage with clear reader value and search-intent alignment."
+          : "Write only factual reporting on what happened, drivers, impact, and near-term implications.",
       ipoStructuredMode ? ipoFormatInstruction : "",
       "Append SEO Metadata and FAQ Schema (JSON-LD) after article body.",
       ipoStructuredMode
         ? "Include at least 6 issue details bullets, at least 2 GMP/grey market data points, at least 3 strengths, at least 3 risks, and at least 3 peer positioning bullets."
-        : "Length constraint: 4-6 paragraphs and at least 280 words in articleText.",
+        : isBlogCampaign
+          ? "Length constraint: 5-8 substantial sections/paragraphs and at least 450 words in articleText."
+          : "Length constraint: 4-6 paragraphs and at least 280 words in articleText.",
     ].join("\n");
 
     const refinementPromptDetailed = [
-      "You are editing an existing Indian markets article.",
+      isBlogCampaign
+        ? "You are editing an existing grounded SEO blog article."
+        : "You are editing an existing Indian markets article.",
       `Topic: ${topic}`,
       `Language: ${language}`,
       `User instruction: ${userPrompt}`,
@@ -1778,16 +1852,24 @@ export async function POST(request: NextRequest) {
         ? `Reference documents attached: ${referenceDocNames.join(", ")}`
         : "",
       hasReferenceDocs
-        ? "Use attached PDFs for factual correction where relevant."
+        ? isBlogCampaign
+          ? "Use attached PDFs and web grounding for factual corrections."
+          : "Use attached PDFs for factual correction where relevant."
         : "",
-      `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+      isBlogCampaign
+        ? `Current date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}).`
+        : `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
       'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
       "Apply the user instruction exactly and keep all unrelated content unchanged.",
-      "Do not add recommendations/advisory language.",
+      isBlogCampaign
+        ? "Do not add unverified claims."
+        : "Do not add recommendations/advisory language.",
       "Do not leave the revised article body ending with an incomplete sentence, trailing clause, or cut-off word.",
       ipoStructuredMode
         ? ""
-        : "Keep the existing body in a headed structure using these exact section headings where applicable: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+        : isBlogCampaign
+          ? "Keep the body under these exact H2 headings where applicable: Introduction, Key Insights, Why It Matters, Bottom Line."
+          : "Keep the existing body in a headed structure using these exact section headings where applicable: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       "Return plain text in this exact format and nothing else:",
       "HEADLINE: <single line>",
       "SUMMARY: <2-3 lines>",
@@ -1828,9 +1910,10 @@ export async function POST(request: NextRequest) {
           },
         ];
         const response = await ai.models.generateContent({
-          model: MODEL,
+          model: articleModel,
           contents,
           config: {
+            systemInstruction: systemPrompt,
             temperature: 0.05,
             maxOutputTokens: 3072,
             tools: [{ googleSearch: {} }],
@@ -1922,9 +2005,10 @@ export async function POST(request: NextRequest) {
           },
         ];
         const response = await ai.models.generateContent({
-          model: MODEL,
+          model: articleModel,
           contents: requestContents,
           config: {
+            systemInstruction: systemPrompt,
             temperature: 0.3,
             maxOutputTokens: attempt.maxOutputTokens,
             tools: [{ googleSearch: {} }],
@@ -2008,13 +2092,13 @@ export async function POST(request: NextRequest) {
             });
             continue;
           }
-        } else if (cWordCount < 120) {
+        } else if (cWordCount < minimumBodyWords) {
           retryTrace.push({
             attempt: index + 1,
             promptVariant: attempt.name,
             maxOutputTokens: attempt.maxOutputTokens,
             status: "missing-fields",
-            detail: `Article body too short (${cWordCount} words).`,
+            detail: `Article body too short (${cWordCount} words; minimum ${minimumBodyWords}).`,
             elapsedMs: Date.now() - attemptStartedAt,
           });
           continue;
@@ -2050,7 +2134,9 @@ export async function POST(request: NextRequest) {
       const salvageStartedAt = Date.now();
       try {
         const salvagePrompt = [
-          "You are writing a complete, factual Indian markets IPO news report.",
+          isBlogCampaign
+            ? "Write a complete grounded SEO blog article."
+            : "You are writing a complete, factual Indian markets IPO news report.",
           `Topic: ${topic}`,
           hasReferenceDocs
             ? `Reference documents attached: ${referenceDocNames.join(", ")}`
@@ -2058,7 +2144,9 @@ export async function POST(request: NextRequest) {
           hasReferenceDocs
             ? "Use attached document facts first, then web grounding for context."
             : "",
-          `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
+          isBlogCampaign
+            ? `Current date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}).`
+            : `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
           'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
           "Return plain text only (no JSON).",
           "Include separate top lines: Headline, Summary, Intro.",
@@ -2069,25 +2157,32 @@ export async function POST(request: NextRequest) {
           "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
           ipoStructuredMode
             ? ""
-            : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+            : isBlogCampaign
+              ? "Use these exact H2 headings on separate lines in the body: Introduction, Key Insights, Why It Matters, Bottom Line."
+              : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
           ipoStructuredMode
             ? ""
-            : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
+            : isBlogCampaign
+              ? "Write a complete, grounded article that ends with a full sentence and covers the core query clearly."
+              : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
           "After article end append SEO Metadata and FAQ Schema (JSON-LD).",
           "Hard constraints:",
           "- No recommendations/advisory language.",
           "- articleText must be complete and not truncated.",
           ipoStructuredMode
             ? "- Include all IPO sections: Summary, Issue Details and Key Dates, GMP and Grey Market Premium, Use of Proceeds / Key Objectives, About the Company, Financial Performance, What the Numbers Show, Strengths, Risks, Peer Positioning, Bottom Line."
-            : "- Write 4-6 solid paragraphs with clear market context.",
+            : isBlogCampaign
+              ? "- Write 5-8 solid sections/paragraphs with grounded search-intent coverage."
+              : "- Write 4-6 solid paragraphs with clear market context.",
         ].join("\n");
 
         const salvageResponse = await ai.models.generateContent({
-          model: MODEL,
+          model: articleModel,
           contents: [
             { role: "user" as const, parts: [{ text: salvagePrompt }, ...pdfParts] },
           ],
           config: {
+            systemInstruction: systemPrompt,
             temperature: 0.2,
             maxOutputTokens: 2600,
             tools: [{ googleSearch: {} }],
@@ -2109,7 +2204,7 @@ export async function POST(request: NextRequest) {
           sHeadline &&
           sSummary &&
           sArticleText &&
-          sWordCount >= 140 &&
+          sWordCount >= (isBlogCampaign ? 260 : 140) &&
           sHasIpoShape &&
           !sSchemaLike
         ) {
@@ -2220,9 +2315,10 @@ export async function POST(request: NextRequest) {
           "Return only the revised summary text in 2-3 sentences. No labels.",
         ].join("\n");
         const summaryResp = await ai.models.generateContent({
-          model: MODEL,
+          model: articleModel,
           contents: [{ role: "user" as const, parts: [{ text: summaryRewritePrompt }] }],
           config: {
+            systemInstruction: systemPrompt,
             temperature: 0.05,
             maxOutputTokens: 220,
             seed: resolvedSeed,
@@ -2367,9 +2463,12 @@ export async function POST(request: NextRequest) {
                 "The move is being driven by a combination of macroeconomic, policy, and sector-specific factors discussed in the article.",
             },
             {
-              question: "How is this affecting Indian markets?",
-              answer:
-                "The article explains sector impact, market sentiment, and near-term implications using grounded sources.",
+              question: isBlogCampaign
+                ? "What should readers understand from this topic?"
+                : "How is this affecting Indian markets?",
+              answer: isBlogCampaign
+                ? "The article explains the core implications, trade-offs, and key context using grounded sources."
+                : "The article explains sector impact, market sentiment, and near-term implications using grounded sources.",
             },
           ];
 
@@ -2429,7 +2528,7 @@ export async function POST(request: NextRequest) {
       topic,
       generatedAt: new Date().toISOString(),
       generationSeed: resolvedSeed,
-      model: MODEL,
+      model: articleModel,
       factCheck: {
         grounded: true,
         sourceCount: groundedSources.length,
@@ -2454,13 +2553,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(article);
   } catch (error) {
-    console.error("Live news article generation error:", error);
+    console.error("Article generation error:", error);
     return NextResponse.json(
       {
         error:
           error instanceof Error
             ? error.message
-            : "Failed to generate live news article",
+            : "Failed to generate article",
       },
       { status: 500 },
     );

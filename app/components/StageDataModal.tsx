@@ -40,7 +40,7 @@ export default function StageDataModal({
     if (isOpen && data) {
       // Initialize form data from the data object
       const flattenedData = flattenObject(data)
-      if (stageId === 2 && flattenedData['contentType'] === 'live-news-article') {
+      if (stageId === 2 && ['live-news-article', 'blog-article'].includes(String(flattenedData['contentType'] || ''))) {
         // Refinement instruction for Stage 2 re-runs.
         if (flattenedData['userPrompt'] === undefined || flattenedData['userPrompt'] === null) {
           flattenedData['userPrompt'] = ''
@@ -144,6 +144,8 @@ export default function StageDataModal({
   }
 
   const getFieldLabel = (key: string): string => {
+    if (key === 'userPrompt') return 'Follow-Up Edit Prompt'
+
     // Convert key to readable label
     return key
       .split('.')
@@ -152,6 +154,7 @@ export default function StageDataModal({
   }
 
   const renderField = (key: string, value: any) => {
+    const isArticleContentType = stageId === 2 && ['live-news-article', 'blog-article'].includes(String(formData['contentType'] || ''))
     const isLongText = typeof value === 'string' && value.length > 100
 
     // Check if this is an image URL (from imgbb, Stage 2 WhatsApp creative, or Stage 3 visuals)
@@ -281,6 +284,14 @@ export default function StageDataModal({
               </div>
             )}
           </div>
+        ) : key === 'userPrompt' && isArticleContentType ? (
+          <textarea
+            value={value || ''}
+            onChange={(e) => handleFieldChange(key, e.target.value)}
+            rows={5}
+            placeholder="Ask for focused edits here, for example: rewrite the introduction, tighten the SEO title, add clearer examples under Key Insights, or regenerate the article with a more executive tone."
+            className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-vertical"
+          />
         ) : isLongText ? (
           <textarea
             value={value || ''}
@@ -539,7 +550,7 @@ export default function StageDataModal({
     )
   }
 
-  const renderLiveNewsArticle = () => {
+  const renderArticlePreview = () => {
     const headline = formData['headline'] || ''
     const subheadline = formData['subheadline'] || ''
     const summary = formData['summary'] || ''
@@ -606,12 +617,13 @@ export default function StageDataModal({
     }
 
     const downloadArticleHtml = () => {
+      const articleTypeLabel = formData['contentType'] === 'blog-article' ? 'blog-article' : 'live-news-article'
       const html = buildDownloadHtml()
       const blob = new Blob([html], { type: 'text/html' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `live-news-article-${Date.now()}.html`
+      a.download = `${articleTypeLabel}-${Date.now()}.html`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -626,7 +638,7 @@ export default function StageDataModal({
               <span className="text-2xl">📰</span>
               <div>
                 <label className="block text-base font-bold text-blue-900">
-                  Live News Article
+                  {formData['contentType'] === 'blog-article' ? 'Blog Article' : 'Live News Article'}
                 </label>
                 <p className="text-xs text-blue-700 mt-0.5">
                   Preview and export clean reader-friendly HTML (sources hidden in download)
@@ -746,10 +758,10 @@ export default function StageDataModal({
             </>
           )}
 
-          {/* For Stage 2: Display live-news article with preview/download */}
-          {stageId === 2 && formData['contentType'] === 'live-news-article' && formData['articleHtml'] && (
+          {/* For Stage 2: Display grounded article with preview/download */}
+          {stageId === 2 && ['live-news-article', 'blog-article'].includes(String(formData['contentType'] || '')) && formData['articleHtml'] && (
             <>
-              {renderLiveNewsArticle()}
+              {renderArticlePreview()}
               <div className="my-6 border-t-2 border-gray-200"></div>
               <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Additional Details</h3>
             </>
@@ -763,7 +775,7 @@ export default function StageDataModal({
                 if (stageId === 2 && formData['contentType'] === 'email-newsletter') {
                   return !['html', 'subject', 'preheader', 'plainText', 'subjectVariations', 'contentType'].includes(key)
                 }
-                if (stageId === 2 && formData['contentType'] === 'live-news-article') {
+                if (stageId === 2 && ['live-news-article', 'blog-article'].includes(String(formData['contentType'] || ''))) {
                   return !['headline', 'subheadline', 'summary', 'rawOutput', 'articleText', 'articleHtml', 'contentType'].includes(key)
                 }
                 return true

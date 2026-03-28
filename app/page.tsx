@@ -185,6 +185,7 @@ export default function Home() {
     { value: 'twitter-thread', label: 'Twitter Thread', platforms: ['twitter'] },
     { value: 'whatsapp-creative', label: 'WhatsApp Creative', platforms: ['whatsapp'] },
     { value: 'email-newsletter', label: 'Email Newsletter', platforms: ['email'] },
+    { value: 'blog', label: 'Blog Article', platforms: ['linkedin'] },
     { value: 'live-news', label: 'Live News Update', platforms: ['linkedin', 'twitter', 'youtube'] },
     { value: 'infographic', label: 'Infographic', platforms: ['linkedin', 'instagram', 'facebook', 'twitter'] },
   ]
@@ -719,9 +720,13 @@ export default function Home() {
     try {
       setIsGeneratingTopic(true)
       setTopicError(null)
-      addLog(campaignType === 'live-news'
-        ? 'Generating live-news campaign topic with web search...'
-        : 'Generating campaign topic...')
+      addLog(
+        campaignType === 'live-news'
+          ? 'Generating live-news campaign topic with web search...'
+          : campaignType === 'blog'
+            ? 'Generating blog topic...'
+            : 'Generating campaign topic...'
+      )
 
       const seedKeyword = topic.trim() || undefined
       console.log('[Topic Generate] campaignType:', campaignType, '| seedTheme sent:', seedKeyword ?? '(none)')
@@ -1057,7 +1062,7 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-gray-800 mb-2">
-                  Torqq Social Media Engine
+                  Torqq Content Engine
                 </h1>
                 <p className="text-gray-600 text-lg">
                   AI-Powered Multi-Platform Campaign Automation
@@ -2495,7 +2500,7 @@ export default function Home() {
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600">
           <p className="text-sm">
-            Torqq Social Media Engine • Port 3004 •
+            Torqq Content Engine • Port 3004 •
             <span className="ml-2">AI-Powered Video Production & Multi-Platform Publishing</span>
           </p>
         </div>

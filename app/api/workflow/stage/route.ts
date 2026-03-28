@@ -539,9 +539,13 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Special handling for Stage 2: Generate grounded live-news article
-        if (stageId === 2 && campaignType === 'live-news') {
-          sendEvent({ log: '📰 Generating grounded live-news article with Gemini...' })
+        // Special handling for Stage 2: Generate grounded article content
+        if (stageId === 2 && ['live-news', 'blog'].includes(campaignType)) {
+          const isBlogCampaign = campaignType === 'blog'
+          const articleLabel = isBlogCampaign ? 'blog article' : 'live-news article'
+          sendEvent({ log: isBlogCampaign
+            ? '📝 Generating grounded SEO blog article with Gemini...'
+            : '📰 Generating grounded live-news article with Gemini...' })
 
           // Send SSE keepalive comments every 20s so Railway/Cloudflare proxy does not
           // close the idle SSE connection while article generation runs (can take 1-4 min).
@@ -624,12 +628,12 @@ export async function POST(request: NextRequest) {
               } catch {
                 // ignore non-JSON error payload
               }
-              throw new Error(errText || 'Failed to generate grounded live-news article')
+              throw new Error(errText || `Failed to generate grounded ${articleLabel}`)
             }
 
             const article = await articleResponse.json()
 
-            sendEvent({ log: '✅ Live-news article generated successfully!' })
+            sendEvent({ log: `✅ ${isBlogCampaign ? 'Blog article' : 'Live-news article'} generated successfully!` })
             if (Array.isArray(article.retryTrace) && article.retryTrace.length > 0) {
               sendEvent({ log: '🔁 Gemini retry trace:' })
               for (const trace of article.retryTrace) {
@@ -655,7 +659,7 @@ export async function POST(request: NextRequest) {
               generationSeed: Number.isInteger(Number(article.generationSeed)) ? Number(article.generationSeed) : undefined,
               status: 'completed',
               type: 'content-generation',
-              contentType: 'live-news-article',
+              contentType: isBlogCampaign ? 'blog-article' : 'live-news-article',
               headline: article.headline,
               subheadline: article.subheadline,
               summary: article.summary,
@@ -674,14 +678,14 @@ export async function POST(request: NextRequest) {
             }
 
             saveStageData(stageId, stageData)
-            sendEvent({ stage: stageId, status: 'completed', message: 'Live-news article generated', data: stageData })
+            sendEvent({ stage: stageId, status: 'completed', message: `${isBlogCampaign ? 'Blog article' : 'Live-news article'} generated`, data: stageData })
             sendEvent({ log: '✅ Stage 2 completed successfully!' })
             clearInterval(keepaliveTimer)
             controller.close()
             return
           } catch (error) {
-            sendEvent({ log: `❌ Live-news article generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
-            sendEvent({ stage: stageId, status: 'error', message: 'Live-news article generation failed' })
+            sendEvent({ log: `❌ ${isBlogCampaign ? 'Blog article' : 'Live-news article'} generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
+            sendEvent({ stage: stageId, status: 'error', message: `${isBlogCampaign ? 'Blog article' : 'Live-news article'} generation failed` })
             clearInterval(keepaliveTimer)
             controller.close()
             return
@@ -720,7 +724,7 @@ export async function POST(request: NextRequest) {
           if (campaignType === 'email-newsletter') {
             derivedPlatform = 'email'
             derivedFormat = 'newsletter'
-          } else if (campaignType === 'live-news') {
+          } else if (campaignType === 'live-news' || campaignType === 'blog') {
             derivedPlatform = primaryPlatform || 'linkedin'
             derivedFormat = 'article'
           } else if (campaignType === 'infographic') {
