@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { AuthProvider, useAuth } from '@/contexts/AuthContext'
-import { AuthGate } from '@/app/components/auth/AuthGate'
 import FileUpload from './components/FileUpload'
 import PromptEditor from './components/PromptEditor'
 import PublishingQueue from './components/PublishingQueue'
@@ -69,8 +67,7 @@ function LogEntry({ text, index }: { text: string; index: number }) {
   );
 }
 
-function DashboardPage() {
-  const { user, logout } = useAuth()
+export default function Home() {
   const [isRunning, setIsRunning] = useState(false)
   const [stages, setStages] = useState<WorkflowStage[]>([
     { id: 1, name: 'Stage 1: Campaign Planning', status: 'idle', message: '' },
@@ -277,9 +274,10 @@ function DashboardPage() {
 
   const executeStage = async (stageId: number) => {
     setExecutingStage(stageId)
-    /** Only filters noisy server SSE `data.log` lines during blog Stage 2 — not client prep/start lines. */
     const quietStage2BlogLogs = stageId === 2 && campaignType === 'blog'
-    addLog(`Starting Stage ${stageId} execution...`)
+    if (!quietStage2BlogLogs) {
+      addLog(`Starting Stage ${stageId} execution...`)
+    }
     let terminalStatus: WorkflowStage['status'] | null = null
 
     try {
@@ -308,7 +306,6 @@ function DashboardPage() {
       // Prepare file data
       addLog('Preparing reference materials...')
       const fileData = await prepareFilesForAPI(stageId)
-      addLog(`Reference materials ready (Stage ${stageId}). Connecting to workflow…`)
 
       // Stage 4 runs via async job queue to avoid long-lived HTTP request timeouts.
       if (stageId === 4) {
@@ -557,11 +554,17 @@ function DashboardPage() {
       }
 
       if (terminalStatus === 'completed') {
-        addLog(`Stage ${stageId} completed!`)
+        if (!quietStage2BlogLogs) {
+          addLog(`Stage ${stageId} completed!`)
+        }
       } else if (terminalStatus === 'error') {
-        addLog(`Stage ${stageId} failed`)
+        if (!quietStage2BlogLogs) {
+          addLog(`Stage ${stageId} failed`)
+        }
       } else {
-        addLog(`Stage ${stageId} ended without terminal status`)
+        if (!quietStage2BlogLogs) {
+          addLog(`Stage ${stageId} ended without terminal status`)
+        }
       }
     } catch (error) {
       addLog(`Error in Stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -925,8 +928,6 @@ function DashboardPage() {
         })
       )
       addLog('PDF upload completed')
-    } else if (includeResearchPDFs) {
-      addLog('No reference PDFs — skipping upload.')
     }
 
     // Convert reference images
@@ -1130,22 +1131,6 @@ function DashboardPage() {
                   AI-Powered Multi-Platform Campaign Automation
                 </p>
               </div>
-            </div>
-            <div className="flex items-center gap-3 self-start md:self-center">
-              <div className="text-right">
-                <p className="text-sm font-medium text-slate-900">
-                  {user?.name || user?.email}
-                </p>
-                {user?.email ? (
-                  <p className="text-xs text-slate-500">{user.email}</p>
-                ) : null}
-              </div>
-              <button
-                onClick={() => void logout()}
-                className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
-              >
-                Sign out
-              </button>
             </div>
           </div>
           <div className="mt-4 flex items-center gap-4">
@@ -2604,15 +2589,5 @@ function DashboardPage() {
         )}
       </div>
     </div>
-  )
-}
-
-export default function Home() {
-  return (
-    <AuthProvider>
-      <AuthGate>
-        <DashboardPage />
-      </AuthGate>
-    </AuthProvider>
   )
 }

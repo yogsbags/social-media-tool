@@ -564,15 +564,15 @@ export async function POST(request: NextRequest) {
             articleHtml: '',
             ...overrides
           })
-          const emitBlogPartialSuccess = (stageData: Record<string, any>, logLine: string) => {
+          /** Blog failures: no verbose SSE logs — completion message is minimal (see page addLog). */
+          const emitBlogPartialSuccess = (stageData: Record<string, any>) => {
             saveStageData(stageId, stageData)
             sendEvent({
               stage: stageId,
               status: 'completed',
-              message: 'Blog article: raw / partial output saved — open View & Edit',
+              message: 'Blog — open View & Edit',
               data: stageData
             })
-            sendEvent({ log: logLine })
             clearInterval(keepaliveTimer)
             controller.close()
           }
@@ -583,9 +583,9 @@ export async function POST(request: NextRequest) {
             controller.close()
           }
 
-          sendEvent({ log: isBlogCampaign
-            ? '📝 Generating grounded SEO blog article with Gemini...'
-            : '📰 Generating grounded live-news article with Gemini...' })
+          if (!isBlogCampaign) {
+            sendEvent({ log: '📰 Generating grounded live-news article with Gemini...' })
+          }
 
           // Send SSE keepalive comments every 20s so Railway/Cloudflare proxy does not
           // close the idle SSE connection while article generation runs (can take 1-4 min).
@@ -627,7 +627,9 @@ export async function POST(request: NextRequest) {
 
             for (const candidateBase of baseCandidates) {
               const endpoint = `${candidateBase}/api/article/generate`
-              sendEvent({ log: `🌐 Calling grounded article API: ${endpoint}` })
+              if (!isBlogCampaign) {
+                sendEvent({ log: `🌐 Calling grounded article API: ${endpoint}` })
+              }
               let timeout: NodeJS.Timeout | null = null
               try {
                 const controller = new AbortController()
@@ -643,7 +645,9 @@ export async function POST(request: NextRequest) {
                 break
               } catch (err) {
                 lastFetchError = err instanceof Error ? err : new Error('Unknown fetch error')
-                sendEvent({ log: `⚠️ Grounded article API call failed at ${candidateBase}: ${lastFetchError.message}` })
+                if (!isBlogCampaign) {
+                  sendEvent({ log: `⚠️ Grounded article API call failed at ${candidateBase}: ${lastFetchError.message}` })
+                }
               } finally {
                 if (timeout) clearTimeout(timeout)
               }
@@ -658,10 +662,7 @@ export async function POST(request: NextRequest) {
                   rawOutput: '',
                   articleText: ''
                 })
-                emitBlogPartialSuccess(
-                  stageData,
-                  `⚠️ Grounded article API unreachable — partial entry saved with transport error (open View & Edit). ${transportMsg}`
-                )
+                emitBlogPartialSuccess(stageData)
                 return
               }
               emitLiveNewsFailure(`❌ Grounded article API unreachable: ${transportMsg}`)
@@ -676,7 +677,7 @@ export async function POST(request: NextRequest) {
               } catch {
                 // plain-text error body
               }
-              if (Array.isArray(errJson?.retryTrace)) {
+              if (!isBlogCampaign && Array.isArray(errJson?.retryTrace)) {
                 sendEvent({ log: '🔁 Gemini retry trace:' })
                 for (const trace of errJson!.retryTrace) {
                   sendEvent({
@@ -696,10 +697,7 @@ export async function POST(request: NextRequest) {
                   retryTrace: errJson?.retryTrace ?? null,
                   generationMeta: errJson?.generationMeta ?? null
                 })
-                emitBlogPartialSuccess(
-                  stageData,
-                  `⚠️ Blog validation failed — raw model output saved (open View & Edit). ${errJson?.error || errText?.slice(0, 200) || articleResponse.status}`
-                )
+                emitBlogPartialSuccess(stageData)
                 return
               }
               emitLiveNewsFailure(
@@ -710,27 +708,31 @@ export async function POST(request: NextRequest) {
 
             const article = await articleResponse.json()
 
-            sendEvent({ log: `✅ ${isBlogCampaign ? 'Blog article' : 'Live-news article'} generated successfully!` })
-            if (Array.isArray(article.retryTrace) && article.retryTrace.length > 0) {
-              const hadActualRetry = article.retryTrace.length > 1 || article.retryTrace.some((trace: any) => trace?.status !== 'success')
-              if (hadActualRetry) {
-                sendEvent({ log: '🔁 Gemini retry trace:' })
-              } else {
-                sendEvent({ log: '🧾 Gemini generation trace:' })
+            if (isBlogCampaign) {
+              sendEvent({ log: '✅ Blog article generated.' })
+            } else {
+              sendEvent({ log: '✅ Live-news article generated successfully!' })
+              if (Array.isArray(article.retryTrace) && article.retryTrace.length > 0) {
+                const hadActualRetry = article.retryTrace.length > 1 || article.retryTrace.some((trace: any) => trace?.status !== 'success')
+                if (hadActualRetry) {
+                  sendEvent({ log: '🔁 Gemini retry trace:' })
+                } else {
+                  sendEvent({ log: '🧾 Gemini generation trace:' })
+                }
+                for (const trace of article.retryTrace) {
+                  sendEvent({
+                    log: `   Attempt ${trace.attempt}/${article.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
+                  })
+                }
               }
-              for (const trace of article.retryTrace) {
-                sendEvent({
-                  log: `   Attempt ${trace.attempt}/${article.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
-                })
+              if (article.generationMeta?.totalElapsedMs) {
+                sendEvent({ log: `⏱️ Article generation time: ${article.generationMeta.totalElapsedMs}ms` })
               }
-            }
-            if (article.generationMeta?.totalElapsedMs) {
-              sendEvent({ log: `⏱️ Article generation time: ${article.generationMeta.totalElapsedMs}ms` })
-            }
-            sendEvent({ log: `🗞️ Headline: ${article.headline}` })
-            sendEvent({ log: `🔎 Grounded sources: ${article.factCheck?.sourceCount || article.sources?.length || 0}` })
-            if (article.referenceDocuments?.attached) {
-              sendEvent({ log: `📄 Reference PDFs used: ${article.referenceDocuments.count}` })
+              sendEvent({ log: `🗞️ Headline: ${article.headline}` })
+              sendEvent({ log: `🔎 Grounded sources: ${article.factCheck?.sourceCount || article.sources?.length || 0}` })
+              if (article.referenceDocuments?.attached) {
+                sendEvent({ log: `📄 Reference PDFs used: ${article.referenceDocuments.count}` })
+              }
             }
 
             const stageData = {
@@ -761,7 +763,9 @@ export async function POST(request: NextRequest) {
 
             saveStageData(stageId, stageData)
             sendEvent({ stage: stageId, status: 'completed', message: `${isBlogCampaign ? 'Blog article' : 'Live-news article'} generated`, data: stageData })
-            sendEvent({ log: '✅ Stage 2 completed successfully!' })
+            if (!isBlogCampaign) {
+              sendEvent({ log: '✅ Stage 2 completed successfully!' })
+            }
             clearInterval(keepaliveTimer)
             controller.close()
             return
@@ -785,13 +789,7 @@ export async function POST(request: NextRequest) {
                 retryTrace: errJson?.retryTrace ?? null,
                 generationMeta: errJson?.generationMeta ?? null
               })
-              sendEvent({
-                log: `❌ Blog article exception — saving raw/partial for modal: ${msg.slice(0, 500)}${msg.length > 500 ? '…' : ''}`
-              })
-              emitBlogPartialSuccess(
-                stageData,
-                '⚠️ Blog generation error — inspect raw output in View & Edit'
-              )
+              emitBlogPartialSuccess(stageData)
               return
             }
             clearInterval(keepaliveTimer)
