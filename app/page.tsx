@@ -274,10 +274,9 @@ export default function Home() {
 
   const executeStage = async (stageId: number) => {
     setExecutingStage(stageId)
+    /** Only filters noisy server SSE `data.log` lines during blog Stage 2 — not client prep/start lines. */
     const quietStage2BlogLogs = stageId === 2 && campaignType === 'blog'
-    if (!quietStage2BlogLogs) {
-      addLog(`Starting Stage ${stageId} execution...`)
-    }
+    addLog(`Starting Stage ${stageId} execution...`)
     let terminalStatus: WorkflowStage['status'] | null = null
 
     try {
@@ -306,6 +305,7 @@ export default function Home() {
       // Prepare file data
       addLog('Preparing reference materials...')
       const fileData = await prepareFilesForAPI(stageId)
+      addLog(`Reference materials ready (Stage ${stageId}). Connecting to workflow…`)
 
       // Stage 4 runs via async job queue to avoid long-lived HTTP request timeouts.
       if (stageId === 4) {
@@ -554,17 +554,11 @@ export default function Home() {
       }
 
       if (terminalStatus === 'completed') {
-        if (!quietStage2BlogLogs) {
-          addLog(`Stage ${stageId} completed!`)
-        }
+        addLog(`Stage ${stageId} completed!`)
       } else if (terminalStatus === 'error') {
-        if (!quietStage2BlogLogs) {
-          addLog(`Stage ${stageId} failed`)
-        }
+        addLog(`Stage ${stageId} failed`)
       } else {
-        if (!quietStage2BlogLogs) {
-          addLog(`Stage ${stageId} ended without terminal status`)
-        }
+        addLog(`Stage ${stageId} ended without terminal status`)
       }
     } catch (error) {
       addLog(`Error in Stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -928,6 +922,8 @@ export default function Home() {
         })
       )
       addLog('PDF upload completed')
+    } else if (includeResearchPDFs) {
+      addLog('No reference PDFs — skipping upload.')
     }
 
     // Convert reference images
