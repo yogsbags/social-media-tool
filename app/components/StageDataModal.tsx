@@ -588,10 +588,18 @@ export default function StageDataModal({
     const articleText = formData['articleText'] || ''
     const isBlogArticle = formData['contentType'] === 'blog-article'
     const generationFailed = formData['generationFailed'] === true
-    const apiError = formData['apiError']
-    const transportError = formData['transportError']
-    const retryTrace = formData['retryTrace']
-    const generationMeta = formData['generationMeta']
+
+    if (isBlogArticle && generationFailed) {
+      const rawGemini = String(rawOutput || articleText || '')
+      return (
+        <div className="p-4 border-2 border-gray-200 rounded-xl bg-neutral-50">
+          <label className="block text-sm font-semibold text-gray-900 mb-3">Raw Gemini output</label>
+          <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed font-mono max-h-[70vh] overflow-auto p-4 bg-white border border-gray-200 rounded-lg text-gray-900">
+            {rawGemini || '(empty)'}
+          </pre>
+        </div>
+      )
+    }
 
     const escapeHtml = (value: string) =>
       String(value || '')
@@ -794,39 +802,6 @@ export default function StageDataModal({
 
     return (
       <div className="space-y-6">
-        {generationFailed && (
-          <div className="p-4 bg-amber-50 border-2 border-amber-400 rounded-xl">
-            <p className="text-sm font-bold text-amber-950">
-              Generation did not return a fully validated article — below is everything we could recover (raw text, traces, transport errors).
-            </p>
-            {apiError != null && String(apiError).length > 0 && (
-              <p className="text-xs mt-2 text-amber-900 whitespace-pre-wrap break-words">
-                <span className="font-semibold">API / parser:</span> {String(apiError)}
-              </p>
-            )}
-            {transportError != null && String(transportError).length > 0 && (
-              <p className="text-xs mt-2 text-red-900 whitespace-pre-wrap break-words">
-                <span className="font-semibold">Transport:</span> {String(transportError)}
-              </p>
-            )}
-            {retryTrace != null && (
-              <details className="mt-3 text-xs">
-                <summary className="cursor-pointer font-semibold text-amber-900">Retry trace (JSON)</summary>
-                <pre className="mt-2 p-2 bg-white rounded border border-amber-200 overflow-auto max-h-56 text-[11px] leading-relaxed">
-                  {JSON.stringify(retryTrace, null, 2)}
-                </pre>
-              </details>
-            )}
-            {generationMeta != null && (
-              <details className="mt-2 text-xs">
-                <summary className="cursor-pointer font-semibold text-amber-900">Generation meta (JSON)</summary>
-                <pre className="mt-2 p-2 bg-white rounded border border-amber-200 overflow-auto max-h-40 text-[11px] leading-relaxed">
-                  {JSON.stringify(generationMeta, null, 2)}
-                </pre>
-              </details>
-            )}
-          </div>
-        )}
         <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xl">📝</span>
@@ -907,6 +882,11 @@ export default function StageDataModal({
 
   if (!isOpen) return null
 
+  const hideBlogRawOnlyDetails =
+    stageId === 2 &&
+    String(formData['contentType']) === 'blog-article' &&
+    formData['generationFailed'] === true
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
@@ -967,14 +947,19 @@ export default function StageDataModal({
               (String(formData['contentType']) === 'live-news-article' && formData['articleHtml'])) && (
             <>
               {renderArticlePreview()}
-              <div className="my-6 border-t-2 border-gray-200"></div>
-              <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Additional Details</h3>
+              {!hideBlogRawOnlyDetails && (
+                <>
+                  <div className="my-6 border-t-2 border-gray-200"></div>
+                  <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Additional Details</h3>
+                </>
+              )}
             </>
           )}
 
           <div className="space-y-4">
             {Object.entries(formData)
               .filter(([key]) => {
+                if (hideBlogRawOnlyDetails) return false
                 // Don't render these fields twice in special sections
                 if (stageId === 1) return false
                 if (stageId === 2 && formData['contentType'] === 'email-newsletter') {

@@ -859,6 +859,20 @@ function stripCodeFences(text: string): string {
   return m?.[1]?.trim() || t;
 }
 
+function escapeHtmlForPre(text: string): string {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** Preserve Gemini output verbatim in HTML (escaped pre). */
+function wrapRawGeminiAsPreHtml(text: string): string {
+  return `<pre class="gemini-raw whitespace-pre-wrap break-words">${escapeHtmlForPre(text)}</pre>`;
+}
+
 function extractBracketedJson(text: string): string {
   const s = String(text || "");
   const start = s.indexOf("{");
@@ -2332,25 +2346,87 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const attempts = isRefinementRun
-      ? []
-      : [
+    /**
+     * Blog (initial run): one Gemini call, return model text as-is — no JSON parse,
+     * schema-like / word-count / advisory checks, retries, or salvage.
+     */
+    if (isBlogCampaign && !isRefinementRun) {
+      const rawPassStartedAt = Date.now();
+      try {
+        const requestContents = [
           {
-            name: "detailed",
-            prompt: promptDetailed,
-            maxOutputTokens: articleOutDetailed,
-          },
-          {
-            name: "compact",
-            prompt: promptCompact,
-            maxOutputTokens: articleOutCompact,
-          },
-          {
-            name: "advisory-safe",
-            prompt: promptAdvisorySafe,
-            maxOutputTokens: articleOutCompact,
+            role: "user" as const,
+            parts: [{ text: promptDetailed }, ...pdfParts],
           },
         ];
+        const response = await ai.models.generateContent({
+          model: articleModel,
+          contents: requestContents,
+          config: {
+            systemInstruction: systemPrompt,
+            temperature: 0.3,
+            maxOutputTokens: articleOutDetailed,
+            seed: resolvedSeed,
+          },
+        });
+        const rawGemini = await getGeminiText(response);
+        lastRaw = rawGemini;
+        const articleTextRaw = String(rawGemini);
+        const fallbackHeadline = buildFallbackHeadline(topic);
+        parsed = {
+          rawGeminiPass: true,
+          headline: fallbackHeadline,
+          summary: "",
+          articleText: articleTextRaw,
+          articleHtml: wrapRawGeminiAsPreHtml(articleTextRaw),
+          seoTitle: fallbackHeadline,
+          metaDescription: "",
+          focusKeywords: [] as string[],
+          faqs: [] as ArticleFaq[],
+          faqSchema: undefined,
+          tags: [] as string[],
+        };
+        responseForSources = blogEvidenceResponse ? blogEvidenceResponse : response;
+        retryTrace.push({
+          attempt: 1,
+          promptVariant: "blog-raw",
+          maxOutputTokens: articleOutDetailed,
+          status: "success",
+          detail: "Blog: returned raw model output without validation.",
+          elapsedMs: Date.now() - rawPassStartedAt,
+        });
+      } catch (err) {
+        retryTrace.push({
+          attempt: 1,
+          promptVariant: "blog-raw",
+          maxOutputTokens: articleOutDetailed,
+          status: "model-error",
+          detail: err instanceof Error ? err.message : "Unknown model error",
+          elapsedMs: Date.now() - rawPassStartedAt,
+        });
+      }
+    }
+
+    const attempts =
+      isRefinementRun || (isBlogCampaign && !isRefinementRun)
+        ? []
+        : [
+            {
+              name: "detailed",
+              prompt: promptDetailed,
+              maxOutputTokens: articleOutDetailed,
+            },
+            {
+              name: "compact",
+              prompt: promptCompact,
+              maxOutputTokens: articleOutCompact,
+            },
+            {
+              name: "advisory-safe",
+              prompt: promptAdvisorySafe,
+              maxOutputTokens: articleOutCompact,
+            },
+          ];
 
     for (let index = 0; index < attempts.length; index += 1) {
       if (Date.now() - startedAt > MAX_GENERATION_MS) {
@@ -2524,6 +2600,7 @@ export async function POST(request: NextRequest) {
     if (
       !parsed &&
       !isRefinementRun &&
+      !isBlogCampaign &&
       Date.now() - startedAt <= MAX_GENERATION_MS - 30000
     ) {
       const salvageStartedAt = Date.now();
@@ -2684,6 +2761,68 @@ ${blogEvidencePackText}`
         },
         { status: 500 },
       );
+    }
+
+    const blogRawGeminiOnly =
+      isBlogCampaign &&
+      !isRefinementRun &&
+      parsed &&
+      (parsed as any).rawGeminiPass === true;
+
+    if (blogRawGeminiOnly) {
+      const rawText = String((parsed as any)?.articleText || "");
+      const h = buildFallbackHeadline(topic);
+      const summarySnippet =
+        rawText
+          .split(/\r?\n/)
+          .map((l) => l.trim())
+          .find((l) => l.length > 0)
+          ?.slice(0, 360) || h;
+      const bodyWords = countBodyWords(rawText);
+      const bodyParagraphCount = countBodyParagraphs(rawText);
+      return NextResponse.json({
+        headline: h,
+        subheadline: "",
+        summary: summarySnippet,
+        rawOutput: rawText,
+        articleText: rawText,
+        articleHtml: wrapRawGeminiAsPreHtml(rawText),
+        tags: [],
+        seo: {
+          seoTitle: h,
+          metaDescription: summarySnippet.slice(0, 160),
+          focusKeywords: [],
+        },
+        faqs: [],
+        faqSchema: null,
+        articleSchema: null,
+        topic,
+        generatedAt: new Date().toISOString(),
+        generationSeed: resolvedSeed,
+        model: articleModel,
+        factCheck: {
+          grounded: Boolean(blogEvidenceResponse),
+          sourceCount: 0,
+          sourceResolutionMode: "blog-raw",
+          sourceResolutionModel: null,
+        },
+        quality: {
+          length: lengthQuality(bodyWords, bodyParagraphCount),
+          bodyWordCount: bodyWords,
+          bodyParagraphCount,
+        },
+        retryTrace,
+        generationMeta: {
+          attempts: retryTrace.length,
+          totalElapsedMs: Date.now() - startedAt,
+        },
+        referenceDocuments: {
+          attached: hasReferenceDocs,
+          count: pdfParts.length,
+          names: referenceDocNames,
+        },
+        sources: [],
+      });
     }
 
     let headline = cleanupTextArtifacts(String(parsed?.headline || "").trim());

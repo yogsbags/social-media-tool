@@ -274,7 +274,10 @@ export default function Home() {
 
   const executeStage = async (stageId: number) => {
     setExecutingStage(stageId)
-    addLog(`Starting Stage ${stageId} execution...`)
+    const quietStage2BlogLogs = stageId === 2 && campaignType === 'blog'
+    if (!quietStage2BlogLogs) {
+      addLog(`Starting Stage ${stageId} execution...`)
+    }
     let terminalStatus: WorkflowStage['status'] | null = null
 
     try {
@@ -488,12 +491,20 @@ export default function Home() {
                   const data = JSON.parse(finalLine.slice(6))
                   if (data.stage) {
                     await updateStage(data.stage, data.status, data.message)
-                    addLog(`Stage ${data.stage}: ${data.message}`)
+                    if (!(quietStage2BlogLogs && data.status === 'running')) {
+                      addLog(`Stage ${data.stage}: ${data.message}`)
+                    }
                     if (data.stage === stageId && (data.status === 'completed' || data.status === 'error')) {
                       terminalStatus = data.status
                     }
                   } else if (data.log) {
-                    addLog(data.log)
+                    if (quietStage2BlogLogs) {
+                      if (String(data.log).startsWith('✅ Blog article generated')) {
+                        addLog(data.log)
+                      }
+                    } else {
+                      addLog(data.log)
+                    }
                   } else if (data.campaignData) {
                     setCampaignData(prev => ({ ...prev, ...data.campaignData }))
                   }
@@ -517,12 +528,20 @@ export default function Home() {
 
                 if (data.stage) {
                   await updateStage(data.stage, data.status, data.message)
-                  addLog(`Stage ${data.stage}: ${data.message}`)
+                  if (!(quietStage2BlogLogs && data.status === 'running')) {
+                    addLog(`Stage ${data.stage}: ${data.message}`)
+                  }
                   if (data.stage === stageId && (data.status === 'completed' || data.status === 'error')) {
                     terminalStatus = data.status
                   }
                 } else if (data.log) {
-                  addLog(data.log)
+                  if (quietStage2BlogLogs) {
+                    if (String(data.log).startsWith('✅ Blog article generated')) {
+                      addLog(data.log)
+                    }
+                  } else {
+                    addLog(data.log)
+                  }
                 } else if (data.campaignData) {
                   setCampaignData(prev => ({ ...prev, ...data.campaignData }))
                 }
@@ -535,11 +554,17 @@ export default function Home() {
       }
 
       if (terminalStatus === 'completed') {
-        addLog(`Stage ${stageId} completed!`)
+        if (!quietStage2BlogLogs) {
+          addLog(`Stage ${stageId} completed!`)
+        }
       } else if (terminalStatus === 'error') {
-        addLog(`Stage ${stageId} failed`)
+        if (!quietStage2BlogLogs) {
+          addLog(`Stage ${stageId} failed`)
+        }
       } else {
-        addLog(`Stage ${stageId} ended without terminal status`)
+        if (!quietStage2BlogLogs) {
+          addLog(`Stage ${stageId} ended without terminal status`)
+        }
       }
     } catch (error) {
       addLog(`Error in Stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -629,6 +654,8 @@ export default function Home() {
 
       if (reader) {
         let sseBuffer = ''
+        let lastStreamStageId = 0
+        const quietBlogStage2InStream = campaignType === 'blog'
         while (true) {
           const { done, value } = await reader.read()
           if (done) {
@@ -638,10 +665,28 @@ export default function Home() {
                 try {
                   const data = JSON.parse(finalLine.slice(6))
                   if (data.stage) {
+                    lastStreamStageId = data.stage
                     updateStage(data.stage, data.status, data.message)
-                    addLog(`Stage ${data.stage}: ${data.message}`)
+                    if (
+                      !(
+                        quietBlogStage2InStream &&
+                        data.stage === 2 &&
+                        data.status === 'running'
+                      )
+                    ) {
+                      addLog(`Stage ${data.stage}: ${data.message}`)
+                    }
                   } else if (data.log) {
-                    addLog(data.log)
+                    if (
+                      quietBlogStage2InStream &&
+                      lastStreamStageId === 2
+                    ) {
+                      if (String(data.log).startsWith('✅ Blog article generated')) {
+                        addLog(data.log)
+                      }
+                    } else {
+                      addLog(data.log)
+                    }
                   } else if (data.campaignData) {
                     setCampaignData(prev => ({ ...prev, ...data.campaignData }))
                   }
@@ -664,10 +709,28 @@ export default function Home() {
                 const data = JSON.parse(line.slice(6))
 
                 if (data.stage) {
+                  lastStreamStageId = data.stage
                   updateStage(data.stage, data.status, data.message)
-                  addLog(`Stage ${data.stage}: ${data.message}`)
+                  if (
+                    !(
+                      quietBlogStage2InStream &&
+                      data.stage === 2 &&
+                      data.status === 'running'
+                    )
+                  ) {
+                    addLog(`Stage ${data.stage}: ${data.message}`)
+                  }
                 } else if (data.log) {
-                  addLog(data.log)
+                  if (
+                    quietBlogStage2InStream &&
+                    lastStreamStageId === 2
+                  ) {
+                    if (String(data.log).startsWith('✅ Blog article generated')) {
+                      addLog(data.log)
+                    }
+                  } else {
+                    addLog(data.log)
+                  }
                 } else if (data.campaignData) {
                   setCampaignData(prev => ({ ...prev, ...data.campaignData }))
                 }
