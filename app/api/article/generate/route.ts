@@ -12,11 +12,14 @@ export const maxDuration = 300;
 
 const LIVE_NEWS_MODEL = "gemini-3-flash-preview";
 const BLOG_MODEL = "gemini-3.1-pro-preview";
+const GROUNDING_FALLBACK_MODEL = "gemini-3.1-flash-lite-preview";
 const MAX_GENERATION_MS = 240000;
 /** Blog prompts + grounding need more headroom; 3k often truncates before body + SEO/FAQ tail. */
-const BLOG_OUT_TOKENS_DETAILED = 8192;
-const BLOG_OUT_TOKENS_COMPACT = 6144;
-const BLOG_OUT_TOKENS_SALVAGE = 8192;
+const BLOG_OUT_TOKENS_DETAILED = 12288;
+const BLOG_OUT_TOKENS_COMPACT = 8192;
+const BLOG_OUT_TOKENS_SALVAGE = 12288;
+const BLOG_BODY_TARGET_MIN = 1500;
+const BLOG_BODY_TARGET_MAX = 2200;
 const LIVE_NEWS_OUT_DETAILED = 3072;
 const LIVE_NEWS_OUT_COMPACT = 2300;
 const LIVE_NEWS_OUT_SALVAGE = 2600;
@@ -422,6 +425,10 @@ function articleTextToHtml(articleText: string): string {
 
   const headingMatchers: Array<{ pattern: RegExp; label: string }> = [
     { pattern: /^(?:\d+\.\s*)?summary\b\s*:?\s*/i, label: "Summary" },
+    // Blog SEO template (must be before generic paragraphs)
+    { pattern: /^(?:\d+\.\s*)?introduction\b\s*:?\s*/i, label: "Introduction" },
+    { pattern: /^(?:\d+\.\s*)?key insights\b\s*:?\s*/i, label: "Key Insights" },
+    { pattern: /^(?:\d+\.\s*)?why it matters\b\s*:?\s*/i, label: "Why It Matters" },
     { pattern: /^(?:\d+\.\s*)?market overview\b\s*:?\s*/i, label: "Market Overview" },
     { pattern: /^(?:\d+\.\s*)?key movers\b\s*:?\s*/i, label: "Key Movers" },
     { pattern: /^(?:\d+\.\s*)?drivers and context\b\s*:?\s*/i, label: "Drivers and Context" },
@@ -690,6 +697,102 @@ function cleanupTextArtifacts(input: string): string {
     .trim();
 }
 
+function splitLongParagraph(block: string): string[] {
+  const clean = String(block || "").trim();
+  if (!clean) return [];
+  if (clean.length < 650) return [clean];
+
+  const sentences =
+    clean.match(/[^.!?]+(?:[.!?]+|$)/g)?.map((part) => part.trim()).filter(Boolean) ||
+    [clean];
+
+  if (sentences.length <= 2) return [clean];
+
+  const chunks: string[] = [];
+  let current: string[] = [];
+  let currentLength = 0;
+
+  for (const sentence of sentences) {
+    const nextLength = currentLength + sentence.length + (current.length ? 1 : 0);
+    if (current.length >= 3 || nextLength > 520) {
+      chunks.push(current.join(" ").trim());
+      current = [sentence];
+      currentLength = sentence.length;
+      continue;
+    }
+    current.push(sentence);
+    currentLength = nextLength;
+  }
+
+  if (current.length) chunks.push(current.join(" ").trim());
+  return chunks.filter(Boolean);
+}
+
+function normalizeArticleBodyStructure(text: string): string {
+  let normalized = cleanupTextArtifacts(String(text || ""));
+  if (!normalized) return "";
+
+  const fixedHeadings = [
+    "Introduction",
+    "Key Insights",
+    "Why It Matters",
+    "Market Overview",
+    "Key Movers",
+    "Drivers and Context",
+    "Broader Market and Outlook",
+    "Issue Details and Key Dates",
+    "GMP and Grey Market Premium",
+    "Use of Proceeds / Key Objectives",
+    "About the Company",
+    "Financial Performance",
+    "What the Numbers Show",
+    "Strengths",
+    "Risks",
+    "Peer Positioning",
+    "Bottom Line",
+  ];
+
+  for (const heading of fixedHeadings) {
+    const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\$&");
+    normalized = normalized.replace(
+      new RegExp(`\\s+(?=${escaped}\\s*:?)`, "g"),
+      "\n\n",
+    );
+  }
+
+  normalized = normalized
+    .replace(
+      /([.!?])\s+([A-Z][A-Za-z0-9'"“”‘’()/-]+(?:\s+[A-Z][A-Za-z0-9'"“”‘’()/-]+){1,10}:)/g,
+      "$1\n\n$2",
+    )
+    .replace(/\s+(-\s+)/g, "\n$1")
+    .replace(/\s+(\d+\.\s+)/g, "\n$1")
+    .replace(/\n{3,}/g, "\n\n");
+
+  const blocks = normalized
+    .split(/\n\n+/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  const rebuilt: string[] = [];
+  for (const block of blocks) {
+    const line = block.replace(/\s+/g, " ").trim();
+    const isHeading =
+      line.length <= 90 &&
+      !/[.!?]$/.test(line) &&
+      /^[A-Z0-9][A-Za-z0-9&/,()'"“”‘’: -]+$/.test(line);
+
+    if (isHeading || /^[-*]\s+/.test(line) || /^\d+\.\s+/.test(line)) {
+      rebuilt.push(block);
+      continue;
+    }
+
+    rebuilt.push(...splitLongParagraph(block));
+  }
+
+  return rebuilt.join("\n\n").trim();
+}
+
 function cleanupHtmlArtifacts(input: string): string {
   const html = String(input || "");
   if (!html) return "";
@@ -927,10 +1030,34 @@ function sanitizeFaqSchemaObject(input: any): any | null {
 }
 
 function parseRawArticleOutput(raw: string, topic: string): any {
-  const text = cleanupTextArtifacts(stripCodeFences(raw));
-  const seoIdx = text.search(/\nSEO Metadata:/i);
-  const faqIdx = text.search(/\nFAQ Schema \(JSON-LD\):/i);
-  const splitIdx = seoIdx >= 0 ? seoIdx : faqIdx >= 0 ? faqIdx : text.length;
+  const originalText = cleanupTextArtifacts(stripCodeFences(raw));
+  const parsedPayload = normalizeArticlePayload(parseJsonFlexible(originalText));
+  const parsedRawOutput = cleanupTextArtifacts(
+    stripCodeFences(String(parsedPayload?.rawOutput || "").trim()),
+  );
+  const parsedArticleText = cleanupTextArtifacts(
+    stripCodeFences(String(parsedPayload?.articleText || "").trim()),
+  );
+  const parsedArticleHtmlText = cleanupTextArtifacts(
+    htmlToText(String(parsedPayload?.articleHtml || "").trim()),
+  );
+  const text =
+    (parsedRawOutput && !isSchemaLikeBody(parsedRawOutput) && parsedRawOutput) ||
+    (parsedArticleText &&
+      !isSchemaLikeBody(parsedArticleText) &&
+      parsedArticleText) ||
+    (parsedArticleHtmlText &&
+      !isSchemaLikeBody(parsedArticleHtmlText) &&
+      parsedArticleHtmlText) ||
+    originalText;
+  const faqIdx = text.search(/(?:^|\n)\s{0,3}(?:#{1,6}\s*)?FAQ Schema \(JSON-LD\)\s*:/im);
+  const markerPattern =
+    /(?:^|\n)\s{0,3}(?:#{1,6}\s*)?(SEO Metadata|FAQ Schema \(JSON-LD\))\s*:/im;
+  const markerMatch = markerPattern.exec(text);
+  const splitIdx =
+    markerMatch && typeof markerMatch.index === "number"
+      ? markerMatch.index
+      : text.length;
   const normalizeLine = (line: string) =>
     line
       .replace(/^#{1,6}\s*/, "")
@@ -1085,7 +1212,7 @@ function parseRawArticleOutput(raw: string, topic: string): any {
   }
   const cleanedArticleText = bodyLines.join("\n").trim();
   const sectionHeadingPattern =
-    /^(?:\d+\.\s*)?(summary|market overview|key movers|drivers and context|broader market and outlook|issue details and key dates|gmp and grey market premium|grey market premium|gray market premium|gmp|use of proceeds \/ key objectives|about the company|financial performance|what the numbers show|strengths|risks|peer positioning|bottom line)\s*:?$/i;
+    /^(?:\d+\.\s*)?(summary|introduction|key insights|why it matters|market overview|key movers|drivers and context|broader market and outlook|issue details and key dates|gmp and grey market premium|grey market premium|gray market premium|gmp|use of proceeds \/ key objectives|about the company|financial performance|what the numbers show|strengths|risks|peer positioning|bottom line)\s*:?$/i;
 
   const firstLine =
     cleanedArticleText
@@ -1145,18 +1272,27 @@ function parseRawArticleOutput(raw: string, topic: string): any {
   );
 
   const seoTitle = cleanupTextArtifacts(
-    stripMarkdownDelimiters(tail.match(/SEO Title:\s*(.+)/i)?.[1] || headline),
+    stripMarkdownDelimiters(
+      tail.match(/SEO Title:\s*(.+)/i)?.[1] || parsedPayload?.seoTitle || headline,
+    ),
   );
   const metaDescriptionRaw = cleanupTextArtifacts(
     stripMarkdownDelimiters(
-      tail.match(/Meta Description:\s*(.+)/i)?.[1] || summary,
+      tail.match(/Meta Description:\s*(.+)/i)?.[1] ||
+        parsedPayload?.metaDescription ||
+        summary,
     ),
   );
   const metaDescription = isSchemaLikeBody(metaDescriptionRaw)
     ? summary
     : metaDescriptionRaw;
   const focusKeywordsRaw = cleanupTextArtifacts(
-    stripMarkdownDelimiters(tail.match(/Focus Keywords:\s*(.+)/i)?.[1] || ""),
+    stripMarkdownDelimiters(
+      tail.match(/Focus Keywords:\s*(.+)/i)?.[1] ||
+        (Array.isArray(parsedPayload?.focusKeywords)
+          ? parsedPayload.focusKeywords.join(", ")
+          : parsedPayload?.focusKeywords || ""),
+    ),
   );
   const focusKeywords = focusKeywordsRaw
     ? focusKeywordsRaw
@@ -1166,10 +1302,10 @@ function parseRawArticleOutput(raw: string, topic: string): any {
         .slice(0, 8)
     : [];
 
-  let faqSchema: any = null;
+  let faqSchema: any = sanitizeFaqSchemaObject(parsedPayload?.faqSchema);
   const faqBlock = faqIdx >= 0 ? text.slice(faqIdx) : "";
   const faqJson = extractBracketedJson(faqBlock);
-  if (faqJson) {
+  if (!faqSchema && faqJson) {
     try {
       faqSchema = JSON.parse(faqJson);
     } catch {
@@ -1214,18 +1350,24 @@ function isSchemaLikeBody(text: string): boolean {
 
   const head = t.slice(0, 700);
   if (
-    (/^\s*[\[{]/.test(head) && /"@type"\s*:\s*"FAQPage"/i.test(head)) ||
-    /"@context"\s*:\s*"https:\/\/schema\.org"/i.test(head)
+    /^\s*[\[{]/.test(head) ||
+    /^\s*"@(?:context|type)"/i.test(head) ||
+    /^\s*(?:mainEntity|acceptedAnswer|Question|Answer)\s*[:{[]/i.test(head) ||
+    /"@context"\s*:\s*"https:\/\/schema\.org"/i.test(head) ||
+    /"@type"\s*:\s*"FAQPage"/i.test(head)
   ) {
     return true;
   }
+
+  const wordCount = t.split(/\s+/).filter(Boolean).length;
+  const sentenceSignals = (t.match(/[.!?](\s|$)/g) || []).length;
+  if (wordCount >= 120 && sentenceSignals >= 4) return false;
 
   const jsonSignals = (
     t.match(
       /"@context"|"@type"|"mainEntity"|"acceptedAnswer"|"Question"|"Answer"|[{}[\]]/g,
     ) || []
   ).length;
-  const sentenceSignals = (t.match(/[.!?](\s|$)/g) || []).length;
   return jsonSignals >= 20 && sentenceSignals <= 4;
 }
 
@@ -1285,6 +1427,154 @@ function collectGroundedSources(
     if (sources.length >= 8) break;
   }
   return sources;
+}
+
+function dedupeGroundedSources(
+  sources: Array<{ title: string; url: string }>,
+): Array<{ title: string; url: string }> {
+  const seen = new Set<string>();
+  const deduped: Array<{ title: string; url: string }> = [];
+  for (const source of sources) {
+    const rawUrl = String(source?.url || "").trim();
+    if (!rawUrl || seen.has(rawUrl)) continue;
+    seen.add(rawUrl);
+    deduped.push({
+      title: String(source?.title || "Source").trim() || "Source",
+      url: rawUrl,
+    });
+  }
+  return deduped;
+}
+
+async function resolveGroundedSources(options: {
+  ai: GoogleGenAI;
+  primaryResponse: any;
+  topic: string;
+  headline?: string;
+  summary?: string;
+  articleTypeLabel: string;
+}): Promise<{
+  sources: Array<{ title: string; url: string }>;
+  resolutionMode: "primary-google-search" | "article-response";
+  resolutionModel: string | null;
+}> {
+  const lookupPrompt = [
+    `Use Google Search grounding to gather authoritative web sources for this ${options.articleTypeLabel}.`,
+    `Topic: ${options.topic}`,
+    options.headline ? `Draft headline: ${options.headline}` : "",
+    options.summary ? `Draft summary: ${options.summary}` : "",
+    "Return a short factual brief in 4-6 bullets using only grounded facts.",
+    "Prefer official sources, standards bodies, company or organization pages, and high-trust reporting over generic aggregators.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const lookupResponse = await options.ai.models.generateContent({
+    model: GROUNDING_FALLBACK_MODEL,
+    contents: [{ role: "user", parts: [{ text: lookupPrompt }] }],
+    config: {
+      tools: [{ googleSearch: {} }],
+      temperature: 0.1,
+      maxOutputTokens: 768,
+    },
+  });
+
+  const primarySources = dedupeGroundedSources(
+    collectGroundedSources(lookupResponse),
+  );
+  if (primarySources.length > 0) {
+    return {
+      sources: primarySources,
+      resolutionMode: "primary-google-search",
+      resolutionModel: GROUNDING_FALLBACK_MODEL,
+    };
+  }
+
+  return {
+    sources: dedupeGroundedSources(collectGroundedSources(options.primaryResponse)),
+    resolutionMode: "article-response",
+    resolutionModel: null,
+  };
+}
+
+async function buildGroundedEvidencePack(options: {
+  ai: GoogleGenAI;
+  topic: string;
+  articleTypeLabel: string;
+  purpose: string;
+  targetAudience: string;
+  currentDateHuman: string;
+  currentDateIso: string;
+}): Promise<{ text: string; response: any }> {
+  const evidencePrompt = [
+    `Use Google Search grounding to build a factual evidence pack for this ${options.articleTypeLabel}.`,
+    `Topic: ${options.topic}`,
+    `Purpose: ${options.purpose}`,
+    `Target audience: ${options.targetAudience}`,
+    `Current date context: ${options.currentDateHuman} (${options.currentDateIso}).`,
+    'Return only grounded facts in this exact structure:',
+    '1. Core answer: 3-5 bullets',
+    '2. Verified timeline, dates, and numbers: 4-8 bullets',
+    '3. Key entities, organisations, and speakers: 4-8 bullets',
+    '4. Important subtopics, implications, and comparisons readers expect: 6-12 bullets',
+    '5. Caveats, open questions, and points of disagreement: 3-6 bullets',
+    'Keep it compact but information-dense. Do not write the article itself.',
+  ].join("\n");
+
+  const response = await options.ai.models.generateContent({
+    model: GROUNDING_FALLBACK_MODEL,
+    contents: [{ role: "user", parts: [{ text: evidencePrompt }] }],
+    config: {
+      tools: [{ googleSearch: {} }],
+      temperature: 0.1,
+      maxOutputTokens: 2200,
+    },
+  });
+
+  const evidenceText = cleanupTextArtifacts(await getGeminiText(response));
+  return { text: evidenceText, response };
+}
+
+function extractSectionHeadings(text: string): string[] {
+  return String(text || "")
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => {
+      if (line.length < 3 || line.length > 90) return false;
+      if (/^(sources|seo metadata|faq schema|article schema)/i.test(line)) return false;
+      if (/[:.]\s*$/.test(line)) return false;
+      if (/[!?]$/.test(line)) return false;
+      if (countBodyWords(line) > 10) return false;
+      return /^[A-Z0-9][A-Za-z0-9&/,()'’ -]+$/.test(line);
+    })
+    .slice(0, 12);
+}
+
+function buildBlogPostingSchema(input: {
+  headline: string;
+  description: string;
+  keywords: string[];
+  inLanguage: string;
+  datePublished: string;
+  articleBody: string;
+}) {
+  const articleSections = extractSectionHeadings(input.articleBody);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: input.headline,
+    description: input.description,
+    datePublished: input.datePublished,
+    dateModified: input.datePublished,
+    inLanguage: input.inLanguage,
+    keywords: input.keywords.join(", "),
+    articleSection: articleSections,
+    about: input.keywords.slice(0, 6).map((keyword) => ({
+      "@type": "Thing",
+      name: keyword,
+    })),
+  };
 }
 
 function escapeHtml(text: string): string {
@@ -1476,17 +1766,11 @@ function hasAllIpoSections(text: string): boolean {
 function stripGeneratedTailBlocks(text: string): string {
   const raw = String(text || "");
   if (!raw) return "";
-  const markers = [
-    "\n\nSources:",
-    "\n\nSEO Metadata:",
-    "\n\nFAQ Schema (JSON-LD):",
-  ];
-  let cut = raw.length;
-  for (const marker of markers) {
-    const idx = raw.indexOf(marker);
-    if (idx >= 0 && idx < cut) cut = idx;
-  }
-  return raw.slice(0, cut).trim();
+  const markerPattern =
+    /(?:^|\n)\s{0,3}(?:#{1,6}\s*)?(Sources|SEO Metadata|FAQ Schema \(JSON-LD\))\s*:/im;
+  const match = markerPattern.exec(raw);
+  if (!match || typeof match.index !== "number") return raw.trim();
+  return raw.slice(0, match.index).trim();
 }
 
 function parseRefinementBlocks(raw: string): {
@@ -1640,7 +1924,7 @@ export async function POST(request: NextRequest) {
       .map((p) => String(p?.name || "Reference PDF").trim())
       .filter(Boolean);
     const ipoStructuredMode = !isBlogCampaign && isIpoTopic(topic);
-    const minimumBodyWords = isBlogCampaign ? 220 : 120;
+    const minimumBodyWords = isBlogCampaign ? BLOG_BODY_TARGET_MIN : 120;
     const articleOutDetailed = isBlogCampaign
       ? BLOG_OUT_TOKENS_DETAILED
       : LIVE_NEWS_OUT_DETAILED;
@@ -1673,13 +1957,29 @@ export async function POST(request: NextRequest) {
       "- Keep tone neutral and factual (no recommendations).",
     ].join("\n");
 
+    let blogEvidencePackText = "";
+    let blogEvidenceResponse: any = null;
+    if (isBlogCampaign) {
+      const evidencePack = await buildGroundedEvidencePack({
+        ai,
+        topic,
+        articleTypeLabel,
+        purpose,
+        targetAudience,
+        currentDateHuman: currentIndiaDateHuman,
+        currentDateIso: currentIndiaDateIso,
+      });
+      blogEvidencePackText = evidencePack.text;
+      blogEvidenceResponse = evidencePack.response;
+    }
+
     const systemPrompt = isBlogCampaign
       ? [
-          "You are a senior SEO editor and fact-checked web researcher.",
-          "Use only facts grounded by Google Search and any attached documents.",
-          "If a claim, date, stat, quote, or comparison is not grounded, omit it.",
-          "Do not hallucinate entities, metrics, sources, or examples.",
-          "Write original, concise, search-intent aligned prose for a professional blog article.",
+          "You are an elite SEO editor, GEO/LLMO content strategist, and fact-checked web researcher.",
+          "Use the provided grounded evidence pack and any attached documents as the factual basis for the article. Infer dominant search intent, recurring subtopics, important entities, freshness requirements, and expected depth of coverage from that evidence pack. Do not introduce facts that are not supported by the evidence pack or attached documents.",
+          "If a claim, date, metric, quote, comparison, or example is not grounded, omit it.",
+          "Do not hallucinate entities, metrics, sources, examples, expert opinions, or case studies.",
+          "Create original blog articles that can outperform generic web summaries, satisfy search intent, and be easily cited by LLMs. The article should be rich enough in coverage, specificity, and usefulness to compete for top-tier SEO visibility and strong LLM retrieval/citation for the target query. Prefer primary or highly authoritative sources surfaced in the evidence pack; use weaker sources only for non-critical context. Write answer-first content so the opening resolves the primary query quickly. Make the article citation-friendly for LLMs with precise, self-contained explanatory passages, strong entity coverage, and direct answers to likely follow-up questions. Use primary and semantically related keywords naturally based on the grounded evidence pack, never keyword-stuff, and choose the ideal length and section depth based on authoritative search coverage reflected in that pack.",
           "Return plain text only unless explicitly asked for structured JSON.",
         ].join(" ")
       : [
@@ -1693,7 +1993,7 @@ export async function POST(request: NextRequest) {
 
     const promptDetailed = [
       isBlogCampaign
-        ? "Create a grounded, SEO-rich blog article using Google Search and any attached reference documents."
+        ? "Create a grounded, search-intent aligned, SEO-rich blog article using the grounded evidence pack and any attached reference documents."
         : "Use Google Search grounding to fact-check and generate a current Indian markets live-news article.",
       `Primary topic: ${topic}`,
       `Campaign purpose: ${purpose}`,
@@ -1709,8 +2009,11 @@ export async function POST(request: NextRequest) {
         : "",
       hasReferenceDocs
         ? isBlogCampaign
-          ? "Use attached PDFs as primary source context when relevant, then validate with web grounding."
+          ? "Use attached PDFs as primary source context when relevant, then validate with the grounded evidence pack."
           : "When PDF facts are used, mention them in article context and in FAQ/source attribution."
+        : "",
+      isBlogCampaign && blogEvidencePackText
+        ? `Grounded evidence pack (use this as the factual source base for the article):\n${blogEvidencePackText}`
         : "",
       userPrompt
         ? `User refinement instruction (must follow): ${userPrompt}`
@@ -1724,7 +2027,7 @@ export async function POST(request: NextRequest) {
       'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
       `Do not drift to older coverage from prior years when similarly dated articles exist.`,
       isBlogCampaign
-        ? "Write in a crisp editorial tone with strong clarity, not marketing fluff."
+        ? "Write in a crisp editorial tone with strong clarity, original synthesis, and zero marketing fluff."
         : "Write in a neutral newsroom tone similar to professional business news portals.",
       isBlogCampaign
         ? "Use only grounded facts. If a detail cannot be verified, omit it instead of guessing."
@@ -1738,17 +2041,30 @@ export async function POST(request: NextRequest) {
       "Do not repeat the same paragraph or near-duplicate lead lines.",
       "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
       isBlogCampaign
-        ? "Make the article SEO-rich by answering the likely primary query directly and covering related subtopics naturally."
+        ? "Make the article SEO-rich by answering the primary query directly, then covering the most important adjacent subtopics, entities, comparisons, and follow-up questions suggested by grounded search results."
         : "Focus on what happened, why it matters, and relevant market context.",
+      isBlogCampaign
+        ? `Target article body length: ${BLOG_BODY_TARGET_MIN}-${BLOG_BODY_TARGET_MAX} words, excluding SEO Metadata and FAQ Schema.`
+        : "",
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Use these exact H2 section headings in the article body on their own lines: Introduction, Key Insights, Why It Matters, Bottom Line."
+          ? "Do not force a fixed blog template. Choose the best H2/H3 section hierarchy based on the dominant query intent and competitive coverage visible in grounded search results."
           : "For non-IPO market news, structure the article body with these exact section headings on their own lines: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Under Key Insights, use grounded specifics, examples, comparisons, or bullet points where that improves clarity. Ensure the article ends with a complete final sentence."
+          ? [
+              "For blog articles, hard requirements:",
+              "- Open with a concise answer-first paragraph that can stand alone in AI Overviews and LLM citations.",
+              "- Use section headings that reflect searcher language and grounded entity coverage.",
+              "- Match the ideal depth and length implied by authoritative ranking results on the web for this topic.",
+              "- The article body alone should usually land between 1500 and 2200 words; do not count SEO Metadata or FAQ Schema toward that length.",
+              "- Include grounded examples, comparisons, definitions, checklists, or caveats when they appear important across search results.",
+              "- Cover the primary keyword and close variants naturally in the headline, summary, opening, headings, and body without stuffing.",
+              "- Ensure every FAQ is answered clearly in the body text.",
+              "- End with a complete final sentence.",
+            ].join("\n")
           : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       ipoStructuredMode
         ? "Because this is IPO/DRHP context, write articleText and articleHtml in this exact section order: Summary, Issue Details and Key Dates, GMP and Grey Market Premium, Use of Proceeds / Key Objectives, About the Company, Financial Performance, What the Numbers Show, Strengths, Risks, Peer Positioning, Bottom Line."
@@ -1764,11 +2080,11 @@ export async function POST(request: NextRequest) {
       "- Meta Description: ...",
       "- Focus Keywords: ...",
       "FAQ Schema (JSON-LD):",
-      "{valid FAQPage JSON-LD with 3-5 FAQs}",
+      "{valid FAQPage JSON-LD with 3-5 FAQs that are all grounded and directly answered in the article}",
     ].join("\n");
     const promptCompact = [
       isBlogCampaign
-        ? "Write a grounded SEO blog article using Google Search."
+        ? "Write a grounded SEO blog article using the grounded evidence pack."
         : "Use Google Search grounding and write a concise, factual Indian market news article.",
       `Topic: ${topic}`,
       hasReferenceDocs
@@ -1776,8 +2092,11 @@ export async function POST(request: NextRequest) {
         : "",
       hasReferenceDocs
         ? isBlogCampaign
-          ? "Use attached PDFs as primary source context when relevant, then validate with web grounding."
+          ? "Use attached PDFs as primary source context when relevant, then validate with the grounded evidence pack."
           : "Use document facts as primary context where relevant."
+        : "",
+      isBlogCampaign && blogEvidencePackText
+        ? `Grounded evidence pack (use this as the factual source base for the article):\n${blogEvidencePackText}`
         : "",
       userPrompt
         ? `User refinement instruction (must follow): ${userPrompt}`
@@ -1800,27 +2119,27 @@ export async function POST(request: NextRequest) {
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Use these exact H2 headings in the body: Introduction, Key Insights, Why It Matters, Bottom Line."
+          ? "Use intent-aware H2/H3 headings based on grounded search results. Do not force generic headings."
           : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Keep intro distinct from summary and ensure the article ends with a complete final sentence."
+          ? "Keep intro distinct from summary, answer the likely primary query early, cover related subtopics naturally, and ensure the article ends with a complete final sentence."
           : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       ipoStructuredMode
         ? "articleText and articleHtml must include all requested IPO sections with bullets and financial table-like data."
         : isBlogCampaign
-          ? "Write articleText as a substantial blog post with strong factual detail and clear search-intent coverage."
+          ? "Write articleText as a substantial grounded blog post with search-intent coverage, strong entity coverage, and a body length of roughly 1500 to 2200 words before SEO Metadata and FAQ Schema are appended."
           : "Write articleText as 4 substantial paragraphs with strong factual detail.",
       ipoStructuredMode ? ipoFormatInstruction : "",
       "Append SEO Metadata and FAQ Schema (JSON-LD) after article body.",
       isBlogCampaign
-        ? "Keep facts grounded; omit anything unverified."
+        ? "Keep facts grounded; omit anything unverified. Only include FAQs that are directly supported by the article."
         : "No investment recommendations or buy/sell/hold language.",
     ].join("\n");
     const promptAdvisorySafe = [
       isBlogCampaign
-        ? "Rewrite the grounded blog article in stricter editorial style."
+        ? "Rewrite the grounded blog article in stricter editorial style using only the grounded evidence pack and attached documents."
         : "Use Google Search grounding and rewrite as strict business-news copy.",
       `Topic: ${topic}`,
       hasReferenceDocs
@@ -1831,6 +2150,9 @@ export async function POST(request: NextRequest) {
         : "",
       seedArticleText
         ? `Previous draft context (refine, not copy):\n${seedArticleText}`
+        : "",
+      isBlogCampaign && blogEvidencePackText
+        ? `Grounded evidence pack (use this as the factual source base for the article):\n${blogEvidencePackText}`
         : "",
       isBlogCampaign
         ? `Current date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}).`
@@ -1847,7 +2169,7 @@ export async function POST(request: NextRequest) {
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Use the exact H2 headings: Introduction, Key Insights, Why It Matters, Bottom Line."
+          ? "Preserve or improve an intent-aware H2/H3 structure chosen from the grounded evidence pack. Do not force generic headings unless the user explicitly asks for them."
           : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       ipoStructuredMode
         ? ""
@@ -1855,7 +2177,7 @@ export async function POST(request: NextRequest) {
           ? "Do not add hype, invented facts, fabricated statistics, or speculation presented as fact."
           : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       isBlogCampaign
-        ? "Hard constraint: keep only grounded editorial claims and no hype."
+        ? "Hard constraint: keep only grounded editorial claims, no hype, no filler, and no unsupported SEO padding."
         : "Hard constraint: do not include ANY advisory words or actions.",
       isBlogCampaign
         ? "Avoid unsupported superlatives, invented metrics, and fabricated examples."
@@ -1863,14 +2185,14 @@ export async function POST(request: NextRequest) {
       ipoStructuredMode
         ? "For IPO/DRHP context, output the full sectioned report format and keep each bullet factual and source-grounded."
         : isBlogCampaign
-          ? "Write only grounded explanatory coverage with clear reader value and search-intent alignment."
+          ? "Write only grounded explanatory coverage with clear reader value, strong retrievability for LLMs, and search-intent alignment."
           : "Write only factual reporting on what happened, drivers, impact, and near-term implications.",
       ipoStructuredMode ? ipoFormatInstruction : "",
       "Append SEO Metadata and FAQ Schema (JSON-LD) after article body.",
       ipoStructuredMode
         ? "Include at least 6 issue details bullets, at least 2 GMP/grey market data points, at least 3 strengths, at least 3 risks, and at least 3 peer positioning bullets."
         : isBlogCampaign
-          ? "Length constraint: 5-8 substantial sections/paragraphs and at least 450 words in articleText."
+          ? "Length constraint: article body only should be roughly 1500 to 2200 words, excluding SEO Metadata and FAQ Schema; prioritize coverage quality but do not undershoot the floor."
           : "Length constraint: 4-6 paragraphs and at least 280 words in articleText.",
     ].join("\n");
 
@@ -1886,8 +2208,11 @@ export async function POST(request: NextRequest) {
         : "",
       hasReferenceDocs
         ? isBlogCampaign
-          ? "Use attached PDFs and web grounding for factual corrections."
+          ? "Use attached PDFs as factual context alongside the grounded evidence pack for corrections."
           : "Use attached PDFs for factual correction where relevant."
+        : "",
+      isBlogCampaign && blogEvidencePackText
+        ? `Grounded evidence pack (treat this as the factual source base for the revision):\n${blogEvidencePackText}`
         : "",
       isBlogCampaign
         ? `Current date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}).`
@@ -1895,13 +2220,13 @@ export async function POST(request: NextRequest) {
       'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
       "Apply the user instruction exactly and keep all unrelated content unchanged.",
       isBlogCampaign
-        ? "Do not add unverified claims."
+        ? "Do not add unverified claims. Preserve grounded SEO richness while following the user edit instruction."
         : "Do not add recommendations/advisory language.",
       "Do not leave the revised article body ending with an incomplete sentence, trailing clause, or cut-off word.",
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Keep the body under these exact H2 headings where applicable: Introduction, Key Insights, Why It Matters, Bottom Line."
+          ? "Keep or improve the article's intent-aware H2/H3 structure. Do not collapse it into generic headings unless the user explicitly asks."
           : "Keep the existing body in a headed structure using these exact section headings where applicable: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       "Return plain text in this exact format and nothing else:",
       "HEADLINE: <single line>",
@@ -1913,6 +2238,9 @@ export async function POST(request: NextRequest) {
     let parsed: any = null;
     let responseForSources: any = null;
     let lastRaw = "";
+    let bestEffortCandidate: any = null;
+    let bestEffortResponse: any = null;
+    let bestEffortWordCount = 0;
     const retryTrace: RetryTrace[] = [];
     const startedAt = Date.now();
 
@@ -1949,7 +2277,7 @@ export async function POST(request: NextRequest) {
             systemInstruction: systemPrompt,
             temperature: 0.05,
             maxOutputTokens: articleOutDetailed,
-            tools: [{ googleSearch: {} }],
+            ...(isBlogCampaign ? {} : { tools: [{ googleSearch: {} }] }),
             seed: resolvedSeed,
           },
         });
@@ -1984,7 +2312,7 @@ export async function POST(request: NextRequest) {
             : [],
           faqSchema: seedFaqSchema || undefined,
         };
-        responseForSources = response;
+        responseForSources = isBlogCampaign && blogEvidenceResponse ? blogEvidenceResponse : response;
         retryTrace.push({
           attempt: 1,
           promptVariant: "refine-single-pass",
@@ -2052,7 +2380,7 @@ export async function POST(request: NextRequest) {
             systemInstruction: systemPrompt,
             temperature: 0.3,
             maxOutputTokens: attempt.maxOutputTokens,
-            tools: [{ googleSearch: {} }],
+            ...(isBlogCampaign ? {} : { tools: [{ googleSearch: {} }] }),
             seed: resolvedSeed,
           },
         });
@@ -2117,6 +2445,32 @@ export async function POST(request: NextRequest) {
           });
           continue;
         }
+        if (cWordCount > bestEffortWordCount) {
+          bestEffortCandidate = {
+            ...candidate,
+            articleText: cArticleText || cBodyForChecks,
+            articleHtml: cArticleHtml || articleTextToHtml(cArticleText || cBodyForChecks),
+          };
+          bestEffortResponse = isBlogCampaign && blogEvidenceResponse ? blogEvidenceResponse : response;
+          bestEffortWordCount = cWordCount;
+        }
+        if (isBlogCampaign) {
+          retryTrace.push({
+            attempt: index + 1,
+            promptVariant: attempt.name,
+            maxOutputTokens: attempt.maxOutputTokens,
+            status: "success",
+            detail: `Accepted first valid prose draft (${cWordCount} words).`,
+            elapsedMs: Date.now() - attemptStartedAt,
+          });
+          parsed = {
+            ...candidate,
+            articleText: cArticleText || cBodyForChecks,
+            articleHtml: cArticleHtml || articleTextToHtml(cArticleText || cBodyForChecks),
+          };
+          responseForSources = blogEvidenceResponse ? blogEvidenceResponse : response;
+          break;
+        }
         if (ipoStructuredMode) {
           const hasIpoShape =
             hasAllIpoSections(cArticleText) ||
@@ -2139,7 +2493,7 @@ export async function POST(request: NextRequest) {
             promptVariant: attempt.name,
             maxOutputTokens: attempt.maxOutputTokens,
             status: "missing-fields",
-            detail: `Article body too short (${cWordCount} words; minimum ${minimumBodyWords}).`,
+            detail: `Article body too short (${cWordCount} words; minimum ${minimumBodyWords}, excluding SEO Metadata and FAQ Schema).`,
             elapsedMs: Date.now() - attemptStartedAt,
           });
           continue;
@@ -2153,7 +2507,7 @@ export async function POST(request: NextRequest) {
           elapsedMs: Date.now() - attemptStartedAt,
         });
         parsed = candidate;
-        responseForSources = response;
+        responseForSources = isBlogCampaign && blogEvidenceResponse ? blogEvidenceResponse : response;
         break;
       } catch (err) {
         retryTrace.push({
@@ -2176,14 +2530,18 @@ export async function POST(request: NextRequest) {
       try {
         const salvagePrompt = [
           isBlogCampaign
-            ? "Write a complete grounded SEO blog article."
+            ? "Write a complete grounded SEO blog article with an article body of roughly 1500 to 2200 words, excluding SEO Metadata and FAQ Schema."
             : "You are writing a complete, factual Indian markets IPO news report.",
           `Topic: ${topic}`,
           hasReferenceDocs
             ? `Reference documents attached: ${referenceDocNames.join(", ")}`
             : "",
           hasReferenceDocs
-            ? "Use attached document facts first, then web grounding for context."
+            ? "Use attached document facts first, then grounded evidence pack context."
+            : "",
+          isBlogCampaign && blogEvidencePackText
+            ? `Grounded evidence pack (use this as the factual source base for the article):
+${blogEvidencePackText}`
             : "",
           isBlogCampaign
             ? `Current date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}).`
@@ -2199,12 +2557,12 @@ export async function POST(request: NextRequest) {
           ipoStructuredMode
             ? ""
             : isBlogCampaign
-              ? "Use these exact H2 headings on separate lines in the body: Introduction, Key Insights, Why It Matters, Bottom Line."
+              ? "Use intent-aware H2/H3 headings that match the grounded query class. Do not force generic headings."
               : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
           ipoStructuredMode
             ? ""
             : isBlogCampaign
-              ? "Write a complete, grounded article that ends with a full sentence and covers the core query clearly."
+              ? "Write a complete, grounded article that answers the core query early, matches competitive SERP depth, uses natural primary and semantically related keywords, and ends with a full sentence."
               : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
           "After article end append SEO Metadata and FAQ Schema (JSON-LD).",
           "Hard constraints:",
@@ -2226,7 +2584,7 @@ export async function POST(request: NextRequest) {
             systemInstruction: systemPrompt,
             temperature: 0.2,
             maxOutputTokens: articleOutSalvage,
-            tools: [{ googleSearch: {} }],
+            ...(isBlogCampaign ? {} : { tools: [{ googleSearch: {} }] }),
             seed: resolvedSeed,
           },
         });
@@ -2240,6 +2598,22 @@ export async function POST(request: NextRequest) {
         const sHasIpoShape =
           !ipoStructuredMode || hasAllIpoSections(sArticleText);
         const sSchemaLike = isSchemaLikeBody(sArticleText);
+
+        if (
+          sHeadline &&
+          sSummary &&
+          sArticleText &&
+          !sSchemaLike
+        ) {
+          if (sWordCount > bestEffortWordCount && sHasIpoShape) {
+            bestEffortCandidate = {
+              ...salvageCandidate,
+              articleHtml: articleTextToHtml(sArticleText),
+            };
+            bestEffortResponse = isBlogCampaign && blogEvidenceResponse ? blogEvidenceResponse : salvageResponse;
+            bestEffortWordCount = sWordCount;
+          }
+        }
 
         if (
           sHeadline &&
@@ -2260,14 +2634,14 @@ export async function POST(request: NextRequest) {
             ...salvageCandidate,
             articleHtml: articleTextToHtml(sArticleText),
           };
-          responseForSources = salvageResponse;
+          responseForSources = isBlogCampaign && blogEvidenceResponse ? blogEvidenceResponse : salvageResponse;
         } else {
           retryTrace.push({
             attempt: retryTrace.length + 1,
             promptVariant: "salvage",
             maxOutputTokens: articleOutSalvage,
             status: "missing-fields",
-            detail: `Salvage output incomplete (words=${sWordCount}, minWords=${salvageMinWords}, ipoSectionsOk=${ipoStructuredMode ? sHasIpoShape : "n/a"}, schemaLike=${sSchemaLike}).`,
+            detail: `Salvage output incomplete (words=${sWordCount}, minWords=${salvageMinWords}, excluding SEO Metadata and FAQ Schema, ipoSectionsOk=${ipoStructuredMode ? sHasIpoShape : "n/a"}, schemaLike=${sSchemaLike}).`,
             elapsedMs: Date.now() - salvageStartedAt,
           });
         }
@@ -2282,6 +2656,19 @@ export async function POST(request: NextRequest) {
           elapsedMs: Date.now() - salvageStartedAt,
         });
       }
+    }
+
+    if (!parsed && bestEffortCandidate) {
+      retryTrace.push({
+        attempt: retryTrace.length + 1,
+        promptVariant: "best-effort-fallback",
+        maxOutputTokens: 0,
+        status: "success",
+        detail: `Accepted best valid prose draft below ideal target length (${bestEffortWordCount} words).`,
+        elapsedMs: Date.now() - startedAt,
+      });
+      parsed = bestEffortCandidate;
+      responseForSources = bestEffortResponse;
     }
 
     if (!parsed) {
@@ -2395,6 +2782,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    articleBodyText = normalizeArticleBodyStructure(articleBodyText);
+    articleBodyHtml = cleanupHtmlArtifacts(articleTextToHtml(articleBodyText));
+    if (ipoStructuredMode) {
+      articleBodyHtml = normalizeIpoSectionHeadingsToH2(articleBodyHtml);
+    }
+
     const parsedTags = parsed?.tags;
     const tags = Array.isArray(parsedTags)
       ? parsedTags
@@ -2486,7 +2879,15 @@ export async function POST(request: NextRequest) {
     const bodyWordCount = countBodyWords(articleBodyText);
     const bodyParagraphCount = countBodyParagraphs(articleBodyText);
 
-    const groundedSources = collectGroundedSources(responseForSources);
+    const groundedSourceResult = await resolveGroundedSources({
+      ai,
+      primaryResponse: responseForSources,
+      topic,
+      headline,
+      summary,
+      articleTypeLabel,
+    });
+    const groundedSources = groundedSourceResult.sources;
     const faqForSchema =
       faqs.length > 0
         ? faqs
@@ -2551,13 +2952,36 @@ export async function POST(request: NextRequest) {
     const faqTextBlock = `\n\nFAQ Schema (JSON-LD):\n${faqSchemaJson}`;
     const faqHtmlBlock = `<h2>FAQ Schema</h2><pre>${escapeHtml(faqSchemaJson)}</pre><script type="application/ld+json">${faqSchemaJson}</script>`;
 
+    const articleSchema = isBlogCampaign
+      ? buildBlogPostingSchema({
+          headline,
+          description: metaDescription,
+          keywords: focusKeywords,
+          inLanguage: language,
+          datePublished: new Date().toISOString(),
+          articleBody: articleBodyText,
+        })
+      : null;
+    const articleSchemaJson = articleSchema
+      ? JSON.stringify(articleSchema, null, 2)
+      : "";
+    const articleSchemaTextBlock = articleSchema
+      ? `
+
+Article Schema (JSON-LD):
+${articleSchemaJson}`
+      : "";
+    const articleSchemaHtmlBlock = articleSchema
+      ? `<h2>Article Schema</h2><pre>${escapeHtml(articleSchemaJson)}</pre><script type="application/ld+json">${articleSchemaJson}</script>`
+      : "";
+
     const article = {
       headline,
       subheadline,
       summary,
       rawOutput: lastRaw,
-      articleText: `${articleBodyText}${sourcesTextBlock}${seoTextBlock}${faqTextBlock}`,
-      articleHtml: `${articleBodyHtml}${sourcesHtmlBlock}${seoHtmlBlock}${faqHtmlBlock}`,
+      articleText: `${articleBodyText}${sourcesTextBlock}${seoTextBlock}${faqTextBlock}${articleSchemaTextBlock}`,
+      articleHtml: `${articleBodyHtml}${sourcesHtmlBlock}${seoHtmlBlock}${faqHtmlBlock}${articleSchemaHtmlBlock}`,
       tags,
       seo: {
         seoTitle,
@@ -2566,6 +2990,7 @@ export async function POST(request: NextRequest) {
       },
       faqs: faqForSchema,
       faqSchema,
+      articleSchema,
       topic,
       generatedAt: new Date().toISOString(),
       generationSeed: resolvedSeed,
@@ -2573,6 +2998,8 @@ export async function POST(request: NextRequest) {
       factCheck: {
         grounded: true,
         sourceCount: groundedSources.length,
+        sourceResolutionMode: groundedSourceResult.resolutionMode,
+        sourceResolutionModel: groundedSourceResult.resolutionModel,
       },
       quality: {
         length: lengthQuality(bodyWordCount, bodyParagraphCount),

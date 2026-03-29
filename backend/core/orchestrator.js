@@ -92,6 +92,78 @@ class SocialMediaOrchestrator {
     return paragraph.length > 30 ? paragraph : null;
   }
 
+  _getLatestArticleStageEntry(topic, options = {}) {
+    const contentEntries = Object.values(this.stateManager?.state?.content || {}).filter(Boolean);
+    const byCompletedAtDesc = (a, b) => {
+      const aTs = new Date(a?.completedAt || a?.updatedAt || a?.createdAt || 0).getTime();
+      const bTs = new Date(b?.completedAt || b?.updatedAt || b?.createdAt || 0).getTime();
+      return bTs - aTs;
+    };
+    const normalizeTopic = (value) => String(value || '')
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const requestedCampaignType = String(options?.type || '').trim().toLowerCase();
+    const normalizedTopic = normalizeTopic(topic);
+    let filtered = contentEntries.filter((entry) => {
+      const contentType = String(entry?.contentType || '').trim().toLowerCase();
+      const campaignType = String(entry?.campaignType || '').trim().toLowerCase();
+      const isArticle = contentType === 'blog-article' || contentType === 'live-news-article';
+      if (!isArticle) return false;
+      if (!requestedCampaignType) return true;
+      if (requestedCampaignType === 'blog') return contentType === 'blog-article' || campaignType === 'blog';
+      if (requestedCampaignType === 'live-news') return contentType === 'live-news-article' || campaignType === 'live-news';
+      return true;
+    });
+
+    if (normalizedTopic) {
+      const exact = filtered
+        .filter((entry) => normalizeTopic(entry?.topic) === normalizedTopic)
+        .sort(byCompletedAtDesc)[0];
+      if (exact) return exact;
+    }
+
+    return filtered.sort(byCompletedAtDesc)[0] || null;
+  }
+
+  _buildArticleStage3Prompt(articleEntry, options = {}) {
+    const topic = String(options.topic || articleEntry?.topic || 'the article topic').trim();
+    const headline = String(articleEntry?.headline || '').trim();
+    const summary = String(articleEntry?.summary || '').trim();
+    const articleText = String(articleEntry?.articleText || '').trim();
+    const articleType = String(articleEntry?.contentType || '').trim().toLowerCase() === 'blog-article' ? 'blog' : 'live news';
+    const language = options.language || 'english';
+    const languageInstruction = language !== 'english'
+      ? `All visible text, if any is used, must be in ${this._getLanguageName(language)}.`
+      : '';
+    const lines = articleText
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .filter((line) => !/^(sources|seo metadata|faq schema|article schema)\b/i.test(line));
+    const snippet = lines.slice(0, 5).join(' ').slice(0, 900);
+    const brandConstraints = this._buildBrandConstraintBlock(this._getEffectiveBrandSettings(options) || options.brandSettings);
+
+    return [
+      `Create a premium editorial hero image for a ${articleType} article.`,
+      `Topic: ${topic}.`,
+      headline ? `Working headline: ${headline}.` : '',
+      summary ? `Article summary: ${summary}.` : '',
+      snippet ? `Article context to visualize: ${snippet}.` : '',
+      'The image must feel specific to the story, contemporary, credible, and publication-ready.',
+      'Use a magazine-quality composition with one strong focal idea or scene, cinematic lighting, depth, and clear visual hierarchy.',
+      'Prefer symbolic or contextual storytelling over generic stock-photo aesthetics.',
+      'Do not add logos, watermarks, UI screenshots, fake dashboards, or excessive text overlays.',
+      'If text is used at all, keep it to an absolute minimum and make it typographically clean.',
+      'Avoid plastic-looking faces, distorted hands, and low-quality collage effects.',
+      'Output a single striking article cover image suitable for a modern blog or news feature.',
+      languageInstruction,
+      brandConstraints
+    ].filter(Boolean).join(' ');
+  }
+
   async _generateHeyGenScript(options) {
     const topic = options.topic || 'brand or product insights';
     const platform = options.platform || 'instagram';
@@ -1238,6 +1310,41 @@ Make it specific, actionable, and optimized for ${options.platform || 'the platf
           success: true,
           images: result.images,
           features: ['infographic', 'gemini-3.1-flash-image-preview']
+        };
+      }
+
+      const isArticleVisual = options.format === 'article' || options.type === 'blog' || options.type === 'live-news';
+      if (isArticleVisual) {
+        console.log('   📰 Article visual detected — generating editorial cover image...');
+
+        const articleEntry = this._getLatestArticleStageEntry(options.topic, options);
+        const articlePrompt = options.prompt || this._buildArticleStage3Prompt(articleEntry || { topic: options.topic }, options);
+
+        const result = await generator.textToImage(articlePrompt, {
+          model: 'gemini-3.1-flash-image-preview',
+          imageSize: '1K',
+          useGrounding: false,
+          aspectRatio: options.aspectRatio || '16:9',
+          language: options.language,
+          numberOfImages: 1
+        });
+
+        if (process.env.IMGBB_API_KEY && result.images && result.images.length > 0) {
+          console.log('   ☁️  Uploading article cover to ImgBB...');
+          for (const img of result.images) {
+            const imagePath = img.path || img.url;
+            const hostedUrl = await uploadToImgBB(imagePath);
+            if (hostedUrl) {
+              img.hostedUrl = hostedUrl;
+              console.log(`   ✅ Uploaded to ImgBB: ${hostedUrl}`);
+            }
+          }
+        }
+
+        return {
+          success: true,
+          images: result.images,
+          features: ['article-cover', options.type || options.format || 'article', 'gemini-3.1-flash-image-preview']
         };
       }
 

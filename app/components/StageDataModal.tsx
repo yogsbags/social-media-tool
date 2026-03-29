@@ -313,6 +313,7 @@ export default function StageDataModal({
 
   const renderCreativePrompt = () => {
     const promptValue = formData['creativePrompt'] || ''
+    const isBlogStage1 = stageId === 1 && String(formData['campaignType'] || '') === 'blog'
 
     return (
       <div className="mb-6 p-4 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-300 rounded-xl">
@@ -321,10 +322,10 @@ export default function StageDataModal({
             <span className="text-2xl">🎨</span>
             <div>
               <label className="block text-base font-bold text-purple-900">
-                Creative Prompt
+                {isBlogStage1 ? 'Campaign Planning Brief' : 'Stage 1 Prompt'}
               </label>
               <p className="text-xs text-purple-700 mt-0.5">
-                This prompt will be used to generate content in the next stages. Edit to refine the creative direction.
+                {isBlogStage1 ? 'This planning brief will guide Stage 2 article generation. Edit it to refine search intent, coverage, and structure.' : 'This Stage 1 output will be used in the next stages. Edit it to refine the direction.'}
               </p>
             </div>
           </div>
@@ -341,7 +342,7 @@ export default function StageDataModal({
             value={promptValue}
             onChange={(e) => handleFieldChange('creativePrompt', e.target.value)}
             rows={12}
-            placeholder="Creative prompt will be generated here..."
+            placeholder={isBlogStage1 ? 'Campaign planning brief will be generated here...' : 'Stage 1 prompt will be generated here...'}
             className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none text-sm font-mono bg-white shadow-inner resize-vertical"
           />
         ) : (
@@ -357,8 +358,36 @@ export default function StageDataModal({
         )}
         <div className="mt-2 flex items-center gap-2 text-xs text-purple-600">
           <span>💡</span>
-          <span>Tip: Be specific about visual style, tone, messaging, and platform requirements</span>
+          <span>{isBlogStage1 ? 'Tip: Be specific about search intent, article angle, target entities, keyword themes, and section structure' : 'Tip: Be specific about visual style, tone, messaging, and platform requirements'}</span>
         </div>
+      </div>
+    )
+  }
+
+
+  const renderStage1GeneratedUserPrompt = () => {
+    const promptValue = String(formData['generatedUserPrompt'] || '').trim()
+    if (!promptValue) return null
+
+    return (
+      <div className="mb-6 p-4 bg-indigo-50 border-2 border-indigo-300 rounded-xl">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-2xl">🧠</span>
+          <div>
+            <label className="block text-base font-bold text-indigo-900">
+              Generated User Prompt
+            </label>
+            <p className="text-xs text-indigo-700 mt-0.5">
+              Internal Stage 1 generator prompt used to create the campaign planning brief.
+            </p>
+          </div>
+        </div>
+        <textarea
+          value={promptValue}
+          onChange={(e) => handleFieldChange('generatedUserPrompt', e.target.value)}
+          rows={6}
+          className="w-full px-4 py-3 border-2 border-indigo-300 rounded-lg focus:border-indigo-500 focus:outline-none text-sm bg-white resize-vertical"
+        />
       </div>
     )
   }
@@ -557,6 +586,128 @@ export default function StageDataModal({
     const rawOutput = formData['rawOutput'] || ''
     const articleHtml = formData['articleHtml'] || ''
     const articleText = formData['articleText'] || ''
+    const isBlogArticle = formData['contentType'] === 'blog-article'
+
+    const escapeHtml = (value: string) =>
+      String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+
+    const articleTextToPreviewHtml = (text: string) => {
+      const normalizeMarkdownLine = (line: string) =>
+        line
+          .replace(/^#{1,6}\s*/, '')
+          .replace(/^\s*\*\*(.*?)\*\*\s*$/g, '$1')
+          .replace(/^\s*__(.*?)__\s*$/g, '$1')
+          .trim()
+
+      const lines = String(text || '')
+        .split('\n')
+        .map((line) => normalizeMarkdownLine(line))
+        .filter(Boolean)
+
+      if (lines.length === 0) return ''
+
+      const headingMatchers: Array<{ pattern: RegExp; label: string }> = [
+        { pattern: /^(?:\d+\.\s*)?summary\b\s*:?\s*/i, label: 'Summary' },
+        { pattern: /^(?:\d+\.\s*)?introduction\b\s*:?\s*/i, label: 'Introduction' },
+        { pattern: /^(?:\d+\.\s*)?key insights\b\s*:?\s*/i, label: 'Key Insights' },
+        { pattern: /^(?:\d+\.\s*)?why it matters\b\s*:?\s*/i, label: 'Why It Matters' },
+        { pattern: /^(?:\d+\.\s*)?market overview\b\s*:?\s*/i, label: 'Market Overview' },
+        { pattern: /^(?:\d+\.\s*)?key movers\b\s*:?\s*/i, label: 'Key Movers' },
+        { pattern: /^(?:\d+\.\s*)?drivers and context\b\s*:?\s*/i, label: 'Drivers and Context' },
+        { pattern: /^(?:\d+\.\s*)?broader market and outlook\b\s*:?\s*/i, label: 'Broader Market and Outlook' },
+        { pattern: /^(?:\d+\.\s*)?issue details(?:\s+and\s+key\s+dates)?\b\s*:?\s*/i, label: 'Issue Details and Key Dates' },
+        { pattern: /^(?:\d+\.\s*)?use of proceeds(?:\s*\/\s*key objectives?|(?:\s+and\s+key objectives?))?\b\s*:?\s*/i, label: 'Use of Proceeds / Key Objectives' },
+        { pattern: /^(?:\d+\.\s*)?about the company\b\s*:?\s*/i, label: 'About the Company' },
+        { pattern: /^(?:\d+\.\s*)?financial performance\b\s*:?\s*/i, label: 'Financial Performance' },
+        { pattern: /^(?:\d+\.\s*)?what the numbers show\b\s*:?\s*/i, label: 'What the Numbers Show' },
+        { pattern: /^(?:\d+\.\s*)?strengths?\b\s*:?\s*/i, label: 'Strengths' },
+        { pattern: /^(?:\d+\.\s*)?risks?\b\s*:?\s*/i, label: 'Risks' },
+        { pattern: /^(?:\d+\.\s*)?peer positioning\b\s*:?\s*/i, label: 'Peer Positioning' },
+        { pattern: /^(?:\d+\.\s*)?bottom line\b\s*:?\s*/i, label: 'Bottom Line' },
+      ]
+
+      const splitTableCells = (line: string): string[] => {
+        const cleaned = line.trim().replace(/^\|/, '').replace(/\|$/, '')
+        return cleaned.split('|').map((c) => c.trim())
+      }
+
+      const isAlignmentRow = (line: string): boolean => {
+        const normalized = line
+          .trim()
+          .replace(/^\|/, '')
+          .replace(/\|$/, '')
+          .replace(/\s+/g, '')
+        return /^:?-{2,}:?(?:\|:?-{2,}:?)*$/.test(normalized)
+      }
+
+      const blocks: string[] = []
+      let inList = false
+      const closeList = () => {
+        if (!inList) return
+        blocks.push('</ul>')
+        inList = false
+      }
+
+      let i = 0
+      while (i < lines.length) {
+        const line = lines[i]
+        let matched = false
+
+        for (const matcher of headingMatchers) {
+          if (!matcher.pattern.test(line)) continue
+          closeList()
+          const trailing = line.replace(matcher.pattern, '').trim()
+          blocks.push(`<h2>${escapeHtml(matcher.label)}</h2>`)
+          if (trailing) blocks.push(`<p>${escapeHtml(trailing)}</p>`)
+          matched = true
+          break
+        }
+
+        if (matched) {
+          i += 1
+          continue
+        }
+
+        const next = lines[i + 1] || ''
+        if (line.includes('|') && next && isAlignmentRow(next)) {
+          closeList()
+          const header = splitTableCells(line)
+          const rows: string[][] = []
+          i += 2
+          while (i < lines.length && lines[i].includes('|')) {
+            rows.push(splitTableCells(lines[i]))
+            i += 1
+          }
+          const thead = `<thead><tr>${header.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>`
+          const tbody = `<tbody>${rows.map((row) => `<tr>${row.map((c) => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody>`
+          blocks.push(`<table>${thead}${tbody}</table>`)
+          continue
+        }
+
+        const bullet = line.match(/^[-*]\s+(.*)$/)
+        if (bullet) {
+          if (!inList) {
+            blocks.push('<ul>')
+            inList = true
+          }
+          blocks.push(`<li>${escapeHtml(bullet[1].trim())}</li>`)
+          i += 1
+          continue
+        }
+
+        closeList()
+        blocks.push(`<p>${escapeHtml(line)}</p>`)
+        i += 1
+      }
+
+      closeList()
+      return blocks.join('')
+    }
 
     const normalizePreviewHtml = (html: string) => {
       if (!html) return ''
@@ -569,11 +720,13 @@ export default function StageDataModal({
         .map((block: string) => `<p>${block.replace(/\n/g, '<br/>')}</p>`)
         .join('')
     }
+    const previewHtmlSource = isBlogArticle
+      ? articleTextToPreviewHtml(articleText || '')
+      : normalizePreviewHtml(articleHtml || articleTextToPreviewHtml(articleText || ''))
 
-    const articleBodyPreviewHtml = normalizePreviewHtml(articleHtml)
+    const articleBodyPreviewHtml = previewHtmlSource
       .replace(/<h1\b[^>]*>[\s\S]*?<\/h1>/i, '')
       .trim()
-
     const stripSourcesFromHtml = (html: string) => {
       if (!html) return ''
       return html
@@ -585,7 +738,11 @@ export default function StageDataModal({
     }
 
     const buildDownloadHtml = () => {
-      const cleanBody = stripSourcesFromHtml(articleHtml)
+      const cleanBody = stripSourcesFromHtml(
+        isBlogArticle
+          ? articleTextToPreviewHtml(articleText || '')
+          : (articleHtml || articleTextToPreviewHtml(articleText || ''))
+      )
       return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -632,16 +789,36 @@ export default function StageDataModal({
 
     return (
       <div className="space-y-6">
+        <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl">📝</span>
+            <div>
+              <label className="block text-sm font-bold text-gray-900">
+                Raw Article Text
+              </label>
+              <p className="text-xs text-gray-600 mt-0.5">
+                This raw article body is shown first so you can inspect or edit the exact generated output before reviewing the rendered preview.
+              </p>
+            </div>
+          </div>
+          <textarea
+            value={articleText}
+            onChange={(e) => handleFieldChange('articleText', e.target.value)}
+            rows={14}
+            className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white resize-vertical"
+          />
+        </div>
+
         <div className="p-4 bg-gradient-to-br from-blue-50 to-sky-50 border-2 border-blue-300 rounded-xl">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <span className="text-2xl">📰</span>
               <div>
                 <label className="block text-base font-bold text-blue-900">
-                  {formData['contentType'] === 'blog-article' ? 'Blog Article' : 'Live News Article'}
+                  {formData['contentType'] === 'blog-article' ? 'Blog Article Preview' : 'Live News Article Preview'}
                 </label>
                 <p className="text-xs text-blue-700 mt-0.5">
-                  Preview and export clean reader-friendly HTML (sources hidden in download)
+                  Rendered rich-text preview for reader-friendly review and HTML export
                 </p>
               </div>
             </div>
@@ -668,21 +845,6 @@ export default function StageDataModal({
               <div dangerouslySetInnerHTML={{ __html: articleBodyPreviewHtml }} />
             </div>
           </div>
-        </div>
-
-        <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-xl">📝</span>
-            <label className="block text-sm font-bold text-gray-900">
-              Raw Article Text
-            </label>
-          </div>
-          <textarea
-            value={articleText}
-            onChange={(e) => handleFieldChange('articleText', e.target.value)}
-            rows={10}
-            className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white resize-vertical"
-          />
         </div>
 
         {rawOutput && (
@@ -740,12 +902,11 @@ export default function StageDataModal({
             </div>
           )}
 
-          {/* For Stage 1: Display creative prompt prominently */}
+          {/* For Stage 1: Display campaign planning prompt(s) only */}
           {stageId === 1 && formData['creativePrompt'] && (
             <>
+              {String(formData['campaignType'] || '') === 'blog' && renderStage1GeneratedUserPrompt()}
               {renderCreativePrompt()}
-              <div className="my-6 border-t-2 border-gray-200"></div>
-              <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Additional Details</h3>
             </>
           )}
 
@@ -771,7 +932,7 @@ export default function StageDataModal({
             {Object.entries(formData)
               .filter(([key]) => {
                 // Don't render these fields twice in special sections
-                if (key === 'creativePrompt' && stageId === 1) return false
+                if (stageId === 1) return false
                 if (stageId === 2 && formData['contentType'] === 'email-newsletter') {
                   return !['html', 'subject', 'preheader', 'plainText', 'subjectVariations', 'contentType'].includes(key)
                 }

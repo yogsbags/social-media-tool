@@ -168,6 +168,7 @@ export async function POST(request: NextRequest) {
     }
 
     const isLiveNewsCampaign = campaignType === 'live-news'
+    const isBlogCampaign = campaignType === 'blog'
 
     // Build platform-specific guidance
     const platformGuidance = platforms?.map((p: string) => {
@@ -252,7 +253,29 @@ ${brandSettings.customInstructions ? `- **Additional Guidelines**: ${brandSettin
 
     // For faceless-video, output a Veo 3.1-ready prompt only (no creative brief)
     const isFacelessVideo = contentType === 'faceless-video'
-    const systemPrompt = isFacelessVideo
+    const systemPrompt = isBlogCampaign
+      ? `You are a senior SEO and editorial strategist creating a Stage 1 campaign planning brief for a long-form blog article.
+
+Your output is NOT the final article. It is a planning brief that helps the Stage 2 article generator produce a grounded, search-intent-aligned, SEO-rich article.
+
+Return a concise but useful planning brief with these exact sections:
+1. Search Intent
+2. Core Reader Takeaway
+3. Recommended Article Angle
+4. Suggested Article Structure
+5. Primary Keyword Targets
+6. Semantic / Related Keywords
+7. Key Entities To Cover
+8. FAQ Opportunities
+9. Editorial Guardrails
+
+Rules:
+- Do not include image prompts, visual direction, design language, camera instructions, or Gemini image guidance.
+- Do not mention direct image prompt, aspect ratio, or creative asset production.
+- Focus on topic framing, search intent, likely SERP expectations, coverage depth, subtopics, and factual guardrails.
+- Keep it practical and directly usable by the blog/article generation step.
+- Write in clear markdown with short bullets under each section.`
+      : isFacelessVideo
       ? `You are an expert prompt engineer for Google Veo 3.1 video generation. Your output must be a single, direct VIDEO PROMPT that will be passed to Veo 3.1 — not a creative brief or document.
 
 Veo 3.1 best practices (use these):
@@ -372,7 +395,9 @@ Make the prompt so detailed and specific that a designer or video editor could e
     const isReelOrShort = platforms?.some((p: string) => /instagram|youtube/i.test(p))
     const isWhatsAppCreativeCampaign = /whatsapp[\s_-]*creative/i.test(String(campaignType || ''))
     const isWhatsAppImage = contentType === 'image' && isWhatsAppCreativeCampaign
-    const userMessage = isFacelessVideo
+    const userMessage = isBlogCampaign
+      ? `Generate a Stage 1 blog planning brief for topic: ${topic}. Purpose: ${purpose || 'SEO blog content'}. Audience: ${targetAudience || 'general readers'}. Language: ${language}. Focus on likely search intent, article angle, key entities, keyword themes, FAQ opportunities, and the strongest structure for a high-quality grounded article. Do not include any image prompt or visual-design instructions.`
+      : isFacelessVideo
       ? `Generate a single Veo 3.1 video prompt for topic: ${topic}.${isReelOrShort ? ' Optimize for a viral reel: strong hook in first 1–2s, punchy pacing, loopable ending, clear on-screen CTA moment.' : ''} Output ONLY the prompt text (one paragraph or 4 timestamped lines for 8s).`
       : isWhatsAppImage
         ? `Generate ONLY one "Direct image prompt" paragraph for: ${topic}. Output must be a single narrative paragraph (2-5 sentences) ready for Gemini image generation. Do not output headings, numbered sections, bullets, or any extra text outside the direct prompt paragraph.`
@@ -403,14 +428,17 @@ Make the prompt so detailed and specific that a designer or video editor could e
       brandSettings
     })
     const cleanedPrompt = stripLogoWatermarkMentions(anchoredPrompt)
-    const finalPrompt = isWhatsAppImage
-      ? keepOnlyDirectImagePromptSection(cleanedPrompt).replace(/^\s*\*{0,2}\s*Direct image prompt\s*\*{0,2}\s*:?\s*/i, '').trim()
-      : cleanedPrompt
+    const finalPrompt = isBlogCampaign
+      ? generatedPrompt.trim()
+      : isWhatsAppImage
+        ? keepOnlyDirectImagePromptSection(cleanedPrompt).replace(/^\s*\*{0,2}\s*Direct image prompt\s*\*{0,2}\s*:?\s*/i, '').trim()
+        : cleanedPrompt
 
     console.log('Creative prompt generated successfully')
 
     return NextResponse.json({
       prompt: finalPrompt,
+      userPrompt: userMessage,
       model: MODEL,
       usage: completion.usage
     })
