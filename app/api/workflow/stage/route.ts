@@ -547,6 +547,42 @@ export async function POST(request: NextRequest) {
         if (stageId === 2 && ['live-news', 'blog'].includes(campaignType)) {
           const isBlogCampaign = campaignType === 'blog'
           const articleLabel = isBlogCampaign ? 'blog article' : 'live-news article'
+          /** Blog-only: on API/parse failure, save raw output and mark stage completed so the modal can show it. */
+          const buildBlogPartialStageData = (overrides: Record<string, any> = {}) => ({
+            topic,
+            campaignType,
+            platforms,
+            userPrompt: typeof userPrompt === 'string' ? userPrompt : '',
+            status: 'completed',
+            type: 'content-generation',
+            contentType: 'blog-article' as const,
+            generationFailed: true,
+            headline: '',
+            subheadline: '',
+            summary: '',
+            articleText: '',
+            articleHtml: '',
+            ...overrides
+          })
+          const emitBlogPartialSuccess = (stageData: Record<string, any>, logLine: string) => {
+            saveStageData(stageId, stageData)
+            sendEvent({
+              stage: stageId,
+              status: 'completed',
+              message: 'Blog article: raw / partial output saved — open View & Edit',
+              data: stageData
+            })
+            sendEvent({ log: logLine })
+            clearInterval(keepaliveTimer)
+            controller.close()
+          }
+          const emitLiveNewsFailure = (logLine: string) => {
+            sendEvent({ log: logLine })
+            sendEvent({ stage: stageId, status: 'error', message: `${articleLabel} generation failed` })
+            clearInterval(keepaliveTimer)
+            controller.close()
+          }
+
           sendEvent({ log: isBlogCampaign
             ? '📝 Generating grounded SEO blog article with Gemini...'
             : '📰 Generating grounded live-news article with Gemini...' })
@@ -614,25 +650,62 @@ export async function POST(request: NextRequest) {
             }
 
             if (!articleResponse) {
-              throw new Error(lastFetchError?.message || 'Failed to call grounded article API')
+              const transportMsg = lastFetchError?.message || 'Failed to call grounded article API'
+              if (isBlogCampaign) {
+                const stageData = buildBlogPartialStageData({
+                  transportError: transportMsg,
+                  apiError: 'Grounded article API unreachable (network / DNS / TLS)',
+                  rawOutput: '',
+                  articleText: ''
+                })
+                emitBlogPartialSuccess(
+                  stageData,
+                  `⚠️ Grounded article API unreachable — partial entry saved with transport error (open View & Edit). ${transportMsg}`
+                )
+                return
+              }
+              emitLiveNewsFailure(`❌ Grounded article API unreachable: ${transportMsg}`)
+              return
             }
 
             if (!articleResponse.ok) {
               const errText = await articleResponse.text()
+              let errJson: Record<string, any> | null = null
               try {
-                const errJson = JSON.parse(errText)
-                if (Array.isArray(errJson?.retryTrace)) {
-                  sendEvent({ log: '🔁 Gemini retry trace:' })
-                  for (const trace of errJson.retryTrace) {
-                    sendEvent({
-                      log: `   Attempt ${trace.attempt}/${errJson.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
-                    })
-                  }
-                }
+                errJson = JSON.parse(errText)
               } catch {
-                // ignore non-JSON error payload
+                // plain-text error body
               }
-              throw new Error(errText || `Failed to generate grounded ${articleLabel}`)
+              if (Array.isArray(errJson?.retryTrace)) {
+                sendEvent({ log: '🔁 Gemini retry trace:' })
+                for (const trace of errJson!.retryTrace) {
+                  sendEvent({
+                    log: `   Attempt ${trace.attempt}/${errJson!.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
+                  })
+                }
+              }
+              if (isBlogCampaign) {
+                const raw =
+                  typeof errJson?.raw === 'string'
+                    ? errJson.raw
+                    : errText || `HTTP ${articleResponse.status}`
+                const stageData = buildBlogPartialStageData({
+                  articleText: raw,
+                  rawOutput: raw,
+                  apiError: errJson?.error || `HTTP ${articleResponse.status}`,
+                  retryTrace: errJson?.retryTrace ?? null,
+                  generationMeta: errJson?.generationMeta ?? null
+                })
+                emitBlogPartialSuccess(
+                  stageData,
+                  `⚠️ Blog validation failed — raw model output saved (open View & Edit). ${errJson?.error || errText?.slice(0, 200) || articleResponse.status}`
+                )
+                return
+              }
+              emitLiveNewsFailure(
+                `❌ Live-news generation failed: ${errJson?.error || errText?.slice(0, 500) || articleResponse.status}`
+              )
+              return
             }
 
             const article = await articleResponse.json()
@@ -693,9 +766,39 @@ export async function POST(request: NextRequest) {
             controller.close()
             return
           } catch (error) {
-            sendEvent({ log: `❌ ${isBlogCampaign ? 'Blog article' : 'Live-news article'} generation failed: ${error instanceof Error ? error.message : 'Unknown error'}` })
-            sendEvent({ stage: stageId, status: 'error', message: `${isBlogCampaign ? 'Blog article' : 'Live-news article'} generation failed` })
+            const msg = error instanceof Error ? error.message : String(error)
+            if (isBlogCampaign) {
+              let errJson: Record<string, any> | null = null
+              try {
+                errJson = JSON.parse(msg)
+              } catch {
+                /* not JSON */
+              }
+              const rawFromJson = typeof errJson?.raw === 'string' ? errJson.raw : ''
+              const raw =
+                rawFromJson ||
+                (msg.length > 50000 ? `${msg.slice(0, 50000)}… [truncated]` : msg)
+              const stageData = buildBlogPartialStageData({
+                articleText: rawFromJson || raw,
+                rawOutput: raw,
+                apiError: errJson?.error || msg.slice(0, 2000),
+                retryTrace: errJson?.retryTrace ?? null,
+                generationMeta: errJson?.generationMeta ?? null
+              })
+              sendEvent({
+                log: `❌ Blog article exception — saving raw/partial for modal: ${msg.slice(0, 500)}${msg.length > 500 ? '…' : ''}`
+              })
+              emitBlogPartialSuccess(
+                stageData,
+                '⚠️ Blog generation error — inspect raw output in View & Edit'
+              )
+              return
+            }
             clearInterval(keepaliveTimer)
+            sendEvent({
+              log: `❌ Live-news article generation failed: ${msg}`
+            })
+            sendEvent({ stage: stageId, status: 'error', message: `${articleLabel} generation failed` })
             controller.close()
             return
           }

@@ -587,6 +587,11 @@ export default function StageDataModal({
     const articleHtml = formData['articleHtml'] || ''
     const articleText = formData['articleText'] || ''
     const isBlogArticle = formData['contentType'] === 'blog-article'
+    const generationFailed = formData['generationFailed'] === true
+    const apiError = formData['apiError']
+    const transportError = formData['transportError']
+    const retryTrace = formData['retryTrace']
+    const generationMeta = formData['generationMeta']
 
     const escapeHtml = (value: string) =>
       String(value || '')
@@ -789,6 +794,39 @@ export default function StageDataModal({
 
     return (
       <div className="space-y-6">
+        {generationFailed && (
+          <div className="p-4 bg-amber-50 border-2 border-amber-400 rounded-xl">
+            <p className="text-sm font-bold text-amber-950">
+              Generation did not return a fully validated article — below is everything we could recover (raw text, traces, transport errors).
+            </p>
+            {apiError != null && String(apiError).length > 0 && (
+              <p className="text-xs mt-2 text-amber-900 whitespace-pre-wrap break-words">
+                <span className="font-semibold">API / parser:</span> {String(apiError)}
+              </p>
+            )}
+            {transportError != null && String(transportError).length > 0 && (
+              <p className="text-xs mt-2 text-red-900 whitespace-pre-wrap break-words">
+                <span className="font-semibold">Transport:</span> {String(transportError)}
+              </p>
+            )}
+            {retryTrace != null && (
+              <details className="mt-3 text-xs">
+                <summary className="cursor-pointer font-semibold text-amber-900">Retry trace (JSON)</summary>
+                <pre className="mt-2 p-2 bg-white rounded border border-amber-200 overflow-auto max-h-56 text-[11px] leading-relaxed">
+                  {JSON.stringify(retryTrace, null, 2)}
+                </pre>
+              </details>
+            )}
+            {generationMeta != null && (
+              <details className="mt-2 text-xs">
+                <summary className="cursor-pointer font-semibold text-amber-900">Generation meta (JSON)</summary>
+                <pre className="mt-2 p-2 bg-white rounded border border-amber-200 overflow-auto max-h-40 text-[11px] leading-relaxed">
+                  {JSON.stringify(generationMeta, null, 2)}
+                </pre>
+              </details>
+            )}
+          </div>
+        )}
         <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xl">📝</span>
@@ -847,12 +885,12 @@ export default function StageDataModal({
           </div>
         </div>
 
-        {rawOutput && (
+        {rawOutput && String(rawOutput) !== String(articleText) && (
           <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-xl">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xl">🤖</span>
               <label className="block text-sm font-bold text-amber-900">
-                Raw Gemini Output
+                Raw Gemini Output (alternate field)
               </label>
             </div>
             <textarea
@@ -920,7 +958,13 @@ export default function StageDataModal({
           )}
 
           {/* For Stage 2: Display grounded article with preview/download */}
-          {stageId === 2 && ['live-news-article', 'blog-article'].includes(String(formData['contentType'] || '')) && formData['articleHtml'] && (
+          {stageId === 2 &&
+            ((String(formData['contentType']) === 'blog-article' &&
+              (formData['articleHtml'] ||
+                formData['generationFailed'] === true ||
+                formData['rawOutput'] ||
+                formData['articleText'])) ||
+              (String(formData['contentType']) === 'live-news-article' && formData['articleHtml'])) && (
             <>
               {renderArticlePreview()}
               <div className="my-6 border-t-2 border-gray-200"></div>
@@ -937,7 +981,20 @@ export default function StageDataModal({
                   return !['html', 'subject', 'preheader', 'plainText', 'subjectVariations', 'contentType'].includes(key)
                 }
                 if (stageId === 2 && ['live-news-article', 'blog-article'].includes(String(formData['contentType'] || ''))) {
-                  return !['headline', 'subheadline', 'summary', 'rawOutput', 'articleText', 'articleHtml', 'contentType'].includes(key)
+                  return ![
+                    'headline',
+                    'subheadline',
+                    'summary',
+                    'rawOutput',
+                    'articleText',
+                    'articleHtml',
+                    'contentType',
+                    'generationFailed',
+                    'apiError',
+                    'transportError',
+                    'retryTrace',
+                    'generationMeta'
+                  ].includes(key)
                 }
                 return true
               })
