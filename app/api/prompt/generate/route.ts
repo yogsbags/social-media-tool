@@ -268,16 +268,11 @@ Return a concise but useful planning brief with these exact sections:
 7. Key Entities To Cover
 8. FAQ Opportunities
 9. Editorial Guardrails
-10. SERP-Style Sections Users Expect
-11. Conversion Opportunity / Soft CTA
 
 Rules:
 - Do not include image prompts, visual direction, design language, camera instructions, or Gemini image guidance.
 - Do not mention direct image prompt, aspect ratio, or creative asset production.
 - Focus on topic framing, search intent, likely SERP expectations, coverage depth, subtopics, and factual guardrails.
-- Explicitly call out whether the article should include a step-by-step process, comparison table, real-life example, checklist, or highlight/callout box.
-- In Suggested Article Structure and SERP-Style Sections Users Expect, prefer practical query-answering sections such as Meaning, Process, Charges, Tax, Rules, Documents Required, Timeline, Example, Common Mistakes, and FAQs when relevant.
-- In Conversion Opportunity / Soft CTA, suggest one soft business CTA that matches the topic and user journey, such as open an account, talk to an advisor, learn more, or book a consultation.
 - Keep it practical and directly usable by the blog/article generation step.
 - Write in clear markdown with short bullets under each section.`
       : isFacelessVideo

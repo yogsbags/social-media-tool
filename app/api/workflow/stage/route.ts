@@ -357,9 +357,11 @@ export async function POST(request: NextRequest) {
               topic,
               campaignType,
               platforms,
+              contentType,
               status: 'completed',
               type: 'campaign-planning',
               creativePrompt: generatedPrompt,
+              generatedUserPrompt: typeof promptData.userPrompt === 'string' ? promptData.userPrompt : '',
               promptModel: promptData.model,
               ...(referenceImageUrls.length > 0 && { referenceImageUrls })
             }
@@ -399,9 +401,11 @@ export async function POST(request: NextRequest) {
               topic,
               campaignType,
               platforms,
+              contentType,
               status: 'completed',
               type: 'campaign-planning',
               creativePrompt: fallbackPrompt,
+              generatedUserPrompt: '',
               promptModel: 'fallback'
             }
 
@@ -635,7 +639,12 @@ export async function POST(request: NextRequest) {
 
             sendEvent({ log: `✅ ${isBlogCampaign ? 'Blog article' : 'Live-news article'} generated successfully!` })
             if (Array.isArray(article.retryTrace) && article.retryTrace.length > 0) {
-              sendEvent({ log: '🔁 Gemini retry trace:' })
+              const hadActualRetry = article.retryTrace.length > 1 || article.retryTrace.some((trace: any) => trace?.status !== 'success')
+              if (hadActualRetry) {
+                sendEvent({ log: '🔁 Gemini retry trace:' })
+              } else {
+                sendEvent({ log: '🧾 Gemini generation trace:' })
+              }
               for (const trace of article.retryTrace) {
                 sendEvent({
                   log: `   Attempt ${trace.attempt}/${article.retryTrace.length} [${trace.promptVariant}] -> ${trace.status} (${trace.elapsedMs}ms)${trace.detail ? `: ${trace.detail}` : ''}`
