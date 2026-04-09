@@ -1990,6 +1990,15 @@ export async function POST(request: NextRequest) {
     const systemPrompt = isBlogCampaign
       ? [
           "You are an elite SEO editor, GEO/LLMO content strategist, and fact-checked web researcher.",
+          "Write for searchers with a practical query in mind, not for a generic blog audience.",
+          "The article must directly answer the exact query and its close variants in the first 120 words.",
+          "Prioritize practical search-intent coverage over broad educational exposition.",
+          "Do not keyword-stuff. Use the primary keyword naturally and avoid repeating it excessively in the introduction.",
+          "Make the article highly scannable with short paragraphs, bullets, numbered steps, tables or table-like blocks, and bold emphasis for important takeaways.",
+          "Include at least one step-by-step process section whenever the topic implies a workflow, transfer, application, compliance task, calculation, or operational sequence.",
+          "Include at least one grounded real-life example or use-case scenario whenever it helps the searcher understand the topic.",
+          "Prefer query-answering section patterns such as Meaning, Charges, Tax, Rules, Process, Documents Required, Timeline, Example, Common Mistakes, and FAQs whenever they fit the topic.",
+          "End with a soft commercial CTA when relevant to the business, such as opening an account, speaking to an advisor, learning more, or booking a consultation. The CTA must remain helpful and not aggressive.",
           "Use the provided grounded evidence pack and any attached documents as the factual basis for the article. Infer dominant search intent, recurring subtopics, important entities, freshness requirements, and expected depth of coverage from that evidence pack. Do not introduce facts that are not supported by the evidence pack or attached documents.",
           "If a claim, date, metric, quote, comparison, or example is not grounded, omit it.",
           "Do not hallucinate entities, metrics, sources, examples, expert opinions, or case studies.",
@@ -2058,12 +2067,24 @@ export async function POST(request: NextRequest) {
         ? "Make the article SEO-rich by answering the primary query directly, then covering the most important adjacent subtopics, entities, comparisons, and follow-up questions suggested by grounded search results."
         : "Focus on what happened, why it matters, and relevant market context.",
       isBlogCampaign
+        ? "Within the first 120 words, answer the likely search query directly in plain language before expanding into detail."
+        : "",
+      isBlogCampaign
+        ? "Generate a title that balances SEO and click-through rate. Prefer explicit query-matching title formulas such as 'Meaning, Charges, Tax, Process, Rules, Documents, Timeline, Example, or 2025 Updates Explained' when they fit the topic."
+        : "",
+      isBlogCampaign
+        ? "Avoid vague titles like 'Complete Guide' unless the grounded evidence pack strongly suggests that search intent."
+        : "",
+      isBlogCampaign
+        ? "Do not over-repeat the exact primary keyword in the intro; use natural variants, pronouns, and related entities to preserve readability."
+        : "",
+      isBlogCampaign
         ? `Target article body length: ${BLOG_BODY_TARGET_MIN}-${BLOG_BODY_TARGET_MAX} words, excluding SEO Metadata and FAQ Schema.`
         : "",
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Do not force a fixed blog template. Choose the best H2/H3 section hierarchy based on the dominant query intent and competitive coverage visible in grounded search results."
+          ? "Choose the best H2/H3 hierarchy based on dominant search intent, but include query-answering sections such as Meaning, Process, Charges, Tax, Rules, Documents Required, Example, and FAQs whenever they are relevant."
           : "For non-IPO market news, structure the article body with these exact section headings on their own lines: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       ipoStructuredMode
         ? ""
@@ -2077,6 +2098,14 @@ export async function POST(request: NextRequest) {
               "- Include grounded examples, comparisons, definitions, checklists, or caveats when they appear important across search results.",
               "- Cover the primary keyword and close variants naturally in the headline, summary, opening, headings, and body without stuffing.",
               "- Ensure every FAQ is answered clearly in the body text.",
+              "- Keep paragraphs short and mobile-readable; most paragraphs should stay within 2 to 4 sentences.",
+              "- Use bullets for scan-heavy information such as requirements, charges, rules, mistakes, or document lists.",
+              "- Use a numbered step-by-step section whenever the topic implies a process or workflow.",
+              "- Include at least one comparison table or table-like block when discussing charges, tax treatment, rules, timelines, or differences between options.",
+              "- Include at least one grounded real-life example or use case scenario.",
+              "- Add a short text callout such as Important, Key Takeaway, or Note where it improves scannability.",
+              "- Use bold emphasis selectively for important rules, charges, deadlines, warnings, or definitions.",
+              "- End with a soft CTA aligned to the business context, such as open an account, talk to an advisor, learn more, or book a meeting.",
               "- End with a complete final sentence.",
             ].join("\n")
           : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
@@ -2133,12 +2162,12 @@ export async function POST(request: NextRequest) {
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Use intent-aware H2/H3 headings based on grounded search results. Do not force generic headings."
+          ? "Use intent-aware H2/H3 headings based on grounded search results. Include query-answering sections such as Meaning, Process, Charges, Tax, Rules, Example, and FAQs whenever they are relevant."
           : "For non-IPO market news, use these exact section headings on separate lines in the body: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Keep intro distinct from summary, answer the likely primary query early, cover related subtopics naturally, and ensure the article ends with a complete final sentence."
+          ? "Keep intro distinct from summary, answer the likely primary query early, cover related subtopics naturally, include scannable formatting, and ensure the article ends with a complete final sentence."
           : "Write at least one substantial paragraph under each section heading and ensure the article ends with a complete final sentence.",
       ipoStructuredMode
         ? "articleText and articleHtml must include all requested IPO sections with bullets and financial table-like data."
@@ -2148,7 +2177,7 @@ export async function POST(request: NextRequest) {
       ipoStructuredMode ? ipoFormatInstruction : "",
       "Append SEO Metadata and FAQ Schema (JSON-LD) after article body.",
       isBlogCampaign
-        ? "Keep facts grounded; omit anything unverified. Only include FAQs that are directly supported by the article."
+        ? "Keep facts grounded; omit anything unverified. Only include FAQs that are directly supported by the article. Use short paragraphs, bullets, at least one numbered process section when relevant, at least one real-life example, at least one table or table-like block when useful, selective bold emphasis, and a soft business CTA."
         : "No investment recommendations or buy/sell/hold language.",
     ].join("\n");
     const promptAdvisorySafe = [
@@ -2240,8 +2269,11 @@ export async function POST(request: NextRequest) {
       ipoStructuredMode
         ? ""
         : isBlogCampaign
-          ? "Keep or improve the article's intent-aware H2/H3 structure. Do not collapse it into generic headings unless the user explicitly asks."
+          ? "Keep or improve the article's intent-aware H2/H3 structure. Preserve or add query-answering sections such as Meaning, Process, Charges, Tax, Rules, Example, and FAQs whenever they fit the topic."
           : "Keep the existing body in a headed structure using these exact section headings where applicable: Market Overview, Key Movers, Drivers and Context, Broader Market and Outlook.",
+      isBlogCampaign
+        ? "When revising blog articles, preserve or improve scannability: short paragraphs, bullets, numbered steps when relevant, examples, table-like structure where helpful, selective bold emphasis, and a soft business CTA."
+        : "",
       "Return plain text in this exact format and nothing else:",
       "HEADLINE: <single line>",
       "SUMMARY: <2-3 lines>",
