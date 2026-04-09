@@ -2055,11 +2055,21 @@ export async function POST(request: NextRequest) {
       isBlogCampaign
         ? "Use only grounded facts. If a detail cannot be verified, omit it instead of guessing."
         : "Do NOT include recommendations, advisory calls, buy/sell/hold language, or investor tips.",
-      "Mandatory top structure (keep each on its own line):",
-      "Headline: <one line>",
-      "Summary: <2-3 lines>",
-      "Intro: <one opening paragraph, distinct from summary and not repeated later>",
-      "Do NOT output these label words (Headline:, Summary:, Intro:) in the final article body.",
+      isBlogCampaign
+        ? "Output format for blog articles: GitHub-flavored Markdown only."
+        : "Mandatory top structure (keep each on its own line):",
+      isBlogCampaign
+        ? "First line must be a single markdown H1 heading in this format: # <headline>"
+        : "Headline: <one line>",
+      isBlogCampaign
+        ? "Immediately after the H1, add one italicized 2-3 sentence summary paragraph using markdown italics."
+        : "Summary: <2-3 lines>",
+      isBlogCampaign
+        ? "Then write the body in markdown, starting with one short intro paragraph followed by ## section headings."
+        : "Intro: <one opening paragraph, distinct from summary and not repeated later>",
+      isBlogCampaign
+        ? "Use ## for main sections, ### only when needed, markdown bullets/numbered lists, and GFM tables when useful. Do not output labels like Headline:, Summary:, or Intro:."
+        : "Do NOT output these label words (Headline:, Summary:, Intro:) in the final article body.",
       "Do not repeat the headline in the body.",
       "Do not repeat the same paragraph or near-duplicate lead lines.",
       "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
@@ -2079,7 +2089,7 @@ export async function POST(request: NextRequest) {
         ? "Do not over-repeat the exact primary keyword in the intro; use natural variants, pronouns, and related entities to preserve readability."
         : "",
       isBlogCampaign
-        ? `Target article body length: ${BLOG_BODY_TARGET_MIN}-${BLOG_BODY_TARGET_MAX} words, excluding SEO Metadata and FAQ Schema.`
+        ? `Target article body length: ${BLOG_BODY_TARGET_MIN}-${BLOG_BODY_TARGET_MAX} words.`
         : "",
       ipoStructuredMode
         ? ""
@@ -2094,7 +2104,7 @@ export async function POST(request: NextRequest) {
               "- Open with a concise answer-first paragraph that can stand alone in AI Overviews and LLM citations.",
               "- Use section headings that reflect searcher language and grounded entity coverage.",
               "- Match the ideal depth and length implied by authoritative ranking results on the web for this topic.",
-              "- The article body alone should usually land between 1500 and 2200 words; do not count SEO Metadata or FAQ Schema toward that length.",
+              "- The markdown article body alone should usually land between 1500 and 2200 words.",
               "- Include grounded examples, comparisons, definitions, checklists, or caveats when they appear important across search results.",
               "- Cover the primary keyword and close variants naturally in the headline, summary, opening, headings, and body without stuffing.",
               "- Ensure every FAQ is answered clearly in the body text.",
@@ -2116,14 +2126,16 @@ export async function POST(request: NextRequest) {
       ipoStructuredMode
         ? "Use document data as primary source for dates, issue terms, proceeds, financials, and risks; use web grounding for contextual verification."
         : "",
-      "Return plain text only (no JSON).",
-      "After article end, append exactly:",
-      "SEO Metadata:",
-      "- SEO Title: ...",
-      "- Meta Description: ...",
-      "- Focus Keywords: ...",
-      "FAQ Schema (JSON-LD):",
-      "{valid FAQPage JSON-LD with 3-5 FAQs that are all grounded and directly answered in the article}",
+      isBlogCampaign
+        ? "Return markdown only. No JSON, no code fences, no SEO Metadata block, no FAQ Schema block, and no Sources block."
+        : "Return plain text only (no JSON).",
+      isBlogCampaign ? "" : "After article end, append exactly:",
+      isBlogCampaign ? "" : "SEO Metadata:",
+      isBlogCampaign ? "" : "- SEO Title: ...",
+      isBlogCampaign ? "" : "- Meta Description: ...",
+      isBlogCampaign ? "" : "- Focus Keywords: ...",
+      isBlogCampaign ? "" : "FAQ Schema (JSON-LD):",
+      isBlogCampaign ? "" : "{valid FAQPage JSON-LD with 3-5 FAQs that are all grounded and directly answered in the article}",
     ].join("\n");
     const promptCompact = [
       isBlogCampaign
@@ -2152,10 +2164,14 @@ export async function POST(request: NextRequest) {
         : `Current India date context: ${currentIndiaDateHuman} (${currentIndiaDateIso}, Asia/Kolkata).`,
       'If the topic says "today" or gives only a month/day like "February 27", resolve it to the current India date above unless the user explicitly provides a different year/date.',
       `Do not drift to older coverage from prior years when similarly dated articles exist.`,
-      "Return plain text only (no JSON).",
-      "Include separate top lines: Headline, Summary, Intro.",
-      "Keep intro paragraph distinct from summary.",
-      "Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.",
+      isBlogCampaign
+        ? "Return markdown only. No JSON, no code fences, no SEO Metadata block, and no FAQ Schema block."
+        : "Return plain text only (no JSON).",
+      isBlogCampaign
+        ? "Use markdown article structure: # headline, then one italicized 2-3 sentence summary paragraph, then the body with ## headings."
+        : "Include separate top lines: Headline, Summary, Intro.",
+      isBlogCampaign ? "Keep the opening paragraph distinct from the italic summary." : "Keep intro paragraph distinct from summary.",
+      isBlogCampaign ? "Do not print label prefixes or append metadata blocks." : "Do NOT print label prefixes like Headline:, Summary:, Intro: in the final output.",
       "Do not repeat the headline in the body.",
       "Do not repeat paragraphs.",
       "Do not end the article body with an incomplete sentence, trailing clause, or cut-off word.",
@@ -2172,10 +2188,10 @@ export async function POST(request: NextRequest) {
       ipoStructuredMode
         ? "articleText and articleHtml must include all requested IPO sections with bullets and financial table-like data."
         : isBlogCampaign
-          ? "Write articleText as a substantial grounded blog post with search-intent coverage, strong entity coverage, and a body length of roughly 1500 to 2200 words before SEO Metadata and FAQ Schema are appended."
-          : "Write articleText as 4 substantial paragraphs with strong factual detail.",
+        ? "Write articleText as a substantial grounded markdown blog post with search-intent coverage, strong entity coverage, and a body length of roughly 1500 to 2200 words."
+        : "Write articleText as 4 substantial paragraphs with strong factual detail.",
       ipoStructuredMode ? ipoFormatInstruction : "",
-      "Append SEO Metadata and FAQ Schema (JSON-LD) after article body.",
+      isBlogCampaign ? "Do not append SEO Metadata or FAQ Schema after the article body." : "Append SEO Metadata and FAQ Schema (JSON-LD) after article body.",
       isBlogCampaign
         ? "Keep facts grounded; omit anything unverified. Only include FAQs that are directly supported by the article. Use short paragraphs, bullets, at least one numbered process section when relevant, at least one real-life example, at least one table or table-like block when useful, selective bold emphasis, and a soft business CTA."
         : "No investment recommendations or buy/sell/hold language.",
@@ -2403,20 +2419,20 @@ export async function POST(request: NextRequest) {
         });
         const rawGemini = await getGeminiText(response);
         lastRaw = rawGemini;
-        const articleTextRaw = String(rawGemini);
-        const fallbackHeadline = buildFallbackHeadline(topic);
         parsed = {
           rawGeminiPass: true,
-          headline: fallbackHeadline,
+          headline: "",
+          subheadline: "",
           summary: "",
-          articleText: articleTextRaw,
-          articleHtml: wrapRawGeminiAsPreHtml(articleTextRaw),
-          seoTitle: fallbackHeadline,
+          articleText: "",
+          articleHtml: "",
+          seoTitle: "",
           metaDescription: "",
           focusKeywords: [] as string[],
           faqs: [] as ArticleFaq[],
-          faqSchema: undefined,
+          faqSchema: null,
           tags: [] as string[],
+          rawOutput: String(rawGemini),
         };
         responseForSources = blogEvidenceResponse ? blogEvidenceResponse : response;
         retryTrace.push({
@@ -2802,27 +2818,23 @@ ${blogEvidencePackText}`
       (parsed as any).rawGeminiPass === true;
 
     if (blogRawGeminiOnly) {
-      const rawText = String((parsed as any)?.articleText || "");
-      const h = buildFallbackHeadline(topic);
-      const summarySnippet =
-        rawText
-          .split(/\r?\n/)
-          .map((l) => l.trim())
-          .find((l) => l.length > 0)
-          ?.slice(0, 360) || h;
+      const rawText = cleanupTextArtifacts(
+        String((parsed as any)?.rawOutput || lastRaw || ""),
+      );
       const bodyWords = countBodyWords(rawText);
       const bodyParagraphCount = countBodyParagraphs(rawText);
       return NextResponse.json({
-        headline: h,
+        headline: "",
         subheadline: "",
-        summary: summarySnippet,
+        summary: "",
         rawOutput: rawText,
         articleText: rawText,
-        articleHtml: wrapRawGeminiAsPreHtml(rawText),
+        articleHtml: "",
+        renderMode: "markdown-article",
         tags: [],
         seo: {
-          seoTitle: h,
-          metaDescription: summarySnippet.slice(0, 160),
+          seoTitle: "",
+          metaDescription: "",
           focusKeywords: [],
         },
         faqs: [],
