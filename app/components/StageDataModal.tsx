@@ -610,6 +610,13 @@ export default function StageDataModal({
         .replace(/'/g, '&#39;')
 
     const articleTextToPreviewHtml = (text: string) => {
+      const renderInlineMarkdown = (value: string) =>
+        escapeHtml(value)
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/__(.+?)__/g, '<strong>$1</strong>')
+          .replace(/(^|[\s(])\*(?!\s)(.+?)(?<!\s)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>')
+          .replace(/(^|[\s(])_(?!\s)(.+?)(?<!\s)_(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>')
+
       const normalizeMarkdownLine = (line: string) =>
         line
           .replace(/^#{1,6}\s*/, '')
@@ -676,7 +683,7 @@ export default function StageDataModal({
           closeList()
           const trailing = line.replace(matcher.pattern, '').trim()
           blocks.push(`<h2>${escapeHtml(matcher.label)}</h2>`)
-          if (trailing) blocks.push(`<p>${escapeHtml(trailing)}</p>`)
+          if (trailing) blocks.push(`<p>${renderInlineMarkdown(trailing)}</p>`)
           matched = true
           break
         }
@@ -696,8 +703,8 @@ export default function StageDataModal({
             rows.push(splitTableCells(lines[i]))
             i += 1
           }
-          const thead = `<thead><tr>${header.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>`
-          const tbody = `<tbody>${rows.map((row) => `<tr>${row.map((c) => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody>`
+          const thead = `<thead><tr>${header.map((h) => `<th>${renderInlineMarkdown(h)}</th>`).join('')}</tr></thead>`
+          const tbody = `<tbody>${rows.map((row) => `<tr>${row.map((c) => `<td>${renderInlineMarkdown(c)}</td>`).join('')}</tr>`).join('')}</tbody>`
           blocks.push(`<table>${thead}${tbody}</table>`)
           continue
         }
@@ -708,18 +715,54 @@ export default function StageDataModal({
             blocks.push('<ul>')
             inList = true
           }
-          blocks.push(`<li>${escapeHtml(bullet[1].trim())}</li>`)
+          blocks.push(`<li>${renderInlineMarkdown(bullet[1].trim())}</li>`)
           i += 1
           continue
         }
 
         closeList()
-        blocks.push(`<p>${escapeHtml(line)}</p>`)
+        blocks.push(`<p>${renderInlineMarkdown(line)}</p>`)
         i += 1
       }
 
       closeList()
       return blocks.join('')
+    }
+
+    const renderMarkdownArticle = (markdown: string) => (
+      <article className="max-w-none text-gray-800">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            h1: ({node, ...props}) => <h1 className="text-3xl font-bold leading-tight mb-3 text-gray-900" {...props} />,
+            h2: ({node, ...props}) => <h2 className="text-2xl font-bold leading-snug mt-6 mb-2 text-blue-900" {...props} />,
+            h3: ({node, ...props}) => <h3 className="text-xl font-semibold leading-snug mt-5 mb-2 text-blue-900" {...props} />,
+            p: ({node, ...props}) => <p className="text-[16px] leading-7 mb-4 text-gray-800" {...props} />,
+            ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4 text-gray-800" {...props} />,
+            ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4 text-gray-800" {...props} />,
+            li: ({node, ...props}) => <li className="mb-1" {...props} />,
+            strong: ({node, ...props}) => <strong className="font-bold text-gray-900" {...props} />,
+            table: ({node, ...props}) => <table className="w-full border-collapse my-4" {...props} />,
+            th: ({node, ...props}) => <th className="border border-gray-300 bg-gray-100 px-3 py-2 text-left text-sm font-semibold" {...props} />,
+            td: ({node, ...props}) => <td className="border border-gray-300 px-3 py-2 text-sm" {...props} />,
+          }}
+        >
+          {markdown}
+        </ReactMarkdown>
+      </article>
+    )
+
+    const buildBlogMarkdownSource = () => {
+      const raw = String(articleText || '').trim()
+      if (!raw) return ''
+      if (/^\s*#\s+.+/m.test(raw)) return raw
+
+      const parts: string[] = []
+      if (headline) parts.push(`# ${String(headline).trim()}`)
+      if (summary) parts.push(`*${String(summary).trim()}*`)
+      if (subheadline) parts.push(`_${String(subheadline).trim()}_`)
+      parts.push(raw)
+      return parts.filter(Boolean).join('\n\n')
     }
 
     const normalizePreviewHtml = (html: string) => {
@@ -733,11 +776,39 @@ export default function StageDataModal({
         .map((block: string) => `<p>${block.replace(/\n/g, '<br/>')}</p>`)
         .join('')
     }
+
+    const dedupePreviewLeadEchoes = (html: string) => {
+      if (!html) return ''
+      const normalize = (value: string) =>
+        String(value || '')
+          .toLowerCase()
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+
+      const headlineNorm = normalize(String(headline || ''))
+      const summaryNorm = normalize(String(summary || ''))
+      let cleaned = String(html || '')
+
+      const firstParagraphMatch = cleaned.match(/^\s*<p>([\s\S]*?)<\/p>/i)
+      if (firstParagraphMatch) {
+        const firstNorm = normalize(firstParagraphMatch[1] || '')
+        const duplicateHeadline = headlineNorm && (firstNorm === headlineNorm || firstNorm.includes(headlineNorm) || headlineNorm.includes(firstNorm))
+        const duplicateSummary = summaryNorm && (firstNorm === summaryNorm || firstNorm.includes(summaryNorm) || summaryNorm.includes(firstNorm))
+        if (duplicateHeadline || duplicateSummary) {
+          cleaned = cleaned.replace(/^\s*<p>[\s\S]*?<\/p>\s*/i, '')
+        }
+      }
+
+      return cleaned.trim()
+    }
+
     const previewHtmlSource = isBlogArticle
       ? articleTextToPreviewHtml(articleText || '')
       : normalizePreviewHtml(articleHtml || articleTextToPreviewHtml(articleText || ''))
 
-    const articleBodyPreviewHtml = previewHtmlSource
+    const articleBodyPreviewHtml = dedupePreviewLeadEchoes(previewHtmlSource)
       .replace(/<h1\b[^>]*>[\s\S]*?<\/h1>/i, '')
       .trim()
     const stripSourcesFromHtml = (html: string) => {
@@ -848,14 +919,20 @@ export default function StageDataModal({
               Article Preview
             </div>
             <div className="p-5 max-w-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:leading-tight [&_h1]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:leading-snug [&_h2]:mt-6 [&_h2]:mb-2 [&_p]:text-[16px] [&_p]:leading-7 [&_p]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-1 [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_table]:w-full [&_table]:border-collapse [&_table]:my-4 [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-100 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:text-sm [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-3 [&_td]:py-2 [&_td]:text-sm">
-              {headline && <h1 className="!mb-2 !font-bold">{headline}</h1>}
-              {subheadline && <p className="!mt-0 !text-gray-700"><em>{subheadline}</em></p>}
-              {summary && (
-                <div className="bg-gray-50 border-l-4 border-blue-600 px-3 py-2 my-3">
-                  <p className="!my-0 text-gray-700">{summary}</p>
-                </div>
+              {isBlogArticle ? (
+                renderMarkdownArticle(buildBlogMarkdownSource())
+              ) : (
+                <>
+                  {headline && <h1 className="!mb-2 !font-bold">{headline}</h1>}
+                  {subheadline && <p className="!mt-0 !text-gray-700"><em>{subheadline}</em></p>}
+                  {summary && (
+                    <div className="bg-gray-50 border-l-4 border-blue-600 px-3 py-2 my-3">
+                      <p className="!my-0 text-gray-700">{summary}</p>
+                    </div>
+                  )}
+                  <div dangerouslySetInnerHTML={{ __html: articleBodyPreviewHtml }} />
+                </>
               )}
-              <div dangerouslySetInnerHTML={{ __html: articleBodyPreviewHtml }} />
             </div>
           </div>
         </div>
