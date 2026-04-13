@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import { AuthGate } from '@/app/components/auth/AuthGate'
 import FileUpload from './components/FileUpload'
 import PromptEditor from './components/PromptEditor'
 import PublishingQueue from './components/PublishingQueue'
@@ -67,7 +69,8 @@ function LogEntry({ text, index }: { text: string; index: number }) {
   );
 }
 
-export default function Home() {
+function DashboardPage() {
+  const { user, logout } = useAuth()
   const [isRunning, setIsRunning] = useState(false)
   const [stages, setStages] = useState<WorkflowStage[]>([
     { id: 1, name: 'Stage 1: Campaign Planning', status: 'idle', message: '' },
@@ -1127,6 +1130,22 @@ export default function Home() {
                   AI-Powered Multi-Platform Campaign Automation
                 </p>
               </div>
+            </div>
+            <div className="flex items-center gap-3 self-start md:self-center">
+              <div className="text-right">
+                <p className="text-sm font-medium text-slate-900">
+                  {user?.name || user?.email}
+                </p>
+                {user?.email ? (
+                  <p className="text-xs text-slate-500">{user.email}</p>
+                ) : null}
+              </div>
+              <button
+                onClick={() => void logout()}
+                className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+              >
+                Sign out
+              </button>
             </div>
           </div>
           <div className="mt-4 flex items-center gap-4">
@@ -2585,5 +2604,15 @@ export default function Home() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <AuthProvider>
+      <AuthGate>
+        <DashboardPage />
+      </AuthGate>
+    </AuthProvider>
   )
 }
