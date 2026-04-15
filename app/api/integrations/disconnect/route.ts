@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { initiateConnection, type LeadConnectorId } from '../../../../lib/server/composio'
+import { disconnectConnector, type LeadConnectorId } from '../../../../frontend/lib/server/composio'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -14,11 +14,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing userId or connectorId' }, { status: 400 })
     }
 
-    const result = await initiateConnection(userId, connectorId)
+    const result = await disconnectConnector(userId, connectorId)
     return NextResponse.json(result)
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Could not start connector auth' },
+      { error: error instanceof Error ? error.message : 'Could not disconnect connector' },
       { status: 500 }
     )
   }

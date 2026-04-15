@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callLeadsDb } from '../../../../lib/server/leads-db'
-import { enrichApolloPeopleByEmails } from '../../../../lib/server/composio'
+import { callLeadsDb } from '../../../../frontend/lib/server/leads-db'
+import { enrichApolloPeopleByEmails } from '../../../../frontend/lib/server/composio'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

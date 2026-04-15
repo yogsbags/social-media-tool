@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callLeadsDb } from '@/lib/server/leads-db'
+import { callLeadsDb } from '../../../../lib/server/leads-db'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { initiateConnection, type LeadConnectorId } from '../../../../lib/server/composio'
+import { initiateConnection, type LeadConnectorId } from '../../../../frontend/lib/server/composio'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

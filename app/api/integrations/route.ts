@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getConnectors } from '../../../lib/server/composio'
+import { getConnectors } from '../../../frontend/lib/server/composio'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
