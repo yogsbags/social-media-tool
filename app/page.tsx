@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import * as XLSX from 'xlsx'
-import { AuthProvider, useAuth } from '@/contexts/AuthContext'
-import { AuthGate } from '@/app/components/auth/AuthGate'
+import { AuthProvider, useAuth } from '../contexts/AuthContext'
+import { AuthGate } from './components/auth/AuthGate'
 import FileUpload from './components/FileUpload'
 import PromptEditor from './components/PromptEditor'
 import PublishingQueue from './components/PublishingQueue'
@@ -36,220 +35,6 @@ type StageData = {
     [key: string]: any
   }
 }
-
-type ModuleKind = 'content-engine' | 'lead-intelligence'
-
-type LeadConnectorId =
-  | 'apollo'
-  | 'linkedin'
-  | 'hubspot'
-  | 'salesforce'
-  | 'google-sheets'
-  | 'gmail'
-  | 'google-calendar'
-
-type LeadConnectorMeta = {
-  id: LeadConnectorId
-  label: string
-  description: string
-  category: 'source' | 'crm' | 'outreach'
-}
-
-type LeadIntegrationRecord = LeadConnectorMeta & {
-  connected: boolean
-  status?: string
-  connectedAt?: string | null
-}
-
-type LeadsDbMetadata = {
-  total_rows?: number
-  tables?: string[]
-  last_updated?: string
-  source?: string
-  valid_industries?: string[]
-  valid_seniorities?: string[]
-  channels?: string[]
-}
-
-type LeadsDbFetchResponse = {
-  count?: number
-  table_used?: string
-  leads?: Array<Record<string, unknown>>
-  error?: string
-}
-
-type LeadsDbSizeResponse = {
-  estimated_count?: number
-  table_used?: string
-  error?: string
-}
-
-type EnrichedUploadResponse = {
-  count?: number
-  matched?: number
-  enrichedRows?: Array<Record<string, unknown>>
-  error?: string
-}
-
-const CONTENT_ENGINE_STAGES = (): WorkflowStage[] => [
-  { id: 1, name: 'Stage 1: Campaign Planning', status: 'idle', message: '' },
-  { id: 2, name: 'Stage 2: Content Generation', status: 'idle', message: '' },
-  { id: 3, name: 'Stage 3: Visual Assets', status: 'idle', message: '' },
-  { id: 4, name: 'Stage 4: Video Production', status: 'idle', message: '' },
-  { id: 5, name: 'Stage 5: Publishing', status: 'idle', message: '' },
-  { id: 6, name: 'Stage 6: Analytics & Tracking', status: 'idle', message: '' },
-]
-
-const LEAD_GENERATION_STAGES = (): WorkflowStage[] => [
-  { id: 1, name: 'Stage 1: ICP Definition', status: 'idle', message: '' },
-  { id: 2, name: 'Stage 2: Source Setup', status: 'idle', message: '' },
-  { id: 3, name: 'Stage 3: Prospect Discovery', status: 'idle', message: '' },
-  { id: 4, name: 'Stage 4: Enrichment', status: 'idle', message: '' },
-  { id: 5, name: 'Stage 5: Scoring & Prioritization', status: 'idle', message: '' },
-  { id: 6, name: 'Stage 6: Outreach Readiness', status: 'idle', message: '' },
-]
-
-const LEAD_CONNECTOR_META: LeadConnectorMeta[] = [
-  {
-    id: 'apollo',
-    label: 'Apollo',
-    description: 'Primary account and contact discovery source',
-    category: 'source',
-  },
-  {
-    id: 'linkedin',
-    label: 'LinkedIn',
-    description: 'Role validation, profile checks, and social sourcing',
-    category: 'source',
-  },
-  {
-    id: 'hubspot',
-    label: 'HubSpot',
-    description: 'Lead sync, lifecycle stages, and CRM feedback',
-    category: 'crm',
-  },
-  {
-    id: 'salesforce',
-    label: 'Salesforce',
-    description: 'Account sync and downstream revenue tracking',
-    category: 'crm',
-  },
-  {
-    id: 'google-sheets',
-    label: 'Google Sheets',
-    description: 'Manual imports, lead lists, and QA review loops',
-    category: 'source',
-  },
-  {
-    id: 'gmail',
-    label: 'Gmail',
-    description: 'Outbound delivery and reply monitoring',
-    category: 'outreach',
-  },
-  {
-    id: 'google-calendar',
-    label: 'Google Calendar',
-    description: 'Meeting routing and booked-demo readiness',
-    category: 'outreach',
-  },
-]
-
-const LEAD_STAGE_CONNECTORS: Record<number, LeadConnectorId[]> = {
-  1: ['hubspot', 'salesforce', 'google-sheets'],
-  2: ['apollo', 'linkedin', 'google-sheets', 'hubspot'],
-  3: ['apollo', 'linkedin'],
-  4: ['apollo', 'hubspot', 'salesforce'],
-  5: ['hubspot', 'salesforce', 'google-sheets'],
-  6: ['gmail', 'linkedin', 'google-calendar', 'hubspot'],
-}
-
-const LEAD_STAGE_MESSAGES: Record<number, { running: string; completed: string }> = {
-  1: {
-    running: 'Normalizing ICP inputs into a usable targeting blueprint',
-    completed: 'ICP blueprint ready for discovery',
-  },
-  2: {
-    running: 'Validating lead sources and connector coverage',
-    completed: 'Lead sources mapped to the workflow',
-  },
-  3: {
-    running: 'Framing prospect discovery logic for the selected ICP',
-    completed: 'Discovery logic prepared for enrichment',
-  },
-  4: {
-    running: 'Defining enrichment requirements and fallback sources',
-    completed: 'Enrichment schema approved',
-  },
-  5: {
-    running: 'Combining fit and timing rules into one scorecard',
-    completed: 'Lead scoring model is ready',
-  },
-  6: {
-    running: 'Preparing outreach handoff and channel readiness',
-    completed: 'Lead generation workflow is ready to activate',
-  },
-}
-
-const LEAD_SOURCE_LABELS: Record<string, string> = {
-  apollo: 'Apollo',
-  linkedin: 'LinkedIn',
-  'leads-db': 'Leads DB',
-  hubspot: 'HubSpot Lists',
-}
-
-const LEADS_DB_DEFAULT_INDUSTRIES = ['IT_SERVICES', 'FINANCE', 'MANUFACTURING', 'HEALTHCARE', 'CONSULTING', 'LEGAL']
-const LEADS_DB_DEFAULT_SENIORITIES = ['C_SUITE', 'VP', 'DIRECTOR', 'MANAGER', 'IC', 'PARTNER', 'OWNER']
-
-const LEADS_DB_FILTER_PRESETS: Array<{
-  value: string
-  label: string
-  config: {
-    industries?: string[]
-    seniorities?: string[]
-    designationKeywords?: string[]
-    cities?: string[]
-    channel?: 'any' | 'phone' | 'whatsapp' | 'email' | 'linkedin'
-    hasPhone?: boolean | null
-    hasEmail?: boolean | null
-    hasLinkedin?: boolean | null
-  }
-}> = [
-  {
-    value: 'b2b-decision-makers',
-    label: 'B2B Decision-Makers (CXO/Founder)',
-    config: {
-      industries: ['IT_SERVICES', 'FINANCE', 'CONSULTING'],
-      seniorities: ['C_SUITE', 'OWNER', 'PARTNER'],
-      designationKeywords: ['CEO', 'CFO', 'CTO', 'Founder', 'Promoter', 'Business Head'],
-      cities: ['Mumbai', 'Delhi', 'Bangalore'],
-      channel: 'phone',
-      hasPhone: true,
-    },
-  },
-  {
-    value: 'b2b-influencers',
-    label: 'B2B Influencers (Director/Manager)',
-    config: {
-      industries: ['IT_SERVICES', 'FINANCE', 'CONSULTING'],
-      seniorities: ['DIRECTOR', 'MANAGER', 'VP'],
-      designationKeywords: ['Director', 'Head', 'Manager', 'VP'],
-      cities: ['Mumbai', 'Delhi', 'Pune', 'Hyderabad'],
-      channel: 'phone',
-      hasPhone: true,
-    },
-  },
-  {
-    value: 'b2c-investor-trader',
-    label: 'B2C Proxy: Investors/Traders',
-    config: {
-      industries: ['FINANCE'],
-      designationKeywords: ['Investor', 'Trader', 'Portfolio', 'Mutual Fund', 'Equity'],
-      cities: ['Mumbai', 'Delhi', 'Bangalore', 'Pune'],
-      channel: 'phone',
-      hasPhone: true,
-    },
-  },
-]
 
 // Helper function to detect if text contains markdown
 function isMarkdown(text: string): boolean {
@@ -286,9 +71,15 @@ function LogEntry({ text, index }: { text: string; index: number }) {
 
 function DashboardPage() {
   const { user, logout } = useAuth()
-  const [activeModule, setActiveModule] = useState<ModuleKind>('content-engine')
   const [isRunning, setIsRunning] = useState(false)
-  const [stages, setStages] = useState<WorkflowStage[]>(CONTENT_ENGINE_STAGES())
+  const [stages, setStages] = useState<WorkflowStage[]>([
+    { id: 1, name: 'Stage 1: Campaign Planning', status: 'idle', message: '' },
+    { id: 2, name: 'Stage 2: Content Generation', status: 'idle', message: '' },
+    { id: 3, name: 'Stage 3: Visual Assets', status: 'idle', message: '' },
+    { id: 4, name: 'Stage 4: Video Production', status: 'idle', message: '' },
+    { id: 5, name: 'Stage 5: Publishing', status: 'idle', message: '' },
+    { id: 6, name: 'Stage 6: Analytics & Tracking', status: 'idle', message: '' },
+  ])
   const [logs, setLogs] = useState<string[]>([])
   const [stageData, setStageData] = useState<Record<number, StageData>>({})
   const [campaignData, setCampaignData] = useState<CampaignData>({})
@@ -297,76 +88,6 @@ function DashboardPage() {
   const [expandedStage, setExpandedStage] = useState<number | null>(null)
   const [showDataModal, setShowDataModal] = useState(false)
   const [selectedStageData, setSelectedStageData] = useState<{ stageId: number; stageName: string; data: any; dataId: string } | null>(null)
-  const [connectedLeadConnectors, setConnectedLeadConnectors] = useState<Record<LeadConnectorId, boolean>>({
-    apollo: false,
-    linkedin: false,
-    hubspot: false,
-    salesforce: false,
-    'google-sheets': false,
-    gmail: false,
-    'google-calendar': false,
-  })
-  const [leadConnectorStatuses, setLeadConnectorStatuses] = useState<Partial<Record<LeadConnectorId, string>>>({})
-  const [connectorPanelOpen, setConnectorPanelOpen] = useState(true)
-  const [connectorActionId, setConnectorActionId] = useState<LeadConnectorId | null>(null)
-  const [integrationsLoading, setIntegrationsLoading] = useState(false)
-  const [leadsDbMetadata, setLeadsDbMetadata] = useState<LeadsDbMetadata | null>(null)
-  const [leadsDbError, setLeadsDbError] = useState<string | null>(null)
-
-  // Lead generation configuration
-  const [leadGoal, setLeadGoal] = useState<
-    'lead-generation' | 'lead-enrichment' | 'lead-scoring' | 'lead-qualification-outreach'
-  >('lead-generation')
-  const leadGoalOptions: Array<{
-    value: 'lead-generation' | 'lead-enrichment' | 'lead-scoring' | 'lead-qualification-outreach'
-    label: string
-  }> = [
-    { value: 'lead-generation', label: 'Lead generation' },
-    { value: 'lead-enrichment', label: 'Lead Enrichment' },
-    { value: 'lead-scoring', label: 'Lead scoring' },
-    { value: 'lead-qualification-outreach', label: 'Lead qualification/outreach' },
-  ]
-  const leadGoalLabel =
-    leadGoalOptions.find((option) => option.value === leadGoal)?.label || 'Lead generation'
-  const [leadIcpPreset, setLeadIcpPreset] = useState('b2b-saas')
-  const [leadGeography, setLeadGeography] = useState('india')
-  const [leadIndustry, setLeadIndustry] = useState('saas')
-  const [leadCompanySize, setLeadCompanySize] = useState('11-50')
-  const [leadBuyerRole, setLeadBuyerRole] = useState('marketing-leader')
-  const [leadSource] = useState('leads-db')
-  const [leadIntentLevel, setLeadIntentLevel] = useState('medium')
-  const [leadOutreachChannel, setLeadOutreachChannel] = useState('email-linkedin')
-  const [leadPreset, setLeadPreset] = useState('b2b-decision-makers')
-  const [leadDbCountry, setLeadDbCountry] = useState<'IN' | 'US'>('IN')
-  const [leadDbChannel, setLeadDbChannel] = useState<'any' | 'phone' | 'whatsapp' | 'email' | 'linkedin'>('phone')
-  const [leadDbIndustries, setLeadDbIndustries] = useState<string[]>(['IT_SERVICES', 'FINANCE'])
-  const [leadDbSeniorities, setLeadDbSeniorities] = useState<string[]>(['C_SUITE', 'DIRECTOR'])
-  const [leadDbDesignationKeywords, setLeadDbDesignationKeywords] = useState('CEO, CFO, CTO, Founder')
-  const [leadDbCities, setLeadDbCities] = useState('Mumbai, Bangalore, Delhi')
-  const [leadDbStates, setLeadDbStates] = useState('')
-  const [leadDbHasPhone, setLeadDbHasPhone] = useState<boolean | null>(true)
-  const [leadDbHasEmail, setLeadDbHasEmail] = useState<boolean | null>(null)
-  const [leadDbHasLinkedin, setLeadDbHasLinkedin] = useState<boolean | null>(null)
-  const [leadDbLimit, setLeadDbLimit] = useState(25)
-  const [leadDbMatchMode, setLeadDbMatchMode] = useState<'strict' | 'broad'>('strict')
-  const [leadDbQueryLoading, setLeadDbQueryLoading] = useState(false)
-  const [leadDbQueryError, setLeadDbQueryError] = useState<string | null>(null)
-  const [leadDbQueryResult, setLeadDbQueryResult] = useState<LeadsDbFetchResponse | null>(null)
-  const [leadDbSizeLoading, setLeadDbSizeLoading] = useState(false)
-  const [leadDbSizeError, setLeadDbSizeError] = useState<string | null>(null)
-  const [leadDbSizeResult, setLeadDbSizeResult] = useState<LeadsDbSizeResponse | null>(null)
-  const [leadDbSortField, setLeadDbSortField] = useState<'full_name' | 'designation' | 'company' | 'city' | 'phone_e164'>('full_name')
-  const [leadDbSortDirection, setLeadDbSortDirection] = useState<'asc' | 'desc'>('asc')
-  const [leadDbPage, setLeadDbPage] = useState(1)
-  const [leadDbPageSize, setLeadDbPageSize] = useState(5)
-  const [leadEnrichmentFiles, setLeadEnrichmentFiles] = useState<File[]>([])
-  const [leadUploadRows, setLeadUploadRows] = useState<Array<Record<string, unknown>>>([])
-  const [leadUploadHeaders, setLeadUploadHeaders] = useState<string[]>([])
-  const [leadEmailField, setLeadEmailField] = useState('')
-  const [leadPhoneField, setLeadPhoneField] = useState('')
-  const [leadEnrichmentLoading, setLeadEnrichmentLoading] = useState(false)
-  const [leadEnrichmentError, setLeadEnrichmentError] = useState<string | null>(null)
-  const [leadEnrichmentResult, setLeadEnrichmentResult] = useState<EnrichedUploadResponse | null>(null)
 
   // Campaign configuration
   const [campaignType, setCampaignType] = useState<string>('linkedin-carousel')
@@ -531,725 +252,12 @@ function DashboardPage() {
     loadAvatars()
   }, [])
 
-  useEffect(() => {
-    setStages(activeModule === 'content-engine' ? CONTENT_ENGINE_STAGES() : LEAD_GENERATION_STAGES())
-    setLogs([])
-    setStageData({})
-    setCampaignData({})
-    setIsRunning(false)
-    setExecutingStage(null)
-  }, [activeModule])
-
-  useEffect(() => {
-    if (!user?.id) return
-
-    let cancelled = false
-    const loadIntegrations = async () => {
-      setIntegrationsLoading(true)
-      try {
-        const response = await fetch(`/api/integrations?userId=${encodeURIComponent(user.id)}`)
-        const data = await response.json().catch(() => ({ connectors: [] }))
-        if (!response.ok) {
-          throw new Error(data?.error || 'Could not load integrations')
-        }
-        if (cancelled) return
-
-        const nextConnectedState: Record<LeadConnectorId, boolean> = {
-          apollo: false,
-          linkedin: false,
-          hubspot: false,
-          salesforce: false,
-          'google-sheets': false,
-          gmail: false,
-          'google-calendar': false,
-        }
-        const nextStatuses: Partial<Record<LeadConnectorId, string>> = {}
-
-        for (const connector of data.connectors || []) {
-          const connectorId = connector.id as LeadConnectorId
-          if (!(connectorId in nextConnectedState)) continue
-          nextConnectedState[connectorId] = Boolean(connector.connected || connector.status === 'active')
-          nextStatuses[connectorId] = String(connector.status || '')
-        }
-
-        setConnectedLeadConnectors(nextConnectedState)
-        setLeadConnectorStatuses(nextStatuses)
-      } catch (error) {
-        if (!cancelled) {
-          console.error('Failed to load integrations:', error)
-        }
-      } finally {
-        if (!cancelled) setIntegrationsLoading(false)
-      }
-    }
-
-    loadIntegrations()
-    return () => {
-      cancelled = true
-    }
-  }, [user?.id])
-
-  useEffect(() => {
-    if (activeModule !== 'lead-intelligence' || leadSource !== 'leads-db') return
-
-    let cancelled = false
-    const loadLeadsDbMetadata = async () => {
-      try {
-        setLeadsDbError(null)
-        const response = await fetch('/api/leads-db/metadata')
-        const data = await response.json().catch(() => ({}))
-        if (!response.ok) {
-          throw new Error(data?.error || 'Could not load leads DB metadata')
-        }
-        if (!cancelled) setLeadsDbMetadata(data)
-      } catch (error) {
-        if (!cancelled) {
-          setLeadsDbMetadata(null)
-          setLeadsDbError(error instanceof Error ? error.message : 'Could not load leads DB metadata')
-        }
-      }
-    }
-
-    loadLeadsDbMetadata()
-    return () => {
-      cancelled = true
-    }
-  }, [activeModule, leadSource])
-
-  useEffect(() => {
-    const handler = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return
-      if (event.data?.type !== 'composio_oauth_success') return
-
-      const connectorId = event.data?.connectorId as LeadConnectorId | undefined
-      if (!connectorId) return
-
-      setConnectorActionId(null)
-      addLog(`${LEAD_CONNECTOR_META.find((connector) => connector.id === connectorId)?.label || connectorId} connected successfully.`)
-
-      if (!user?.id) return
-      fetch(`/api/integrations?userId=${encodeURIComponent(user.id)}`)
-        .then((response) => response.json())
-        .then((data) => {
-          const nextConnectedState: Record<LeadConnectorId, boolean> = {
-            apollo: false,
-            linkedin: false,
-            hubspot: false,
-            salesforce: false,
-            'google-sheets': false,
-            gmail: false,
-            'google-calendar': false,
-          }
-          const nextStatuses: Partial<Record<LeadConnectorId, string>> = {}
-
-          for (const connector of data.connectors || []) {
-            const nextId = connector.id as LeadConnectorId
-            if (!(nextId in nextConnectedState)) continue
-            nextConnectedState[nextId] = Boolean(connector.connected || connector.status === 'active')
-            nextStatuses[nextId] = String(connector.status || '')
-          }
-
-          setConnectedLeadConnectors(nextConnectedState)
-          setLeadConnectorStatuses(nextStatuses)
-        })
-        .catch((error) => {
-          console.error('Failed to refresh integrations after popup success:', error)
-        })
-    }
-
-    window.addEventListener('message', handler)
-    return () => window.removeEventListener('message', handler)
-  }, [user?.id])
-
-  const stageCount = stages.length
-  const activeModuleTitle =
-    activeModule === 'content-engine' ? 'Torqq Content Engine' : 'Torqq Lead Intelligence'
-  const activeModuleSubtitle =
-    activeModule === 'content-engine'
-      ? 'AI-Powered Multi-Platform Campaign Automation'
-      : 'Connector-aware lead generation architecture'
-
-  const activeGoalLabel =
-    activeModule === 'content-engine' ? 'Scalable Content Ops' : leadGoalLabel
-
-  const leadConnectorRecords: LeadIntegrationRecord[] = LEAD_CONNECTOR_META.map((connector) => ({
-    ...connector,
-    connected: connectedLeadConnectors[connector.id],
-    status: leadConnectorStatuses[connector.id],
-  }))
-
-  const disconnectLeadConnector = async (connectorId: LeadConnectorId) => {
-    if (!user?.id) {
-      addLog('Sign in again to manage connectors.')
-      return
-    }
-
-    setConnectorActionId(connectorId)
-    try {
-      const response = await fetch('/api/integrations/disconnect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, connectorId }),
-      })
-      const data = await response.json().catch(() => ({}))
-      if (!response.ok) {
-        throw new Error(data?.error || 'Could not disconnect connector')
-      }
-
-      setConnectedLeadConnectors((prev) => ({
-        ...prev,
-        [connectorId]: false,
-      }))
-      setLeadConnectorStatuses((prev) => ({
-        ...prev,
-        [connectorId]: 'not_connected',
-      }))
-      addLog(`${LEAD_CONNECTOR_META.find((connector) => connector.id === connectorId)?.label || connectorId} disconnected.`)
-    } catch (error) {
-      addLog(error instanceof Error ? error.message : `Could not disconnect ${connectorId}.`)
-    } finally {
-      setConnectorActionId(null)
-    }
-  }
-
-  const connectLeadConnector = async (connectorId: LeadConnectorId) => {
-    if (!user?.id) {
-      addLog('Sign in again to manage connectors.')
-      return
-    }
-
-    setConnectorActionId(connectorId)
-    try {
-      const response = await fetch('/api/integrations/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, connectorId }),
-      })
-      const data = await response.json().catch(() => ({}))
-      if (!response.ok) {
-        throw new Error(data?.error || 'Could not start connector auth')
-      }
-
-      if (!data?.redirectUrl) {
-        throw new Error('Connector auth link was not returned by Composio')
-      }
-
-      const popup = window.open(
-        data.redirectUrl,
-        'composio_oauth',
-        'width=560,height=720,left=220,top=100'
-      )
-
-      if (!popup) {
-        throw new Error(`Unable to open the ${connectorId} connector popup. Check popup blocking in your browser.`)
-      }
-
-      addLog(`Opening ${LEAD_CONNECTOR_META.find((connector) => connector.id === connectorId)?.label || connectorId} connector popup...`)
-
-      const poll = window.setInterval(() => {
-        if (!popup || popup.closed) {
-          window.clearInterval(poll)
-          setConnectorActionId((prev) => (prev === connectorId ? null : prev))
-        }
-      }, 1200)
-    } catch (error) {
-      setConnectorActionId(null)
-      addLog(error instanceof Error ? error.message : `Could not connect ${connectorId}.`)
-    }
-  }
-
-  const handleLeadConnectorAction = (connectorId: LeadConnectorId) => {
-    void connectLeadConnector(connectorId)
-  }
-
-  const setStageStatusLocal = (stageId: number, status: WorkflowStage['status'], message: string) => {
-    setStages((prev) => prev.map((stage) => (
-      stage.id === stageId ? { ...stage, status, message } : stage
-    )))
-  }
-
-  const parseCommaSeparated = (value: string) =>
-    value
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean)
-
-  const toggleMultiSelectValue = (value: string, current: string[], setter: (next: string[]) => void) => {
-    if (current.includes(value)) {
-      setter(current.filter((item) => item !== value))
-      return
-    }
-    setter([...current, value])
-  }
-
-  const buildLeadsDbFilterPayload = (limitOverride?: number) => {
-    const payload: Record<string, unknown> = {
-      country: leadDbCountry,
-      channel: leadDbChannel,
-      limit: Math.min(Math.max(limitOverride ?? leadDbLimit, 1), 1000),
-      output_format: 'json',
-    }
-
-    if (leadDbIndustries.length > 0) payload.industries = leadDbIndustries
-    if (leadDbSeniorities.length > 0) payload.seniorities = leadDbSeniorities
-
-    const designationKeywords = parseCommaSeparated(leadDbDesignationKeywords)
-    if (designationKeywords.length > 0) payload.designation_keywords = designationKeywords
-
-    const cities = parseCommaSeparated(leadDbCities)
-    if (cities.length > 0) payload.cities = cities
-
-    const states = parseCommaSeparated(leadDbStates)
-    if (states.length > 0) payload.states = states
-
-    if (leadDbMatchMode === 'strict') {
-      if (leadDbHasPhone !== null) payload.has_phone = leadDbHasPhone
-      if (leadDbHasEmail !== null) payload.has_email = leadDbHasEmail
-      if (leadDbHasLinkedin !== null) payload.has_linkedin = leadDbHasLinkedin
-    } else {
-      if (leadDbHasPhone === false) payload.has_phone = false
-      if (leadDbHasEmail === false) payload.has_email = false
-      if (leadDbHasLinkedin === false) payload.has_linkedin = false
-    }
-
-    return payload
-  }
-
-  const applyLeadsDbPreset = (presetValue: string) => {
-    const preset = LEADS_DB_FILTER_PRESETS.find((item) => item.value === presetValue)
-    if (!preset) return
-
-    setLeadPreset(presetValue)
-    if (preset.config.industries) setLeadDbIndustries(preset.config.industries)
-    if (preset.config.seniorities) setLeadDbSeniorities(preset.config.seniorities)
-    if (preset.config.designationKeywords) setLeadDbDesignationKeywords(preset.config.designationKeywords.join(', '))
-    if (preset.config.cities) setLeadDbCities(preset.config.cities.join(', '))
-    if (preset.config.channel) setLeadDbChannel(preset.config.channel)
-    if (typeof preset.config.hasPhone === 'boolean' || preset.config.hasPhone === null) setLeadDbHasPhone(preset.config.hasPhone ?? null)
-    if (typeof preset.config.hasEmail === 'boolean' || preset.config.hasEmail === null) setLeadDbHasEmail(preset.config.hasEmail ?? null)
-    if (typeof preset.config.hasLinkedin === 'boolean' || preset.config.hasLinkedin === null) setLeadDbHasLinkedin(preset.config.hasLinkedin ?? null)
-  }
-
-  const runLeadsDbQuery = async (limitOverride?: number) => {
-    const needsApolloLinkedin =
-      leadOutreachChannel === 'linkedin-only' || leadOutreachChannel === 'email-linkedin'
-    if (!needsApolloLinkedin && leadSource !== 'leads-db') return null
-
-    if (needsApolloLinkedin) {
-      if (!user?.id) {
-        setLeadDbQueryError('Sign in again to run Apollo lead search.')
-        return null
-      }
-      if (!connectedLeadConnectors.apollo) {
-        setLeadDbQueryError('LinkedIn mode requires Apollo. Connect Apollo via Connector Architecture first.')
-        return null
-      }
-    }
-
-    setLeadDbQueryLoading(true)
-    setLeadDbQueryError(null)
-
-    try {
-      const payload = buildLeadsDbFilterPayload(limitOverride)
-      const response = await fetch(needsApolloLinkedin ? '/api/integrations/apollo-leads' : '/api/leads-db/fetch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          needsApolloLinkedin
-            ? {
-                userId: user?.id,
-                country: payload.country,
-                industries: payload.industries || [],
-                seniorities: payload.seniorities || [],
-                designation_keywords: payload.designation_keywords || [],
-                cities: payload.cities || [],
-                states: payload.states || [],
-                limit: Math.min(Number(payload.limit || 25), 25),
-              }
-            : payload
-        ),
-      })
-
-      const data = (await response.json().catch(() => ({}))) as LeadsDbFetchResponse
-      if (!response.ok) {
-        throw new Error(data?.error || 'Leads DB query failed')
-      }
-
-      setLeadDbQueryResult(data)
-      setLeadDbPage(1)
-      addLog(`Leads DB query returned ${data.count ?? 0} records.`)
-      return data
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Leads DB query failed'
-      setLeadDbQueryError(message)
-      addLog(`Leads DB query failed: ${message}`)
-      return null
-    } finally {
-      setLeadDbQueryLoading(false)
-    }
-  }
-
-  const runLeadsDbSizeEstimate = async () => {
-    if (leadSource !== 'leads-db') return null
-
-    setLeadDbSizeLoading(true)
-    setLeadDbSizeError(null)
-
-    try {
-      const response = await fetch('/api/leads-db/size', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildLeadsDbFilterPayload(1000)),
-      })
-      const data = (await response.json().catch(() => ({}))) as LeadsDbSizeResponse
-      if (!response.ok) {
-        throw new Error(data?.error || 'Leads DB size estimate failed')
-      }
-      setLeadDbSizeResult(data)
-      addLog(`Leads DB size estimate: ${Number(data.estimated_count || 0).toLocaleString()} matches.`)
-      return data
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Leads DB size estimate failed'
-      setLeadDbSizeError(message)
-      addLog(`Leads DB size estimate failed: ${message}`)
-      return null
-    } finally {
-      setLeadDbSizeLoading(false)
-    }
-  }
-
-  const currentLeadsDbPayload = buildLeadsDbFilterPayload()
-
-  const leadsPreviewSorted = useMemo(() => {
-    const leads = leadDbQueryResult?.leads || []
-    const sorted = [...leads].sort((a, b) => {
-      const av = String(a[leadDbSortField] ?? '').toLowerCase()
-      const bv = String(b[leadDbSortField] ?? '').toLowerCase()
-      if (av === bv) return 0
-      const order = av > bv ? 1 : -1
-      return leadDbSortDirection === 'asc' ? order : -order
-    })
-    return sorted
-  }, [leadDbQueryResult, leadDbSortField, leadDbSortDirection])
-
-  const leadsPreviewTotalPages = Math.max(1, Math.ceil(leadsPreviewSorted.length / leadDbPageSize))
-  const leadsPreviewPageRows = leadsPreviewSorted.slice(
-    (leadDbPage - 1) * leadDbPageSize,
-    leadDbPage * leadDbPageSize
-  )
-
-  useEffect(() => {
-    if (leadDbPage > leadsPreviewTotalPages) {
-      setLeadDbPage(leadsPreviewTotalPages)
-    }
-  }, [leadDbPage, leadsPreviewTotalPages])
-
-  const handlePreviewSort = (field: 'full_name' | 'designation' | 'company' | 'city' | 'phone_e164') => {
-    if (leadDbSortField === field) {
-      setLeadDbSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
-      return
-    }
-    setLeadDbSortField(field)
-    setLeadDbSortDirection('asc')
-  }
-
-  const downloadTextFile = (filename: string, content: string, mimeType: string) => {
-    const blob = new Blob([content], { type: mimeType })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }
-
-  const exportCurrentPayloadAsCsv = () => {
-    const payload = buildLeadsDbFilterPayload()
-    const rows = Object.entries(payload).map(([key, value]) => {
-      const serialized = Array.isArray(value) || typeof value === 'object'
-        ? JSON.stringify(value)
-        : String(value)
-      const escaped = serialized.replace(/"/g, '""')
-      return `"${key}","${escaped}"`
-    })
-    const csv = ['field,value', ...rows].join('\n')
-    downloadTextFile(`leads-db-query-payload-${Date.now()}.csv`, csv, 'text/csv;charset=utf-8;')
-  }
-
-  const exportCurrentPayloadAsXls = () => {
-    const payload = buildLeadsDbFilterPayload()
-    const rows = Object.entries(payload)
-      .map(([key, value]) => {
-        const serialized = Array.isArray(value) || typeof value === 'object'
-          ? JSON.stringify(value)
-          : String(value)
-        return `<tr><td>${key}</td><td>${serialized}</td></tr>`
-      })
-      .join('')
-    const html = `<table><thead><tr><th>field</th><th>value</th></tr></thead><tbody>${rows}</tbody></table>`
-    downloadTextFile(`leads-db-query-payload-${Date.now()}.xls`, html, 'application/vnd.ms-excel;charset=utf-8;')
-  }
-
-  const detectUploadField = (headers: string[], kind: 'email' | 'phone') => {
-    const normalizedHeaders = headers.map((header) => ({
-      original: header,
-      normalized: header.toLowerCase().replace(/[^a-z0-9]/g, ''),
-    }))
-    const candidates = kind === 'email'
-      ? ['email', 'emailid', 'emailaddress', 'workemail', 'primaryemail']
-      : ['phone', 'mobile', 'mobilenumber', 'phone_number', 'number', 'contactnumber', 'phoneno']
-
-    for (const candidate of candidates) {
-      const found = normalizedHeaders.find((header) => header.normalized.includes(candidate.replace(/[^a-z0-9]/g, '')))
-      if (found) return found.original
-    }
-    return ''
-  }
-
-  const parseLeadUploadFile = async (file: File) => {
-    const name = file.name.toLowerCase()
-    if (name.endsWith('.csv')) {
-      const text = await file.text()
-      const workbook = XLSX.read(text, { type: 'string' })
-      const sheet = workbook.Sheets[workbook.SheetNames[0]]
-      return XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '' })
-    }
-    const arrayBuffer = await file.arrayBuffer()
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' })
-    const sheet = workbook.Sheets[workbook.SheetNames[0]]
-    return XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '' })
-  }
-
-  const handleLeadEnrichmentFilesChange = async (files: File[]) => {
-    setLeadEnrichmentError(null)
-    setLeadEnrichmentResult(null)
-    setLeadEnrichmentFiles(files)
-    if (!files.length) {
-      setLeadUploadRows([])
-      setLeadUploadHeaders([])
-      setLeadEmailField('')
-      setLeadPhoneField('')
-      return
-    }
-
-    try {
-      const parsed = await parseLeadUploadFile(files[0])
-      const headers = parsed.length ? Object.keys(parsed[0]) : []
-      setLeadUploadRows(parsed)
-      setLeadUploadHeaders(headers)
-      setLeadEmailField(detectUploadField(headers, 'email'))
-      setLeadPhoneField(detectUploadField(headers, 'phone'))
-    } catch (error) {
-      setLeadEnrichmentError(error instanceof Error ? error.message : 'Could not parse uploaded file')
-    }
-  }
-
-  const exportEnrichedRows = (type: 'csv' | 'xls') => {
-    const rows = leadEnrichmentResult?.enrichedRows || []
-    if (!rows.length) return
-    const worksheet = XLSX.utils.json_to_sheet(rows)
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Enriched')
-    const wbout = XLSX.write(workbook, { bookType: type === 'csv' ? 'csv' : 'xls', type: 'array' })
-    const mime = type === 'csv' ? 'text/csv;charset=utf-8;' : 'application/vnd.ms-excel;charset=utf-8;'
-    const blob = new Blob([wbout], { type: mime })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `enriched-leads-${Date.now()}.${type}`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
-
-  const runLeadEnrichmentUpload = async () => {
-    if (!leadUploadRows.length) {
-      setLeadEnrichmentError('Upload a CSV/XLS file first.')
-      return null
-    }
-    if (!leadEmailField && !leadPhoneField) {
-      setLeadEnrichmentError('Map at least one field: email or phone.')
-      return null
-    }
-
-    setLeadEnrichmentLoading(true)
-    setLeadEnrichmentError(null)
-    try {
-      const response = await fetch('/api/leads-db/enrich-upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          rows: leadUploadRows.slice(0, 1000),
-          emailField: leadEmailField,
-          phoneField: leadPhoneField,
-          useApollo: connectedLeadConnectors.apollo,
-          userId: user?.id || '',
-        }),
-      })
-      const data = (await response.json().catch(() => ({}))) as EnrichedUploadResponse
-      if (!response.ok) {
-        throw new Error(data?.error || 'Lead enrichment failed')
-      }
-      setLeadEnrichmentResult(data)
-      addLog(`Lead enrichment completed: ${data.matched || 0}/${data.count || 0} matched.`)
-      return data
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Lead enrichment failed'
-      setLeadEnrichmentError(message)
-      addLog(`Lead enrichment failed: ${message}`)
-      return null
-    } finally {
-      setLeadEnrichmentLoading(false)
-    }
-  }
-
-  const buildLeadStageData = (stageId: number) => {
-    const sourceLabel = LEAD_SOURCE_LABELS[leadSource] || leadConnectorRecords.find((connector) => connector.id === leadSource)?.label || leadSource
-    switch (stageId) {
-      case 1:
-        return {
-          goal: leadGoalLabel,
-          icpDefinition: buildLeadsDbFilterPayload(),
-          messagingAngles: [
-            'Anchor outreach around a narrow operational pain point',
-            'Prioritize fast path-to-value messaging over feature depth',
-            'Keep CTA optimized for qualification, not education',
-          ],
-          exclusions: [
-            'Very small teams without an active GTM owner',
-            'Accounts outside the selected geography',
-            'Roles below the buyer authority threshold',
-          ],
-        }
-      case 2:
-        return {
-          sourcePlan: {
-            primarySource: sourceLabel,
-            intentThreshold: leadIntentLevel,
-          },
-          leadsDb: leadSource === 'leads-db'
-            ? {
-                connected: !leadsDbError,
-                metadata: leadsDbMetadata,
-                error: leadsDbError,
-              }
-            : null,
-          requiredConnectors: LEAD_STAGE_CONNECTORS[stageId].map((connectorId) => {
-            const connector = leadConnectorRecords.find((item) => item.id === connectorId)
-            return {
-              id: connectorId,
-              label: connector?.label || connectorId,
-              connected: Boolean(connector?.connected),
-            }
-          }),
-        }
-      case 3:
-        return {
-          discoveryLogic: {
-            accountFilters: [leadDbCountry, ...(leadDbIndustries.length ? leadDbIndustries : ['all-industries']), ...(leadDbSeniorities.length ? leadDbSeniorities : ['all-seniorities'])],
-            persona: leadDbSeniorities[0] || 'any',
-            sourcePriority: [sourceLabel, 'LinkedIn cross-check'],
-          },
-          leadsDbFilters: leadSource === 'leads-db' ? buildLeadsDbFilterPayload() : null,
-          leadsDbPreview: leadSource === 'leads-db'
-            ? {
-                count: leadDbQueryResult?.count ?? 0,
-                tableUsed: leadDbQueryResult?.table_used || 'n/a',
-              }
-            : null,
-          nextAction: 'Pull accounts first, then expand to contacts after account fit is confirmed.',
-        }
-      case 4:
-        return {
-          enrichmentPlan: {
-            requiredFields: ['company domain', 'employee band', 'title', 'seniority', 'location'],
-            secondaryFields: ['tech stack', 'recent hiring', 'CRM ownership'],
-          },
-          uploadEnrichment: leadGoal === 'lead-enrichment'
-            ? {
-                uploadedRows: leadUploadRows.length,
-                mappedEmailField: leadEmailField || null,
-                mappedPhoneField: leadPhoneField || null,
-                matchedRows: leadEnrichmentResult?.matched ?? 0,
-                totalRows: leadEnrichmentResult?.count ?? 0,
-                apolloEnabled: connectedLeadConnectors.apollo,
-              }
-            : null,
-          qaRule: 'Discard incomplete records before they reach scoring.',
-        }
-      case 5:
-        return {
-          scoringModel: {
-            fitWeight: 60,
-            timingWeight: 25,
-            dataQualityWeight: 15,
-          },
-          scoreBands: [
-            'A: strong ICP fit and ready for outreach',
-            'B: qualified but needs enrichment or trigger confirmation',
-            'C: nurture or hold for later review',
-          ],
-        }
-      case 6:
-        return {
-          outreachPlan: {
-            channelMix: leadOutreachChannel,
-            connectorCoverage: leadConnectorRecords
-              .filter((connector) => connector.connected)
-              .map((connector) => connector.label),
-          },
-          handoff: 'Qualified leads should enter sequence creation or SDR review next.',
-        }
-      default:
-        return { module: 'Lead Intelligence', goal: leadGoal }
-    }
-  }
-
-  const executeLeadStage = async (stageId: number) => {
-    setExecutingStage(stageId)
-    const stageName = stages.find((stage) => stage.id === stageId)?.name || `Stage ${stageId}`
-    addLog(`Starting ${stageName}...`)
-    setStageStatusLocal(stageId, 'running', LEAD_STAGE_MESSAGES[stageId]?.running || 'Running lead intelligence stage')
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 700))
-      if (leadSource === 'leads-db' && stageId === 3) {
-        await runLeadsDbQuery()
-      }
-      if (leadGoal === 'lead-enrichment' && stageId === 4) {
-        const enrichmentResult = await runLeadEnrichmentUpload()
-        if (!enrichmentResult) {
-          throw new Error('Lead enrichment requires a valid upload with mapped email/phone columns.')
-        }
-      }
-      const data = buildLeadStageData(stageId)
-      setStageData((prev) => ({
-        ...prev,
-        [stageId]: {
-          data,
-          summary: {
-            module: 'Lead Intelligence',
-            goal: leadGoalLabel,
-          },
-        },
-      }))
-      setStageStatusLocal(stageId, 'completed', LEAD_STAGE_MESSAGES[stageId]?.completed || 'Stage completed')
-      addLog(`${stageName} completed.`)
-    } catch (error) {
-      setStageStatusLocal(stageId, 'error', 'Lead intelligence stage failed')
-      addLog(`${stageName} failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    } finally {
-      setExecutingStage(null)
-    }
-  }
-
   const updateStage = async (stageId: number, status: WorkflowStage['status'], message: string) => {
-    setStageStatusLocal(stageId, status, message)
+    setStages(prev => prev.map(stage =>
+      stage.id === stageId ? { ...stage, status, message } : stage
+    ))
 
-    if (activeModule === 'content-engine' && status === 'completed') {
+    if (status === 'completed') {
       try {
         const response = await fetch(`/api/workflow/data?stage=${stageId}`)
         if (response.ok) {
@@ -1268,11 +276,6 @@ function DashboardPage() {
   }
 
   const executeStage = async (stageId: number) => {
-    if (activeModule === 'lead-intelligence') {
-      await executeLeadStage(stageId)
-      return
-    }
-
     setExecutingStage(stageId)
     /** Only filters noisy server SSE `data.log` lines during blog Stage 2 — not client prep/start lines. */
     const quietStage2BlogLogs = stageId === 2 && campaignType === 'blog'
@@ -1569,30 +572,11 @@ function DashboardPage() {
   }
 
   const executeWorkflow = async () => {
-    if (activeModule === 'lead-intelligence') {
-      setIsRunning(true)
-      setLogs([])
-      setStageData({})
-      setCampaignData({})
-      setStages(LEAD_GENERATION_STAGES())
-
-      try {
-        addLog('Starting Lead Intelligence workflow...')
-        for (const stage of LEAD_GENERATION_STAGES()) {
-          await executeLeadStage(stage.id)
-        }
-        addLog('Lead generation architecture run completed.')
-      } finally {
-        setIsRunning(false)
-      }
-      return
-    }
-
     setIsRunning(true)
     setLogs([])
     setStageData({})
     setCampaignData({})
-    setStages(CONTENT_ENGINE_STAGES())
+    setStages(stages.map(s => ({ ...s, status: 'idle', message: '' })))
 
     try {
       addLog('Starting full workflow execution...')
@@ -2140,10 +1124,10 @@ function DashboardPage() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-gray-800 mb-2">
-                  {activeModuleTitle}
+                  Torqq Social Media Engine
                 </h1>
                 <p className="text-gray-600 text-lg">
-                  {activeModuleSubtitle}
+                  AI-Powered Multi-Platform Campaign Automation
                 </p>
               </div>
             </div>
@@ -2165,50 +1149,26 @@ function DashboardPage() {
             </div>
           </div>
           <div className="mt-4 flex items-center gap-4">
-            <div className={`px-4 py-2 rounded-lg ${activeModule === 'content-engine' ? 'bg-blue-50' : 'bg-emerald-50'}`}>
-              <span className="text-sm text-gray-600">
-                {activeModule === 'content-engine' ? 'Video Production:' : 'Connectors:'}
-              </span>
-              <span className={`ml-2 font-semibold ${activeModule === 'content-engine' ? 'text-blue-600' : 'text-emerald-600'}`}>
-                {activeModule === 'content-engine' ? 'AI-Powered' : 'Composio-ready'}
-              </span>
+            <div className="px-4 py-2 bg-blue-50 rounded-lg">
+              <span className="text-sm text-gray-600">Video Production:</span>
+              <span className="ml-2 font-semibold text-blue-600">AI-Powered</span>
             </div>
             <div className="px-4 py-2 bg-green-50 rounded-lg">
-              <span className="text-sm text-gray-600">
-                {activeModule === 'content-engine' ? 'Platforms:' : 'Sources:'}
-              </span>
-              <span className="ml-2 font-semibold text-green-600">
-                {activeModule === 'content-engine' ? '7 Social Channels' : 'Leads DB + Composio'}
-              </span>
+              <span className="text-sm text-gray-600">Platforms:</span>
+              <span className="ml-2 font-semibold text-green-600">7 Social Channels</span>
             </div>
             <div className="px-4 py-2 bg-purple-50 rounded-lg">
               <span className="text-sm text-gray-600">Goal:</span>
-              <span className="ml-2 font-semibold text-purple-600">{activeGoalLabel}</span>
+              <span className="ml-2 font-semibold text-purple-600">Scalable Content Ops</span>
             </div>
           </div>
         </div>
 
         {/* Main Control Panel */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              Campaign Configuration
-            </h2>
-            <div className="w-full md:w-72">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Module
-              </label>
-              <select
-                value={activeModule}
-                onChange={(e) => setActiveModule(e.target.value as ModuleKind)}
-                disabled={isRunning || executingStage !== null}
-                className="w-full rounded-xl border-2 border-gray-300 bg-gradient-to-r from-slate-50 to-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm transition-all focus:border-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
-              >
-                <option value="content-engine">Content Engine</option>
-                <option value="lead-intelligence">Lead Intelligence</option>
-              </select>
-            </div>
-          </div>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+            Campaign Configuration
+          </h2>
 
           {/* Execution Mode Toggle */}
           <div className="mb-6 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
@@ -2225,8 +1185,8 @@ function DashboardPage() {
                     : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-blue-300'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
-                <div>{activeModule === 'content-engine' ? 'Full Campaign' : 'Full Workflow'}</div>
-                <p className="text-xs mt-1 opacity-80">Execute all {stageCount} stages automatically</p>
+                <div>Full Campaign</div>
+                <p className="text-xs mt-1 opacity-80">Execute all 6 stages automatically</p>
               </button>
               <button
                 onClick={() => setExecutionMode('staged')}
@@ -2243,307 +1203,6 @@ function DashboardPage() {
             </div>
           </div>
 
-          {activeModule === 'lead-intelligence' && (
-            <>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Goal:</label>
-                  <select value={leadGoal} onChange={(e) => setLeadGoal(e.target.value as 'lead-generation' | 'lead-enrichment' | 'lead-scoring' | 'lead-qualification-outreach')} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    {leadGoalOptions.map((option) => (
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">ICP Preset:</label>
-                  <select value={leadIcpPreset} onChange={(e) => { setLeadIcpPreset(e.target.value); applyLeadsDbPreset(e.target.value) }} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    {LEADS_DB_FILTER_PRESETS.map((preset) => (
-                      <option key={preset.value} value={preset.value}>{preset.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Country:</label>
-                  <select value={leadDbCountry} onChange={(e) => setLeadDbCountry(e.target.value as 'IN' | 'US')} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    <option value="IN">India (IN)</option>
-                    <option value="US">United States (US)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Channel:</label>
-                  <select value={leadDbChannel} onChange={(e) => setLeadDbChannel(e.target.value as 'any' | 'phone' | 'whatsapp' | 'email' | 'linkedin')} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    <option value="any">Any</option>
-                    <option value="phone">Phone</option>
-                    <option value="whatsapp">WhatsApp</option>
-                    <option value="email">Email</option>
-                    <option value="linkedin">LinkedIn</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Industry:</label>
-                  <select
-                    value={leadDbIndustries[0] || 'any'}
-                    onChange={(e) => setLeadDbIndustries(e.target.value === 'any' ? [] : [e.target.value])}
-                    disabled={isRunning || executingStage !== null}
-                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100"
-                  >
-                    <option value="any">Any</option>
-                    {(leadsDbMetadata?.valid_industries || LEADS_DB_DEFAULT_INDUSTRIES).map((industry) => (
-                      <option key={industry} value={industry}>{industry}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Seniority:</label>
-                  <select
-                    value={leadDbSeniorities[0] || 'any'}
-                    onChange={(e) => setLeadDbSeniorities(e.target.value === 'any' ? [] : [e.target.value])}
-                    disabled={isRunning || executingStage !== null}
-                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100"
-                  >
-                    <option value="any">Any</option>
-                    {(leadsDbMetadata?.valid_seniorities || LEADS_DB_DEFAULT_SENIORITIES).map((seniority) => (
-                      <option key={seniority} value={seniority}>{seniority}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Has Phone:</label>
-                  <select value={leadDbHasPhone === null ? 'any' : leadDbHasPhone ? 'yes' : 'no'} onChange={(e) => setLeadDbHasPhone(e.target.value === 'any' ? null : e.target.value === 'yes')} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    <option value="any">Any</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Has Email:</label>
-                  <select value={leadDbHasEmail === null ? 'any' : leadDbHasEmail ? 'yes' : 'no'} onChange={(e) => setLeadDbHasEmail(e.target.value === 'any' ? null : e.target.value === 'yes')} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    <option value="any">Any</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Has LinkedIn:</label>
-                  <select value={leadDbHasLinkedin === null ? 'any' : leadDbHasLinkedin ? 'yes' : 'no'} onChange={(e) => setLeadDbHasLinkedin(e.target.value === 'any' ? null : e.target.value === 'yes')} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    <option value="any">Any</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Match Mode:</label>
-                  <select value={leadDbMatchMode} onChange={(e) => setLeadDbMatchMode(e.target.value as 'strict' | 'broad')} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    <option value="strict">Strict</option>
-                    <option value="broad">Broad</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Limit:</label>
-                  <input type="number" min={1} max={1000} value={leadDbLimit} onChange={(e) => setLeadDbLimit(Number(e.target.value) || 25)} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Outreach Channel:</label>
-                  <select value={leadOutreachChannel} onChange={(e) => setLeadOutreachChannel(e.target.value)} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100">
-                    <option value="email-linkedin">Email + LinkedIn</option>
-                    <option value="email-only">Email only</option>
-                    <option value="linkedin-only">LinkedIn only</option>
-                    <option value="whatsapp-assisted">WhatsApp assisted</option>
-                  </select>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Designation Keywords (comma separated):</label>
-                  <input value={leadDbDesignationKeywords} onChange={(e) => setLeadDbDesignationKeywords(e.target.value)} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Cities (comma separated):</label>
-                  <input value={leadDbCities} onChange={(e) => setLeadDbCities(e.target.value)} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">States (comma separated):</label>
-                  <input value={leadDbStates} onChange={(e) => setLeadDbStates(e.target.value)} disabled={isRunning || executingStage !== null} className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:outline-none text-sm text-gray-800 disabled:bg-gray-100" />
-                </div>
-              </div>
-
-              <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">Connector Architecture</h3>
-                    <p className="mt-1 text-sm text-gray-600">Stage-aware Composio connectors with popup auth and live status refresh.</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-sm font-medium text-emerald-700">
-                      {integrationsLoading
-                        ? 'Syncing...'
-                        : `${leadConnectorRecords.filter((connector) => connector.connected).length}/${leadConnectorRecords.length} connected`}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setConnectorPanelOpen((prev) => !prev)}
-                      aria-label={connectorPanelOpen ? 'Hide connector architecture' : 'Show connector architecture'}
-                      className="rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-sm font-semibold text-emerald-700 transition-colors hover:border-emerald-300"
-                    >
-                      {connectorPanelOpen ? '▲' : '▼'}
-                    </button>
-                  </div>
-                </div>
-                {connectorPanelOpen && (
-                  <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                    {leadConnectorRecords.map((connector) => {
-                      const isBusy = connectorActionId === connector.id
-                      return (
-                        <div
-                          key={connector.id}
-                          className={`rounded-xl border px-4 py-3 transition-all ${
-                            connector.connected
-                              ? 'border-emerald-300 bg-white shadow-sm'
-                              : 'border-emerald-100 bg-white/80 hover:border-emerald-300 hover:bg-white'
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <div className="font-medium text-gray-800">{connector.label}</div>
-                              <p className="mt-2 text-xs text-gray-600">{connector.description}</p>
-                            </div>
-                            <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-                              connector.connected ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
-                            }`}>
-                              {connector.connected ? 'Connected' : 'Not connected'}
-                            </span>
-                          </div>
-                          <div className="mt-4 flex items-center justify-between gap-3">
-                            <span className="text-[11px] uppercase tracking-[0.14em] text-gray-500">
-                              {connector.category}
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => handleLeadConnectorAction(connector.id)}
-                                disabled={isBusy || integrationsLoading}
-                                className="rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
-                              >
-                                {isBusy ? 'Opening...' : connector.connected ? 'Reconnect' : 'Connect'}
-                              </button>
-                              {connector.connected && (
-                                <button
-                                  type="button"
-                                  onClick={() => void disconnectLeadConnector(connector.id)}
-                                  disabled={isBusy || integrationsLoading}
-                                  className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-rose-200 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
-                                >
-                                  Disconnect
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-
-
-              {leadGoal === 'lead-enrichment' && (
-                <div className="mb-6 rounded-2xl border border-purple-200 bg-purple-50/60 p-5">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-purple-700">Stage 4: Upload Enrichment</h3>
-                      <p className="mt-1 text-sm text-gray-600">
-                        Upload a CSV/XLS(X), auto-map email/phone headers, enrich using Leads DB and Apollo (if connected), then export.
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => void runLeadEnrichmentUpload()}
-                        disabled={leadEnrichmentLoading || isRunning || executingStage !== null}
-                        className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {leadEnrichmentLoading ? 'Enriching...' : 'Run Enrichment'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => exportEnrichedRows('csv')}
-                        disabled={!leadEnrichmentResult?.enrichedRows?.length}
-                        className="rounded-lg border border-purple-200 bg-white px-3 py-2 text-xs font-semibold text-purple-700 disabled:opacity-50"
-                      >
-                        Export CSV
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => exportEnrichedRows('xls')}
-                        disabled={!leadEnrichmentResult?.enrichedRows?.length}
-                        className="rounded-lg border border-purple-200 bg-white px-3 py-2 text-xs font-semibold text-purple-700 disabled:opacity-50"
-                      >
-                        Export XLS
-                      </button>
-                    </div>
-                  </div>
-
-                  <FileUpload
-                    fileType="pdf"
-                    label="Lead Upload File (CSV/XLS/XLSX)"
-                    description="Only first sheet/file is used. Max 1,000 rows are enriched per run."
-                    accept=".csv,.xls,.xlsx"
-                    onFilesChange={(files) => void handleLeadEnrichmentFilesChange(files)}
-                    maxFiles={1}
-                    multiple={false}
-                    maxSizeMB={25}
-                    disabled={leadEnrichmentLoading || isRunning || executingStage !== null}
-                    icon="📊"
-                  />
-
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-gray-600">Email column mapping</label>
-                      <select
-                        value={leadEmailField}
-                        onChange={(e) => setLeadEmailField(e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800"
-                      >
-                        <option value="">Not mapped</option>
-                        {leadUploadHeaders.map((header) => (
-                          <option key={header} value={header}>{header}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-gray-600">Phone column mapping</label>
-                      <select
-                        value={leadPhoneField}
-                        onChange={(e) => setLeadPhoneField(e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800"
-                      >
-                        <option value="">Not mapped</option>
-                        {leadUploadHeaders.map((header) => (
-                          <option key={header} value={header}>{header}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 rounded-lg border border-purple-200 bg-white p-3 text-sm">
-                    <p className="text-xs text-gray-600">
-                      Uploaded rows: <span className="font-semibold text-purple-700">{leadUploadRows.length.toLocaleString()}</span>
-                      {' '}| Apollo enrichment: <span className="font-semibold text-purple-700">{connectedLeadConnectors.apollo ? 'Enabled' : 'Disabled (connect Apollo to enrich LinkedIn/email)'}</span>
-                    </p>
-                    {leadEnrichmentError && (
-                      <p className="mt-2 text-xs font-medium text-rose-600">{leadEnrichmentError}</p>
-                    )}
-                    {leadEnrichmentResult && (
-                      <p className="mt-2 text-xs font-semibold text-purple-700">
-                        Enriched {leadEnrichmentResult.matched || 0} of {leadEnrichmentResult.count || 0} uploaded records.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {activeModule === 'content-engine' && (
-            <div>
           {/* Campaign Configuration Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {/* Campaign Type Selection */}
@@ -3747,9 +2406,9 @@ function DashboardPage() {
             <div className="flex justify-center">
               <button
                 onClick={executeWorkflow}
-                disabled={isRunning || executingStage !== null || (activeModule === 'content-engine' && !topic)}
+                disabled={isRunning || executingStage !== null || !topic}
                 className={`px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105 ${
-                  isRunning || executingStage !== null || (activeModule === 'content-engine' && !topic)
+                  isRunning || executingStage !== null || !topic
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl'
                 }`}
@@ -3760,21 +2419,19 @@ function DashboardPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    {activeModule === 'content-engine' ? 'Running Campaign...' : 'Running Lead Workflow...'}
+                    Running Campaign...
                   </span>
                 ) : (
-                  activeModule === 'content-engine' ? 'Execute Full Campaign' : 'Execute Lead Workflow'
+                  'Execute Full Campaign'
                 )}
               </button>
-            </div>
-          )}
             </div>
           )}
 
           {executionMode === 'staged' && (
             <div className="text-sm text-gray-600 bg-purple-50 px-4 py-3 rounded-lg border-2 border-purple-200">
               <p className="font-semibold text-purple-700">Stage-by-Stage Mode Active</p>
-              <p className="text-xs mt-1">Execute and review each stage individually below.</p>
+              <p className="text-xs mt-1">Execute and review each stage individually below</p>
             </div>
           )}
         </div>
@@ -3782,7 +2439,7 @@ function DashboardPage() {
         {/* Workflow Stages */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            {activeModule === 'content-engine' ? 'Workflow Stages' : 'Lead Intelligence Workflow'}
+            Workflow Stages
           </h2>
 
           <div className="space-y-3">
@@ -3810,30 +2467,6 @@ function DashboardPage() {
                         {stage.message && (
                           <p className="text-sm text-gray-600 mt-1">{stage.message}</p>
                         )}
-                        {activeModule === 'lead-intelligence' && LEAD_STAGE_CONNECTORS[stage.id] && (
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {LEAD_STAGE_CONNECTORS[stage.id].map((connectorId) => {
-                              const connector = leadConnectorRecords.find((item) => item.id === connectorId)
-                              if (!connector) return null
-                              return (
-                                <button
-                                  key={connector.id}
-                                  type="button"
-                                  onClick={() => {
-                                    if (!connector.connected) handleLeadConnectorAction(connector.id)
-                                  }}
-                                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
-                                    connector.connected
-                                      ? 'border-emerald-300 bg-emerald-100 text-emerald-700'
-                                      : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:text-emerald-700'
-                                  }`}
-                                >
-                                  {connector.label} • {connector.connected ? 'Connected' : connectorActionId === connector.id ? 'Opening...' : 'Connect'}
-                                </button>
-                              )
-                            })}
-                          </div>
-                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -3851,11 +2484,11 @@ function DashboardPage() {
                           {stage.id === 1 ? (
                             <button
                               onClick={() => executeStage(stage.id)}
-                              disabled={executingStage !== null || isRunning || (activeModule !== 'lead-intelligence' && !topic)}
+                              disabled={executingStage !== null || isRunning || !topic}
                               className={`text-sm px-4 py-2 rounded-lg font-semibold transition-all ${
                                 executingStage === stage.id
                                   ? 'bg-purple-400 text-white cursor-wait'
-                                  : activeModule !== 'lead-intelligence' && !topic
+                                  : !topic
                                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                   : stage.status === 'completed'
                                   ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-md hover:shadow-lg'
@@ -3943,7 +2576,7 @@ function DashboardPage() {
         {/* Footer */}
         <div className="mt-8 text-center text-gray-600">
           <p className="text-sm">
-            Torqq Content Engine • Port 3004 •
+            Torqq Social Media Engine • Port 3004 •
             <span className="ml-2">AI-Powered Video Production & Multi-Platform Publishing</span>
           </p>
         </div>

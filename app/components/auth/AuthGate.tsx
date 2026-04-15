@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '../../../contexts/AuthContext'
 import { AuthScreen } from './AuthScreen'
 
 export function AuthGate({ children }: { children: ReactNode }) {

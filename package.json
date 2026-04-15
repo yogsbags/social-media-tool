@@ -2,9 +2,12 @@
   "name": "social-media-automation",
   "version": "1.0.0",
   "description": "AI-powered social media campaign automation with Veo 3.1, HeyGen, and Shotstack",
-  "main": "main.js",
+  "private": true,
   "scripts": {
-    "start": "node main.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "start:automation": "node main.js",
     "init": "node main.js init",
     "status": "node main.js status",
     "test": "node main.js --simulate status",
@@ -25,14 +28,33 @@
   "author": "Generic",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.916.0",
+    "@aws-sdk/s3-request-presigner": "^3.916.0",
     "@fal-ai/client": "^1.7.2",
     "@google/genai": "^1.29.1",
+    "@supabase/supabase-js": "^2.103.2",
     "canvas": "^3.2.0",
+    "groq-sdk": "^0.17.0",
     "jsdom": "^27.2.0",
+    "next": "^14.2.33",
     "node-fetch": "^3.3.2",
-    "replicate": "^0.27.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^9.1.0",
+    "remark-gfm": "^4.0.1",
+    "replicate": "^0.27.0",
+    "xlsx": "^0.18.5"
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.10",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^6.0.2"
   }
 }

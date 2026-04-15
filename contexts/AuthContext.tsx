@@ -10,8 +10,8 @@ import {
   type ReactNode,
 } from 'react'
 import type { AuthError } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
-import type { AuthState, User } from '@/types/auth'
+import { supabase } from '../lib/supabase'
+import type { AuthState, User } from '../types/auth'
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>
