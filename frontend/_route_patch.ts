@@ -1,0 +1,1 @@
+/Users/yogs87/Documents/New project/social-media-tool/frontend/app/api/article/generate/route.ts

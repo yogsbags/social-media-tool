@@ -1,0 +1,205 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - img "Torqq logo" [ref=e8]
+        - generic [ref=e9]:
+          - heading "Torqq Content Engine" [level=1] [ref=e10]
+          - paragraph [ref=e11]: AI-Powered Multi-Platform Campaign Automation
+      - generic [ref=e12]:
+        - generic [ref=e13]: Video Production:AI-Powered
+        - generic [ref=e14]: Platforms:7 Social Channels
+        - generic [ref=e15]: Goal:Scalable Content Ops
+    - generic [ref=e16]:
+      - heading "Campaign Configuration" [level=2] [ref=e17]
+      - generic [ref=e18]:
+        - generic [ref=e19]: "Execution Mode:"
+        - generic [ref=e20]:
+          - button "Full Campaign Execute all 6 stages automatically" [ref=e21] [cursor=pointer]:
+            - generic [ref=e22]: Full Campaign
+            - paragraph [ref=e23]: Execute all 6 stages automatically
+          - button "Stage-by-Stage Review and approve each stage" [ref=e24] [cursor=pointer]:
+            - generic [ref=e25]: Stage-by-Stage
+            - paragraph [ref=e26]: Review and approve each stage
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e29]: "Campaign Type:"
+          - combobox [ref=e30]:
+            - option "LinkedIn Carousel"
+            - option "Instagram Reel"
+            - option "Instagram Carousel"
+            - option "YouTube Explainer"
+            - option "YouTube Short"
+            - option "Facebook Reel"
+            - option "Twitter Thread"
+            - option "WhatsApp Creative"
+            - option "Email Newsletter"
+            - option "Blog Article" [selected]
+            - option "Live News Update"
+            - option "Infographic"
+        - generic [ref=e31]:
+          - generic [ref=e32]: "Campaign Purpose:"
+          - combobox [ref=e33]:
+            - option "Brand Awareness - General awareness and top-of-funnel campaigns" [selected]
+            - option "Product Launch - Launch a new product, service, or feature"
+            - option "Lead Generation - Drive inbound interest and conversions"
+            - option "Customer Education - Explain workflows, benefits, and best practices"
+            - option "Feature Adoption - Promote product usage and activation"
+            - option "Event Promotion - Webinars, events, or announcements"
+            - option "Case Study - Customer proof, testimonials, and outcomes"
+            - option "Community Engagement - Grow ongoing audience engagement"
+            - option "Newsletter - Recurring updates and editorial content"
+        - generic [ref=e34]:
+          - generic [ref=e35]: "Target Audience:"
+          - combobox [ref=e36]:
+            - option "General audience - Default audience for broad campaigns" [selected]
+            - option "Lead generation - Prospects evaluating the offer"
+            - option "Internal teams - Employee communications and training"
+            - option "Professionals - Working professionals and business users"
+            - option "Executives - Senior stakeholders and decision-makers"
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: "Campaign Topic:"
+          - generic [ref=e40]:
+            - 'textbox "e.g., Client Success: ₹50L to ₹2Cr in 5 years" [ref=e41]': AI Action Summit 2026 key takeaways
+            - button "Generate" [ref=e42] [cursor=pointer]
+        - generic [ref=e43]:
+          - generic [ref=e44]: "Target Platforms:"
+          - generic [ref=e45] [cursor=pointer]:
+            - generic [ref=e46]: 1 selected (linkedin)
+            - img [ref=e47]
+      - generic [ref=e49]:
+        - generic [ref=e50]: "Content Language:"
+        - combobox [ref=e52]:
+          - option "English (English)" [selected]
+          - option "Hindi (हिंदी)"
+          - option "Bengali (বাংলা)"
+          - option "Telugu (తెలుగు)"
+          - option "Marathi (मराठी)"
+          - option "Tamil (தமிழ்)"
+          - option "Gujarati (ગુજરાતી)"
+          - option "Kannada (ಕನ್ನಡ)"
+          - option "Malayalam (മലയാളം)"
+          - option "Punjabi (ਪੰਜਾਬੀ)"
+        - paragraph [ref=e53]: Content and videos will be created in the selected language
+      - generic [ref=e54]:
+        - heading "Output Format Type" [level=3] [ref=e55]
+        - generic [ref=e56]:
+          - button "Static Image Generate single image" [ref=e57] [cursor=pointer]:
+            - generic [ref=e58]: Static Image
+            - paragraph [ref=e59]: Generate single image
+          - button "Faceless Video AI video generation" [ref=e60] [cursor=pointer]:
+            - generic [ref=e61]: Faceless Video
+            - paragraph [ref=e62]: AI video generation
+          - button "Avatar Video AI Avatar" [ref=e63] [cursor=pointer]:
+            - generic [ref=e64]: Avatar Video
+            - paragraph [ref=e65]: AI Avatar
+      - generic [ref=e66]:
+        - generic [ref=e67]: Aspect Ratio
+        - generic [ref=e68]:
+          - button "16:9 Horizontal" [ref=e69] [cursor=pointer]:
+            - generic [ref=e70]: 16:9
+            - paragraph [ref=e71]: Horizontal
+          - button "9:16 Vertical" [ref=e72] [cursor=pointer]:
+            - generic [ref=e73]: 9:16
+            - paragraph [ref=e74]: Vertical
+          - button "1:1 Square" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]: 1:1
+            - paragraph [ref=e77]: Square
+          - button "3:4 Portrait" [ref=e78] [cursor=pointer]:
+            - generic [ref=e79]: 3:4
+            - paragraph [ref=e80]: Portrait
+      - generic [ref=e83]:
+        - button [ref=e84] [cursor=pointer]:
+          - img [ref=e85]
+        - heading "Reference Materials (Optional)" [level=3] [ref=e87]
+      - generic [ref=e89]:
+        - generic [ref=e90]:
+          - heading "Auto-Publish" [level=3] [ref=e91]
+          - paragraph [ref=e92]: Automatically publish content to selected platforms after generation
+        - generic [ref=e93] [cursor=pointer]:
+          - checkbox "Enable Auto-Publish" [ref=e94]
+          - generic [ref=e95]: Enable Auto-Publish
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - button [ref=e99] [cursor=pointer]:
+            - img [ref=e100]
+          - heading "Brand Guidelines" [level=3] [ref=e102]
+        - generic [ref=e103] [cursor=pointer]:
+          - checkbox "Use saved brand guidelines" [checked] [ref=e104]
+          - generic [ref=e105]: Use saved brand guidelines
+      - generic [ref=e106]:
+        - paragraph [ref=e107]: Stage-by-Stage Mode Active
+        - paragraph [ref=e108]: Execute and review each stage individually below
+    - generic [ref=e109]:
+      - heading "Workflow Stages" [level=2] [ref=e110]
+      - generic [ref=e111]:
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e116]: ✅
+            - generic [ref=e117]:
+              - 'heading "Stage 1: Campaign Planning" [level=3] [ref=e118]'
+              - paragraph [ref=e119]: Creative prompt generated
+          - generic [ref=e120]:
+            - button "Re-run Stage" [ref=e121] [cursor=pointer]
+            - button "📝 View & Edit Data" [ref=e122] [cursor=pointer]
+        - generic [ref=e125]:
+          - generic [ref=e126]:
+            - generic [ref=e127]: ❌
+            - generic [ref=e128]:
+              - 'heading "Stage 2: Content Generation" [level=3] [ref=e129]'
+              - paragraph [ref=e130]: Blog article generation failed
+          - button "Approve & Continue" [ref=e132] [cursor=pointer]
+        - generic [ref=e135]:
+          - generic [ref=e136]:
+            - generic [ref=e137]: ⚪
+            - 'heading "Stage 3: Visual Assets" [level=3] [ref=e139]'
+          - button "Waiting" [disabled] [ref=e141]
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]: ⚪
+            - 'heading "Stage 4: Video Production" [level=3] [ref=e148]'
+          - button "Waiting" [disabled] [ref=e150]
+        - generic [ref=e153]:
+          - generic [ref=e154]:
+            - generic [ref=e155]: ⚪
+            - 'heading "Stage 5: Publishing" [level=3] [ref=e157]'
+          - button "Waiting" [disabled] [ref=e159]
+        - generic [ref=e162]:
+          - generic [ref=e163]:
+            - generic [ref=e164]: ⚪
+            - 'heading "Stage 6: Analytics & Tracking" [level=3] [ref=e166]'
+          - button "Waiting" [disabled] [ref=e168]
+    - generic [ref=e169]:
+      - heading "Live Logs" [level=2] [ref=e170]
+      - generic [ref=e171]:
+        - generic [ref=e172]: "[11:35:51 AM] Starting Stage 1 execution..."
+        - generic [ref=e173]: "[11:35:51 AM] Preparing reference materials..."
+        - generic [ref=e174]: "[11:35:51 AM] 🚀 Starting Stage 1: planning..."
+        - generic [ref=e175]: "[11:35:51 AM] Stage 1: Executing planning..."
+        - generic [ref=e176]: "[11:35:51 AM] 🎨 Generating creative prompt with Groq Compound..."
+        - generic [ref=e177]: "[11:35:51 AM] 🌐 Calling prompt generation API: http://127.0.0.1:3007/api/prompt/generate"
+        - generic [ref=e178]: "[11:35:58 AM] ✅ Creative prompt generated successfully!"
+        - generic [ref=e179]: "[11:35:58 AM] Stage 1: Creative prompt generated"
+        - generic [ref=e180]: "[11:35:58 AM] ✅ Stage 1 completed successfully!"
+        - generic [ref=e181]: "[11:35:58 AM] Stage 1 completed!"
+        - generic [ref=e182]: "[11:35:59 AM] Starting Stage 2 execution..."
+        - generic [ref=e183]: "[11:35:59 AM] Preparing reference materials..."
+        - generic [ref=e184]: "[11:35:59 AM] 🚀 Starting Stage 2: content..."
+        - generic [ref=e185]: "[11:35:59 AM] Stage 2: Executing content..."
+        - generic [ref=e186]: "[11:35:59 AM] 📝 Generating grounded SEO blog article with Gemini..."
+        - generic [ref=e187]: "[11:35:59 AM] 🌐 Calling grounded article API: http://localhost:3007/api/article/generate"
+        - generic [ref=e188]: "[11:40:03 AM] 🔁 Gemini retry trace:"
+        - generic [ref=e189]: "[11:40:03 AM] Attempt 1/4 [detailed] -> missing-fields (62965ms): Article body was schema-like JSON instead of prose."
+        - generic [ref=e190]: "[11:40:03 AM] Attempt 2/4 [compact] -> missing-fields (53914ms): Article body was schema-like JSON instead of prose."
+        - generic [ref=e191]: "[11:40:03 AM] Attempt 3/4 [advisory-safe] -> missing-fields (65820ms): Article body was schema-like JSON instead of prose."
+        - generic [ref=e192]: "[11:40:03 AM] Attempt 4/4 [salvage] -> missing-fields (50241ms): Salvage output incomplete (words=297, minWords=1500, excluding SEO Metadata and FAQ Schema, ipoSectionsOk=n/a, schemaLike=true)."
+        - generic [ref=e193]: "[11:40:03 AM] ❌ Blog article generation failed: {\"error\":\"Failed to parse grounded article response\",\"raw\":\"The 2026 AI Impact Summit: Key Takeaways, Global South Leadership, and the Shift to Implementation\\n\\nThe February 2026 AI Impact Summit in New Delhi marked a definitive pivot in global artificial intelligence dialogues, transitioning from theoretical existential safety debates to practical deployment, infrastructure investment, and Global South inclusion. With over 500,000 attendees and $270 billion in total commitments, the event underscored the urgent need for equitable compute access, multilingual AI models, and massive energy infrastructure, culminating in the voluntary New Delhi Declaratio\",\"retryTrace\":[{\"attempt\":1,\"promptVariant\":\"detailed\",\"maxOutputTokens\":12288,\"status\":\"missing-fields\",\"detail\":\"Article body was schema-like JSON instead of prose.\",\"elapsedMs\":62965},{\"attempt\":2,\"promptVariant\":\"compact\",\"maxOutputTokens\":8192,\"status\":\"missing-fields\",\"detail\":\"Article body was schema-like JSON instead of prose.\",\"elapsedMs\":53914},{\"attempt\":3,\"promptVariant\":\"advisory-safe\",\"maxOutputTokens\":8192,\"status\":\"missing-fields\",\"detail\":\"Article body was schema-like JSON instead of prose.\",\"elapsedMs\":65820},{\"attempt\":4,\"promptVariant\":\"salvage\",\"maxOutputTokens\":12288,\"status\":\"missing-fields\",\"detail\":\"Salvage output incomplete (words=297, minWords=1500, excluding SEO Metadata and FAQ Schema, ipoSectionsOk=n/a, schemaLike=true).\",\"elapsedMs\":50241}],\"generationMeta\":{\"attempts\":4,\"totalElapsedMs\":232940}}"
+        - generic [ref=e194]: "[11:40:03 AM] Stage 2: Blog article generation failed"
+        - generic [ref=e195]: "[11:40:03 AM] Stage 2 failed"
+    - paragraph [ref=e197]: Torqq Content Engine • Port 3004 •AI-Powered Video Production & Multi-Platform Publishing
+  - alert [ref=e198]
+```
